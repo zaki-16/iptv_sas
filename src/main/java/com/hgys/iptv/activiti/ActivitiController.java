@@ -20,42 +20,6 @@ public class ActivitiController {
     @Autowired
     ActivitiServiceImpl activitiService;
 
-    @GetMapping("/processlist")
-    String process(){
-        return "activiti/user";
-    }
-    //跳到purchaseapply.html
-    @GetMapping("/purchase")
-    String purchase(){
-        return "purchase/purchaseapply";
-    }
-    //展示历史采购申请页面
-    @GetMapping("/historypurchaseprocess")
-    String historypurchaseprocess(){
-        return "purchase/historypurchaseprocess";
-    }
-    //	处理页面
-    @GetMapping("/purchasemanager")
-    String purchasemanager(){
-        return "purchase/purchasemanager";
-    }
-
-    @GetMapping("/manager")
-    String manager(){
-        return "purchase/manager";
-    }
-
-    @GetMapping("/")
-    String updateapply(){
-        return "purchase/updateapply";
-    }
-
-    @GetMapping("/receiveitem")
-    public String receiveitem(){
-        return "purchase/receiveitem";
-    }
-
-
     @GetMapping("/uploadWorkFlow")
     public String fileupload(@RequestParam MultipartFile file, HttpServletRequest request){
         try{
