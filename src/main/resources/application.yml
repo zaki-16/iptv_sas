@@ -1,0 +1,36 @@
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: utf-8
+  connection-timeout: 10
+
+spring:
+  datasource:
+    username: root
+    password: root
+    #serverTimezone=GMT
+    url: jdbc:mysql://localhost/iptv_sas?characterEncoding=utf-8&useSSl=false&serverTimezone=GMT
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+
+  jpa:
+    show-sql: true
+    #spring data jpa 默认命名策略是 ImprovedNamingStrategy ，即用下划线转换驼峰名，容易造成mysql找不到字段
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: update
+  http:
+   encoding:
+      charset: utf-8
+      enabled: true
+
+  #去掉html校验
+  thymeleaf:
+    cache: false
+    mode: HTML
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+
+
