@@ -25,7 +25,7 @@ import org.hibernate.annotations.GenericGenerator;
  */
 @Entity
 @Table(name = "settlement_dimension")
-public class SettlementDimensionEntity implements java.io.Serializable {
+public class SettlementDimension implements java.io.Serializable {
     /** 版本号 */
     private static final long serialVersionUID = 3103784636788260031L;
 
@@ -78,6 +78,10 @@ public class SettlementDimensionEntity implements java.io.Serializable {
     /** 备用字段5 */
     @Column(name = "col5", nullable = true, length = 100)
     private String col5;
+
+    /** 逻辑删除(0:否；1:是) */
+    @Column(name = "isdelete", nullable = true, length = 10)
+    private Integer isdelete;
 
     /**
      * 获取主键
@@ -305,5 +309,24 @@ public class SettlementDimensionEntity implements java.io.Serializable {
      */
     public void setCol5(String col5) {
         this.col5 = col5;
+    }
+
+    /**
+     * 获取逻辑删除(0:否;1:是)
+     *
+     * @return 逻辑删除(0
+     */
+    public Integer getIsdelete() {
+        return this.isdelete;
+    }
+
+    /**
+     * 设置逻辑删除(0:否;1:是)
+     *
+     * @param isdelete
+     *          逻辑删除(0
+     */
+    public void setIsdelete(Integer isdelete) {
+        this.isdelete = isdelete;
     }
 }

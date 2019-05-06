@@ -6,10 +6,10 @@ server:
 
 spring:
   datasource:
-    username: developer
-    password: 1234@qwer
+    username: root
+    password: 953828yp
     #serverTimezone=GMT
-    url: jdbc:mysql://192.168.31.191:5696/iptv_sas?characterEncoding=utf-8&useSSl=false&serverTimezone=GMT
+    url: jdbc:mysql://localhost:3306/iptv_sas?characterEncoding=utf-8&useSSl=false&serverTimezone=GMT
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
 
