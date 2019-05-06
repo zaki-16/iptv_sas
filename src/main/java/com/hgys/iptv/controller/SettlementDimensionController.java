@@ -1,7 +1,6 @@
 package com.hgys.iptv.controller;
 
 import com.hgys.iptv.model.SettlementDimension;
-import com.hgys.iptv.model.dao.EntityDao;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.SettlementDimensionService;
 import com.hgys.iptv.util.CodeUtil;
@@ -13,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 
 
@@ -27,9 +25,6 @@ public class SettlementDimensionController {
 
     @Autowired
     private SettlementDimensionService settlementDimensionService;
-
-    @Autowired
-    private EntityDao entityDao;
 
     @PostMapping("/selectByCode")
     @ApiOperation(value = "通过code查询",notes = "返回json数据类型")

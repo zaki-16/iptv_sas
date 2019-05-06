@@ -1,7 +1,6 @@
 package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.model.SettlementDimension;
-import com.hgys.iptv.model.dao.EntityDao;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.QueryResult;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -23,9 +22,6 @@ import java.util.List;
 public class SettlementDimensionServiceImpl implements SettlementDimensionService {
     @Autowired
     private SettlementDimensionRepository settlementDimensionRepository;
-
-    @Autowired
-    private EntityDao entityDao;
 
     @Override
     public ResultVO<?> insterSettlementDimension(String name, String status, String remarks) {
@@ -75,24 +71,8 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
 
     @Override
     public ResultVO<?> findByConditions(String name, String code, String status, String pageNum, String pageSize) {
-        StringBuffer sql = new StringBuffer();
-        sql.append("1 = 1");
-        if (StringUtils.isNotBlank(name)){
-            sql.append(" and o.name = ?1");
-        }
-        if (StringUtils.isNotBlank(code)){
-            sql.append(" and o.code = ?2");
-        }
-        if (StringUtils.isNotBlank(status)){
-            sql.append(" and o.status = ?3");
-        }
-        QueryResult<SettlementDimension> pagingData = new QueryResult();
-        try {
-             pagingData = entityDao.getPagingData(SettlementDimension.class, Integer.parseInt(pageNum), Integer.parseInt(pageSize), null, new Object[]{name,code,Integer.parseInt(status)});
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return ResultVOUtil.success(pagingData);
+
+        return ResultVOUtil.success(null);
     }
 
 
