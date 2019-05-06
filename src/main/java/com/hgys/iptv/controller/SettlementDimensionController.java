@@ -84,4 +84,12 @@ public class SettlementDimensionController {
 
         return settlementDimensionService.findByConditions(name,code,status,pageNum,pageSize);
     }
+
+
+    @PostMapping("/updateSettlementDimension")
+    @ApiOperation(value = "修改",notes = "返回处理结果，false或true")
+    public ResultVO<?> updateSettlementDimension(@ApiParam(value = "结算单维度名称") @RequestBody() SettlementDimension vo){
+
+        return null;
+    }
 }
