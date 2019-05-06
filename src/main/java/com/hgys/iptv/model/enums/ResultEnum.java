@@ -8,11 +8,10 @@ import lombok.Getter;
 @Getter
 public enum ResultEnum {
 
-    SYSTEM_INTERNAL_ERROR("0001", "系统内部错误"), ACCESS_DENIED_ERROR("0002", "拒绝访问"), ACCESS_TOKEN_ERROR("0003", "账号已在别处登录"), ACCESS_LINK_ERROR("0004", "登录失效,请重新登录");
+    SYSTEM_INTERNAL_ERROR("0002", "系统内部错误"), ACCESS_DENIED_ERROR("0003", "拒绝访问");
+    private String	code = "0001";
 
-    private String	code;
-
-    private String	message;
+    private String	message = "true";
 
 
     ResultEnum(String code, String message) {
