@@ -18,6 +18,7 @@ public class OrderBusiness implements java.io.Serializable{
     private Integer id;
 
 
+
     /** 业务级结算名称*/
     @Column(name = "name", nullable = true, length = 50)
     private String name;
