@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -83,17 +84,19 @@ public class SettlementDimensionController {
                                                                     @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
 
         Sort sort = new Sort(Sort.Direction.DESC,"inputTime");
-        Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageNum),sort);
+        Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
         Page<SettlementDimensionControllerListVM> byConditions = settlementDimensionService.findByConditions(name, code, status, pageable);
         return byConditions;
     }
 
 
     @PutMapping("/updateSettlementDimension")
-    @ApiOperation(value = "修改",notes = "返回处理结果，false或true")
+    @ApiOperation(value = "结算单维度修改",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResultVO<?> updateSettlementDimension(@ApiParam(value = "结算单维度名称") @RequestBody() SettlementDimensionControllerUpdateVM vo){
-
-        return ResultVOUtil.success(null);
+    public ResultVO<?> updateSettlementDimension(@ApiParam(value = "结算单维度修改VM") @RequestBody() SettlementDimensionControllerUpdateVM vo){
+        SettlementDimension settlementDimension = new SettlementDimension();
+        BeanUtils.copyProperties(vo,settlementDimension);
+        ResultVO<?> resultVO = settlementDimensionService.updateSettlementDimension(settlementDimension);
+        return resultVO;
     }
 }
