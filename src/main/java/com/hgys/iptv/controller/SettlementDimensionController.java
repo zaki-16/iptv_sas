@@ -5,7 +5,6 @@ import com.hgys.iptv.controller.vm.SettlementDimensionControllerUpdateVM;
 import com.hgys.iptv.model.SettlementDimension;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.SettlementDimensionService;
-import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,8 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.Timestamp;
 
 
 /**
@@ -84,11 +81,6 @@ public class SettlementDimensionController {
                                                                     @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
                                                                     @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
                                                                     @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
-
-        SettlementDimension vo = new SettlementDimension();
-        vo.setCode(CodeUtil.getOnlyCode("SDS",5));
-        vo.setInputTime(new Timestamp(System.currentTimeMillis()));
-        vo.setName(name);
 
         Sort sort = new Sort(Sort.Direction.DESC,"inputTime");
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageNum),sort);
