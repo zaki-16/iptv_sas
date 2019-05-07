@@ -9,6 +9,7 @@ import com.hgys.iptv.repository.SettlementDimensionRepository;
 import com.hgys.iptv.service.SettlementDimensionService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
+import com.hgys.iptv.util.UpdateTool;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -74,7 +75,29 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
 
     @Override
     public ResultVO<?> updateSettlementDimension(SettlementDimension vo) {
-        return null;
+        if (null == vo.getId()){
+            ResultVOUtil.error("1","结算维度主键不能为空");
+        }else if (StringUtils.isBlank(vo.getName())){
+            ResultVOUtil.error("1","结算维度名称不能为空");
+        }else if (null == vo.getStatus()){
+            ResultVOUtil.error("1","结算维度状态不能为空");
+        }
+
+        try{
+            //验证名称是否已经存在
+            SettlementDimension byName = settlementDimensionRepository.findByName(vo.getName().trim());
+            if (null != byName && !byName.getId().equals(vo.getId()) ){
+                ResultVOUtil.error("1","结算维度名称已经存在");
+            }
+            SettlementDimension byId = settlementDimensionRepository.findById(vo.getId()).orElseThrow(()-> new IllegalArgumentException("为查询到ID为:" + vo.getId() + "结算维度信息"));
+            vo.setModifyTime(new Timestamp(System.currentTimeMillis()));
+            UpdateTool.copyNullProperties(byId,vo);
+            settlementDimensionRepository.saveAndFlush(vo);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
     }
 
     @Override

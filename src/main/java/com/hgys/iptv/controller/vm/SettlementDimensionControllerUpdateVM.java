@@ -5,20 +5,19 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import java.sql.Timestamp;
 
 @ApiModel(value = "结算维度修改VM")
 @Data
 public class SettlementDimensionControllerUpdateVM {
 
+    /** 维度ID */
+    @ApiModelProperty("维度ID")
+    @NotBlank(message = "维度Id不能为空")
+    private Integer id;
+
     /** 维度名称 */
     @ApiModelProperty("维度名称")
     private String name;
-
-    /** 维度编码 */
-    @ApiModelProperty("维度编码")
-    @NotBlank(message = "维度编码不能为空")
-    private String code;
 
     /** 状态 */
     @ApiModelProperty("状态")

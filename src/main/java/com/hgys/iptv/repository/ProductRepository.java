@@ -6,6 +6,17 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Integer> {
-    Product findByPid(Integer pid);
+    /**
+     * 通过code查询
+     * @param code
+     * @return
+     */
     Product findByCode(String code);
+
+    /**
+     * 通过名称查询
+     * @param name
+     * @return
+     */
+    Product findByName(String name);
 }
