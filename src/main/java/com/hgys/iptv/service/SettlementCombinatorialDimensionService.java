@@ -36,4 +36,10 @@ public interface SettlementCombinatorialDimensionService {
      */
     Page<SettlementCombinatorialDimensionControllerListVM> findByConditions(String name, String code, String status, Pageable pageable);
 
+    /**
+     * 修改
+     * @param vo
+     * @return
+     */
+    ResultVO<?> updateCombinatorialDimension(SettlementCombinatorialDimensionAddVM vo);
 }

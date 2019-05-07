@@ -87,4 +87,10 @@ public class SettlementCombinatorialDimensionController {
         Page<SettlementCombinatorialDimensionControllerListVM> byConditions = settlementCombinatorialDimensionService.findByConditions(name, code, status, pageable);
         return byConditions;
     }
+    @PutMapping("/updateCombinatorialDimension")
+    @ApiOperation(value = "修改结算组合维度",notes = "返回处理结果，false或true")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResultVO<?> updateCombinatorialDimension(@ApiParam(value = "结算单组合维度VM") @RequestBody() SettlementCombinatorialDimensionAddVM vo){
+        return settlementCombinatorialDimensionService.updateCombinatorialDimension(vo);
+    }
 }
