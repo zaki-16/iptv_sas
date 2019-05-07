@@ -59,7 +59,45 @@ public class OrderCPWithCPListVM {
 
         /** cpcode */
         @ApiModelProperty("cpcode")
-        private String cpid;
+        private String cpcode;
+
+
+        /** occode */
+        @ApiModelProperty("occode")
+        private String occode;
+
+        /** ocname */
+        @ApiModelProperty("ocname")
+        private String ocname;
+
+        /** 金额 */
+        @ApiModelProperty("money")
+        private String money;
+
+        /** 权重 */
+        @ApiModelProperty("weight")
+        private String weight;
+
+
+        public String getCpcode() {
+            return cpcode;
+        }
+
+        public String getOccode() {
+            return occode;
+        }
+
+        public String getOcname() {
+            return ocname;
+        }
+
+        public String getMoney() {
+            return money;
+        }
+
+        public String getWeight() {
+            return weight;
+        }
 
         public Integer getId() {
             return id;
@@ -73,8 +111,24 @@ public class OrderCPWithCPListVM {
             return cpname;
         }
 
-        public String getCpid() {
-            return cpid;
+        public void setCpcode(String cpcode) {
+            this.cpcode = cpcode;
+        }
+
+        public void setOccode(String occode) {
+            this.occode = occode;
+        }
+
+        public void setOcname(String ocname) {
+            this.ocname = ocname;
+        }
+
+        public void setMoney(String money) {
+            this.money = money;
+        }
+
+        public void setWeight(String weight) {
+            this.weight = weight;
         }
 
         public void setId(Integer id) {
@@ -89,9 +143,7 @@ public class OrderCPWithCPListVM {
             this.cpname = cpname;
         }
 
-        public void setCpid(String cpid) {
-            this.cpid = cpid;
-        }
+
     }
 
     public Integer getId() {

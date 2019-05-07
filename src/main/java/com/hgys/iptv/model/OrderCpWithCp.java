@@ -29,10 +29,13 @@ public class OrderCpWithCp implements java.io.Serializable{
     @Column(name = "code", nullable = true, length = 50)
     private String code;
 
-
-    @Column(name = "cpcode", nullable = true, length = 11)
     /** cp的CODE */
-    private Integer cpcode;
+    @Column(name = "cpcode", nullable = true, length = 50)
+    private String cpcode;
+
+    /** 结算方式 */
+    @Column(name = "settleaccounts", nullable = true, length = 2)
+    private Integer settleaccounts;
 
     @Column(name = "createtime", nullable = true, length = 6)
     /** 创建时间*/
@@ -47,8 +50,12 @@ public class OrderCpWithCp implements java.io.Serializable{
     private String ocname;
 
     /** 结算类型-CP定比例表的CODE */
-    @Column(name = "occode", nullable = true, length = 11)
-    private Integer occode;
+    @Column(name = "occode", nullable = true, length = 50)
+    private String occode;
+
+    /** 权重 */
+    @Column(name = "weight", nullable = true, length = 2)
+    private Integer weight;
 
     /** 备用字段3 */
     @Column(name = "col3", nullable = true, length = 50)
@@ -79,9 +86,17 @@ public class OrderCpWithCp implements java.io.Serializable{
         return note;
     }
 
+    public Integer getWeight() {
+        return weight;
+    }
 
+    public void setOccode(String occode) {
+        this.occode = occode;
+    }
 
-
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
 
     public String getCol3() {
         return col3;
@@ -99,11 +114,25 @@ public class OrderCpWithCp implements java.io.Serializable{
         this.cpname = cpname;
     }
 
-    public Integer getCpcode() {
+    public void setCpcode(String cpcode) {
+        this.cpcode = cpcode;
+    }
+
+    public void setSettleaccounts(Integer settleaccounts) {
+        this.settleaccounts = settleaccounts;
+    }
+
+    public String getCpcode() {
         return cpcode;
     }
 
+    public Integer getSettleaccounts() {
+        return settleaccounts;
+    }
 
+    public String getOccode() {
+        return occode;
+    }
 
     public String getCode() {
         return code;
@@ -113,17 +142,13 @@ public class OrderCpWithCp implements java.io.Serializable{
         this.code = code;
     }
 
-    public void setCpcode(Integer cpcode) {
-        this.cpcode = cpcode;
-    }
+
 
     public String getOcname() {
         return ocname;
     }
 
-    public Integer getOccode() {
-        return occode;
-    }
+
 
     public void setNote(String note) {
         this.note = note;
@@ -134,9 +159,6 @@ public class OrderCpWithCp implements java.io.Serializable{
         this.ocname = ocname;
     }
 
-    public void setOccode(Integer occode) {
-        this.occode = occode;
-    }
 
     public void setCol3(String col3) {
         this.col3 = col3;
