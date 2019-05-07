@@ -34,9 +34,9 @@ public class LoginController {
     @ApiOperation(value = "登录请求(管理员用户密码:admin/admin)")
     @ResponseStatus(HttpStatus.OK)
     public String login(
-            @ApiParam(value = "登录名") String name,
-            @ApiParam(value = "登录密码") String pwd){
-        userDetailsService.loadUserByUsername(name);
+            @ApiParam(value = "登录名") String username,
+            @ApiParam(value = "登录密码") String password){
+        userDetailsService.loadUserByUsername(username);
         return "pages/success";//thymeleaf会将路径映射成.html
     }
 

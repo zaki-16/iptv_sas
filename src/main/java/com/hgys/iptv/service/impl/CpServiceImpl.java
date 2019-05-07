@@ -26,6 +26,8 @@ import java.util.List;
 public class CpServiceImpl implements CpService {
     @Autowired
     private CpRepository cpRepository;
+//    @Autowired
+//    AbstractBaseRepositoryImpl<Cp> repository;
 
     //必填字段
 //    private final String[] cols = {"name","status"};

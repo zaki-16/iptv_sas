@@ -2,10 +2,14 @@ package com.hgys.iptv.security;
 
 import com.hgys.iptv.security.rest.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
@@ -32,6 +36,11 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         // 加入自定义的安全认证
         auth.authenticationProvider(provider);
     }
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
 
     @Override
@@ -56,8 +65,23 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutSuccessHandler(logoutSuccessHandler)
                 .permitAll()
-                .and()
-                .csrf().disable();//防止跨域攻击
+                .and();
+//                .csrf().disable();//防止跨域攻击
+
+        http.csrf().disable()
+                // 开启跨域
+                .cors().and();
+
+//                .exceptionHandling()
+//                .authenticationEntryPoint(this.authenticationEntryPoint)
+//                .and()
+//                .sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
+//                .authorizeRequests()
+//                .antMatchers("/**/login").permitAll()
+//                .and();
+
 //
 //        http.authorizeRequests()
 //                .antMatchers("/admins/**").hasRole("ADMIN")   //管理员权限
