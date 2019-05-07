@@ -105,7 +105,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
 //
 //        http.authorizeRequests()
-//                .antMatchers("/admins/**").hasRole("ADMIN")   //管理员权限
+//                .antMatchers("/admins/**").hasRole("ADMIN")   //管理员cls权限
 //                .antMatchers("/users/**").hasRole("USER")   ;  //用户权限
 //
 //        // 记住我
