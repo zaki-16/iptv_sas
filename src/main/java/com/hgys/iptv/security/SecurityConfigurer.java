@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsUtils;
 
 @EnableWebSecurity
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
@@ -66,11 +67,31 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler(logoutSuccessHandler)
                 .permitAll()
                 .and();
+        http
+                // 由于使用的是JWT，我们这里不需要csrf
+                .csrf().disable()
+                // 基于token，所以不需要session
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests()
+                // 所有 / 的所有请求 都放行
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() //对preflight放行
+                .antMatchers("/*").permitAll()
+                .antMatchers("/u").denyAll()
+                .antMatchers("/article/**").permitAll()
+                .antMatchers("/api/**").permitAll()
+                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/**","/swagger-ui.html", "/webjars/**")
+                .permitAll()
+                .antMatchers("/manage/**").hasRole("ADMIN") // 需要相应的角色才能访问
+                // 除上面外的所有请求全部需要鉴权认证
+                .anyRequest().authenticated();
+
+        // 禁用缓存
+        http.headers().cacheControl();
 //                .csrf().disable();//防止跨域攻击
 
-        http.csrf().disable()
-                // 开启跨域
-                .cors().and();
+//        http.csrf().disable()
+//                // 开启跨域
+//                .cors().and();
 
 //                .exceptionHandling()
 //                .authenticationEntryPoint(this.authenticationEntryPoint)
@@ -93,6 +114,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 //
 //        http.exceptionHandling().accessDeniedHandler(accessDeniedHandler); // 无权访问 JSON 格式的数据
 //        http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class); // JWT Filter
+
 
 
     }
