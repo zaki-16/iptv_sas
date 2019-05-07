@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller.vm;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,9 +27,10 @@ public class SettlementCombinatorialDimensionAddVM {
     @ApiModelProperty("结算组合维度状态")
     private Integer status;
 
-    @ApiModelProperty("结算维度组合集合")
+    @ApiModelProperty(value = "结算维度组合集合",dataType = "List")
+    @JsonAnySetter
     private List<SettlementDimension> list;
-
+    
     @Data
     public class SettlementDimension{
         /** 维度编码 */
