@@ -2,13 +2,15 @@ package com.hgys.iptv.repository;
 
 
 import com.hgys.iptv.model.OrderQuantity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 
 @Repository
-    public interface OrderQuantityRepository extends BaseRepository<OrderQuantity,Integer> {
+    public interface OrderQuantityRepository extends JpaRepository<OrderQuantity,Object>, JpaSpecificationExecutor<OrderQuantity> {
     /**
      * 通过ID逻辑删除
      */
