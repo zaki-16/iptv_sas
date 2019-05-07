@@ -1,10 +1,16 @@
 package com.hgys.iptv.service;
 
 
+import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
 import com.hgys.iptv.model.SettlementDimension;
 import com.hgys.iptv.model.vo.ResultVO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-public interface SettlementDimensionService {
+import java.util.Optional;
+
+public interface
+SettlementDimensionService {
     /**
      * 新增
      * @param name
@@ -18,7 +24,7 @@ public interface SettlementDimensionService {
      * @param code
      * @return
      */
-    SettlementDimension findByCode(String code);
+    Optional<SettlementDimension> findByCode(String code);
 
     /**
      * 通过Id,批量逻辑删除
@@ -38,6 +44,12 @@ public interface SettlementDimensionService {
      * 根据条件分页查询
      * @return
      */
-    ResultVO<?> findByConditions(String name,String code,String status,String pageNum,String pageSize);
+    Page<SettlementDimensionControllerListVM> findByConditions(String name, String code, String status, Pageable pageable);
 
+    /**
+     * 保存结算维度
+     * @param settlementDimension
+     * @return
+     */
+    SettlementDimension save(SettlementDimension settlementDimension);
 }

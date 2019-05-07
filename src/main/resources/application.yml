@@ -1,6 +1,6 @@
  spring:
    profiles:
-     active: dev #切换项目环境
+     active: localhost #切换项目环境
 
 #配置共用配置
 

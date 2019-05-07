@@ -1,8 +1,9 @@
 package com.hgys.iptv.service.impl;
 
+import com.hgys.iptv.controller.assemlber.SettlementDimensionControllerAssemlber;
+import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
 import com.hgys.iptv.model.SettlementDimension;
 import com.hgys.iptv.model.enums.ResultEnum;
-import com.hgys.iptv.model.vo.QueryResult;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.SettlementDimensionRepository;
 import com.hgys.iptv.service.SettlementDimensionService;
@@ -10,18 +11,25 @@ import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
+import javax.persistence.criteria.Predicate;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SettlementDimensionServiceImpl implements SettlementDimensionService {
     @Autowired
     private SettlementDimensionRepository settlementDimensionRepository;
+
+    @Autowired
+    private SettlementDimensionControllerAssemlber settlementDimensionControllAssemlber;
 
     @Override
     public ResultVO<?> insterSettlementDimension(String name, String status, String remarks) {
@@ -44,7 +52,7 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
     }
 
     @Override
-    public SettlementDimension findByCode(String code) {
+    public Optional<SettlementDimension> findByCode(String code) {
         return settlementDimensionRepository.findByCode(code);
     }
 
@@ -70,11 +78,37 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
     }
 
     @Override
-    public ResultVO<?> findByConditions(String name, String code, String status, String pageNum, String pageSize) {
+    public Page<SettlementDimensionControllerListVM> findByConditions(String name, String code, String status, Pageable pageable) {
 
-        return ResultVOUtil.success(null);
+        return settlementDimensionRepository.findAll(((root, query, builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (StringUtils.isNotBlank(name)){
+                Predicate condition = builder.equal(root.get("name"), name);
+                predicates.add(condition);
+            }
+            if (StringUtils.isNotBlank(code)){
+                Predicate condition = builder.equal(root.get("code"), code);
+                predicates.add(condition);
+            }
+
+            if (StringUtils.isNotBlank(status)){
+                Predicate condition = builder.equal(root.get("status"), status);
+                predicates.add(condition);
+            }
+
+
+            if (!predicates.isEmpty()){
+                return builder.and(predicates.toArray(new Predicate[0]));
+            }
+            return builder.conjunction();
+        }),pageable).map(settlementDimensionControllAssemlber::getListVM);
     }
 
+    @Override
+    public SettlementDimension save(SettlementDimension settlementDimension) {
+        return settlementDimensionRepository.save(settlementDimension);
+    }
 
 
 }
