@@ -1,5 +1,6 @@
 package com.hgys.iptv.service.impl;
 
+import com.hgys.iptv.controller.assemlber.SettlementCombinatorialDimensionControllerAssemlber;
 import com.hgys.iptv.controller.vm.SettlementCombinatorialDimensionAddVM;
 import com.hgys.iptv.controller.vm.SettlementCombinatorialDimensionControllerListVM;
 import com.hgys.iptv.model.SettlementCombinatorialDimensionFrom;
@@ -14,9 +15,12 @@ import com.hgys.iptv.util.ResultVOUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.Predicate;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +36,8 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
     @Autowired
     private SettlementCombinatorialDimensionFromRepository settlementCombinatorialDimensionFromRepository;
 
+    @Autowired
+    private SettlementCombinatorialDimensionControllerAssemlber settlementCombinatorialDimensionControllerAssemlber;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -121,5 +127,39 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
             vm.setList(list);
         }
         return vm;
+    }
+
+    @Override
+    public Page<SettlementCombinatorialDimensionControllerListVM> findByConditions(String name, String code, String status, Pageable pageable) {
+
+        Page<SettlementCombinatorialDimensionControllerListVM> map = settlementCombinatorialDimensionMasterRepository.findAll(((root, query, builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (StringUtils.isNotBlank(name)) {
+                Predicate condition = builder.equal(root.get("name"), name);
+                predicates.add(condition);
+            }
+            if (StringUtils.isNotBlank(code)) {
+                Predicate condition = builder.equal(root.get("code"), code);
+                predicates.add(condition);
+            }
+
+            if (StringUtils.isNotBlank(status)) {
+                Predicate condition = builder.equal(root.get("status"), status);
+                predicates.add(condition);
+            }
+
+            Predicate condition = builder.equal(root.get("isdelete"), 0);
+            predicates.add(condition);
+
+            if (!predicates.isEmpty()) {
+                return builder.and(predicates.toArray(new Predicate[0]));
+            }
+            return builder.conjunction();
+        }), pageable).map(settlementCombinatorialDimensionControllerAssemlber::getListVM);
+
+
+
+        return map;
     }
 }
