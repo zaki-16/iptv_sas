@@ -12,6 +12,7 @@ import com.hgys.iptv.repository.SettlementCombinatorialDimensionMasterRepository
 import com.hgys.iptv.service.SettlementCombinatorialDimensionService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
+import com.hgys.iptv.util.UpdateTool;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,15 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
             settlementCombinatorialDimensionMasterRepository.save(master);
 
             List<SettlementCombinatorialDimensionAddVM.SettlementDimension> vos = vo.getList();
+
+            //验证权重是否超过100%
+            Integer he = 0;
+            for (SettlementCombinatorialDimensionAddVM.SettlementDimension s : vos){
+                he += he + s.getWeight();
+                if (he > 100){
+                    new IllegalArgumentException("权重不能超过100%");
+                }
+            }
             //处理附表数据
             for (SettlementCombinatorialDimensionAddVM.SettlementDimension s : vos){
                 SettlementCombinatorialDimensionFrom from = new SettlementCombinatorialDimensionFrom();
@@ -158,8 +168,40 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
             return builder.conjunction();
         }), pageable).map(settlementCombinatorialDimensionControllerAssemlber::getListVM);
 
-
-
         return map;
+    }
+
+    @Override
+    public ResultVO<?> updateCombinatorialDimension(SettlementCombinatorialDimensionAddVM vo) {
+        if (null == vo.getId()){
+            ResultVOUtil.error("1","结算组合维度主键不能为空");
+        }else if (StringUtils.isBlank(vo.getName())){
+            ResultVOUtil.error("1","结算组合维度名称不能为空");
+        }else if (null == vo.getStatus()){
+            ResultVOUtil.error("1","结算组合维度状态不能为空");
+        }
+
+        try{
+            if (null != vo.getList() && vo.getList().size() > 0){
+
+            }else {
+                //验证名称是否已经存在
+                Optional<SettlementCombinatorialDimensionMaster> byName = settlementCombinatorialDimensionMasterRepository.findByName(vo.getName().trim());
+                if (byName.isPresent()){
+                    return ResultVOUtil.error("1","结算维度组合名称已经存在");
+                }
+                SettlementCombinatorialDimensionMaster master = settlementCombinatorialDimensionMasterRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到ID为:" + vo.getId() + "结算维度信息"));
+
+                SettlementCombinatorialDimensionMaster m = new SettlementCombinatorialDimensionMaster();
+                BeanUtils.copyProperties(vo,m);
+                m.setModifyTime(new Timestamp(System.currentTimeMillis()));
+                UpdateTool.copyNullProperties(master,m);
+                settlementCombinatorialDimensionMasterRepository.saveAndFlush(m);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+        }
+        return null;
     }
 }
