@@ -3,6 +3,7 @@ package com.hgys.iptv.service.impl;
 import com.hgys.iptv.model.Permission;
 import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.User;
+import com.hgys.iptv.model.enums.PermissionEnum;
 import com.hgys.iptv.repository.RoleRepository;
 import com.hgys.iptv.repository.UserRepository;
 import com.hgys.iptv.service.LoginService;
@@ -34,6 +35,7 @@ public class LoginServiceImpl implements LoginService {
         User user = new User();
         user.setUsername(map.get("username").toString());
         user.setPassword(map.get("password").toString());
+        user.setSalt(map.get("salt").toString());
         userRepository.save(user);
         return user;
     }
@@ -53,10 +55,10 @@ public class LoginServiceImpl implements LoginService {
         role.setUsers(users);
 
         Permission permission1 = new Permission();
-        permission1.setPermission("save");
+        permission1.setPermission(PermissionEnum.QUERY.name());
         permission1.setRoles(roles);
         Permission permission2 = new Permission();
-        permission2.setPermission("update");
+        permission2.setPermission(PermissionEnum.SAVE.name());
         permission2.setRoles(roles);
 
         List<Permission> permissions = new ArrayList<>();

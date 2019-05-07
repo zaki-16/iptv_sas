@@ -12,6 +12,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,5 +71,26 @@ public class SettlementCombinatorialDimensionController {
         }
 
         return settlementCombinatorialDimensionService.getSettlementCombinatorialDimension(code);
+    }
+
+    @GetMapping("/findByConditions")
+    @ApiOperation(value = "通过条件，分页查询结算组合维度",notes = "返回处理结果，false或true")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<SettlementCombinatorialDimensionControllerListVM> findByConditions(@ApiParam(value = "结算单维度名称") @RequestParam(value = "name",required = false )String name,
+                                                                      @ApiParam(value = "结算单维度编码") @RequestParam(value = "code",required = false)String code,
+                                                                      @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
+                                                                      @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
+                                                                      @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
+
+        Sort sort = new Sort(Sort.Direction.DESC,"inputTime");
+        Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
+        Page<SettlementCombinatorialDimensionControllerListVM> byConditions = settlementCombinatorialDimensionService.findByConditions(name, code, status, pageable);
+        return byConditions;
+    }
+    @PutMapping("/updateCombinatorialDimension")
+    @ApiOperation(value = "修改结算组合维度",notes = "返回处理结果，false或true")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResultVO<?> updateCombinatorialDimension(@ApiParam(value = "结算单组合维度VM") @RequestBody() SettlementCombinatorialDimensionAddVM vo){
+        return settlementCombinatorialDimensionService.updateCombinatorialDimension(vo);
     }
 }

@@ -3,6 +3,8 @@ package com.hgys.iptv.service;
 import com.hgys.iptv.controller.vm.SettlementCombinatorialDimensionAddVM;
 import com.hgys.iptv.controller.vm.SettlementCombinatorialDimensionControllerListVM;
 import com.hgys.iptv.model.vo.ResultVO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface SettlementCombinatorialDimensionService {
 
@@ -27,4 +29,17 @@ public interface SettlementCombinatorialDimensionService {
      * @return
      */
     SettlementCombinatorialDimensionControllerListVM getSettlementCombinatorialDimension(String code);
+
+    /**
+     * 根据条件分页查询
+     * @return
+     */
+    Page<SettlementCombinatorialDimensionControllerListVM> findByConditions(String name, String code, String status, Pageable pageable);
+
+    /**
+     * 修改
+     * @param vo
+     * @return
+     */
+    ResultVO<?> updateCombinatorialDimension(SettlementCombinatorialDimensionAddVM vo);
 }

@@ -7,7 +7,7 @@ import java.util.List;
 @Table(name="sys_role")
 public class Role {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false, length = 20)
     private Long id;
     @Column(name = "name", unique = true, nullable = false, length = 50)

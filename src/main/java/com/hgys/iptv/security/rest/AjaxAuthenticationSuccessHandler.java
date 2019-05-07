@@ -1,5 +1,6 @@
 package com.hgys.iptv.security.rest;
 
+import com.alibaba.fastjson.JSON;
 import com.hgys.iptv.model.bean.AjaxResponseBody;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -21,8 +22,8 @@ public class AjaxAuthenticationSuccessHandler implements AuthenticationSuccessHa
         responseBody.setMsg("Login Success!");
         //httpServletRequest.getRequestURI()===/iptv/login
         // httpServletRequest.getRequestDispatcher("").forward(httpServletRequest,httpServletResponse);
-        httpServletResponse.sendRedirect("/page2/loginSuccessHtml");
-       // httpServletResponse.getWriter().write(JSON.toJSONString(responseBody));
+//        httpServletResponse.sendRedirect("/page2/loginSuccessHtml");
+        httpServletResponse.getWriter().write(JSON.toJSONString(responseBody));
     }
 }
 

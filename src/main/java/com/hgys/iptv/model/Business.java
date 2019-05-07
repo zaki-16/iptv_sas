@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name="business")
 public class Business {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bid", unique = true, nullable = false, length = 11)
     private Integer bid;
     @Column(name = "name", unique = true, nullable = false, length = 50)
