@@ -7,10 +7,10 @@ import com.hgys.iptv.model.vo.ResultVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
-public interface
-SettlementDimensionService {
+public interface SettlementDimensionService {
     /**
      * 新增
      * @param name
@@ -52,4 +52,10 @@ SettlementDimensionService {
      * @return
      */
     SettlementDimension save(SettlementDimension settlementDimension);
+
+    /**
+     * 查询维度列表不分页
+     * @return
+     */
+    List<SettlementDimension> findAll();
 }

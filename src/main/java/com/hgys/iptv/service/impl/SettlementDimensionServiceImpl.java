@@ -133,5 +133,10 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
         return settlementDimensionRepository.save(settlementDimension);
     }
 
+    @Override
+    public List<SettlementDimension> findAll() {
+        return settlementDimensionRepository.findAll();
+    }
+
 
 }
