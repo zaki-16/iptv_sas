@@ -12,12 +12,15 @@ import java.util.List;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "bid", unique = true, nullable = false, length = 11)
     private Integer pid;
+    @Column(name = "name", unique = true, nullable = false, length = 50)
     private String name;
     private String code;
     private double price;
     private Timestamp inputTime;
     private Timestamp modifyTime;
+    @Column(name = "status", nullable = false, length = 2)
     private Integer status;//0.禁用 1.启用
     private Integer isdelete;//0：未删除 1：已删除
 

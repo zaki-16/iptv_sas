@@ -8,9 +8,12 @@ import java.util.List;
 public class Role {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", unique = true, nullable = false, length = 20)
     private Long id;
+    @Column(name = "name", unique = true, nullable = false, length = 50)
     private String name;
     //角色描述
+    @Column(name = "description",length = 200)
     private String description;
     //用户-角色==多对多，被维护
     @ManyToMany

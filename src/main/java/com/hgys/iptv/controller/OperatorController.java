@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/oper")
-@Api(value = "operator管理")
+@Api(value = "OperatorController",tags = "operator管理Api接口")
 public class OperatorController {
     @Autowired
     private OperatorServiceImpl operatorService;
@@ -29,17 +29,13 @@ public class OperatorController {
     @ApiOperation(value="根据名称获取运营方信息")
 //    @ApiImplicitParam(paramType="Operator", name = "opNm", value = "运营方名称", required = true, dataType = "String")
     public Operator findByOpNm(String name){
-        return operatorService.findByOpNm("wangzhen");
+        return operatorService.findByOpNm(name);
     }
 
     @DeleteMapping("/deleteOperatorById")
     @ApiOperation(value="删除运营方信息")
     public void delete(Operator oper){
-        Operator op = new Operator();
-        op.setOpid(3);
-        //op.setOpNm("jay_nm");
-      //  op.setOpAbbr("jay_abbr");
-        operatorService.delete(op);
+        operatorService.delete(oper);
     }
 
     @GetMapping("/findAll")

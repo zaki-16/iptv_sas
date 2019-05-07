@@ -19,7 +19,7 @@ import java.util.Map;
  * @date:2019/4/19 16:40
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class LoginServiceImpl implements LoginService {
 
     @Autowired
@@ -67,11 +67,46 @@ public class LoginServiceImpl implements LoginService {
         return role;
     }
 
+    @Override
+    public Role updateRole(Role role) {
+        return null;
+    }
+
+    @Override
+    public Role findByRolename(Role role) {
+        return null;
+    }
+
+    @Override
+    public Role findAllRole() {
+        return null;
+    }
+
+    @Override
+    public Permission addPermission(Map<String, Object> map) {
+        return null;
+    }
+
     //通过用户名查询用户
     @Override
     public User findByUsername(String name)
     {
         return userRepository.findByUsername(name);
+    }
+
+    @Override
+    public User findAllUser() {
+        return null;
+    }
+
+    @Override
+    public User updateUser(String username) {
+        return null;
+    }
+
+    @Override
+    public User deleteUser(String username) {
+        return null;
     }
 
 }
