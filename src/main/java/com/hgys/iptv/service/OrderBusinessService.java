@@ -1,10 +1,14 @@
 package com.hgys.iptv.service;
 
-
 import com.hgys.iptv.model.OrderBusiness;
+import com.hgys.iptv.model.Role;
+import com.hgys.iptv.model.User;
 import com.hgys.iptv.model.vo.ResultVO;
 
+import java.util.Map;
+
 public interface OrderBusinessService {
+
 
     /** 通过Id查询*/
     OrderBusiness findById(Integer id);
@@ -18,5 +22,4 @@ public interface OrderBusinessService {
      * @return
      */
     ResultVO<?> batchDeleteob(String ids);
-
 }
