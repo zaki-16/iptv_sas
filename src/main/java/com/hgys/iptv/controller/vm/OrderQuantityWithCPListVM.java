@@ -57,9 +57,9 @@ public class OrderQuantityWithCPListVM {
         @ApiModelProperty("cp名称")
         private String cpname;
 
-        /** cpid */
-        @ApiModelProperty("cpid")
-        private String cpid;
+        /** cpcode */
+        @ApiModelProperty("cpcode")
+        private String cpcode;
 
         public Integer getId() {
             return id;
@@ -73,9 +73,6 @@ public class OrderQuantityWithCPListVM {
             return cpname;
         }
 
-        public String getCpid() {
-            return cpid;
-        }
 
         public void setId(Integer id) {
             this.id = id;
@@ -89,8 +86,12 @@ public class OrderQuantityWithCPListVM {
             this.cpname = cpname;
         }
 
-        public void setCpid(String cpid) {
-            this.cpid = cpid;
+        public void setCpcode(String cpcode) {
+            this.cpcode = cpcode;
+        }
+
+        public String getCpcode() {
+            return cpcode;
         }
     }
 
