@@ -41,9 +41,9 @@ public class OrderCPWithCPListVM {
     private Integer isdelete;
 
     @ApiModelProperty("结算类型-CP定比例与CP集合")
-    private List<OrderCPWithCPListVM.OrderQuantityWithCp> list;
+    private List<OrderCPWithCPListVM.OrderCpWithCp> list;
 
-    public static class OrderQuantityWithCp{
+    public static class OrderCpWithCp{
 
         /** ID */
         @ApiModelProperty("ID")
@@ -158,11 +158,11 @@ public class OrderCPWithCPListVM {
         this.isdelete = isdelete;
     }
 
-    public List<OrderCPWithCPListVM.OrderQuantityWithCp> getList() {
+    public List<OrderCPWithCPListVM.OrderCpWithCp> getList() {
         return list;
     }
 
-    public void setList(List<OrderCPWithCPListVM.OrderQuantityWithCp> list) {
+    public void setList(List<OrderCPWithCPListVM.OrderCpWithCp> list) {
         this.list = list;
     }
 }

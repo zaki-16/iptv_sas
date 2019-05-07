@@ -38,15 +38,14 @@ public interface OrderQuantityService {
      * 根据条件分页查询
      * @return
      */
-    Page<OrderQuantityControllerListVM> findByConditions(String name, String code, String status, Pageable pageable);
-
+    Page<OrderQuantityWithCPListVM> findByConditions(String name, String code, String status, Pageable pageable);
 
     /**
      * 修改
-     * @param
+     * @param vo
      * @return
      */
-    ResultVO<?> updateOrderQuantity(OrderQuantity oq);
+    ResultVO<?> updateOrderQuantity(OrderQuantityAddVM vo);
 
 
     /**

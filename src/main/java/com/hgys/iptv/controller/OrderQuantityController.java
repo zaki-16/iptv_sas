@@ -75,7 +75,7 @@ public class OrderQuantityController {
     @GetMapping("/findByConditions")
     @ApiOperation(value = "通过条件，分页查询",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
-    public Page<OrderQuantityControllerListVM> findByConditions(@ApiParam(value = "名称") @RequestParam(value = "name",required = false )String name,
+    public Page<OrderQuantityWithCPListVM> findByConditions(@ApiParam(value = "名称") @RequestParam(value = "name",required = false )String name,
                                                                 @ApiParam(value = "编码") @RequestParam(value = "code",required = false)String code,
                                                                 @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
                                                                 @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
@@ -83,19 +83,19 @@ public class OrderQuantityController {
 
         Sort sort = new Sort(Sort.Direction.DESC,"inputTime");
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageNum),sort);
-        Page<OrderQuantityControllerListVM> byConditions = orderquantityService.findByConditions(name, code, status, pageable);
+        Page<OrderQuantityWithCPListVM> byConditions = orderquantityService.findByConditions(name, code, status, pageable);
         return byConditions;
     }
 
     @PutMapping("/updateOrderQuantity")
     @ApiOperation(value = "修改",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResultVO<?> updateOrderQuantity(@ApiParam(value = "名称") @RequestBody() OrderQuantityControllerUpdateVM vo){
-        OrderQuantity oq = new OrderQuantity();
-        BeanUtils.copyProperties(vo,oq);
-        ResultVO<?> resultVO = orderquantityService.updateOrderQuantity(oq);
-        return resultVO;
+    public ResultVO<?> updateOrderQuantity(@ApiParam(value = "名称") @RequestBody() OrderQuantityAddVM vo){
+        return orderquantityService.updateOrderQuantity(vo);
     }
+
+
+
 
 
     @GetMapping("/queryCPList")

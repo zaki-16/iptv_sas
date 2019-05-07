@@ -34,9 +34,9 @@ public class OrderQuantityAddVM {
         @ApiModelProperty("cp名称")
         private String cpname;
 
-        /** cpID */
-        @ApiModelProperty("cpID")
-        private Integer cpid;
+        /** cpcode */
+        @ApiModelProperty("cpcode")
+        private Integer cpcode;
 
         /** 创建时间*/
         @ApiModelProperty("createtime")
@@ -50,9 +50,9 @@ public class OrderQuantityAddVM {
         @ApiModelProperty("oqname")
         private String oqname;
 
-        /** 结算类型-订购量表ID */
-        @ApiModelProperty("oqid")
-        private Integer oqid;
+        /** 结算类型-oqcode */
+        @ApiModelProperty("oqcode")
+        private Integer oqcode;
 
         /** 备用字段3 */
         @ApiModelProperty("col3")
@@ -71,9 +71,7 @@ public class OrderQuantityAddVM {
             return cpname;
         }
 
-        public Integer getCpid() {
-            return cpid;
-        }
+
 
 
         public String getNote() {
@@ -96,9 +94,7 @@ public class OrderQuantityAddVM {
             this.cpname = cpname;
         }
 
-        public void setCpid(Integer cpid) {
-            this.cpid = cpid;
-        }
+
 
         public void setCreatetime(Timestamp createtime) {
             this.createtime = createtime;
@@ -112,9 +108,7 @@ public class OrderQuantityAddVM {
             this.oqname = oqname;
         }
 
-        public void setOqid(Integer oqid) {
-            this.oqid = oqid;
-        }
+
 
         public void setCol3(String col3) {
             this.col3 = col3;
@@ -124,8 +118,12 @@ public class OrderQuantityAddVM {
             this.isdelete = isdelete;
         }
 
-        public Integer getOqid() {
-            return oqid;
+        public Integer getCpcode() {
+            return cpcode;
+        }
+
+        public Integer getOqcode() {
+            return oqcode;
         }
 
         public String getCol3() {
