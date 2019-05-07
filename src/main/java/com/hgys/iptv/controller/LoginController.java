@@ -8,6 +8,7 @@ import com.hgys.iptv.service.LoginService;
 import com.hgys.iptv.util.ResultVOUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -32,8 +33,10 @@ public class LoginController {
     @PostMapping("/login")
     @ApiOperation(value = "登录请求(管理员用户密码:admin/admin)")
     @ResponseStatus(HttpStatus.OK)
-    public String login(String name){
-        userDetailsService.loadUserByUsername(name);
+    public String login(
+            @ApiParam(value = "登录名") String username,
+            @ApiParam(value = "登录密码") String password){
+        userDetailsService.loadUserByUsername(username);
         return "pages/success";//thymeleaf会将路径映射成.html
     }
 
@@ -45,7 +48,8 @@ public class LoginController {
     @PostMapping("/addUser")
     @ApiOperation(value = "添加用户,请求参数为表单json")
     @ResponseStatus(HttpStatus.OK)
-    public User addUser(Map<String, Object> map) {
+    @ResponseBody
+    public User addUser(@RequestParam Map<String, Object> map) {
         return loginService.addUser(map);
     }
 
@@ -58,7 +62,7 @@ public class LoginController {
     @PostMapping("/addRole")
     @ApiOperation(value = "添加角色,请求参数为表单json")
     @ResponseStatus(HttpStatus.OK)
-    public Role addRole(Map<String, Object> map) {
+    public Role addRole(@RequestParam Map<String, Object> map) {
         return loginService.addRole(map);
     }
 

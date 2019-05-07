@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name="cp")
 public class Cp {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cpid", unique = true, nullable = false, length = 11)
     private Integer cpid;
     @Column(name = "name", unique = true, nullable = false, length = 50)
