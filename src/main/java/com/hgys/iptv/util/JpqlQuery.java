@@ -21,7 +21,6 @@ import java.util.Map;
  *
  * @author 杨鹏
  */
-@Slf4j
 public class JpqlQuery<E, T> {
     private static final String OR = " or ";
 
@@ -364,9 +363,6 @@ public class JpqlQuery<E, T> {
         queryString = StringUtils.removeEnd(queryString, ", ");
         String countQueryString = countQueryStringBuilder.toString();
         countQueryString = StringUtils.removeEnd(countQueryString, ", ");
-        log.info(queryString);
-        log.info(countQueryString);
-        log.info(whereParameters.toString());
         TypedQuery<E> query = entityManager.createQuery(queryString, resultEntity);
         TypedQuery<Long> countQuery = entityManager.createQuery(countQueryString, Long.class);
         if (!whereParameters.isEmpty()) {
@@ -375,7 +371,6 @@ public class JpqlQuery<E, T> {
                 countQuery.setParameter(key, value);
             });
         }
-        log.info(query.getParameters().toString());
         Long firstResult = pageable.getOffset();
 
         List<E> list = query.setFirstResult(firstResult.intValue()).setMaxResults(pageable.getPageSize()).getResultList();

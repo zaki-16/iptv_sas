@@ -14,9 +14,9 @@ package com.hgys.iptv.model;
 
 import lombok.Data;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import javax.persistence.*;
 
 /**
  * 结算单维度表(settlement_dimension)
@@ -84,4 +84,108 @@ public class SettlementDimension implements Serializable {
     /** 逻辑删除(0:否；1:是) */
     @Column(name = "isdelete", nullable = true, length = 10)
     private Integer isdelete;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Timestamp getInputTime() {
+        return inputTime;
+    }
+
+    public void setInputTime(Timestamp inputTime) {
+        this.inputTime = inputTime;
+    }
+
+    public Timestamp getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Timestamp modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public String getCol1() {
+        return col1;
+    }
+
+    public void setCol1(String col1) {
+        this.col1 = col1;
+    }
+
+    public String getCol2() {
+        return col2;
+    }
+
+    public void setCol2(String col2) {
+        this.col2 = col2;
+    }
+
+    public String getCol3() {
+        return col3;
+    }
+
+    public void setCol3(String col3) {
+        this.col3 = col3;
+    }
+
+    public String getCol4() {
+        return col4;
+    }
+
+    public void setCol4(String col4) {
+        this.col4 = col4;
+    }
+
+    public String getCol5() {
+        return col5;
+    }
+
+    public void setCol5(String col5) {
+        this.col5 = col5;
+    }
+
+    public Integer getIsdelete() {
+        return isdelete;
+    }
+
+    public void setIsdelete(Integer isdelete) {
+        this.isdelete = isdelete;
+    }
 }
