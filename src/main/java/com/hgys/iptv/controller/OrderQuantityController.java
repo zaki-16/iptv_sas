@@ -1,12 +1,10 @@
 package com.hgys.iptv.controller;
 
-import com.hgys.iptv.controller.vm.OrderQuantityControllerListVM;
-import com.hgys.iptv.controller.vm.OrderQuantityControllerUpdateVM;
+import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.OrderQuantity;
-import com.hgys.iptv.model.SettlementDimension;
 import com.hgys.iptv.model.vo.ResultVO;
+import com.hgys.iptv.service.CpService;
 import com.hgys.iptv.service.OrderQuantityService;
-import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,43 +30,32 @@ public class OrderQuantityController {
     @Autowired
     private OrderQuantityService orderquantityService;
 
+    @Autowired
+    private CpService cpService;
     /**
      * 根据ID查询结算类型-订购量
-     * @param id
+     * @param code
      * @return
      */
-    @GetMapping("/selectById")
-    @ApiOperation(value="通过id查询", notes="返回json数据类型..")
+    @GetMapping("/selectByCode")
+    @ApiOperation(value="通过code查询", notes="返回json数据类型..")
     @ResponseStatus(HttpStatus.OK)
-    public ResultVO<?> findById(@ApiParam(value = "用户ID",required = true) @RequestParam("id")String id){
-        if (StringUtils.isBlank(id)){
+    public ResultVO<?> findById(@ApiParam(value = "Code查询",required = true) @RequestParam("code")String code){
+        if (StringUtils.isBlank(code)){
             return ResultVOUtil.error("1","id不能为空");
         }
-        OrderQuantity or = orderquantityService.findById(Integer.valueOf(id.trim()));
-        if (null == or){
-            return ResultVOUtil.error("1","未查询到id为：" + id + "的信息");
-        }
-        return ResultVOUtil.success(or);
+        OrderQuantity or = orderquantityService.findByCode(code.trim()).orElseThrow(()-> new IllegalArgumentException("未查询到code为：" + code + "的信息"));
 
+        return ResultVOUtil.success(or);
     }
 
 
     @PostMapping("/addOrderQuantity")
-    @ApiOperation(value = "新增结算类型-订购量",notes = "返回处理结果，false或true")
+    @ApiOperation(value = "新增",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResultVO<?> addOrderQuantity(@ApiParam(value = "名称",required = true) @RequestParam("name")String name,
-                                        @ApiParam(value = "状态(0:启用;1:禁用;默认启用)",required = true) @RequestParam("status")String status,
-                                        @ApiParam(value = "备注",required = false) @RequestParam("note")String note) {
+    public ResultVO<?> addOrderQuantity(@ApiParam(value = "结算类型订单量VM") @RequestBody() OrderQuantityAddVM vo){
 
-        if (StringUtils.isBlank(name)){
-            return ResultVOUtil.error("1","结算类型-订购量name不能为空");
-        }
-
-        if (StringUtils.isBlank(status)){
-            return ResultVOUtil.error("1","结算类型-订购量status不能为空");
-        }
-
-        return orderquantityService.insterOrderQuantity(name,status,note);
+        return orderquantityService.addOrderQuantity(vo);
     }
 
 
@@ -109,5 +96,26 @@ public class OrderQuantityController {
         ResultVO<?> resultVO = orderquantityService.updateOrderQuantity(oq);
         return resultVO;
     }
+
+
+    @GetMapping("/queryCPList")
+    @ApiOperation(value = "查询CP列表")
+    public ResultVO<?> queryCPList(){
+        ResultVO<?> all = cpService.findAll();
+        return ResultVOUtil.success(all);
+    }
+
+
+    @GetMapping("/getOrderQuantityWithCp")
+    @ApiOperation(value = "通过结算类型订单量与CP关系表的编码查询",notes = "返回json数据")
+    @ResponseStatus(HttpStatus.OK)
+    public OrderQuantityWithCPListVM getOrderQuantityWithCp(@ApiParam(value = "编码",required = true) @RequestParam("code")String code){
+        if (StringUtils.isBlank(code)){
+            new IllegalArgumentException("结算组合维度不能为空");
+        }
+
+        return orderquantityService.getOrderQuantityWithCp(code);
+    }
+
 
 }

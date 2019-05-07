@@ -1,20 +1,33 @@
 package com.hgys.iptv.service;
 
+import com.hgys.iptv.controller.vm.OrderQuantityAddVM;
 import com.hgys.iptv.controller.vm.OrderQuantityControllerListVM;
-import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
+import com.hgys.iptv.controller.vm.OrderQuantityWithCPListVM;
 import com.hgys.iptv.model.OrderQuantity;
 import com.hgys.iptv.model.vo.ResultVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface OrderQuantityService {
-    /**通过Id查询*/
-    OrderQuantity findById(Integer id);
-    /*** 添加*/
-    ResultVO<?> insterOrderQuantity(String name, String status, String note);
+
+
+    /**
+     * 通过code查询
+     * @param code
+     * @return
+     */
+    Optional<OrderQuantity> findByCode(String code);
+
+    /**
+     * 新增
+     *
+     * @param vo
+     */
+    ResultVO<?> addOrderQuantity(OrderQuantityAddVM vo);
 
 
     /*** 通过Id,批量逻辑删除*/
@@ -34,6 +47,14 @@ public interface OrderQuantityService {
      * @return
      */
     ResultVO<?> updateOrderQuantity(OrderQuantity oq);
+
+
+    /**
+     * 通过code查询结算组合数据
+     * @param code
+     * @return
+     */
+    OrderQuantityWithCPListVM getOrderQuantityWithCp(String code);
 
 
 }

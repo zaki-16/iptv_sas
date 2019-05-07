@@ -2,11 +2,14 @@ package com.hgys.iptv.repository;
 
 
 import com.hgys.iptv.model.OrderQuantity;
+import com.hgys.iptv.model.SettlementDimension;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 
 @Repository
@@ -19,15 +22,15 @@ import org.springframework.stereotype.Repository;
     void batchDelete(int id);
 
     /**
-     * 通过id查询
-     * @param id
+     * 通过code查询
+     * @param code
      * @return
      */
-    OrderQuantity findById(String id);
+    Optional<OrderQuantity> findByCode(String code);
 
 
 
-    }
+}
 
 
 
