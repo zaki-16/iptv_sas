@@ -12,7 +12,6 @@ public class SettlementDimensionControllerUpdateVM {
 
     /** 维度ID */
     @ApiModelProperty("维度ID")
-    @NotBlank(message = "维度Id不能为空")
     private Integer id;
 
     /** 维度名称 */

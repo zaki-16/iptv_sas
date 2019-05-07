@@ -6,7 +6,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SettlementCombinatorialDimensionRepository extends JpaRepository<SettlementCombinatorialDimensionFrom,Object> , JpaSpecificationExecutor<SettlementCombinatorialDimensionFrom> {
-
+public interface SettlementCombinatorialDimensionFromRepository extends JpaRepository<SettlementCombinatorialDimensionFrom,Object>, JpaSpecificationExecutor<SettlementCombinatorialDimensionFrom> {
 }
-

@@ -34,7 +34,7 @@ public class SettlementCombinatorialDimensionController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> addSettlementCombinatorialDimension(@ApiParam(value = "结算单组合维度VM") @RequestBody() SettlementCombinatorialDimensionAddVM vo){
 
-
+        settlementCombinatorialDimensionService.addSettlementCombinatorialDimension(vo);
 
         return null;
     }
