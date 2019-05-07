@@ -51,8 +51,8 @@ public class CpController {
     @PostMapping("/batchLogicDeleteCp")
     @ApiOperation(value = "批量逻辑删除cp",notes = "@return：true/false")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResultVO<?> batchLogicDelete(List<Cp> cps){
-        return cpService.batchLogicDelete(cps);
+    public ResultVO<?> batchLogicDelete(String ids){
+        return cpService.batchLogicDelete(ids);
     }
 
 
