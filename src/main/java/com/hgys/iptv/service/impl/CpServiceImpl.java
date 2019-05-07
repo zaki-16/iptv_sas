@@ -28,7 +28,7 @@ public class CpServiceImpl implements CpService {
     private CpRepository cpRepository;
 
     //必填字段
-    private final String[] cols = {"name","status"};
+//    private final String[] cols = {"name","status"};
 
     /**
      * cp 新增
@@ -43,6 +43,7 @@ public class CpServiceImpl implements CpService {
         if (null != byName){
             return ResultVOUtil.error("1",byName + "名称已经存在");
         }
+        String[] cols = {cp.getName(),cp.getStatus().toString()};
         if(!Validator.validEmptyPass(cols))//必填字段不为空则插入
             return ResultVOUtil.error("1","有必填字段未填写！");
         cp.setRegisTime(new Timestamp(System.currentTimeMillis()));//注册时间

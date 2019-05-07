@@ -7,7 +7,7 @@ import java.util.List;
 @Table(name="sys_permission")
 public class Permission {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false, length = 20)
     private Long id;
     //权限名

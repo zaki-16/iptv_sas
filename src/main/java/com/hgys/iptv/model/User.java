@@ -1,5 +1,8 @@
 package com.hgys.iptv.model;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -10,9 +13,11 @@ import java.util.List;
  */
 @Entity
 @Table(name="sys_user")
+@DynamicInsert
+@DynamicUpdate
 public class User implements Serializable {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false, length = 20)
     private Long id;
     @Column(name = "username", unique = true, nullable = false, length = 200)
