@@ -2,7 +2,7 @@ package com.hgys.iptv.controller;
 
 import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.vo.ResultVO;
-import com.hgys.iptv.service.impl.CpServiceImpl;
+import com.hgys.iptv.service.CpService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.List;
 @Api(value = "CpController",tags = "cp管理Api接口")
 public class CpController {
     @Autowired
-    private CpServiceImpl cpService;
+    private CpService cpService;
 
     @PostMapping("/saveCp")
     @ApiOperation(value = "新增cp",notes = "@return：cp对象")

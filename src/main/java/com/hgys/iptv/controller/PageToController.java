@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import io.swagger.annotations.Api;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/page2")
+@Api(value = "PageToController",tags = "页面跳转管理api")
 public class PageToController {
     private final String PREFIX = "pages/";
 

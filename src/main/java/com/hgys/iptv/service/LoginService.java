@@ -1,5 +1,6 @@
 package com.hgys.iptv.service;
 
+import com.hgys.iptv.model.Permission;
 import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.User;
 
@@ -12,4 +13,6 @@ public interface LoginService {
     User addUser(Map<String, Object> map);
 
     Role addRole(Map<String, Object> map);
+
+    Permission addPermission(Map<String, Object> map);
 }
