@@ -3,29 +3,28 @@ package com.hgys.iptv.model;
 import java.sql.Timestamp;
 import javax.persistence.*;
 /**
- * 结算类型-业务级表(order_business)
+ * 结算类型-CP定比例(order_cp)
  *
  * @author tjq
- * @version 1.0.0 2019-05-05
+ * @version 1.0.0 2019-05-06
  */
 @Entity
-@Table(name="order_business")
-public class OrderBusiness implements java.io.Serializable{
+@Table(name="order_cp")
+public class OrderCp implements java.io.Serializable{
     /** 版本号 */
-    private static final long serialVersionUID= -1771950288649702811L;
+    private static final long serialVersionUID = 654371763045670414L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-
-
-    /** 业务级结算名称*/
+    /** CP定比例型结算名称 */
     @Column(name = "name", nullable = true, length = 50)
     private String name;
 
 
     @Column(name = "code", nullable = true, length = 255)
-    /** 业务级结算编码 */
+    /** CP定比例型结算编码 */
     private String code;
 
 
@@ -34,17 +33,26 @@ public class OrderBusiness implements java.io.Serializable{
     private Timestamp inputTime;
 
 
+
     @Column(name = "modifyTime", nullable = true, length = 50)
     /** 修改时间 */
     private Timestamp modifyTime;
+
+
 
     @Column(name = "status", nullable = true, length = 2)
     /** 状态 */
     private Integer status;
 
+
     @Column(name = "note", nullable = true, length = 255)
     /** 备注 */
     private String note;
+
+
+    @Column(name = "settleaccounts", nullable = true, length = 2)
+    /** 备注 */
+    private Integer settleaccounts;
 
     /** 备用字段1 */
     @Column(name = "col1", nullable = true, length = 50)
@@ -62,36 +70,17 @@ public class OrderBusiness implements java.io.Serializable{
     @Column(name = "isdelete", nullable = true, length = 2)
     private Integer isdelete;
 
-    public void setCol1(String col1) {
-        this.col1 = col1;
+
+
+
+
+
+    public void setSettleaccounts(Integer settleaccounts) {
+        this.settleaccounts = settleaccounts;
     }
 
-    public void setCol2(Integer col2) {
-        this.col2 = col2;
-    }
-
-    public void setCol3(String col3) {
-        this.col3 = col3;
-    }
-
-    public void setIsdelete(Integer isdelete) {
-        this.isdelete = isdelete;
-    }
-
-    public String getCol1() {
-        return col1;
-    }
-
-    public Integer getCol2() {
-        return col2;
-    }
-
-    public String getCol3() {
-        return col3;
-    }
-
-    public Integer getIsdelete() {
-        return isdelete;
+    public Integer getSettleaccounts() {
+        return settleaccounts;
     }
 
     public void setId(Integer id) {
@@ -104,22 +93,6 @@ public class OrderBusiness implements java.io.Serializable{
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public Timestamp getInputTime() {
-        return inputTime;
-    }
-
-    public Timestamp getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setInputTime(Timestamp inputTime) {
-        this.inputTime = inputTime;
-    }
-
-    public void setModifyTime(Timestamp modifyTime) {
-        this.modifyTime = modifyTime;
     }
 
     public void setStatus(Integer status) {
@@ -142,7 +115,53 @@ public class OrderBusiness implements java.io.Serializable{
         return code;
     }
 
+    public Timestamp getInputTime() {
+        return inputTime;
+    }
 
+    public void setInputTime(Timestamp inputTime) {
+        this.inputTime = inputTime;
+    }
+
+    public void setModifyTime(Timestamp modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public void setCol1(String col1) {
+        this.col1 = col1;
+    }
+
+    public void setCol2(Integer col2) {
+        this.col2 = col2;
+    }
+
+    public void setCol3(String col3) {
+        this.col3 = col3;
+    }
+
+    public void setIsdelete(Integer isdelete) {
+        this.isdelete = isdelete;
+    }
+
+    public Timestamp getModifyTime() {
+        return modifyTime;
+    }
+
+    public String getCol1() {
+        return col1;
+    }
+
+    public Integer getCol2() {
+        return col2;
+    }
+
+    public String getCol3() {
+        return col3;
+    }
+
+    public Integer getIsdelete() {
+        return isdelete;
+    }
 
     public Integer getStatus() {
         return status;
