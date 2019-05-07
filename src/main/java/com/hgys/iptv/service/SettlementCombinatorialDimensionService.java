@@ -42,4 +42,11 @@ public interface SettlementCombinatorialDimensionService {
      * @return
      */
     ResultVO<?> updateCombinatorialDimension(SettlementCombinatorialDimensionAddVM vo);
+
+    /**
+     * 通过结算组合维度编码查询结算单维度信息
+     * @param code
+     * @return
+     */
+    ResultVO<?> getSettlementDimensionList(String code);
 }

@@ -1,16 +1,15 @@
 package com.hgys.iptv.controller.vm;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
 @ApiModel(value = "结算组合维度新增VM")
-public class SettlementCombinatorialDimensionAddVM {
+public class SettlementCombinatorialDimensionAddVM implements Serializable{
 
     @ApiModelProperty("结算组合维度ID")
     private Integer id;
@@ -28,11 +27,9 @@ public class SettlementCombinatorialDimensionAddVM {
     private Integer status;
 
     @ApiModelProperty(value = "结算维度组合集合",dataType = "List")
-    @JsonAnySetter
     private List<SettlementDimension> list;
-    
-    @Data
-    public class SettlementDimension{
+
+    public class SettlementDimension implements Serializable {
         /** 维度编码 */
         @ApiModelProperty("结算维度编码")
         private String dim_code;
