@@ -1,17 +1,20 @@
 package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.model.Cp;
+import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.CpRepository;
 import com.hgys.iptv.service.CpService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.Validator;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -70,22 +73,27 @@ public class CpServiceImpl implements CpService {
      * cp删除--逻辑删除，只更新对象的isdelete字段值 0：未删除 1：已删除
      */
     @Override
-    public ResultVO<?> logicDelete(Cp cp){
-        cp.setIsdelete(1);
-        return this.update(cp);
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO<?> logicDelete(Integer id){
+        try {
+            cpRepository.logicDelete(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
     }
 
     /**
      * cp批量逻辑删除
-     * @param cps
+     * @param ids
      */
     @Override
-    public ResultVO<?> batchLogicDelete(List<Cp> cps){
-        if(cps!=null && cps.size()>0)
-            for(Cp cp:cps){
-                logicDelete(cp);
-            }
-        return ResultVOUtil.error("1","请选择要删除的供应商");
+    public ResultVO<?> batchLogicDelete(String ids){
+        List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
+        for (String s : idLists)
+            cpRepository.logicDelete(Integer.parseInt(s));
+        return ResultVOUtil.success(Boolean.TRUE);
     }
 
     /**

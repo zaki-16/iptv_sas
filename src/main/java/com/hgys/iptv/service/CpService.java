@@ -11,9 +11,9 @@ public interface CpService {
 
     ResultVO<?> update(Cp cp);
 
-    ResultVO<?> logicDelete(Cp cp);
+    ResultVO<?> logicDelete(Integer id);
 
-    ResultVO<?> batchLogicDelete(List<Cp> cps);
+    ResultVO<?> batchLogicDelete(String ids);
 
     ResultVO<?> findById(Integer id);
 

@@ -5,7 +5,9 @@ import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.CpService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +26,7 @@ public class CpController {
 
     @PostMapping("/saveCp")
     @ApiOperation(value = "新增cp",notes = "@return：cp对象")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> saveCp(Cp cp){
        return cpService.save(cp);
     }
@@ -39,12 +42,15 @@ public class CpController {
      */
     @PostMapping("/logicDeleteCp")
     @ApiOperation(value = "逻辑删除cp",notes = "@return：true/false")
-    public ResultVO<?> logicDelete(Cp cp){
-        return cpService.logicDelete(cp);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResultVO<?> logicDelete(
+            @ApiParam(value = "cp对象",required = true)Integer id){
+        return cpService.logicDelete(id);
     }
 
     @PostMapping("/batchLogicDeleteCp")
     @ApiOperation(value = "批量逻辑删除cp",notes = "@return：true/false")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResultVO<?> batchLogicDelete(List<Cp> cps){
         return cpService.batchLogicDelete(cps);
     }
@@ -52,19 +58,24 @@ public class CpController {
 
     @GetMapping("/findCpById")
     @ApiOperation(value = "按id查询cp",notes = "@return：cp对象")
-    public ResultVO<?> findById(Integer id) {
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO<?> findById(
+            @ApiParam(value = "cpid",required = true) @RequestParam("id")Integer id) {
         return cpService.findById(id);
     }
 
     @GetMapping("/findCpByCode")
     @ApiOperation(value = "按code查询cp",notes = "@return：cp对象")
-    public ResultVO<?> findByCode(String code) {
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO<?> findByCode(
+            @ApiParam(value = "cp编码code",required = true) @RequestParam("code")String code) {
         return cpService.findByCode(code);
     }
 
 
     @GetMapping("/findAllCp")
     @ApiOperation(value = "查询cp列表",notes = "@return：cp对象列表")
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> findAll() {
         return cpService.findAll();
     }
