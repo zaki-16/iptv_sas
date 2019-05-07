@@ -1,6 +1,7 @@
 package com.hgys.iptv.controller;
 
 import com.hgys.iptv.controller.vm.SettlementCombinatorialDimensionAddVM;
+import com.hgys.iptv.controller.vm.SettlementCombinatorialDimensionControllerListVM;
 import com.hgys.iptv.model.SettlementDimension;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.SettlementCombinatorialDimensionService;
@@ -9,6 +10,7 @@ import com.hgys.iptv.util.ResultVOUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -34,15 +36,36 @@ public class SettlementCombinatorialDimensionController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> addSettlementCombinatorialDimension(@ApiParam(value = "结算单组合维度VM") @RequestBody() SettlementCombinatorialDimensionAddVM vo){
 
-        settlementCombinatorialDimensionService.addSettlementCombinatorialDimension(vo);
-
-        return null;
+        return settlementCombinatorialDimensionService.addSettlementCombinatorialDimension(vo);
     }
 
     @GetMapping("/queryDimensionLists")
     @ApiOperation(value = "查询维度列表")
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> queryDimensionLists(){
         List<SettlementDimension> all = settlementDimensionService.findAll();
         return ResultVOUtil.success(all);
+    }
+
+    @DeleteMapping("/batchLogicDelete")
+    @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResultVO<?> batchLogicDelete(@ApiParam(value = "结算单维度ids",required = true) @RequestParam("ids")String ids){
+        if (StringUtils.isBlank(ids)){
+            return ResultVOUtil.error("1","结算单维度ids不能为空");
+        }
+
+        return settlementCombinatorialDimensionService.batchLogicDelete(ids);
+    }
+
+    @GetMapping("/getSettlementCombinatorialDimension")
+    @ApiOperation(value = "通过结算组合维度编码查询",notes = "返回json数据")
+    @ResponseStatus(HttpStatus.OK)
+    public SettlementCombinatorialDimensionControllerListVM getSettlementCombinatorialDimension(@ApiParam(value = "结算组合维度编码",required = true) @RequestParam("code")String code){
+        if (StringUtils.isBlank(code)){
+             new IllegalArgumentException("结算组合维度不能为空");
+        }
+
+        return settlementCombinatorialDimensionService.getSettlementCombinatorialDimension(code);
     }
 }

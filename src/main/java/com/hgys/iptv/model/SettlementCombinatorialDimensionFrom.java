@@ -12,10 +12,8 @@
 
 package com.hgys.iptv.model;
 
-import java.sql.Timestamp;
 import javax.persistence.*;
-
-import org.hibernate.annotations.GenericGenerator;
+import java.sql.Timestamp;
 
 /**
  * 结算组合维度从表(settlement_combinatorial_dimension_from)
@@ -186,7 +184,7 @@ public class SettlementCombinatorialDimensionFrom implements java.io.Serializabl
      * 设置创建时间
      * 
      * @param create_time
-     *          创建时间
+     *   创建时间
      */
     public void setCreate_time(Timestamp create_time) {
         this.create_time = create_time;

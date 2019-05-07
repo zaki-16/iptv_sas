@@ -7,7 +7,7 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 @Data
-@ApiModel("集合VM")
+@ApiModel("结算单维度集合VM")
 public class SettlementDimensionControllerListVM {
 
     /** 主键 */
