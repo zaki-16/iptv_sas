@@ -8,11 +8,16 @@ import java.util.Map;
 
 public interface LoginService {
 
-    User findByUsername(String username);
-
     User addUser(Map<String, Object> map);
+    User findByUsername(String username);
+    User findAllUser();//需要权限
+    User updateUser(String username);
+    User deleteUser(String username);
 
     Role addRole(Map<String, Object> map);
+    Role updateRole(Role role);
+    Role findByRolename(Role role);
+    Role findAllRole();
 
     Permission addPermission(Map<String, Object> map);
 }

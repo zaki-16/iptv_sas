@@ -68,6 +68,21 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
+    public Role updateRole(Role role) {
+        return null;
+    }
+
+    @Override
+    public Role findByRolename(Role role) {
+        return null;
+    }
+
+    @Override
+    public Role findAllRole() {
+        return null;
+    }
+
+    @Override
     public Permission addPermission(Map<String, Object> map) {
         return null;
     }
@@ -77,6 +92,21 @@ public class LoginServiceImpl implements LoginService {
     public User findByUsername(String name)
     {
         return userRepository.findByUsername(name);
+    }
+
+    @Override
+    public User findAllUser() {
+        return null;
+    }
+
+    @Override
+    public User updateUser(String username) {
+        return null;
+    }
+
+    @Override
+    public User deleteUser(String username) {
+        return null;
     }
 
 }

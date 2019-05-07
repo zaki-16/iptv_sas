@@ -8,13 +8,17 @@ import java.util.List;
 public class Permission {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", unique = true, nullable = false, length = 20)
     private Long id;
     //权限名
+    @Column(name = "name",length = 200)
     private String name;
     //权限字符，如query，update等
+    @Column(name = "permission", unique = true, nullable = false, length = 200)
     private String permission;
     //资源路径
-    private String url;
+    @Column(name = "uri", length = 100)
+    private String uri;
 
     //角色-权限==多对多，被维护
     @ManyToMany()
@@ -45,12 +49,12 @@ public class Permission {
         this.permission = permission;
     }
 
-    public String getUrl() {
-        return url;
+    public String getUri() {
+        return uri;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     public List<Role> getRoles() {

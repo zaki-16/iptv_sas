@@ -16,7 +16,9 @@ import java.util.List;
 public class Cp {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "cpid", unique = true, nullable = false, length = 11)
     private Integer cpid;
+    @Column(name = "name", unique = true, nullable = false, length = 50)
     private String name;
     private String cpAbbr;
     private String code;
@@ -26,6 +28,7 @@ public class Cp {
     private Timestamp regisTime;
     private Timestamp modifyTime;
     private Timestamp cancelTime;
+    @Column(name = "status", nullable = false, length = 2)
     private Integer status;//1.正常 2.结算 3.异常 4.注销
     private String note;
     private Integer isdelete;//0：未删除 1：已删除

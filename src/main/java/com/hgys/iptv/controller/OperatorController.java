@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/oper")
-@Api(value = "OperatorController",tags = "operator管理api")
+@Api(value = "OperatorController",tags = "operator管理Api接口")
 public class OperatorController {
     @Autowired
     private OperatorServiceImpl operatorService;

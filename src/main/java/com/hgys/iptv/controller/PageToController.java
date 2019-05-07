@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/page2")
-@Api(value = "PageToController",tags = "页面跳转管理api")
+@Api(value = "PageToController",tags = "页面跳转管理Api接口")
 public class PageToController {
     private final String PREFIX = "pages/";
 

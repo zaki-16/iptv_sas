@@ -13,10 +13,13 @@ import java.util.List;
 public class User implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", unique = true, nullable = false, length = 20)
     private Long id;
-    @Column(unique = true)
+    @Column(name = "username", unique = true, nullable = false, length = 200)
     private String username;
+    @Column(name = "password", nullable = false, length = 200)
     private String password;
+    @Column(name = "salt", length = 200)
     private String salt;//加密盐
 
     //用户-角色==多对多，维护关系方
