@@ -1,10 +1,14 @@
 package com.hgys.iptv.model;
 
+import com.hgys.iptv.model.enums.SystemUserRole;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,6 +30,29 @@ public class User implements Serializable {
     private String password;
     @Column(name = "salt", length = 200)
     private String salt;//加密盐
+
+//    private String img;
+//    @Column(length = 10)
+//    private String displayName; //显示名
+//    private String cellphone;
+//    private String email;
+//    private boolean expired = false;
+//    private boolean locked = false;
+//    private Integer errorTimes = 0;//错误次数
+//    @Column(length = 2048)
+//    private String resources;
+//    @Transient
+//    private List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+//    private boolean enabled = true;
+//    private boolean deleted = false; //是否删除
+//    private Date deletedAt;//删除时间
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private SystemUser deleteBy;//删除人
+//
+//    @ElementCollection(targetClass = SystemUserRole.class, fetch = FetchType.EAGER)
+//    @Enumerated(EnumType.STRING)
+//    private List<SystemUserRole> roles = new ArrayList<SystemUserRole>();
 
     //用户-角色==多对多，维护关系方
     @ManyToMany(cascade = CascadeType.ALL,fetch= FetchType.EAGER)//立即从数据库中进行加载数据;

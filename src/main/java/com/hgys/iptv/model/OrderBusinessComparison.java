@@ -61,6 +61,14 @@ public class OrderBusinessComparison implements java.io.Serializable {
     @Column(name = "remakes", nullable = true, length = 200)
     private String remakes;
 
+    /** 业务编码 */
+    @Column(name = "business_code", nullable = true, length = 50)
+    private String businessCode;
+
+    /** 业务名称 */
+    @Column(name = "business_name", nullable = true, length = 50)
+    private String businessName;
+
     /** 逻辑删除标记 */
     @Column(name = "isdelete", nullable = true, length = 10)
     private Integer isdelete;
@@ -326,5 +334,21 @@ public class OrderBusinessComparison implements java.io.Serializable {
      */
     public void setCol4(String col4) {
         this.col4 = col4;
+    }
+
+    public String getBusinessCode() {
+        return businessCode;
+    }
+
+    public void setBusinessCode(String businessCode) {
+        this.businessCode = businessCode;
+    }
+
+    public String getBusinessName() {
+        return businessName;
+    }
+
+    public void setBusinessName(String businessName) {
+        this.businessName = businessName;
     }
 }
