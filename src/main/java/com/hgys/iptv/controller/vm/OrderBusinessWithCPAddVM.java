@@ -7,12 +7,12 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.List;
 
-@ApiModel(value = "结算组合维度新增VM")
+@ApiModel(value = "结算类型-业务级新增VM")
 public class OrderBusinessWithCPAddVM implements Serializable{
 
     @ApiModelProperty("ID")
     private Integer id;
-    /** 维度名称 */
+    /** 结算类型-业务级名称 */
     @ApiModelProperty("结算类型-业务级名称")
     @NotBlank(message = "结算类型-业务级名称不能为空")
     private String name;
@@ -23,12 +23,14 @@ public class OrderBusinessWithCPAddVM implements Serializable{
     @ApiModelProperty("结算类型-业务级状态")
     private Integer status;
 
+    @ApiModelProperty("结算类型-业务级CODE")
+    private String code;
 
     @ApiModelProperty("权重")
     private Integer weight;
 
 
-    @ApiModelProperty(value = "结算维度组合集合",dataType = "List")
+    @ApiModelProperty(value = "结算类型-业务级集合",dataType = "List")
     private List<SmallOrderBusinessVM> list;
 
     public Integer getId() {
@@ -39,7 +41,13 @@ public class OrderBusinessWithCPAddVM implements Serializable{
         return name;
     }
 
+    public String getCode() {
+        return code;
+    }
 
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public Integer getStatus() {
         return status;
