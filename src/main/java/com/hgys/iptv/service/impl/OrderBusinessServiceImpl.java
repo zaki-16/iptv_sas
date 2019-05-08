@@ -138,6 +138,7 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> updateOrderBusiness(OrderBusinessWithCPAddVM vo) {
         if (null == vo.getId()){
             ResultVOUtil.error("1","主键不能为空");

@@ -34,9 +34,9 @@ public interface OrderBuinessWithCpRepository extends JpaRepository<OrderBusines
 
     /**
      * 根据masterCode删除
-     * @param occode
+     * @param obcode
      */
     @Modifying
-    @Query(value = "delete from OrderBusinessWithCp where occode = ?1")
-    void deleteByMasterCode(String occode);
+    @Query(value = "delete from OrderBusinessWithCp where obcode = ?1")
+    void deleteByMasterCode(String obcode);
 }

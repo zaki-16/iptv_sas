@@ -23,9 +23,6 @@ public class OrderBusinessWithCPAddVM implements Serializable{
     @ApiModelProperty("结算类型-业务级状态")
     private Integer status;
 
-    @ApiModelProperty("结算类型-业务级CODE")
-    private String code;
-
     @ApiModelProperty("权重")
     private Integer weight;
 
@@ -41,13 +38,6 @@ public class OrderBusinessWithCPAddVM implements Serializable{
         return name;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public Integer getStatus() {
         return status;
