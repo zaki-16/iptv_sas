@@ -65,23 +65,23 @@ public class SettlementCombinatorialDimensionController {
     @GetMapping("/findByCode")
     @ApiOperation(value = "通过结算组合维度编码查询",notes = "返回json数据")
     @ResponseStatus(HttpStatus.OK)
-    public SettlementCombinatorialDimensionControllerListVM findByCode(@ApiParam(value = "结算组合维度编码",required = true) @RequestParam("code")String code){
+    public ResultVO<?> findByCode(@ApiParam(value = "结算组合维度编码",required = true) @RequestParam("code")String code){
         if (StringUtils.isBlank(code)){
              new IllegalArgumentException("结算组合维度不能为空");
         }
-
-        return settlementCombinatorialDimensionService.getSettlementCombinatorialDimension(code);
+        SettlementCombinatorialDimensionControllerListVM vm = settlementCombinatorialDimensionService.getSettlementCombinatorialDimension(code);
+        return ResultVOUtil.success(vm);
     }
 
     @GetMapping("/findById")
     @ApiOperation(value = "通过结算组合Id编码查询",notes = "返回json数据")
     @ResponseStatus(HttpStatus.OK)
-    public SettlementCombinatorialDimensionControllerListVM findById(@ApiParam(value = "结算组合Id编码",required = true) @RequestParam("id")String id){
+    public ResultVO<?> findById(@ApiParam(value = "结算组合Id编码",required = true) @RequestParam("id")String id){
         if (StringUtils.isBlank(id)){
              new IllegalArgumentException("结算组合维度不能为空");
         }
-
-        return settlementCombinatorialDimensionService.findById(id);
+        SettlementCombinatorialDimensionControllerListVM byId = settlementCombinatorialDimensionService.findById(id);
+        return ResultVOUtil.success(byId);
     }
 
     @GetMapping("/findByConditions")

@@ -237,7 +237,7 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
             e.printStackTrace();
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
-        return null;
+        return ResultVOUtil.success();
     }
 
     @Override
