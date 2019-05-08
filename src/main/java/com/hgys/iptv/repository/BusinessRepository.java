@@ -2,6 +2,7 @@ package com.hgys.iptv.repository;
 
 import com.hgys.iptv.model.Business;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface BusinessRepository extends JpaRepository<Business,Integer> {
+public interface BusinessRepository extends JpaRepository<Business,Integer>, JpaSpecificationExecutor<Business> {
     /**
      * 通过code查询
      * @param code

@@ -4,6 +4,8 @@ import com.hgys.iptv.exception.BaseException;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.util.ResultVOUtil;
+import com.hgys.iptv.util.excel.ExcelForWebUtil;
+import com.hgys.iptv.util.excel.PathConstant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -12,6 +14,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/demo")
@@ -40,6 +49,22 @@ public class DemoContronller {
          * 处理失败情况
          */
         return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+
+    }
+
+    @GetMapping("/excel")
+    @ApiOperation(value = "excel导出模板",notes = "返回Excel文件")
+    public void excel(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> beanParams = new HashMap<>();
+        List<Map> l = new ArrayList<>();
+        for(int i=1;i<29;i++){
+            Map<String,String> a = new HashMap<>();
+            a.put("name","名称："+i);
+            a.put("code","编码："+i);
+            l.add(a);
+        }
+        beanParams.put("pList",l);
+        ExcelForWebUtil.exportExcel(response,beanParams,"text.xlsx", PathConstant.getExcelExportWebDir(request),"导出测试文件.xlsx");
 
     }
 }

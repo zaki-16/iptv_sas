@@ -13,6 +13,11 @@ import lombok.Data;
 @Data
 @ApiModel("集合VM")
 public class BusinessControllerListVM {
+
+    /** 主键*/
+    @ApiModelProperty("主键")
+    private String id;
+
     /** 名称*/
     @ApiModelProperty("名称")
     private String name;

@@ -6,7 +6,6 @@ import lombok.Data;
  * @author yangpeng
  * @param <T>
  */
-@Data
 public class ResultVO<T> {
     /** 错误码. */
     private String code;

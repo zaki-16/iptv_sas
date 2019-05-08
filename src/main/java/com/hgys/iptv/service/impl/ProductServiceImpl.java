@@ -1,5 +1,7 @@
 package com.hgys.iptv.service.impl;
 
+import com.hgys.iptv.controller.assemlber.ProductControllerAssemlber;
+import com.hgys.iptv.controller.vm.ProductControllerListVM;
 import com.hgys.iptv.model.Product;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -10,10 +12,14 @@ import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.Validator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.Predicate;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,6 +32,9 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    ProductControllerAssemlber assemlber;
     /**
      * 新增
      * @param prod
@@ -129,6 +138,33 @@ public class ProductServiceImpl implements ProductService {
         if(prods!=null&&prods.size()>0)
             return ResultVOUtil.success(prods);
         return ResultVOUtil.error("1","所查询的产品列表不存在!");
+    }
+
+    @Override
+    public Page<ProductControllerListVM> findByConditions(String name,String code, String status, Pageable pageable) {
+        return productRepository.findAll(((root, query,builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (StringUtils.isNotBlank(name)){
+                Predicate condition = builder.equal(root.get("name").as(String.class), name);
+                predicates.add(condition);
+            }
+            if (StringUtils.isNotBlank(code)){
+                Predicate condition = builder.equal(root.get("code").as(String.class), code);
+                predicates.add(condition);
+            }
+            if (StringUtils.isNotBlank(status)){
+                Predicate condition = builder.equal(root.get("status").as(String.class), status);
+                predicates.add(condition);
+            }
+            Predicate condition = builder.equal(root.get("isdelete").as(String.class), 0);
+            predicates.add(condition);
+            if (!predicates.isEmpty()){
+                return builder.and(predicates.toArray(new Predicate[0]));
+            }
+//            return query.where(predicates.toArray(new Predicate[predicates.size()])).getRestriction();
+            return builder.conjunction();
+        }),pageable).map(assemlber::getListVM);
     }
 
 }

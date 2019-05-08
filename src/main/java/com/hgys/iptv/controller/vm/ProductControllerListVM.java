@@ -13,10 +13,18 @@ import lombok.Data;
 @Data
 @ApiModel("集合VM")
 public class ProductControllerListVM {
+
+    /** 主键*/
+    @ApiModelProperty("主键")
+    private String id;
+
     /** 名称*/
     @ApiModelProperty("名称")
     private String name;
 
+    /** 编码*/
+    @ApiModelProperty("编码")
+    private String code;
 
     /** 名称*/
     @ApiModelProperty("价格")

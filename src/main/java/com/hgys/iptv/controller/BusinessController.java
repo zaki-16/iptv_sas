@@ -4,11 +4,16 @@ import com.hgys.iptv.controller.vm.BusinessControllerListVM;
 import com.hgys.iptv.model.Business;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.BusinessService;
+import com.hgys.iptv.util.ResultVOUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -85,6 +90,25 @@ public class BusinessController {
     @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> findAll() {
         return businessService.findAll();
+    }
+
+    @GetMapping("/findByConditions")
+    @ApiOperation(value = "通过条件，分页查询",notes = "返回处理结果，false或true")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<BusinessControllerListVM> findByConditions(
+            @ApiParam(value = "业务名称") @RequestParam(value = "name",required = false )String name,
+            @ApiParam(value = "业务编码") @RequestParam(value = "code",required = false)String code,
+            @ApiParam(value = "业务类型",example = "0:视频类、1:非视频类") @RequestParam(value = "bizType",required = false)String bizType,
+            @ApiParam(value = "结算类型",example = "1:按比例结算、2:按订购量结算") @RequestParam(value = "settleType",required = false)String settleType,
+            @ApiParam(value = "状态",example = "0:禁用 1:启用") @RequestParam(value = "status",required = false)String status,
+            @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
+            @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
+
+        Sort sort = new Sort(Sort.Direction.DESC,"inputTime");
+        Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
+        Page<BusinessControllerListVM> byConditions = businessService.findByConditions(name,code,bizType,settleType,status, pageable);
+        ResultVOUtil.success(byConditions);
+        return byConditions;
     }
 
 }

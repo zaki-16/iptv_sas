@@ -53,7 +53,7 @@ public class SettlementCombinatorialDimensionController {
 
     @DeleteMapping("/batchLogicDelete")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> batchLogicDelete(@ApiParam(value = "结算单维度ids",required = true) @RequestParam("ids")String ids){
         if (StringUtils.isBlank(ids)){
             return ResultVOUtil.error("1","结算单维度ids不能为空");
