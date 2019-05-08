@@ -101,7 +101,7 @@ if (vo.getSettleaccounts()==0) { //按比例结算
     Integer he = 0;
     for (SmallCPOrderVM s : vos) {
         he += he + s.getWeight();
-        if (he > 100 && he<100 ) {
+        if (he > 100 || he<100 ) {
             new IllegalArgumentException("权重合必须为100%");
         }
     }
@@ -180,7 +180,7 @@ if (vo.getSettleaccounts()==0) { //按比例结算
         }
         return vm;
     }
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultVO<?> updateOrderCp(OrderCPAddVM vo) {
         if (null == vo.getId()){
@@ -195,9 +195,9 @@ if (vo.getSettleaccounts()==0) { //按比例结算
             //验证名称是否已经存在
             Optional<OrderCp> byName = ordercpRepository.findByName(vo.getName().trim());
             if (byName.isPresent()){
-                return ResultVOUtil.error("1","结算维度组合名称已经存在");
+                return ResultVOUtil.error("1","名称已经存在");
             }
-            OrderCp master = ordercpRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到ID为:" + vo.getId() + "结算维度信息"));
+            OrderCp master = ordercpRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到ID为:" + vo.getId() + "信息"));
 
             OrderCp m = new OrderCp();
             BeanUtils.copyProperties(vo,m);

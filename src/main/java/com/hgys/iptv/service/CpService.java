@@ -25,6 +25,5 @@ public interface CpService {
     ResultVO<?> findAll();
 
     Page<CpControllerListVM> findByConditions(String name, String code, String cpAbbr, String status, Pageable pageable);
-    ;
 
 }

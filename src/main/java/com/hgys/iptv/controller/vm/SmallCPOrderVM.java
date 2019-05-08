@@ -21,9 +21,7 @@ public class SmallCPOrderVM {
     @ApiModelProperty("cpcode")
     private String cpcode;
 
-    /** 创建时间*/
-    @ApiModelProperty("createtime")
-    private Timestamp createtime;
+
 
     /** 备注 */
     @ApiModelProperty("note")
@@ -65,9 +63,7 @@ public class SmallCPOrderVM {
         return cpcode;
     }
 
-    public Timestamp getCreatetime() {
-        return createtime;
-    }
+
 
     public String getNote() {
         return note;
@@ -109,9 +105,7 @@ public class SmallCPOrderVM {
         this.cpcode = cpcode;
     }
 
-    public void setCreatetime(Timestamp createtime) {
-        this.createtime = createtime;
-    }
+
 
     public void setNote(String note) {
         this.note = note;

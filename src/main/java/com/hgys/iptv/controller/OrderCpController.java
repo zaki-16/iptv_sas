@@ -51,10 +51,10 @@ public class OrderCpController {
     @PostMapping("/batchDeleteoc")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
-    public ResultVO<?> batchDeleteoc(@ApiParam(value = "结算单维度名称",required = true) @RequestParam("ids")String ids){
+    public ResultVO<?> batchDeleteoc(@ApiParam(value = "名称",required = true) @RequestParam("ids")String ids){
 
         if (StringUtils.isBlank(ids)){
-            return ResultVOUtil.error("1","结算单维度ids不能为空");
+            return ResultVOUtil.error("1","ids不能为空");
         }
 
         return ordercpService.batchDeleteoc(ids);
@@ -65,7 +65,7 @@ public class OrderCpController {
     @PostMapping("/addOrderCp")
     @ApiOperation(value = "新增结算类型-订购量",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResultVO<?> addOrderCp(@ApiParam(value = "结算单组合维度VM") @RequestBody() OrderCPAddVM vo){
+    public ResultVO<?> addOrderCp(@ApiParam(value = "新增结算类型-订购量VM") @RequestBody() OrderCPAddVM vo){
 
         return ordercpService.addOrderCp(vo);
     }
@@ -75,7 +75,7 @@ public class OrderCpController {
     @GetMapping("/getOrderCp")
     @ApiOperation(value = "通过编码查询",notes = "返回json数据")
     @ResponseStatus(HttpStatus.OK)
-    public OrderCPWithCPListVM getOrderCp(@ApiParam(value = "结算组合维度编码",required = true) @RequestParam("code")String code){
+    public OrderCPWithCPListVM getOrderCp(@ApiParam(value = "编码",required = true) @RequestParam("code")String code){
         if (StringUtils.isBlank(code)){
             new IllegalArgumentException("Code不能为空");
         }
@@ -106,7 +106,7 @@ public class OrderCpController {
     @PutMapping("/updateOrderCp")
     @ApiOperation(value = "修改结算类型-CP定比例",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResultVO<?> updateOrderCp(@ApiParam(value = "结算单组合维度VM") @RequestBody() OrderCPAddVM vo){
+    public ResultVO<?> updateOrderCp(@ApiParam(value = "结算类型-CP定比例VM") @RequestBody() OrderCPAddVM vo){
         return ordercpService.updateOrderCp(vo);
     }
 
