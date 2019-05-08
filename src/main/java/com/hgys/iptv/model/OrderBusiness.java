@@ -17,8 +17,6 @@ public class OrderBusiness implements java.io.Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-
-
     /** 业务级结算名称*/
     @Column(name = "name", nullable = true, length = 50)
     private String name;
@@ -27,6 +25,8 @@ public class OrderBusiness implements java.io.Serializable{
     @Column(name = "code", nullable = true, length = 255)
     /** 业务级结算编码 */
     private String code;
+
+
 
 
     @Column(name = "inputTime", nullable = true, length = 50)
