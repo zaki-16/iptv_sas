@@ -6,6 +6,7 @@ import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
+import com.hgys.iptv.repository.CpRepository;
 import com.hgys.iptv.repository.OrderQuantityRepository;
 import com.hgys.iptv.repository.OrderQuantityWithCpRepository;
 import com.hgys.iptv.service.OrderQuantityService;
@@ -38,6 +39,9 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
 
     @Autowired
     private OrderQuantityWithCpRepository OrderquantityWithCpRepository;
+
+    @Autowired
+    private CpRepository cpRepository;
 
 
     @Override
@@ -124,7 +128,7 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
         e.printStackTrace();
         return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
     }
-        return null;
+        return ResultVOUtil.success(Boolean.TRUE);
 }
 
 
@@ -193,5 +197,9 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
         return vm;
     }
 
-
+    @Override
+    public ResultVO<?> queryCPList() {
+        List<Cp> byStatusAndIsdelete = cpRepository.findByStatusAndIsdelete(0, 0);
+        return ResultVOUtil.success(byStatusAndIsdelete);
+    }
 }

@@ -216,7 +216,7 @@ public class OrderProductServiceImpl implements OrderProductService {
             e.printStackTrace();
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
-        return null;
+        return ResultVOUtil.success(Boolean.TRUE);
     }
 
 

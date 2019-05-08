@@ -222,7 +222,7 @@ if (vo.getSettleaccounts()==0) { //按比例结算
             e.printStackTrace();
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
-        return null;
+        return ResultVOUtil.success(Boolean.TRUE);
     }
 
 

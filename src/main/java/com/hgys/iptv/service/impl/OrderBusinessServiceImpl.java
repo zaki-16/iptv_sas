@@ -179,7 +179,7 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
             e.printStackTrace();
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
-        return null;
+        return ResultVOUtil.success(Boolean.TRUE);
     }
     @Override
     public Page<OrderBusinessWithCPAddVM> findByConditions(String name, String code,   String status,  Pageable pageable) {
