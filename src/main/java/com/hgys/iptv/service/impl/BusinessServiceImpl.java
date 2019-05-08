@@ -9,6 +9,8 @@ import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.BusinessRepository;
+import com.hgys.iptv.repository.CpRepository;
+import com.hgys.iptv.repository.ProductRepository;
 import com.hgys.iptv.service.BusinessService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
@@ -38,7 +40,6 @@ import java.util.List;
 public class BusinessServiceImpl implements BusinessService {
     @Autowired
     private BusinessRepository businessRepository;
-
     @Autowired
     BusinessControllerAssemlber assemlber;
     /**
@@ -154,7 +155,7 @@ public class BusinessServiceImpl implements BusinessService {
             List<Predicate> predicates = new ArrayList<>();
 
             if (StringUtils.isNotBlank(name)){
-                Predicate condition = builder.equal(root.get("name").as(String.class), name);
+                Predicate condition = builder.equal(root.get("name").as(String.class), "%"+name+"%");
                 predicates.add(condition);
             }
             if (StringUtils.isNotBlank(code)){
