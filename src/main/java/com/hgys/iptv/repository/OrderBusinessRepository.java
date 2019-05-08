@@ -1,9 +1,12 @@
 package com.hgys.iptv.repository;
 
 import com.hgys.iptv.model.OrderBusiness;
+import com.hgys.iptv.model.SettlementCombinatorialDimensionMaster;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public interface OrderBusinessRepository extends BaseRepository<OrderBusiness,Integer> {
@@ -22,5 +25,5 @@ public interface OrderBusinessRepository extends BaseRepository<OrderBusiness,In
      * @return
      */
     OrderBusiness findById(String id);
-
+    Optional<OrderBusiness> findByName(String name);
 }
