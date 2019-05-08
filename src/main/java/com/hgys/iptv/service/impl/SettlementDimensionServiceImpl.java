@@ -120,7 +120,7 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
             }
 
             if (StringUtils.isNotBlank(status)){
-                Predicate condition = builder.like(root.get("status"), status);
+                Predicate condition = builder.equal(root.get("status"), Integer.parseInt(status));
                 predicates.add(condition);
             }
 
