@@ -2,18 +2,13 @@ package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.controller.assemlber.OrderCpControllerAssemlber;
 import com.hgys.iptv.controller.assemlber.OrderCpWithCpControllerAssemlber;
-import com.hgys.iptv.controller.vm.OrderCPWithCPListVM;
-import com.hgys.iptv.controller.vm.OrderCpControllerListVM;
-import com.hgys.iptv.controller.vm.SettlementCombinatorialDimensionControllerListVM;
+import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.OrderCp;
 import com.hgys.iptv.model.OrderCpWithCp;
-import com.hgys.iptv.model.SettlementCombinatorialDimensionFrom;
-import com.hgys.iptv.model.SettlementCombinatorialDimensionMaster;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.OrderCpRepository;
 import com.hgys.iptv.repository.OrderCpWithCpRepository;
-import com.hgys.iptv.repository.SettlementCombinatorialDimensionMasterRepository;
 import com.hgys.iptv.service.OrderCpService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
@@ -69,24 +64,58 @@ public class OrderCpServiceImpl implements OrderCpService {
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
-
-    /**
-     * 添加
-     */
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public ResultVO<?> insterOrderCp(String name, String status, String note) {
-        OrderCp od = new OrderCp();
-        od.setCode(CodeUtil.getOnlyCode("SDS",5));
-        od.setInputTime(new Timestamp(System.currentTimeMillis()));
-        od.setIsdelete(0);
-        od.setName(name);
-        od.setNote(note);
-        od.setStatus(Integer.parseInt(status));
-        ordercpRepository.save(od);
+    public ResultVO<?> addOrderCp(OrderCPAddVM vo) {
+        if (org.apache.commons.lang3.StringUtils.isBlank(vo.getName())){
+            return ResultVOUtil.error("1","名称不能为空");
+        }else if (null == vo.getList()){
+            return ResultVOUtil.error("1","集合不能为空");
+        }
+
+        try {
+            //主表数据新增
+            String code = CodeUtil.getOnlyCode("OCP",5);
+            OrderCp master = new OrderCp();
+            master.setCode(code);
+            master.setName(vo.getName());
+            master.setNote(vo.getNote());
+            master.setInputTime(new Timestamp(System.currentTimeMillis()));
+            master.setIsdelete(0);
+            master.setStatus(vo.getStatus());
+            master.setSettleaccounts(vo.getSettleaccounts());
+            ordercpRepository.save(master);
+
+            List<OrderCPAddVM.OrderCpWithCp> vos = vo.getList();
+if (vo.getSettleaccounts()==0) { //按比例结算
+    //验证权重是否超过100%
+    Integer he = 0;
+    for (OrderCPAddVM.OrderCpWithCp s : vos) {
+        he += he + s.getWeight();
+        if (he > 100 && he<100 ) {
+            new IllegalArgumentException("权重合必须为100%");
+        }
+    }
+}
+            //处理附表数据
+            for (OrderCPAddVM.OrderCpWithCp s : vos){
+                OrderCpWithCp from = new OrderCpWithCp();
+                from.setOccode(code);
+                from.setCpcode(s.getCpcode());
+                from.setOcname(s.getOcname());
+                from.setWeight(s.getWeight());
+                from.setCreatetime(new Timestamp(System.currentTimeMillis()));
+                from.setMoney(s.getMoney());
+                from.setSettleaccounts(s.getSettleaccounts());
+                from.setIsdelete(0);
+                orderCpWithCpRepository.save(from);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+        }
         return ResultVOUtil.success(Boolean.TRUE);
     }
-
-
 
 
     @Override
@@ -121,8 +150,6 @@ public class OrderCpServiceImpl implements OrderCpService {
         return map;
     }
 
-
-
     @Override
     public OrderCPWithCPListVM getOrderCp(String code) {
 
@@ -144,7 +171,6 @@ public class OrderCpServiceImpl implements OrderCpService {
         }
         return vm;
     }
-
 
     @Override
     public ResultVO<?> updateOrderCp(OrderCPWithCPListVM vo) {

@@ -63,7 +63,7 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
     }
 
     @Override
-    public Page<OrderQuantityControllerListVM> findByConditions(String name, String code, String status, Pageable pageable) {
+    public Page<OrderQuantityWithCPListVM> findByConditions(String name, String code, String status, Pageable pageable) {
 
         return orderquantityRepository.findAll(((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -87,8 +87,11 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
             return builder.conjunction();
         }),pageable).map(orderQuantityControllerAssemlber::getListVM);
     }
+
+
+
     @Override
-    public ResultVO<?> updateOrderQuantity(OrderQuantity oq) {
+    public ResultVO<?> updateOrderQuantity(OrderQuantityAddVM oq) {
         if (null == oq.getId()){
             ResultVOUtil.error("1","ID不能为空");
         }else if (StringUtils.isBlank(oq.getName())){
@@ -97,16 +100,18 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
             ResultVOUtil.error("1","状态不能为空");
         }
         try{
-            OrderQuantity byId = orderquantityRepository.findById(oq.getId()).orElseThrow(()-> new IllegalArgumentException("为查询到ID为:" + oq.getId() + "信息"));
-            oq.setModifyTime(new Timestamp(System.currentTimeMillis()));
-            UpdateTool.copyNullProperties(byId,oq);
-            orderquantityRepository.saveAndFlush(oq);
-        }catch (Exception e){
-            e.printStackTrace();
-            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
-        }
-        return ResultVOUtil.success(Boolean.TRUE);
+            OrderQuantity master = orderquantityRepository.findById(oq.getId()).orElseThrow(()-> new IllegalArgumentException("为查询到ID为:" + oq.getId() + "信息"));
+            OrderQuantity m = new OrderQuantity();
+            BeanUtils.copyProperties(oq,m);
+            m.setModifyTime(new Timestamp(System.currentTimeMillis()));
+            UpdateTool.copyNullProperties(master,m);
+            orderquantityRepository.saveAndFlush(m);
+    }catch (Exception e){
+        e.printStackTrace();
+        return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
     }
+        return null;
+}
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -128,7 +133,6 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
             oq.setIsdelete(0);
             oq.setStatus(vo.getStatus());
             orderquantityRepository.save(oq);
-
             List<OrderQuantityAddVM.OrderQuantityWithCp> vos = vo.getList();
             //结算类型-订购量表与 CP 关系表
             for (OrderQuantityAddVM.OrderQuantityWithCp s : vos){

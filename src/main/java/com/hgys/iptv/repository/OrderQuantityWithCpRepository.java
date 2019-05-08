@@ -18,8 +18,9 @@ public interface OrderQuantityWithCpRepository extends JpaRepository<OrderQuanti
      * @param code
      * @return
      */
-    @Query(value = "select o from OrderQuantityWithCp o where o.code = ?1")
+    @Query(value = "select o from OrderQuantityWithCp o where o.oqcode = ?1")
     List<OrderQuantityWithCp> findByMasterCode(String code);
+
 
 
 }

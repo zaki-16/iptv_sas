@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 import java.util.List;
@@ -25,11 +26,26 @@ public class OrderCPAddVM {
     @ApiModelProperty("集合")
     private List<OrderCpWithCp> list;
 
+    public void setSettleaccounts(Integer settleaccounts) {
+        this.settleaccounts = settleaccounts;
+    }
+
+    public Integer getSettleaccounts() {
+        return settleaccounts;
+    }
+
+    /** 结算方式 */
+    @ApiModelProperty("settleaccounts")
+    private Integer settleaccounts;
+
     @Data
     public class OrderCpWithCp{
-        /** cp编码 */
-        @ApiModelProperty("cp编码")
-        private String code;
+        /** 金额 */
+        @ApiModelProperty("money")
+        private Integer money;
+
+        @ApiModelProperty("权重")
+        private Integer weight;
 
         /** cp名称*/
         @ApiModelProperty("cp名称")
@@ -37,7 +53,7 @@ public class OrderCPAddVM {
 
         /** cpcode */
         @ApiModelProperty("cpcode")
-        private Integer cpcode;
+        private String cpcode;
 
         /** 创建时间*/
         @ApiModelProperty("createtime")
@@ -48,12 +64,12 @@ public class OrderCPAddVM {
         private String note;
 
         /** 结算类型-订购量表名称 */
-        @ApiModelProperty("oqname")
-        private String oqname;
+        @ApiModelProperty("ocname")
+        private String ocname;
 
         /** 结算类型-oqcode */
-        @ApiModelProperty("oqcode")
-        private Integer oqcode;
+        @ApiModelProperty("occode")
+        private String occode;
 
         /** 备用字段3 */
         @ApiModelProperty("col3")
@@ -63,10 +79,9 @@ public class OrderCPAddVM {
         @ApiModelProperty("isdelete")
         private Integer isdelete;
 
-
-        public String getCode() {
-            return code;
-        }
+        /** 结算方式 */
+        @ApiModelProperty("settleaccounts")
+        private Integer settleaccounts;
 
         public String getCpname() {
             return cpname;
@@ -79,23 +94,57 @@ public class OrderCPAddVM {
             return note;
         }
 
-        public String getOqname() {
-            return oqname;
-        }
+
 
         public Timestamp getCreatetime() {
             return createtime;
         }
 
-        public void setCode(String code) {
-            this.code = code;
+        public void setMoney(Integer money) {
+            this.money = money;
+        }
+
+        public void setWeight(Integer weight) {
+            this.weight = weight;
+        }
+
+
+
+        public String getOcname() {
+            return ocname;
+        }
+
+        public String getOccode() {
+            return occode;
+        }
+
+        public void setOcname(String ocname) {
+            this.ocname = ocname;
+        }
+
+        public void setOccode(String occode) {
+            this.occode = occode;
+        }
+
+        public void setSettleaccounts(Integer settleaccounts) {
+            this.settleaccounts = settleaccounts;
         }
 
         public void setCpname(String cpname) {
             this.cpname = cpname;
         }
 
+        public Integer getMoney() {
+            return money;
+        }
 
+        public Integer getWeight() {
+            return weight;
+        }
+
+        public Integer getSettleaccounts() {
+            return settleaccounts;
+        }
 
         public void setCreatetime(Timestamp createtime) {
             this.createtime = createtime;
@@ -105,9 +154,7 @@ public class OrderCPAddVM {
             this.note = note;
         }
 
-        public void setOqname(String oqname) {
-            this.oqname = oqname;
-        }
+
 
 
 
@@ -119,12 +166,12 @@ public class OrderCPAddVM {
             this.isdelete = isdelete;
         }
 
-        public Integer getCpcode() {
+        public String getCpcode() {
             return cpcode;
         }
 
-        public Integer getOqcode() {
-            return oqcode;
+        public void setCpcode(String cpcode) {
+            this.cpcode = cpcode;
         }
 
         public String getCol3() {

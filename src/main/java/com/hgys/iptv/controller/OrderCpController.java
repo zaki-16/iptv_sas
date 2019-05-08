@@ -59,45 +59,16 @@ public class OrderCpController {
         return ordercpService.batchDeleteoc(ids);
     }
 
+
+
     @PostMapping("/addOrderCp")
     @ApiOperation(value = "新增结算类型-订购量",notes = "返回处理结果，false或true")
-    public ResultVO<?> addOrderCp(@ApiParam(value = "名称",required = true) @RequestParam("name")String name,
-                                        @ApiParam(value = "状态(0:启用;1:禁用;默认启用)",required = true) @RequestParam("status")String status,
-                                        @ApiParam(value = "备注",required = false) @RequestParam("note")String note) {
-
-        if (StringUtils.isBlank(name)){
-            return ResultVOUtil.error("1","结算类型-业务级name不能为空");
-        }
-
-        if (StringUtils.isBlank(status)){
-            return ResultVOUtil.error("1","结算类型-业务级status不能为空");
-        }
-
-        return ordercpService.insterOrderCp(name,status,note);
-    }
-
-
- /*   @PostMapping("/addOrderCp")
-    @ApiOperation(value = "新增",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResultVO<?> addOrderCp(@ApiParam(value = "VM") @RequestBody() SettlementCombinatorialDimensionAddVM vo){
+    public ResultVO<?> addOrderCp(@ApiParam(value = "结算单组合维度VM") @RequestBody() OrderCPAddVM vo){
 
-        return settlementCombinatorialDimensionService.addSettlementCombinatorialDimension(vo);
+        return ordercpService.addOrderCp(vo);
     }
-*/
 
-
-
- /*   @GetMapping("/getOrderCp")
-    @ApiOperation(value = "通过编码查询",notes = "返回json数据")
-    @ResponseStatus(HttpStatus.OK)
-    public OrderCPWithCPListVM getOrderCp(@ApiParam(value = "编码",required = true) @RequestParam("code")String code){
-        if (StringUtils.isBlank(code)){
-            new IllegalArgumentException("Code不能为空");
-        }
-
-        return ordercpService.getOrderCp(code);
-    }*/
 
 
     @GetMapping("/getOrderCp")
@@ -110,13 +81,6 @@ public class OrderCpController {
 
         return ordercpService.getOrderCp(code);
     }
-
-
-
-
-
-
-
 
 
 

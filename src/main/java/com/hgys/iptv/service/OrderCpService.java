@@ -1,8 +1,8 @@
 package com.hgys.iptv.service;
 
 
+import com.hgys.iptv.controller.vm.OrderCPAddVM;
 import com.hgys.iptv.controller.vm.OrderCPWithCPListVM;
-import com.hgys.iptv.controller.vm.SettlementCombinatorialDimensionControllerListVM;
 import com.hgys.iptv.model.OrderCp;
 import com.hgys.iptv.model.vo.ResultVO;
 import org.springframework.data.domain.Page;
@@ -13,8 +13,12 @@ public interface OrderCpService {
     /*** 通过Id查询*/
     OrderCp findById(Integer id);
 
-    /*** 添加*/
-    ResultVO<?> insterOrderCp(String name, String status, String note);
+    /**
+     * 新增结算组合维度
+     *
+     * @param vo
+     */
+    ResultVO<?> addOrderCp(OrderCPAddVM vo);
 
     /*** 通过Id,批量逻辑删除*/
     ResultVO<?> batchDeleteoc(String ids);

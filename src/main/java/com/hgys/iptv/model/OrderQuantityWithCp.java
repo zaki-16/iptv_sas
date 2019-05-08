@@ -33,7 +33,7 @@ public class OrderQuantityWithCp implements java.io.Serializable{
 
     @Column(name = "cpcode", nullable = true, length = 11)
     /** cp的CODE */
-    private Integer cpcode;
+    private String cpcode;
 
     @Column(name = "createtime", nullable = true, length = 6)
     /** 创建时间*/
@@ -49,7 +49,7 @@ public class OrderQuantityWithCp implements java.io.Serializable{
 
     /** 结算类型-订购量表的CODE */
     @Column(name = "oqcode", nullable = true, length = 11)
-    private Integer oqcode;
+    private String oqcode;
 
     /** 备用字段3 */
     @Column(name = "col3", nullable = true, length = 50)
@@ -102,12 +102,13 @@ public class OrderQuantityWithCp implements java.io.Serializable{
         this.cpname = cpname;
     }
 
-    public Integer getCpcode() {
-        return cpcode;
+
+    public void setCpcode(String cpcode) {
+        this.cpcode = cpcode;
     }
 
-    public Integer getOqcode() {
-        return oqcode;
+    public void setOqcode(String oqcode) {
+        this.oqcode = oqcode;
     }
 
     public String getCode() {
@@ -118,12 +119,12 @@ public class OrderQuantityWithCp implements java.io.Serializable{
         this.code = code;
     }
 
-    public void setCpcode(Integer cpcode) {
-        this.cpcode = cpcode;
+    public String getCpcode() {
+        return cpcode;
     }
 
-    public void setOqcode(Integer oqcode) {
-        this.oqcode = oqcode;
+    public String getOqcode() {
+        return oqcode;
     }
 
     public void setNote(String note) {

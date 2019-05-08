@@ -10,6 +10,18 @@ import java.util.List;
 @ApiModel(value = "结算类型-订购量新增VM")
 public class OrderQuantityAddVM {
 
+
+    @ApiModelProperty("结算类型-订购量ID")
+    private Integer id;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     /** 结算类型-订购量名称 */
     @ApiModelProperty("结算类型-订购量名称")
     @NotBlank(message = "结算类型-订购量名称不能为空")
@@ -26,8 +38,8 @@ public class OrderQuantityAddVM {
 
     @Data
     public class OrderQuantityWithCp{
-        /** cp编码 */
-        @ApiModelProperty("cp编码")
+        /** 编码 */
+        @ApiModelProperty("编码")
         private String code;
 
         /** cp名称*/
@@ -36,7 +48,7 @@ public class OrderQuantityAddVM {
 
         /** cpcode */
         @ApiModelProperty("cpcode")
-        private Integer cpcode;
+        private String cpcode;
 
         /** 创建时间*/
         @ApiModelProperty("createtime")
@@ -52,7 +64,7 @@ public class OrderQuantityAddVM {
 
         /** 结算类型-oqcode */
         @ApiModelProperty("oqcode")
-        private Integer oqcode;
+        private String oqcode;
 
         /** 备用字段3 */
         @ApiModelProperty("col3")
@@ -72,7 +84,9 @@ public class OrderQuantityAddVM {
         }
 
 
-
+        public String getOqcode() {
+            return oqcode;
+        }
 
         public String getNote() {
             return note;
@@ -118,12 +132,16 @@ public class OrderQuantityAddVM {
             this.isdelete = isdelete;
         }
 
-        public Integer getCpcode() {
-            return cpcode;
+        public void setCpcode(String cpcode) {
+            this.cpcode = cpcode;
         }
 
-        public Integer getOqcode() {
-            return oqcode;
+        public void setOqcode(String oqcode) {
+            this.oqcode = oqcode;
+        }
+
+        public String getCpcode() {
+            return cpcode;
         }
 
         public String getCol3() {

@@ -57,6 +57,10 @@ public class OrderCpWithCp implements java.io.Serializable{
     @Column(name = "weight", nullable = true, length = 2)
     private Integer weight;
 
+    /** 金额 */
+    @Column(name = "money", nullable = true, length = 11)
+    private Integer money;
+
     /** 备用字段3 */
     @Column(name = "col3", nullable = true, length = 50)
     private String col3;
@@ -73,6 +77,13 @@ public class OrderCpWithCp implements java.io.Serializable{
         return cpname;
     }
 
+    public Integer getMoney() {
+        return money;
+    }
+
+    public void setMoney(Integer money) {
+        this.money = money;
+    }
 
     public Timestamp getCreatetime() {
         return createtime;
@@ -142,13 +153,9 @@ public class OrderCpWithCp implements java.io.Serializable{
         this.code = code;
     }
 
-
-
     public String getOcname() {
         return ocname;
     }
-
-
 
     public void setNote(String note) {
         this.note = note;
