@@ -2,9 +2,7 @@ package com.hgys.iptv.service.impl;
 
 
 import com.hgys.iptv.controller.assemlber.OrderQuantityControllerAssemlber;
-import com.hgys.iptv.controller.vm.OrderQuantityAddVM;
-import com.hgys.iptv.controller.vm.OrderQuantityControllerListVM;
-import com.hgys.iptv.controller.vm.OrderQuantityWithCPListVM;
+import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -46,13 +44,21 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
     public Optional<OrderQuantity> findByCode(String code) {
         return orderquantityRepository.findByCode(code);
     }
-    @Transactional(rollbackFor = Exception.class)
+
+
+
     @Override
     public ResultVO<?> batchDelete(String ids) {
         try{
             List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
             for (String s : idLists){
                 orderquantityRepository.batchDelete(Integer.parseInt(s));
+
+                OrderQuantity byId = orderquantityRepository.findById(s).orElseThrow(
+                        () -> new IllegalArgumentException("未查询到数据")
+                );
+
+                orderquantityRepository.batchLogicDeleteByCode(byId.getCode().trim());
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -61,6 +67,7 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
 
         return ResultVOUtil.success(Boolean.TRUE);
     }
+
 
     @Override
     public Page<OrderQuantityWithCPListVM> findByConditions(String name, String code, String status, Pageable pageable) {
@@ -89,7 +96,7 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
     }
 
 
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultVO<?> updateOrderQuantity(OrderQuantityAddVM oq) {
         if (null == oq.getId()){
@@ -106,6 +113,19 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
             m.setModifyTime(new Timestamp(System.currentTimeMillis()));
             UpdateTool.copyNullProperties(master,m);
             orderquantityRepository.saveAndFlush(m);
+            if (!oq.getList().isEmpty()){
+                List<SmallOrderCpVM> list = oq.getList();
+                //先将之前的删除
+                orderquantityRepository.deleteByMasterCode(master.getCode().trim());
+                for (SmallOrderCpVM v : list){
+                    OrderQuantityWithCp from = new OrderQuantityWithCp();
+                    BeanUtils.copyProperties(v,from);
+                    from.setOqcode(master.getCode());
+                    from.setCreatetime(new Timestamp(System.currentTimeMillis()));
+                    from.setIsdelete(0);
+                    OrderquantityWithCpRepository.saveAndFlush(from);
+                }
+            }
     }catch (Exception e){
         e.printStackTrace();
         return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
@@ -122,6 +142,11 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
         }else if (null == vo.getList()){
             return ResultVOUtil.error("1","集合不能为空");
         }
+        //验证名字是否已经存在
+        Optional<OrderQuantity> byName = orderquantityRepository.findByName(vo.getName().trim());
+        if (byName.isPresent()){
+            return ResultVOUtil.error("1","结算名称已经存在");
+        }
         try {
             //结算类型-订购量表
             String code = CodeUtil.getOnlyCode("OQ",5);
@@ -133,9 +158,9 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
             oq.setIsdelete(0);
             oq.setStatus(vo.getStatus());
             orderquantityRepository.save(oq);
-            List<OrderQuantityAddVM.OrderQuantityWithCp> vos = vo.getList();
+            List<SmallOrderCpVM> vos = vo.getList();
             //结算类型-订购量表与 CP 关系表
-            for (OrderQuantityAddVM.OrderQuantityWithCp s : vos){
+            for (SmallOrderCpVM s : vos){
                 OrderQuantityWithCp oc = new OrderQuantityWithCp();
                 oc.setCreatetime(new Timestamp(System.currentTimeMillis()));
                 oc.setCpcode(s.getCpcode());
@@ -152,8 +177,6 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
         }
         return ResultVOUtil.success(Boolean.TRUE);
     }
-
-
 
     @Override
     public OrderQuantityWithCPListVM getOrderQuantityWithCp(String code) {

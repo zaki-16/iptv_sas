@@ -34,125 +34,7 @@ public class OrderQuantityAddVM {
     private Integer status;
 
     @ApiModelProperty("集合")
-    private List<OrderQuantityWithCp> list;
-
-    @Data
-    public class OrderQuantityWithCp{
-        /** 编码 */
-        @ApiModelProperty("编码")
-        private String code;
-
-        /** cp名称*/
-        @ApiModelProperty("cp名称")
-        private String cpname;
-
-        /** cpcode */
-        @ApiModelProperty("cpcode")
-        private String cpcode;
-
-        /** 创建时间*/
-        @ApiModelProperty("createtime")
-        private Timestamp createtime;
-
-        /** 备注 */
-        @ApiModelProperty("note")
-        private String note;
-
-        /** 结算类型-订购量表名称 */
-        @ApiModelProperty("oqname")
-        private String oqname;
-
-        /** 结算类型-oqcode */
-        @ApiModelProperty("oqcode")
-        private String oqcode;
-
-        /** 备用字段3 */
-        @ApiModelProperty("col3")
-        private String col3;
-
-        /** 是否删除 */
-        @ApiModelProperty("isdelete")
-        private Integer isdelete;
-
-
-        public String getCode() {
-            return code;
-        }
-
-        public String getCpname() {
-            return cpname;
-        }
-
-
-        public String getOqcode() {
-            return oqcode;
-        }
-
-        public String getNote() {
-            return note;
-        }
-
-        public String getOqname() {
-            return oqname;
-        }
-
-        public Timestamp getCreatetime() {
-            return createtime;
-        }
-
-        public void setCode(String code) {
-            this.code = code;
-        }
-
-        public void setCpname(String cpname) {
-            this.cpname = cpname;
-        }
-
-
-
-        public void setCreatetime(Timestamp createtime) {
-            this.createtime = createtime;
-        }
-
-        public void setNote(String note) {
-            this.note = note;
-        }
-
-        public void setOqname(String oqname) {
-            this.oqname = oqname;
-        }
-
-
-
-        public void setCol3(String col3) {
-            this.col3 = col3;
-        }
-
-        public void setIsdelete(Integer isdelete) {
-            this.isdelete = isdelete;
-        }
-
-        public void setCpcode(String cpcode) {
-            this.cpcode = cpcode;
-        }
-
-        public void setOqcode(String oqcode) {
-            this.oqcode = oqcode;
-        }
-
-        public String getCpcode() {
-            return cpcode;
-        }
-
-        public String getCol3() {
-            return col3;
-        }
-
-        public Integer getIsdelete() {
-            return isdelete;
-        }
-
-    }
+    private List<SmallOrderCpVM> list;
 
     public String getName() {
         return name;
@@ -178,11 +60,11 @@ public class OrderQuantityAddVM {
         this.status = status;
     }
 
-    public List<OrderQuantityWithCp> getList() {
+    public List<SmallOrderCpVM> getList() {
         return list;
     }
 
-    public void setList(List<OrderQuantityWithCp> list) {
+    public void setList(List<SmallOrderCpVM> list) {
         this.list = list;
     }
 }
