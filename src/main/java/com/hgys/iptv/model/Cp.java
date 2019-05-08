@@ -18,12 +18,10 @@ import java.util.List;
  */
 @Entity
 @Table(name="cp")
-@Data
 public class Cp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false, length = 11)
-    @JSONField(ordinal=1)
     private Integer id;
     @Column(name = "name", unique = true, nullable = false, length = 50)
     private String name;
@@ -46,4 +44,123 @@ public class Cp {
     @JoinTable(name="cp_product",joinColumns = {@JoinColumn(name="cpid")},inverseJoinColumns={@JoinColumn(name="pid")})
     private List<Product> productList;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCpAbbr() {
+        return cpAbbr;
+    }
+
+    public void setCpAbbr(String cpAbbr) {
+        this.cpAbbr = cpAbbr;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getContactNm() {
+        return contactNm;
+    }
+
+    public void setContactNm(String contactNm) {
+        this.contactNm = contactNm;
+    }
+
+    public String getContactTel() {
+        return contactTel;
+    }
+
+    public void setContactTel(String contactTel) {
+        this.contactTel = contactTel;
+    }
+
+    public String getContactMail() {
+        return contactMail;
+    }
+
+    public void setContactMail(String contactMail) {
+        this.contactMail = contactMail;
+    }
+
+    public Timestamp getRegisTime() {
+        return regisTime;
+    }
+
+    public void setRegisTime(Timestamp regisTime) {
+        this.regisTime = regisTime;
+    }
+
+    public Timestamp getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Timestamp modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public Timestamp getCancelTime() {
+        return cancelTime;
+    }
+
+    public void setCancelTime(Timestamp cancelTime) {
+        this.cancelTime = cancelTime;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public Integer getIsdelete() {
+        return isdelete;
+    }
+
+    public void setIsdelete(Integer isdelete) {
+        this.isdelete = isdelete;
+    }
+
+    public List<Business> getBusinessList() {
+        return businessList;
+    }
+
+    public void setBusinessList(List<Business> businessList) {
+        this.businessList = businessList;
+    }
+
+    public List<Product> getProductList() {
+        return productList;
+    }
+
+    public void setProductList(List<Product> productList) {
+        this.productList = productList;
+    }
 }

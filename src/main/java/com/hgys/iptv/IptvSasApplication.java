@@ -1,6 +1,7 @@
 package com.hgys.iptv;
 
 import com.hgys.iptv.common.VerifyServlet;
+import com.hgys.iptv.model.Cp;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;

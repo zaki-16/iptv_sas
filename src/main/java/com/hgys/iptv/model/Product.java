@@ -1,7 +1,5 @@
 package com.hgys.iptv.model;
 
-import lombok.Data;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.List;
@@ -11,7 +9,6 @@ import java.util.List;
  */
 @Entity
 @Table(name="product")
-@Data
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,5 +30,83 @@ public class Product {
     @ManyToMany
     @JoinTable(name="business_product",joinColumns = {@JoinColumn(name="pid")},inverseJoinColumns={@JoinColumn(name="bid")})
     private List<Business> businessList;
+    public Integer getId() {
+        return id;
+    }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Timestamp getInputTime() {
+        return inputTime;
+    }
+
+    public void setInputTime(Timestamp inputTime) {
+        this.inputTime = inputTime;
+    }
+
+    public Timestamp getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Timestamp modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Integer getIsdelete() {
+        return isdelete;
+    }
+
+    public void setIsdelete(Integer isdelete) {
+        this.isdelete = isdelete;
+    }
+
+    public List<Cp> getCpList() {
+        return cpList;
+    }
+
+    public void setCpList(List<Cp> cpList) {
+        this.cpList = cpList;
+    }
+
+    public List<Business> getBusinessList() {
+        return businessList;
+    }
+
+    public void setBusinessList(List<Business> businessList) {
+        this.businessList = businessList;
+    }
 }
