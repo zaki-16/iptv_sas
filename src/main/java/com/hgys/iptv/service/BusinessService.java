@@ -1,7 +1,10 @@
 package com.hgys.iptv.service;
 
+import com.hgys.iptv.controller.vm.BusinessControllerListVM;
 import com.hgys.iptv.model.Business;
 import com.hgys.iptv.model.vo.ResultVO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface BusinessService {
     ResultVO<?> save(Business business);
@@ -17,4 +20,7 @@ public interface BusinessService {
     ResultVO<?> findByCode(String code);
 
     ResultVO<?> findAll();
+
+    Page<BusinessControllerListVM> findByConditions(String name,String code,String bizType,String settleType, String status, Pageable pageable);
+
 }

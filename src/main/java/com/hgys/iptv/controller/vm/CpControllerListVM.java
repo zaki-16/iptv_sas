@@ -15,9 +15,18 @@ import lombok.Data;
 @ApiModel("集合VM")
 public class CpControllerListVM {
 
+
+    /** 主键*/
+    @ApiModelProperty("主键")
+    private String id;
+
     /** 名称*/
     @ApiModelProperty("名称")
     private String name;
+
+    /** 编码*/
+    @ApiModelProperty("编码")
+    private String code;
 
     /** cp简称*/
     @ApiModelProperty("cp简称")

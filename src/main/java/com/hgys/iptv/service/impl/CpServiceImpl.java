@@ -1,19 +1,29 @@
 package com.hgys.iptv.service.impl;
 
+import com.hgys.iptv.controller.assemlber.CpControllerAssemlber;
+import com.hgys.iptv.controller.vm.CpControllerListVM;
+import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
 import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.CpRepository;
 import com.hgys.iptv.service.CpService;
-import com.hgys.iptv.util.CodeUtil;
-import com.hgys.iptv.util.ResultVOUtil;
-import com.hgys.iptv.util.Validator;
+import com.hgys.iptv.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,6 +36,9 @@ import java.util.List;
 public class CpServiceImpl implements CpService {
     @Autowired
     private CpRepository cpRepository;
+
+    @Autowired
+    CpControllerAssemlber assemlber;
 
     /**
      * cp 新增
@@ -132,6 +145,39 @@ public class CpServiceImpl implements CpService {
         return ResultVOUtil.error("1","所查询的cp列表不存在!");
     }
 
+    @Override
+    public Page<CpControllerListVM> findByConditions(String name, String code, String cpAbbr, String status, Pageable pageable) {
+        return cpRepository.findAll(((Root<Cp> root, CriteriaQuery<?> query, CriteriaBuilder builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (StringUtils.isNotBlank(name)){
+                Predicate condition = builder.equal(root.get("name").as(String.class), name);
+                predicates.add(condition);
+            }
+
+            if (StringUtils.isNotBlank(code)){
+                Predicate condition = builder.equal(root.get("code").as(String.class), code);
+                predicates.add(condition);
+            }
+
+            if (StringUtils.isNotBlank(cpAbbr)){
+                Predicate condition = builder.equal(root.get("cpAbbr").as(String.class), cpAbbr);
+                predicates.add(condition);
+            }
+
+            if (StringUtils.isNotBlank(status)){
+                Predicate condition = builder.equal(root.get("status").as(String.class), status);
+                predicates.add(condition);
+            }
+            Predicate condition = builder.equal(root.get("isdelete").as(String.class), 0);
+            predicates.add(condition);
+            if (!predicates.isEmpty()){
+                return builder.and(predicates.toArray(new Predicate[0]));
+            }
+//            return query.where(predicates.toArray(new Predicate[predicates.size()])).getRestriction();
+            return builder.conjunction();
+        }),pageable).map(assemlber::getListVM);
+    }
 
 
 

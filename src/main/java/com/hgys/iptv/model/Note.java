@@ -18,11 +18,12 @@ public class Note {
     private Integer id;
 
     /**
-     * cp主键，可以不提供，查所有
+     * 模板类型，如查询cp、维度等不同类型的模板
      */
-    @Column(name = "cpid",length = 11)
-    private Integer cpid;
+    @Column(name = "stateId",length = 11)
+    private Integer typeId;
 
+    private String userId;
     /**
      * 备注内容
      */
@@ -37,12 +38,20 @@ public class Note {
         this.id = id;
     }
 
-    public Integer getCpid() {
-        return cpid;
+    public Integer getTypeId() {
+        return typeId;
     }
 
-    public void setCpid(Integer cpid) {
-        this.cpid = cpid;
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getContent() {
