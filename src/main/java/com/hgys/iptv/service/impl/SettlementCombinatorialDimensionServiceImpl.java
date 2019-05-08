@@ -73,7 +73,7 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
             //验证权重是否超过100%
             Integer he = 0;
             for (SettlementDimensionVM s : vos){
-                he += he + s.getWeight();
+                he = he + s.getWeight();
                 if (he > 100){
                     new IllegalArgumentException("权重不能超过100%");
                 }
@@ -147,16 +147,16 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
             List<Predicate> predicates = new ArrayList<>();
 
             if (StringUtils.isNotBlank(name)) {
-                Predicate condition = builder.equal(root.get("name"), name);
+                Predicate condition = builder.like(root.get("name"), name);
                 predicates.add(condition);
             }
             if (StringUtils.isNotBlank(code)) {
-                Predicate condition = builder.equal(root.get("code"), code);
+                Predicate condition = builder.like(root.get("code"), code);
                 predicates.add(condition);
             }
 
             if (StringUtils.isNotBlank(status)) {
-                Predicate condition = builder.equal(root.get("status"), status);
+                Predicate condition = builder.equal(root.get("status"), Integer.parseInt(status));
                 predicates.add(condition);
             }
 
@@ -187,7 +187,9 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
             //验证名称是否已经存在
             Optional<SettlementCombinatorialDimensionMaster> byName = settlementCombinatorialDimensionMasterRepository.findByName(vo.getName().trim());
             if (byName.isPresent()){
-                return ResultVOUtil.error("1","结算维度组合名称已经存在");
+                if (!vo.getId().equals(byName.get().getId())){
+                    return ResultVOUtil.error("1","结算维度组合名称已经存在");
+                }
             }
             SettlementCombinatorialDimensionMaster master = settlementCombinatorialDimensionMasterRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到ID为:" + vo.getId() + "结算维度信息"));
 
