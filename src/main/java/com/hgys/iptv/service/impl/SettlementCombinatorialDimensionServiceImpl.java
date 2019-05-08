@@ -204,4 +204,10 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
         }
         return null;
     }
+
+    @Override
+    public ResultVO<?> getSettlementDimensionList(String code) {
+        List<SettlementCombinatorialDimensionFrom> byMasterCode = settlementCombinatorialDimensionFromRepository.findByMasterCode(code);
+        return ResultVOUtil.success(byMasterCode);
+    }
 }

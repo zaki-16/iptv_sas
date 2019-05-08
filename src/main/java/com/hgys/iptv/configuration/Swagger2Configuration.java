@@ -6,7 +6,6 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -29,8 +28,8 @@ public class Swagger2Configuration {
         return new ApiInfoBuilder()
                 .title("权限管理，用户管理，页面管理，日志 后台 APIs")
                 .description("分账平台API管理")
-                .termsOfServiceUrl("http://localhost:8080/swagger-ui.html")
-                .contact(new Contact("wangz","www.baidu.caom","123.vip@163.com"))
+                .termsOfServiceUrl("http://localhost:8354/swagger-ui.html")
+//                .contact(new Contact("wangz","www.baidu.caom","123.vip@163.com"))
                 .version("1.0")
                 .build();
     }

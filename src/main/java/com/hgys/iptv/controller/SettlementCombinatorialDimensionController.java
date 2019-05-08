@@ -93,4 +93,11 @@ public class SettlementCombinatorialDimensionController {
     public ResultVO<?> updateCombinatorialDimension(@ApiParam(value = "结算单组合维度VM") @RequestBody() SettlementCombinatorialDimensionAddVM vo){
         return settlementCombinatorialDimensionService.updateCombinatorialDimension(vo);
     }
+
+    @GetMapping("/getSettlementDimensionList")
+    @ApiOperation(value = "通过结算组合维度编码查询结算单维度信息",notes = "返回JSON数据格式")
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO<?> getSettlementDimensionList(@ApiParam(value = "结算组合维度编码",required = true) @RequestParam("code")String code){
+        return settlementCombinatorialDimensionService.getSettlementDimensionList(code);
+    }
 }
