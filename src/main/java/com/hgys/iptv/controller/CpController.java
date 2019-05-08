@@ -1,7 +1,6 @@
 package com.hgys.iptv.controller;
 
 import com.hgys.iptv.controller.vm.CpControllerListVM;
-import com.hgys.iptv.controller.vm.SettlementDimensionControllerUpdateVM;
 import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.CpService;
@@ -30,7 +29,7 @@ public class CpController {
     @ApiOperation(value = "新增cp",notes = "@return：cp对象")
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> saveCp(
-            @ApiParam(value = "cp新增VM")  @RequestBody() CpControllerListVM vo){
+            @ApiParam(value = "cp新增VM")  @RequestBody CpControllerListVM vo){
         Cp cp = new Cp();
         BeanUtils.copyProperties(vo,cp);
        return cpService.save(cp);
@@ -39,7 +38,7 @@ public class CpController {
     @PutMapping("/UpdateCp")
     @ApiOperation(value = "更新cp",notes = "@return：cp对象")
     public ResultVO<?> updateCp(
-            @ApiParam(value = "cp修改VM") @RequestBody() CpControllerListVM vo){
+            @ApiParam(value = "cp修改VM") @RequestBody CpControllerListVM vo){
         Cp cp = new Cp();
         BeanUtils.copyProperties(vo,cp);
         return cpService.update(cp);
