@@ -53,6 +53,10 @@ public class OrderProductWithSCD implements java.io.Serializable {
     @Column(name = "opname", nullable = true, length = 100)
     private String opname;
 
+    /** 测试 */
+    @Column(name = "masterCode", nullable = true, length = 100)
+    private String masterCode;
+
     /** 结算类型-产品级编码 */
     @Column(name = "opcode", nullable = true, length = 50)
     private String opcode;
@@ -112,6 +116,14 @@ public class OrderProductWithSCD implements java.io.Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getMasterCode() {
+        return masterCode;
+    }
+
+    public void setMasterCode(String masterCode) {
+        this.masterCode = masterCode;
     }
 
     public void setSdname(String sdname) {

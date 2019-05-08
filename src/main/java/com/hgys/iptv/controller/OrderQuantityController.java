@@ -61,7 +61,7 @@ public class OrderQuantityController {
 
     @PostMapping("/batchDelete")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> batchDelete(@ApiParam(value = "名称",required = true) @RequestParam("ids")String ids){
 
         if (StringUtils.isBlank(ids)){

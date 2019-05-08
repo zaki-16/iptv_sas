@@ -41,10 +41,10 @@ import java.util.Optional;
     Optional<OrderQuantity> findByName(String name);
     /**
      * 根据oqrCode删除
-     * @param code
+     * @param oqcode
      */
     @Modifying
-    @Query(value = "delete from OrderQuantity where oqcode = ?1")
+    @Query(value = "delete from OrderQuantityWithCp where oqcode = ?1")
     void deleteByMasterCode(String oqcode);
 }
 

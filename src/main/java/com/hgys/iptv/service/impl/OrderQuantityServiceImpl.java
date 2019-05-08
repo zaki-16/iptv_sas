@@ -46,19 +46,13 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
     }
 
 
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultVO<?> batchDelete(String ids) {
         try{
             List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
-            for (String s : idLists){
+            for (String s : idLists) {
                 orderquantityRepository.batchDelete(Integer.parseInt(s));
-
-                OrderQuantity byId = orderquantityRepository.findById(s).orElseThrow(
-                        () -> new IllegalArgumentException("未查询到数据")
-                );
-
-                orderquantityRepository.batchLogicDeleteByCode(byId.getCode().trim());
             }
         }catch (Exception e){
             e.printStackTrace();

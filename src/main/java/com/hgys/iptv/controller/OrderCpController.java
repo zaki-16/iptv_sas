@@ -50,6 +50,7 @@ public class OrderCpController {
 
     @PostMapping("/batchDeleteoc")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> batchDeleteoc(@ApiParam(value = "结算单维度名称",required = true) @RequestParam("ids")String ids){
 
         if (StringUtils.isBlank(ids)){
