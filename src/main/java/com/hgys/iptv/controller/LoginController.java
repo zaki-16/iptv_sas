@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.security.UserDetailsServiceImpl;
 import com.hgys.iptv.model.Role;
@@ -22,7 +23,7 @@ import java.util.Map;
  * @date:2019/4/19 17:35
  */
 @Controller
-@RequestMapping("/iptv")
+@RequestMapping(value={"/iptv","/"})
 @Api(value = "LoginController",tags = "登录管理Api接口")
 public class LoginController {
     @Autowired
@@ -30,14 +31,30 @@ public class LoginController {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
-    @PostMapping("/login")
+    @GetMapping("/index")
+    public String index(){
+        return "main";
+    }
+
+    @GetMapping("/login")
+    public Object login4get( @ApiParam(value = "登录名") String username,
+                             @ApiParam(value = "登录密码") String password){
+        return loginIdentity(username,password);
+    }
+    @PostMapping("/login1")
+    public String login(){
+        return "login";
+    }
+    @PostMapping(value="/login")//loginIdentity
     @ApiOperation(value = "登录请求(管理员用户密码:admin/admin)")
     @ResponseStatus(HttpStatus.OK)
-    public String login(
+    @ResponseBody
+    public Object  loginIdentity(
             @ApiParam(value = "登录名") String username,
             @ApiParam(value = "登录密码") String password){
         userDetailsService.loadUserByUsername(username);
-        return "pages/success";//thymeleaf会将路径映射成.html
+//        return "pages/success";//thymeleaf会将路径映射成.html
+        return JSON.toJSON(ResultVOUtil.success("登录成功"));
     }
 
     /**
