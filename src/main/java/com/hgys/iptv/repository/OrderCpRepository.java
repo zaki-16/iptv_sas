@@ -27,4 +27,6 @@ public interface OrderCpRepository extends JpaRepository<OrderCp,Object>, JpaSpe
     OrderCp findById(String id);
 
     Optional<OrderCp> findByCode(String code);
+
+    Optional<OrderCp> findByName(String name);
 }

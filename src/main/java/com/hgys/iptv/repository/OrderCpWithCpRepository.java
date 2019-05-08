@@ -3,6 +3,7 @@ package com.hgys.iptv.repository;
 import com.hgys.iptv.model.OrderCpWithCp;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -18,4 +19,23 @@ public interface OrderCpWithCpRepository extends JpaRepository<OrderCpWithCp,Obj
      */
     @Query(value = "select o from OrderCpWithCp o where o.code = ?1")
     List<OrderCpWithCp> findByMasterCode(String Code);
+
+
+    /**
+     * 通过code逻辑删除
+     * @param occode
+     * @return
+     */
+    @Modifying
+    @Query(value = "update OrderCpWithCp set isdelete = 1 WHERE occode = ?1")
+    void batchLogicDeleteByCode(String occode);
+
+
+    /**
+     * 根据masterCode删除
+     * @param occode
+     */
+    @Modifying
+    @Query(value = "delete from OrderCpWithCp where occode = ?1")
+    void deleteByMasterCode(String occode);
 }

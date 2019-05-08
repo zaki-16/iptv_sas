@@ -5,6 +5,8 @@ import com.hgys.iptv.controller.assemlber.OrderCpWithCpControllerAssemlber;
 import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.OrderCp;
 import com.hgys.iptv.model.OrderCpWithCp;
+import com.hgys.iptv.model.SettlementCombinatorialDimensionFrom;
+import com.hgys.iptv.model.SettlementCombinatorialDimensionMaster;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.OrderCpRepository;
@@ -13,13 +15,14 @@ import com.hgys.iptv.service.OrderCpService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
+
 
 import javax.persistence.criteria.Predicate;
 import java.sql.Timestamp;
@@ -64,15 +67,21 @@ public class OrderCpServiceImpl implements OrderCpService {
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
+
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultVO<?> addOrderCp(OrderCPAddVM vo) {
-        if (org.apache.commons.lang3.StringUtils.isBlank(vo.getName())){
+        if (StringUtils.isBlank(vo.getName())){
             return ResultVOUtil.error("1","名称不能为空");
         }else if (null == vo.getList()){
             return ResultVOUtil.error("1","集合不能为空");
         }
-
+       //验证名字是否已经存在
+        Optional<OrderCp> byName = ordercpRepository.findByName(vo.getName().trim());
+        if (byName.isPresent()){
+            return ResultVOUtil.error("1","名称已经存在");
+        }
         try {
             //主表数据新增
             String code = CodeUtil.getOnlyCode("OCP",5);
@@ -86,11 +95,11 @@ public class OrderCpServiceImpl implements OrderCpService {
             master.setSettleaccounts(vo.getSettleaccounts());
             ordercpRepository.save(master);
 
-            List<OrderCPAddVM.OrderCpWithCp> vos = vo.getList();
+            List<SmallCPOrderVM> vos = vo.getList();
 if (vo.getSettleaccounts()==0) { //按比例结算
     //验证权重是否超过100%
     Integer he = 0;
-    for (OrderCPAddVM.OrderCpWithCp s : vos) {
+    for (SmallCPOrderVM s : vos) {
         he += he + s.getWeight();
         if (he > 100 && he<100 ) {
             new IllegalArgumentException("权重合必须为100%");
@@ -98,7 +107,7 @@ if (vo.getSettleaccounts()==0) { //按比例结算
     }
 }
             //处理附表数据
-            for (OrderCPAddVM.OrderCpWithCp s : vos){
+            for (SmallCPOrderVM s : vos){
                 OrderCpWithCp from = new OrderCpWithCp();
                 from.setOccode(code);
                 from.setCpcode(s.getCpcode());
@@ -173,7 +182,7 @@ if (vo.getSettleaccounts()==0) { //按比例结算
     }
 
     @Override
-    public ResultVO<?> updateOrderCp(OrderCPWithCPListVM vo) {
+    public ResultVO<?> updateOrderCp(OrderCPAddVM vo) {
         if (null == vo.getId()){
             ResultVOUtil.error("1","主键不能为空");
         }else if (org.apache.commons.lang3.StringUtils.isBlank(vo.getName())){
@@ -183,15 +192,31 @@ if (vo.getSettleaccounts()==0) { //按比例结算
         }
 
         try{
-            if (null != vo.getList() && vo.getList().size() > 0){
+            //验证名称是否已经存在
+            Optional<OrderCp> byName = ordercpRepository.findByName(vo.getName().trim());
+            if (byName.isPresent()){
+                return ResultVOUtil.error("1","结算维度组合名称已经存在");
+            }
+            OrderCp master = ordercpRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到ID为:" + vo.getId() + "结算维度信息"));
 
-            }else {
-                OrderCp master = ordercpRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到ID为:" + vo.getId() + "信息"));
-                OrderCp m = new OrderCp();
-                BeanUtils.copyProperties(vo,m);
-                m.setModifyTime(new Timestamp(System.currentTimeMillis()));
-                UpdateTool.copyNullProperties(master,m);
-                ordercpRepository.saveAndFlush(m);
+            OrderCp m = new OrderCp();
+            BeanUtils.copyProperties(vo,m);
+            m.setModifyTime(new Timestamp(System.currentTimeMillis()));
+            UpdateTool.copyNullProperties(master,m);
+            ordercpRepository.saveAndFlush(m);
+
+            if (!vo.getList().isEmpty()){
+                List<SmallCPOrderVM> list = vo.getList();
+                //先将之前的删除
+                orderCpWithCpRepository.deleteByMasterCode(master.getCode().trim());
+                for (SmallCPOrderVM v : list){
+                    OrderCpWithCp from = new OrderCpWithCp();
+                    BeanUtils.copyProperties(v,from);
+                    from.setOccode(master.getCode());
+                    from.setCreatetime(new Timestamp(System.currentTimeMillis()));
+                    from.setIsdelete(0);
+                    orderCpWithCpRepository.saveAndFlush(from);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();

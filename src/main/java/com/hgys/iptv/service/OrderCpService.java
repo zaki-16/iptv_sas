@@ -3,6 +3,7 @@ package com.hgys.iptv.service;
 
 import com.hgys.iptv.controller.vm.OrderCPAddVM;
 import com.hgys.iptv.controller.vm.OrderCPWithCPListVM;
+import com.hgys.iptv.controller.vm.SettlementCombinatorialDimensionAddVM;
 import com.hgys.iptv.model.OrderCp;
 import com.hgys.iptv.model.vo.ResultVO;
 import org.springframework.data.domain.Page;
@@ -40,7 +41,7 @@ public interface OrderCpService {
      * @param vo
      * @return
      */
-    ResultVO<?> updateOrderCp(OrderCPWithCPListVM vo);
+    ResultVO<?> updateOrderCp(OrderCPAddVM vo);
 
 
 }
