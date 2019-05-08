@@ -4,12 +4,14 @@ import com.hgys.iptv.controller.assemlber.CpControllerAssemlber;
 import com.hgys.iptv.controller.vm.CpSaveAndUpdateVM;
 import com.hgys.iptv.controller.vm.CpControllerListVM;
 import com.hgys.iptv.model.Cp;
+import com.hgys.iptv.model.SettlementDimension;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.CpRepository;
 import com.hgys.iptv.service.CpService;
 import com.hgys.iptv.util.*;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -78,18 +80,33 @@ public class CpServiceImpl implements CpService {
 
     /**
      * cp 修改
-     * @param cp
+     * @param vo
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO<?> update(Cp cp) {
-        Cp cp_up = cpRepository.save(cp);
-        if(cp_up !=null)
-            return ResultVOUtil.success(Boolean.TRUE);
-        return ResultVOUtil.error("1","新增失败！");//jpa会调用isNew()方法判定对象是否已存在
+    public ResultVO<?> update(Cp vo) {
+        if (null == vo.getId()) {
+            ResultVOUtil.error("1", "结算维度主键不能为空");
+        }
+        try {
+            //验证名称是否已经存在
+            if (StringUtils.isNotBlank(vo.getName())) {
+                Cp byName = cpRepository.findByName(vo.getName().trim());
+                if (null != byName && !byName.getId().equals(vo.getId())) {
+                    ResultVOUtil.error("1", "结算维度名称已经存在");
+                }
+            }
+            Cp byId = cpRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到ID为:" + vo.getId() + "cp信息"));
+            vo.setModifyTime(new Timestamp(System.currentTimeMillis()));
+            UpdateTool.copyNullProperties(byId, vo);
+            cpRepository.saveAndFlush(vo);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
     }
-
     /**
      * cp删除--逻辑删除，只更新对象的isdelete字段值 0：未删除 1：已删除
      */

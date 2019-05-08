@@ -22,6 +22,9 @@ public class CpSaveAndUpdateVM {
      * 备注（非必填，列表不展示）
      */
 
+    @ApiModelProperty("主键") @NotBlank(message = "自增")
+    private String id;
+
     @ApiModelProperty("名称") @NotBlank(message = "不能为空")
     private String name;
 
@@ -42,6 +45,14 @@ public class CpSaveAndUpdateVM {
 
     @ApiModelProperty("备注")
     private String note;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

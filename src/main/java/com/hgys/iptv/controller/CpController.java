@@ -38,9 +38,7 @@ public class CpController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> saveCp(
             @ApiParam(value = "cp新增VM")  @RequestBody CpSaveAndUpdateVM vo){
-        Cp cp_ = new Cp();
-        BeanUtils.copyProperties(vo,cp_);
-       return cpService.save(cp_);
+       return cpService.save(vo);
     }
 
     @PutMapping("/UpdateCp")
