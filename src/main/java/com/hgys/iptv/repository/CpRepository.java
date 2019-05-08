@@ -9,7 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface CpRepository extends JpaRepository<Cp,Integer>, JpaSpecificationExecutor<Cp> {
@@ -38,4 +42,16 @@ public interface CpRepository extends JpaRepository<Cp,Integer>, JpaSpecificatio
     void logicDelete(int id);
 
 //    Page<Cp> findAll(Specification<Cp> specification, Pageable pageable);
+
+
+    /**
+     *
+     * @return
+     */
+//    @Query(value = "select new map(t1,t2) from  TCity t1 left  join THotel t2 on t1.id=t2.city where t2.name =:name")
+//    List<Map<String, Object>> findCpAndProductByHQL(@Param("id") Integer id);
+//
+//    @Query(value = "select new map(t1,t2) from  TCity t1 left  join THotel t2 on t1.id=t2.city where t2.name =:name")
+//    List<Map<String, Object>> findCpAndBusinessByHQL(@Param("id") Integer id);
+
 }

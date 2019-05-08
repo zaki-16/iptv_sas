@@ -1,7 +1,7 @@
 package com.hgys.iptv.service;
 
-import com.hgys.iptv.controller.vm.BusinessControllerListVM;
 import com.hgys.iptv.controller.vm.CpControllerListVM;
+import com.hgys.iptv.controller.vm.CpSaveAndUpdateVM;
 import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.vo.ResultVO;
 import org.springframework.data.domain.Page;
@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface CpService {
 
-    ResultVO<?> save(Cp cp);
+    ResultVO<?> save(CpSaveAndUpdateVM cp);
 
     ResultVO<?> update(Cp cp);
 
@@ -26,4 +26,5 @@ public interface CpService {
 
     Page<CpControllerListVM> findByConditions(String name, String code, String cpAbbr, String status, Pageable pageable);
 
+//    Page<Cp> findListById(Integer id, Pageable pageable);
 }

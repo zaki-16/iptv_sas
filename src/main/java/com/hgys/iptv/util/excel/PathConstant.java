@@ -1,22 +1,19 @@
 package com.hgys.iptv.util.excel;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
+import org.springframework.util.ResourceUtils;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class PathConstant {
 
-	private static final String fileRootDir = File.separator+"file";
-
-	//excel模板文件夹
-	private static final String excelExportTemplementDir = fileRootDir+File.separator+"EXCEL_templement";
-
 	/**
-	 * Excel模板路径
-	 * @param request
 	 * @return
+	 * @throws IOException
 	 */
-	public static String getExcelExportWebDir(HttpServletRequest request) {
-		return request.getSession().getServletContext().getRealPath("")+excelExportTemplementDir;
+	public static String getExcelExportResource() throws FileNotFoundException {
+		return ResourceUtils.getFile("classpath:excel").toString();
 	}
+
 
 }
