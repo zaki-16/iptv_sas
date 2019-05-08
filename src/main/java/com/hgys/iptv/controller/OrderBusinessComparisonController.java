@@ -43,14 +43,25 @@ public class OrderBusinessComparisonController {
         return orderBusinessComparisonService.batchLogicDelete(ids);
     }
 
-    @GetMapping("/getOrderBusinessComparison")
+    @GetMapping("/findByCode")
     @ApiOperation(value = "通过编码查询单条记录",notes = "JSON格式数据")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResultVO<?> getOrderBusinessComparison(@ApiParam(value = "结算类型-业务定比例Code",required = true) @RequestParam("code")String code){
+    public ResultVO<?> findByCode(@ApiParam(value = "结算类型-业务定比例Code",required = true) @RequestParam("code")String code){
         if (StringUtils.isBlank(code)){
             return ResultVOUtil.error("1","结算类型-业务定比例code不能为空");
         }
         OrderBusinessComparisonQueryVM vm = orderBusinessComparisonService.getOrderBusinessComparison(code);
+        return ResultVOUtil.success(vm);
+    }
+
+    @GetMapping("/findById")
+    @ApiOperation(value = "通过编码查询单条记录",notes = "JSON格式数据")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResultVO<?> findById(@ApiParam(value = "结算类型-业务定比例Id",required = true) @RequestParam("id")String id){
+        if (StringUtils.isBlank(id)){
+            return ResultVOUtil.error("1","结算类型-业务定比例code不能为空");
+        }
+        OrderBusinessComparisonQueryVM vm = orderBusinessComparisonService.findById(id);
         return ResultVOUtil.success(vm);
     }
 
@@ -72,7 +83,7 @@ public class OrderBusinessComparisonController {
         return byConditions;
     }
 
-    @PutMapping("/updateOrderBusinessComparison")
+    @PostMapping("/updateOrderBusinessComparison")
     @ApiOperation(value = "修改查询结算类型-业务定比例",notes = "返回处理结果")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> updateOrderBusinessComparison(@ApiParam(value = "结算类型-业务定比例VM") @RequestBody()OrderBusinessComparisonAddVM vm){

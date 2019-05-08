@@ -1,6 +1,7 @@
 package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.controller.assemlber.SettlementDimensionControllerAssemlber;
+import com.hgys.iptv.controller.vm.SettlementDimensionAddVM;
 import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
 import com.hgys.iptv.model.SettlementDimension;
 import com.hgys.iptv.model.enums.ResultEnum;
@@ -33,20 +34,20 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
     private SettlementDimensionControllerAssemlber settlementDimensionControllAssemlber;
 
     @Override
-    public ResultVO<?> insterSettlementDimension(String name, String status, String remarks) {
+    public ResultVO<?> insterSettlementDimension(SettlementDimensionAddVM vm) {
 
         //校验名称是否已经存在
-        SettlementDimension byName = settlementDimensionRepository.findByName(name.trim());
+        SettlementDimension byName = settlementDimensionRepository.findByName(vm.getName().trim());
         if (null != byName){
-            return ResultVOUtil.error("1",name + "名称已经存在");
+            return ResultVOUtil.error("1",vm.getName() + "名称已经存在");
         }
         SettlementDimension vo = new SettlementDimension();
         vo.setCode(CodeUtil.getOnlyCode("SDS",5));
         vo.setInputTime(new Timestamp(System.currentTimeMillis()));
         vo.setIsdelete(0);
-        vo.setName(name);
-        vo.setRemarks(remarks);
-        vo.setStatus(Integer.parseInt(status));
+        vo.setName(vm.getName());
+        vo.setRemarks(vm.getRemarks());
+        vo.setStatus(Integer.parseInt(vm.getStatus()));
         settlementDimensionRepository.save(vo);
 
         return ResultVOUtil.success(Boolean.TRUE);
@@ -55,6 +56,11 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
     @Override
     public Optional<SettlementDimension> findByCode(String code) {
         return settlementDimensionRepository.findByCode(code);
+    }
+
+    @Override
+    public Optional<SettlementDimension> findById(String id) {
+        return settlementDimensionRepository.findById(Integer.parseInt(id));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -77,17 +83,15 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
     public ResultVO<?> updateSettlementDimension(SettlementDimension vo) {
         if (null == vo.getId()){
             ResultVOUtil.error("1","结算维度主键不能为空");
-        }else if (StringUtils.isBlank(vo.getName())){
-            ResultVOUtil.error("1","结算维度名称不能为空");
-        }else if (null == vo.getStatus()){
-            ResultVOUtil.error("1","结算维度状态不能为空");
         }
 
         try{
             //验证名称是否已经存在
-            SettlementDimension byName = settlementDimensionRepository.findByName(vo.getName().trim());
-            if (null != byName && !byName.getId().equals(vo.getId()) ){
-                ResultVOUtil.error("1","结算维度名称已经存在");
+            if (StringUtils.isNotBlank(vo.getName())){
+                SettlementDimension byName = settlementDimensionRepository.findByName(vo.getName().trim());
+                if (null != byName && !byName.getId().equals(vo.getId()) ){
+                    ResultVOUtil.error("1","结算维度名称已经存在");
+                }
             }
             SettlementDimension byId = settlementDimensionRepository.findById(vo.getId()).orElseThrow(()-> new IllegalArgumentException("为查询到ID为:" + vo.getId() + "结算维度信息"));
             vo.setModifyTime(new Timestamp(System.currentTimeMillis()));

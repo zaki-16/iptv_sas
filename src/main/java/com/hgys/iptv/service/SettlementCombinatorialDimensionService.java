@@ -31,6 +31,13 @@ public interface SettlementCombinatorialDimensionService {
     SettlementCombinatorialDimensionControllerListVM getSettlementCombinatorialDimension(String code);
 
     /**
+     * 通过id查询结算组合数据
+     * @param id
+     * @return
+     */
+    SettlementCombinatorialDimensionControllerListVM findById(String id);
+
+    /**
      * 根据条件分页查询
      * @return
      */
