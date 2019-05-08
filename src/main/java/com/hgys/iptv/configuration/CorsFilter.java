@@ -42,13 +42,13 @@ public class CorsFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request= (HttpServletRequest) servletRequest;
         HttpServletResponse response= (HttpServletResponse) servletResponse;
-//        response.setHeader("Access-Control-Allow-Origin",request.getHeader("origin"));
-//        response.setHeader("Access-Control-Allow-Origin","http://www.test.com:8099"); //允许跨域访问的域http://www.testa.com:81/
         response.setHeader("Access-Control-Allow-Origin","http://www.testa.com:81"); //允许跨域访问的域http://www.testa.com:81/
+        response.setHeader("Access-Control-Allow-Origin","http://www.test.com:8099"); //允许跨域访问的域 本机测试
         response.setHeader("Access-Control-Allow-Methods","POST,GET,OPTIONS,DELETE,PUT"); //允许使用的请求方法
         response.setHeader("Access-Control-Expose-Headers","*");
-        response.setHeader("Access-Control-Allow-Headers","Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild");
+        response.setHeader("Access-Control-Allow-Headers","Content-Type, Content-Length, Authorization, Accept, X-Requested-With , Origin");
         response.setHeader("Access-Control-Allow-Credentials","true");//是否允许请求带有验证信息
+        response.setHeader("Access-Control-Max-Age","86400");//24小时内不再重复预检
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
