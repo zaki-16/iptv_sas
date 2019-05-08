@@ -45,9 +45,8 @@ public class OrderProductServiceImpl implements OrderProductService {
         //如果未查询到返回null
         return orderproductRepository.findById(id).orElse(null);
     }
-
-    @Transactional(rollbackFor = Exception.class)
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> batchDeleteop(String ids) {
         try{
             List<String> idLists = Arrays.asList(StringUtils.split(ids, ","));
@@ -174,6 +173,7 @@ public class OrderProductServiceImpl implements OrderProductService {
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> updateOrderproduct(OrderProductWithSettlementAddVM vo) {
         if (null == vo.getId()){
             ResultVOUtil.error("1","主键不能为空");
@@ -218,25 +218,6 @@ public class OrderProductServiceImpl implements OrderProductService {
         }
         return null;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

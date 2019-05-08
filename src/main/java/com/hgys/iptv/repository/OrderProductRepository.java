@@ -18,7 +18,7 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct,Objec
      */
     @Modifying
     @Query(value = "update OrderProduct set isdelete = 1 WHERE id = ?1")
-    void batchDeleteop(int id);
+    void batchDeleteop(Integer id);
 
     Optional<OrderProduct> findByName(String name);
     /**

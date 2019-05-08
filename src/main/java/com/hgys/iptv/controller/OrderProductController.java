@@ -62,10 +62,10 @@ public class OrderProductController {
 
     @PostMapping("/batchDeleteop")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
-    public ResultVO<?> batchDeleteop(@ApiParam(value = "结算单维度名称",required = true) @RequestParam("ids")String ids){
+    public ResultVO<?> batchDeleteop(@ApiParam(value = "名称",required = true) @RequestParam("ids")String ids){
 
         if (StringUtils.isBlank(ids)){
-            return ResultVOUtil.error("1","结算单维度ids不能为空");
+            return ResultVOUtil.error("1","ids不能为空");
         }
 
         return orderproductService.batchDeleteop(ids);
