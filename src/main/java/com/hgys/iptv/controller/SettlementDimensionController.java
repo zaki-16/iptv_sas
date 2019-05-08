@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.controller.vm.SettlementDimensionAddVM;
 import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
 import com.hgys.iptv.controller.vm.SettlementDimensionControllerUpdateVM;
 import com.hgys.iptv.model.SettlementDimension;
@@ -44,22 +45,33 @@ public class SettlementDimensionController {
         return ResultVOUtil.success(vo);
     }
 
+    @GetMapping("/selectById")
+    @ApiOperation(value = "通过Id查询",notes = "返回json数据类型")
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO<?> findById(@ApiParam(value = "结算单维度Id",required = true) @RequestParam("id")String id){
+
+        if (StringUtils.isBlank(id)){
+            return ResultVOUtil.error("1","结算单维度id不能为空");
+        }
+        SettlementDimension vo = settlementDimensionService.findById(id.trim()).orElseThrow(()-> new IllegalArgumentException("未查询到code为：" + id + "的信息"));
+
+        return ResultVOUtil.success(vo);
+    }
+
     @PostMapping("/addSettlementDimension")
     @ApiOperation(value = "新增结算维度",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResultVO<?> addSettlementDimension(@ApiParam(value = "结算单维度名称",required = true) @RequestParam("name")String name,
-                                              @ApiParam(value = "结算单维度状态(0:启用;1:禁用;默认启用)",required = true) @RequestParam("status")String status,
-                                              @ApiParam(value = "结算单维度备注") @RequestParam(value = "remarks",required = false)String remarks){
+    public ResultVO<?> addSettlementDimension(@ApiParam(value = "结算单维度名称") SettlementDimensionAddVM vo){
 
-        if (StringUtils.isBlank(name)){
+        if (StringUtils.isBlank(vo.getName())){
             return ResultVOUtil.error("1","结算单维度name不能为空");
         }
 
-        if (StringUtils.isBlank(status)){
+        if (StringUtils.isBlank(vo.getStatus())){
             return ResultVOUtil.error("1","结算单维度status不能为空");
         }
 
-        return settlementDimensionService.insterSettlementDimension(name,status,remarks);
+        return settlementDimensionService.insterSettlementDimension(vo);
     }
 
     @DeleteMapping("/batchLogicDelete")
@@ -90,7 +102,7 @@ public class SettlementDimensionController {
     }
 
 
-    @PutMapping("/updateSettlementDimension")
+    @PostMapping("/updateSettlementDimension")
     @ApiOperation(value = "结算单维度修改",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> updateSettlementDimension(@ApiParam(value = "结算单维度修改VM") @RequestBody() SettlementDimensionControllerUpdateVM vo){

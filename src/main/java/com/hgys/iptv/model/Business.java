@@ -1,7 +1,5 @@
 package com.hgys.iptv.model;
 
-import lombok.Data;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.List;
@@ -15,7 +13,6 @@ import java.util.List;
  */
 @Entity
 @Table(name="business")
-@Data
 public class Business {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,4 +35,92 @@ public class Business {
     @ManyToMany
     @JoinTable(name="business_product",joinColumns = {@JoinColumn(name="bid")},inverseJoinColumns={@JoinColumn(name="pid")})
     private List<Product> productList;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Integer getBizType() {
+        return bizType;
+    }
+
+    public void setBizType(Integer bizType) {
+        this.bizType = bizType;
+    }
+
+    public Integer getSettleType() {
+        return settleType;
+    }
+
+    public void setSettleType(Integer settleType) {
+        this.settleType = settleType;
+    }
+
+    public Timestamp getInputTime() {
+        return inputTime;
+    }
+
+    public void setInputTime(Timestamp inputTime) {
+        this.inputTime = inputTime;
+    }
+
+    public Timestamp getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Timestamp modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Integer getIsdelete() {
+        return isdelete;
+    }
+
+    public void setIsdelete(Integer isdelete) {
+        this.isdelete = isdelete;
+    }
+
+    public List<Cp> getCpList() {
+        return cpList;
+    }
+
+    public void setCpList(List<Cp> cpList) {
+        this.cpList = cpList;
+    }
+
+    public List<Product> getProductList() {
+        return productList;
+    }
+
+    public void setProductList(List<Product> productList) {
+        this.productList = productList;
+    }
 }

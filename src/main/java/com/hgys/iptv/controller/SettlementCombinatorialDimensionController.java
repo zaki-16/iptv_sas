@@ -62,15 +62,26 @@ public class SettlementCombinatorialDimensionController {
         return settlementCombinatorialDimensionService.batchLogicDelete(ids);
     }
 
-    @GetMapping("/getSettlementCombinatorialDimension")
+    @GetMapping("/findByCode")
     @ApiOperation(value = "通过结算组合维度编码查询",notes = "返回json数据")
     @ResponseStatus(HttpStatus.OK)
-    public SettlementCombinatorialDimensionControllerListVM getSettlementCombinatorialDimension(@ApiParam(value = "结算组合维度编码",required = true) @RequestParam("code")String code){
+    public SettlementCombinatorialDimensionControllerListVM findByCode(@ApiParam(value = "结算组合维度编码",required = true) @RequestParam("code")String code){
         if (StringUtils.isBlank(code)){
              new IllegalArgumentException("结算组合维度不能为空");
         }
 
         return settlementCombinatorialDimensionService.getSettlementCombinatorialDimension(code);
+    }
+
+    @GetMapping("/findById")
+    @ApiOperation(value = "通过结算组合Id编码查询",notes = "返回json数据")
+    @ResponseStatus(HttpStatus.OK)
+    public SettlementCombinatorialDimensionControllerListVM findById(@ApiParam(value = "结算组合Id编码",required = true) @RequestParam("id")String id){
+        if (StringUtils.isBlank(id)){
+             new IllegalArgumentException("结算组合维度不能为空");
+        }
+
+        return settlementCombinatorialDimensionService.findById(id);
     }
 
     @GetMapping("/findByConditions")
@@ -87,7 +98,8 @@ public class SettlementCombinatorialDimensionController {
         Page<SettlementCombinatorialDimensionControllerListVM> byConditions = settlementCombinatorialDimensionService.findByConditions(name, code, status, pageable);
         return byConditions;
     }
-    @PutMapping("/updateCombinatorialDimension")
+
+    @PostMapping("/updateCombinatorialDimension")
     @ApiOperation(value = "修改结算组合维度",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> updateCombinatorialDimension(@ApiParam(value = "结算单组合维度VM") @RequestBody() SettlementCombinatorialDimensionAddVM vo){

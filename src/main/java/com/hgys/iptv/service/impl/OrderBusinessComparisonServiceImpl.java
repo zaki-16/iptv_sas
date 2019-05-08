@@ -172,6 +172,32 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
         return vm;
     }
 
+    /**
+     * 通过id查询
+     * @param id
+     * @return
+     */
+    @Override
+    public OrderBusinessComparisonQueryVM findById(String id) {
+        OrderBusinessComparison comparison = orderBusinessComparisonRepository.findById(Integer.parseInt(id)).orElseThrow(
+                () -> new IllegalArgumentException("未查询到结算类型-业务定比例信息")
+        );
+
+        OrderBusinessComparisonQueryVM vm = new OrderBusinessComparisonQueryVM();
+        BeanUtils.copyProperties(comparison,vm);
+
+        List<CpOrderBusinessComparison> byMasterCode = cpOrderBusinessComparisonRepository.findByMasterCode(comparison.getCode().trim());
+
+        List<OrderBusinessComparisonAddLIstVM> list = new ArrayList<>();
+        for (CpOrderBusinessComparison f : byMasterCode){
+            OrderBusinessComparisonAddLIstVM o = new OrderBusinessComparisonAddLIstVM();
+            BeanUtils.copyProperties(f,o);
+            list.add(o);
+            vm.setList(list);
+        }
+        return vm;
+    }
+
     @Override
     public Page<OrderBusinessComparisonQueryVM> findByConditions(String name, String code, String businessCode, String businessName, String status, String mode,Pageable pageable) {
         Page<OrderBusinessComparisonQueryVM> map = orderBusinessComparisonRepository.findAll(((root, query, builder) -> {
@@ -218,23 +244,16 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
     public ResultVO<?> updateOrderBusinessComparison(OrderBusinessComparisonAddVM vo) {
         if (null == vo.getId()){
             ResultVOUtil.error("1","主键不能为空");
-        }else if (StringUtils.isBlank(vo.getName())){
-            ResultVOUtil.error("1","名称不能为空");
-        }else if (null == vo.getStatus()){
-            ResultVOUtil.error("1","状态不能为空");
-        }else if (null == vo.getMode()){
-            ResultVOUtil.error("1","结算方式不能为空");
-        }else if (StringUtils.isBlank(vo.getBusinessCode())){
-            ResultVOUtil.error("1","业务编码不能为空");
-        }else if (StringUtils.isBlank(vo.getBusinessName())){
-            ResultVOUtil.error("1","业务名称不能为空");
         }
+
         try{
             //验证名称是否已经存在
-            Optional<OrderBusinessComparison> byName = orderBusinessComparisonRepository.findByName(vo.getName());
-            if (byName.isPresent()){
-                if (!vo.getId().equals(byName.get().getId())){
-                    return ResultVOUtil.error("1","名称已经存在");
+            if (StringUtils.isNotBlank(vo.getName())){
+                Optional<OrderBusinessComparison> byName = orderBusinessComparisonRepository.findByName(vo.getName());
+                if (byName.isPresent()){
+                    if (!vo.getId().equals(byName.get().getId())){
+                        return ResultVOUtil.error("1","名称已经存在");
+                    }
                 }
             }
 

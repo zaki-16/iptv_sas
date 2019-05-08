@@ -1,6 +1,7 @@
 package com.hgys.iptv.service;
 
 
+import com.hgys.iptv.controller.vm.SettlementDimensionAddVM;
 import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
 import com.hgys.iptv.model.SettlementDimension;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -13,11 +14,8 @@ import java.util.Optional;
 public interface SettlementDimensionService {
     /**
      * 新增
-     * @param name
-     * @param status
-     * @param remarks
      */
-    ResultVO<?> insterSettlementDimension(String name, String status, String remarks);
+    ResultVO<?> insterSettlementDimension(SettlementDimensionAddVM vo);
 
     /**
      * 通过code查询
@@ -25,6 +23,13 @@ public interface SettlementDimensionService {
      * @return
      */
     Optional<SettlementDimension> findByCode(String code);
+
+    /**
+     * 通过code查询
+     * @param id
+     * @return
+     */
+    Optional<SettlementDimension> findById(String id);
 
     /**
      * 通过Id,批量逻辑删除

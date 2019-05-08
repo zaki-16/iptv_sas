@@ -14,6 +14,7 @@ import com.hgys.iptv.service.SettlementCombinatorialDimensionService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
+import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,6 +142,27 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
     }
 
     @Override
+    public SettlementCombinatorialDimensionControllerListVM findById(String id) {
+        SettlementCombinatorialDimensionMaster byId = settlementCombinatorialDimensionMasterRepository.findById(Integer.parseInt(id)).orElseThrow(
+                () -> new IllegalArgumentException("未查询到结算组合信息")
+        );
+
+        SettlementCombinatorialDimensionControllerListVM vm = new SettlementCombinatorialDimensionControllerListVM();
+        BeanUtils.copyProperties(byId,vm);
+
+        List<SettlementCombinatorialDimensionFrom> byMaster_code = settlementCombinatorialDimensionFromRepository.findByMasterCode(byId.getCode().trim());
+
+        List<SettlementCombinatorialDimensionControllerListVM.SettlementDimension> list = new ArrayList<>();
+        for (SettlementCombinatorialDimensionFrom f : byMaster_code){
+            SettlementCombinatorialDimensionControllerListVM.SettlementDimension s = new SettlementCombinatorialDimensionControllerListVM.SettlementDimension();
+            BeanUtils.copyProperties(f,s);
+            list.add(s);
+            vm.setList(list);
+        }
+        return vm;
+    }
+
+    @Override
     public Page<SettlementCombinatorialDimensionControllerListVM> findByConditions(String name, String code, String status, Pageable pageable) {
 
         Page<SettlementCombinatorialDimensionControllerListVM> map = settlementCombinatorialDimensionMasterRepository.findAll(((root, query, builder) -> {
@@ -177,18 +199,16 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
     public ResultVO<?> updateCombinatorialDimension(SettlementCombinatorialDimensionAddVM vo) {
         if (null == vo.getId()){
             ResultVOUtil.error("1","结算组合维度主键不能为空");
-        }else if (StringUtils.isBlank(vo.getName())){
-            ResultVOUtil.error("1","结算组合维度名称不能为空");
-        }else if (null == vo.getStatus()){
-            ResultVOUtil.error("1","结算组合维度状态不能为空");
         }
 
         try{
             //验证名称是否已经存在
-            Optional<SettlementCombinatorialDimensionMaster> byName = settlementCombinatorialDimensionMasterRepository.findByName(vo.getName().trim());
-            if (byName.isPresent()){
-                if (!vo.getId().equals(byName.get().getId())){
-                    return ResultVOUtil.error("1","结算维度组合名称已经存在");
+            if (StringUtils.isNotBlank(vo.getName())){
+                Optional<SettlementCombinatorialDimensionMaster> byName = settlementCombinatorialDimensionMasterRepository.findByName(vo.getName().trim());
+                if (byName.isPresent()){
+                    if (!vo.getId().equals(byName.get().getId())){
+                        return ResultVOUtil.error("1","结算维度组合名称已经存在");
+                    }
                 }
             }
             SettlementCombinatorialDimensionMaster master = settlementCombinatorialDimensionMasterRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到ID为:" + vo.getId() + "结算维度信息"));
