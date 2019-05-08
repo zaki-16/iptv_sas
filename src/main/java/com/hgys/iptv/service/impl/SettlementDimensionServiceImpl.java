@@ -4,6 +4,7 @@ import com.hgys.iptv.controller.assemlber.SettlementDimensionControllerAssemlber
 import com.hgys.iptv.controller.vm.SettlementDimensionAddVM;
 import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
 import com.hgys.iptv.model.SettlementDimension;
+import com.hgys.iptv.model.SettlementDimension_;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.SettlementDimensionRepository;
@@ -111,20 +112,20 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
             List<Predicate> predicates = new ArrayList<>();
 
             if (StringUtils.isNotBlank(name)){
-                Predicate condition = builder.equal(root.get("name"), name);
+                Predicate condition = builder.equal(root.get(SettlementDimension_.name), name);
                 predicates.add(condition);
             }
             if (StringUtils.isNotBlank(code)){
-                Predicate condition = builder.equal(root.get("code"), code);
+                Predicate condition = builder.equal(root.get(SettlementDimension_.code), code);
                 predicates.add(condition);
             }
 
             if (StringUtils.isNotBlank(status)){
-                Predicate condition = builder.equal(root.get("status"), status);
+                Predicate condition = builder.equal(root.get(SettlementDimension_.status), status);
                 predicates.add(condition);
             }
 
-            Predicate condition = builder.equal(root.get("isdelete"), 0);
+            Predicate condition = builder.equal(root.get(SettlementDimension_.isdelete), 0);
             predicates.add(condition);
 
             if (!predicates.isEmpty()){

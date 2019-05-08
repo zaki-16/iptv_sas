@@ -61,7 +61,7 @@ public class SettlementDimensionController {
     @PostMapping("/addSettlementDimension")
     @ApiOperation(value = "新增结算维度",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResultVO<?> addSettlementDimension(@ApiParam(value = "结算单维度名称") SettlementDimensionAddVM vo){
+    public ResultVO<?> addSettlementDimension(@ApiParam(value = "结算单维度名称") @RequestBody SettlementDimensionAddVM vo){
 
         if (StringUtils.isBlank(vo.getName())){
             return ResultVOUtil.error("1","结算单维度name不能为空");
