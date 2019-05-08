@@ -14,7 +14,7 @@ public interface OrderBusinessComparisonRepository extends JpaRepository<OrderBu
 
     @Modifying
     @Query(value = "update OrderBusinessComparison set isdelete = 1 WHERE id = ?1")
-    OrderBusinessComparison batchLogicDelete(int id);
+    void batchLogicDelete(Integer id);
 
     Optional<OrderBusinessComparison> findByCode(String code);
 
