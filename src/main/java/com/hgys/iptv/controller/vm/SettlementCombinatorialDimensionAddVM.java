@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.List;
 
 @ApiModel(value = "结算组合维度新增VM")
@@ -21,50 +20,11 @@ public class SettlementCombinatorialDimensionAddVM implements Serializable{
     @ApiModelProperty("结算组合维度备注")
     private String remakes;
 
-    private Timestamp modifyTime;
-
     @ApiModelProperty("结算组合维度状态")
     private Integer status;
 
     @ApiModelProperty(value = "结算维度组合集合",dataType = "List")
-    private List<SettlementDimension> list;
-
-    public class SettlementDimension implements Serializable {
-        /** 维度编码 */
-        @ApiModelProperty("结算维度编码")
-        private String dim_code;
-
-        /** 维度名称 */
-        @ApiModelProperty("结算维度名称")
-        private String dim_name;
-
-        @ApiModelProperty("权重")
-        private Integer weight;
-
-        public String getDim_code() {
-            return dim_code;
-        }
-
-        public void setDim_code(String dim_code) {
-            this.dim_code = dim_code;
-        }
-
-        public String getDim_name() {
-            return dim_name;
-        }
-
-        public void setDim_name(String dim_name) {
-            this.dim_name = dim_name;
-        }
-
-        public Integer getWeight() {
-            return weight;
-        }
-
-        public void setWeight(Integer weight) {
-            this.weight = weight;
-        }
-    }
+    private List<SettlementDimensionVM> list;
 
     public String getName() {
         return name;
@@ -90,11 +50,11 @@ public class SettlementCombinatorialDimensionAddVM implements Serializable{
         this.status = status;
     }
 
-    public List<SettlementDimension> getList() {
+    public List<SettlementDimensionVM> getList() {
         return list;
     }
 
-    public void setList(List<SettlementDimension> list) {
+    public void setList(List<SettlementDimensionVM> list) {
         this.list = list;
     }
 
@@ -106,11 +66,4 @@ public class SettlementCombinatorialDimensionAddVM implements Serializable{
         this.id = id;
     }
 
-    public Timestamp getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Timestamp modifyTime) {
-        this.modifyTime = modifyTime;
-    }
 }

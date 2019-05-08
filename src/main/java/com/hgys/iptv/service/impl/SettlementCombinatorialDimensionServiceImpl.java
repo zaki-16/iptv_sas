@@ -3,6 +3,7 @@ package com.hgys.iptv.service.impl;
 import com.hgys.iptv.controller.assemlber.SettlementCombinatorialDimensionControllerAssemlber;
 import com.hgys.iptv.controller.vm.SettlementCombinatorialDimensionAddVM;
 import com.hgys.iptv.controller.vm.SettlementCombinatorialDimensionControllerListVM;
+import com.hgys.iptv.controller.vm.SettlementDimensionVM;
 import com.hgys.iptv.model.SettlementCombinatorialDimensionFrom;
 import com.hgys.iptv.model.SettlementCombinatorialDimensionMaster;
 import com.hgys.iptv.model.enums.ResultEnum;
@@ -45,7 +46,7 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
     public ResultVO<?> addSettlementCombinatorialDimension(SettlementCombinatorialDimensionAddVM vo) {
         if (StringUtils.isBlank(vo.getName())){
             return ResultVOUtil.error("1","结算组合维度名称不能为空");
-        }else if (null == vo.getList()){
+        }else if (vo.getList().isEmpty()){
             return ResultVOUtil.error("1","结算维度组合集合不能为空");
         }
         //验证名字是否已经存在
@@ -67,18 +68,18 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
 
             settlementCombinatorialDimensionMasterRepository.save(master);
 
-            List<SettlementCombinatorialDimensionAddVM.SettlementDimension> vos = vo.getList();
+            List<SettlementDimensionVM> vos = vo.getList();
 
             //验证权重是否超过100%
             Integer he = 0;
-            for (SettlementCombinatorialDimensionAddVM.SettlementDimension s : vos){
+            for (SettlementDimensionVM s : vos){
                 he += he + s.getWeight();
                 if (he > 100){
                     new IllegalArgumentException("权重不能超过100%");
                 }
             }
             //处理附表数据
-            for (SettlementCombinatorialDimensionAddVM.SettlementDimension s : vos){
+            for (SettlementDimensionVM s : vos){
                 SettlementCombinatorialDimensionFrom from = new SettlementCombinatorialDimensionFrom();
                 from.setMaster_code(code);
                 from.setDim_code(s.getDim_code());
@@ -171,6 +172,7 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
         return map;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultVO<?> updateCombinatorialDimension(SettlementCombinatorialDimensionAddVM vo) {
         if (null == vo.getId()){
@@ -182,21 +184,32 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
         }
 
         try{
-            if (null != vo.getList() && vo.getList().size() > 0){
+            //验证名称是否已经存在
+            Optional<SettlementCombinatorialDimensionMaster> byName = settlementCombinatorialDimensionMasterRepository.findByName(vo.getName().trim());
+            if (byName.isPresent()){
+                return ResultVOUtil.error("1","结算维度组合名称已经存在");
+            }
+            SettlementCombinatorialDimensionMaster master = settlementCombinatorialDimensionMasterRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到ID为:" + vo.getId() + "结算维度信息"));
 
-            }else {
-                //验证名称是否已经存在
-                Optional<SettlementCombinatorialDimensionMaster> byName = settlementCombinatorialDimensionMasterRepository.findByName(vo.getName().trim());
-                if (byName.isPresent()){
-                    return ResultVOUtil.error("1","结算维度组合名称已经存在");
+            SettlementCombinatorialDimensionMaster m = new SettlementCombinatorialDimensionMaster();
+            BeanUtils.copyProperties(vo,m);
+            m.setModifyTime(new Timestamp(System.currentTimeMillis()));
+            UpdateTool.copyNullProperties(master,m);
+            settlementCombinatorialDimensionMasterRepository.saveAndFlush(m);
+
+            if (!vo.getList().isEmpty()){
+                List<SettlementDimensionVM> list = vo.getList();
+                //先将之前的删除
+                settlementCombinatorialDimensionFromRepository.deleteByMasterCode(master.getCode().trim());
+                for (SettlementDimensionVM v : list){
+                    SettlementCombinatorialDimensionFrom from = new SettlementCombinatorialDimensionFrom();
+                    BeanUtils.copyProperties(v,from);
+                    from.setMaster_code(master.getCode());
+                    from.setCreate_time(new Timestamp(System.currentTimeMillis()));
+                    from.setIsdelete(0);
+
+                    settlementCombinatorialDimensionFromRepository.saveAndFlush(from);
                 }
-                SettlementCombinatorialDimensionMaster master = settlementCombinatorialDimensionMasterRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到ID为:" + vo.getId() + "结算维度信息"));
-
-                SettlementCombinatorialDimensionMaster m = new SettlementCombinatorialDimensionMaster();
-                BeanUtils.copyProperties(vo,m);
-                m.setModifyTime(new Timestamp(System.currentTimeMillis()));
-                UpdateTool.copyNullProperties(master,m);
-                settlementCombinatorialDimensionMasterRepository.saveAndFlush(m);
             }
         }catch (Exception e){
             e.printStackTrace();

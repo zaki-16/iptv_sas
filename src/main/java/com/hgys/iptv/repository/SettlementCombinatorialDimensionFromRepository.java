@@ -27,4 +27,12 @@ public interface SettlementCombinatorialDimensionFromRepository extends JpaRepos
      */
     @Query(value = "select o from SettlementCombinatorialDimensionFrom o where o.master_code = ?1")
     List<SettlementCombinatorialDimensionFrom> findByMasterCode(String masterCode);
+
+    /**
+     * 根据masterCode删除
+     * @param code
+     */
+    @Modifying
+    @Query(value = "delete from SettlementCombinatorialDimensionFrom where master_code = ?1")
+    void deleteByMasterCode(String code);
 }

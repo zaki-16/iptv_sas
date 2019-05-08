@@ -48,6 +48,4 @@ dependencies {
 
     compile("org.projectlombok:lombok:1.18.2")
 
-    compile group: 'org.hibernate', name: 'hibernate-jpamodelgen', version: '5.2.17.Final'
-
 }
