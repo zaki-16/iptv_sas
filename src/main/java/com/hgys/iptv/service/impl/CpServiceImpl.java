@@ -1,8 +1,8 @@
 package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.controller.assemlber.CpControllerAssemlber;
+import com.hgys.iptv.controller.vm.CpSaveAndUpdateVM;
 import com.hgys.iptv.controller.vm.CpControllerListVM;
-import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
 import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -12,9 +12,7 @@ import com.hgys.iptv.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,35 +34,47 @@ import java.util.List;
 public class CpServiceImpl implements CpService {
     @Autowired
     private CpRepository cpRepository;
-
     @Autowired
     CpControllerAssemlber assemlber;
 
     /**
      * cp 新增
-     * @param cp
+     * @param vm
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO<?> save(Cp cp){
+    public ResultVO<?> save(CpSaveAndUpdateVM vm){
         //校验cp名称是否已经存在
-        Cp byName = cpRepository.findByName(cp.getName());
+        Cp byName = cpRepository.findByName(vm.getName());
         if (null != byName){
-            return ResultVOUtil.error("1",byName + "名称已经存在");
+            return ResultVOUtil.error("1",byName.getName() + "名称已经存在");
         }
-        String[] cols = {cp.getName(),cp.getStatus().toString()};
+        String[] cols = {vm.getName(),vm.getStatus().toString()};
         if(!Validator.validEmptyPass(cols))//必填字段不为空则插入
             return ResultVOUtil.error("1","有必填字段未填写！");
+        Cp cp = new Cp();
+        /**
+         * 所属产品（必填，列表展示）、
+         */
+        cp.setName(vm.getName());
+        cp.setCpAbbr(vm.getCpAbbr());
+        cp.setStatus(vm.getStatus());
+        cp.setContactNm(vm.getContactNm());
+        cp.setContactTel(vm.getContactTel());
+        cp.setContactMail(vm.getContactMail());
+        cp.setNote(vm.getNote());
         cp.setRegisTime(new Timestamp(System.currentTimeMillis()));//注册时间
         cp.setModifyTime(new Timestamp(System.currentTimeMillis()));//最后修改时间
         cp.setCode(CodeUtil.getOnlyCode("SDS",5));//cp编码
         cp.setIsdelete(0);//删除状态
+
         Cp cp_add = cpRepository.save(cp);
         if(cp_add !=null)
             return ResultVOUtil.success(Boolean.TRUE);
         return ResultVOUtil.error("1","新增失败！");
     }
+
 
     /**
      * cp 修改
@@ -151,7 +161,7 @@ public class CpServiceImpl implements CpService {
             List<Predicate> predicates = new ArrayList<>();
 
             if (StringUtils.isNotBlank(name)){
-                Predicate condition = builder.equal(root.get("name").as(String.class), name);
+                Predicate condition = builder.equal(root.get("name").as(String.class), "%"+name+"%");
                 predicates.add(condition);
             }
 
@@ -161,7 +171,7 @@ public class CpServiceImpl implements CpService {
             }
 
             if (StringUtils.isNotBlank(cpAbbr)){
-                Predicate condition = builder.equal(root.get("cpAbbr").as(String.class), cpAbbr);
+                Predicate condition = builder.equal(root.get("cpAbbr").as(String.class), "%"+cpAbbr+"%");
                 predicates.add(condition);
             }
 

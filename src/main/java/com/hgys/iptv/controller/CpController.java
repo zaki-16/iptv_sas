@@ -1,5 +1,7 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.controller.vm.CpAddVM;
+import com.hgys.iptv.controller.vm.CpSaveAndUpdateVM;
 import com.hgys.iptv.controller.vm.CpControllerListVM;
 import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -30,20 +32,21 @@ public class CpController {
     @Autowired
     private CpService cpService;
 
+
     @PostMapping("/saveCp")
     @ApiOperation(value = "新增cp",notes = "@return：cp对象")
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> saveCp(
-            @ApiParam(value = "cp新增VM")  @RequestBody CpControllerListVM vo){
-        Cp cp = new Cp();
-        BeanUtils.copyProperties(vo,cp);
-       return cpService.save(cp);
+            @ApiParam(value = "cp新增VM")  @RequestBody CpSaveAndUpdateVM vo){
+        Cp cp_ = new Cp();
+        BeanUtils.copyProperties(vo,cp_);
+       return cpService.save(cp_);
     }
 
     @PutMapping("/UpdateCp")
     @ApiOperation(value = "更新cp",notes = "@return：cp对象")
     public ResultVO<?> updateCp(
-            @ApiParam(value = "cp修改VM") @RequestBody CpControllerListVM vo){
+            @ApiParam(value = "cp修改VM") @RequestBody CpSaveAndUpdateVM vo){
         Cp cp = new Cp();
         BeanUtils.copyProperties(vo,cp);
         return cpService.update(cp);
