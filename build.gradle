@@ -28,6 +28,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: '2.1.4.RELEASE'
 
     implementation group: 'org.activiti', name: 'activiti-spring-boot-starter', version: '7.0.0.Beta2'
 

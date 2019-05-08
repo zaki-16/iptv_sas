@@ -22,8 +22,8 @@ public class AjaxAuthenticationSuccessHandler implements AuthenticationSuccessHa
         responseBody.setMsg("Login Success!");
         //httpServletRequest.getRequestURI()===/iptv/login
         // httpServletRequest.getRequestDispatcher("").forward(httpServletRequest,httpServletResponse);
-//        httpServletResponse.sendRedirect("/page2/loginSuccessHtml");
-        httpServletResponse.getWriter().write(JSON.toJSONString(responseBody));
+       httpServletResponse.sendRedirect("/page2/loginSuccessHtml");
+      //  httpServletResponse.getWriter().write(JSON.toJSONString(responseBody));
     }
 }
 

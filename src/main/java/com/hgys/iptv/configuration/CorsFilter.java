@@ -25,15 +25,29 @@ public class CorsFilter implements Filter {
 
     }
 
+    /**
+     * Access to XMLHttpRequest at 'http://localhost:8080/iptv/login' from origin 'http://www.test.com:8099'
+     * has been blocked by CORS policy:
+     * The value of the 'Access-Control-Allow-Origin'
+     * header in the response must not be the wildcard '*' when the request's credentials mode is
+     * 'include'. The credentials mode of requests initiated by
+     * the XMLHttpRequest is controlled by the withCredentials attribute.
+     * @param servletRequest
+     * @param servletResponse
+     * @param filterChain
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request= (HttpServletRequest) servletRequest;
         HttpServletResponse response= (HttpServletResponse) servletResponse;
-        response.setHeader("Access-Control-Allow-Origin",request.getHeader("origin"));
-        response.setHeader("Access-Control-Allow-Origin","*"); //允许跨域访问的域
+//        response.setHeader("Access-Control-Allow-Origin",request.getHeader("origin"));
+//        response.setHeader("Access-Control-Allow-Origin","http://www.test.com:8099"); //允许跨域访问的域http://www.testa.com:81/
+        response.setHeader("Access-Control-Allow-Origin","http://www.testa.com:81"); //允许跨域访问的域http://www.testa.com:81/
         response.setHeader("Access-Control-Allow-Methods","POST,GET,OPTIONS,DELETE,PUT"); //允许使用的请求方法
         response.setHeader("Access-Control-Expose-Headers","*");
-        response.setHeader("Access-Control-Allow-Headers", "x-requested-with,Cache-Control,Pragma,Content-Type,Authorization"); //允许使用的请求方法
+        response.setHeader("Access-Control-Allow-Headers","Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild");
         response.setHeader("Access-Control-Allow-Credentials","true");//是否允许请求带有验证信息
         filterChain.doFilter(servletRequest, servletResponse);
     }

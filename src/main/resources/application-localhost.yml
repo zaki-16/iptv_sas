@@ -7,7 +7,7 @@ server:
 spring:
   datasource:
     username: root
-    password: 953828yp
+    password: root
     #serverTimezone=GMT
     url: jdbc:mysql://localhost:3306/iptv_sas?characterEncoding=utf-8&useSSl=false&serverTimezone=GMT
     driver-class-name: com.mysql.cj.jdbc.Driver
