@@ -40,8 +40,7 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
     @Autowired
     private OrderQuantityWithCpRepository OrderquantityWithCpRepository;
 
-    @Autowired
-    private CpRepository cpRepository;
+
 
 
     @Override
@@ -197,9 +196,9 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
         return vm;
     }
 
-    @Override
+   /* @Override
     public ResultVO<?> queryCPList() {
         List<Cp> byStatusAndIsdelete = cpRepository.findByStatusAndIsdelete(0, 0);
         return ResultVOUtil.success(byStatusAndIsdelete);
-    }
+    }*/
 }

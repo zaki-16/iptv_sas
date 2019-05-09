@@ -58,5 +58,4 @@ public interface OrderQuantityService {
      */
     OrderQuantityWithCPListVM getOrderQuantityWithCp(String code);
 
-
 }
