@@ -2,10 +2,13 @@ package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.controller.assemlber.BusinessControllerAssemlber;
 import com.hgys.iptv.controller.assemlber.CpControllerAssemlber;
+import com.hgys.iptv.controller.vm.BusinessAddVM;
 import com.hgys.iptv.controller.vm.BusinessControllerListVM;
+import com.hgys.iptv.controller.vm.CpVM;
 import com.hgys.iptv.model.Business;
 import com.hgys.iptv.model.Business;
 import com.hgys.iptv.model.Cp;
+import com.hgys.iptv.model.SettlementDimension;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.BusinessRepository;
@@ -14,6 +17,7 @@ import com.hgys.iptv.repository.ProductRepository;
 import com.hgys.iptv.service.BusinessService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
+import com.hgys.iptv.util.UpdateTool;
 import com.hgys.iptv.util.Validator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -30,6 +36,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.hgys.iptv.service.impl.CpServiceImpl.isId;
 
 /**
  * @Auther: wangz
@@ -40,6 +48,8 @@ import java.util.List;
 public class BusinessServiceImpl implements BusinessService {
     @Autowired
     private BusinessRepository businessRepository;
+    @Autowired
+    private EntityManager entityManager;
     @Autowired
     BusinessControllerAssemlber assemlber;
     /**
@@ -78,10 +88,26 @@ public class BusinessServiceImpl implements BusinessService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> update(Business business) {
-        Business buss_up = businessRepository.save(business);
-        if(buss_up !=null)
-            return ResultVOUtil.success(Boolean.TRUE);
-        return ResultVOUtil.error("1","新增失败！");//jpa会调用isNew()方法判定对象是否已存在
+        if (null == business.getId()){
+            ResultVOUtil.error("1","主键不能为空");
+        }
+        try{
+            //验证名称是否已经存在
+            if (StringUtils.isNotBlank(business.getName())){
+                Business byName = businessRepository.findByName(business.getName().trim());
+                if (null != byName && !byName.getId().equals(business.getId()) ){
+                    ResultVOUtil.error("1","名称已经存在");
+                }
+            }
+            Business byId = businessRepository.findById(business.getId()).orElseThrow(()-> new IllegalArgumentException("为查询到ID为:" + business.getId() + "业务信息"));
+            business.setModifyTime(new Timestamp(System.currentTimeMillis()));
+            UpdateTool.copyNullProperties(byId,business);
+            businessRepository.saveAndFlush(business);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
     }
 
     /**
@@ -91,7 +117,9 @@ public class BusinessServiceImpl implements BusinessService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> logicDelete(Integer id){
         try {
+            System.out.println("in");
             businessRepository.logicDelete(id);
+            System.out.println("");
         }catch (Exception e){
             e.printStackTrace();
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
@@ -104,10 +132,13 @@ public class BusinessServiceImpl implements BusinessService {
      * @param ids
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> batchLogicDelete(String ids){
         List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
-        for (String s : idLists)
+        for (String s : idLists){
             businessRepository.logicDelete(Integer.parseInt(s));
+        }
+
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
@@ -143,11 +174,32 @@ public class BusinessServiceImpl implements BusinessService {
      */
     @Override
     public ResultVO<?> findAll() {
-        List<Business> buss = businessRepository.findAll();
+        List<Business> buss = findBy(new BusinessAddVM());
         if(buss!=null&&buss.size()>0)
             return ResultVOUtil.success(buss);
         return ResultVOUtil.error("1","所查询的产品列表不存在!");
     }
+
+    public List <Business> findBy(BusinessAddVM vm) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Business> query = cb.createQuery(Business.class);
+        Root<Business> root = query.from(Business.class);
+        query.select(root);
+        List<Predicate> predicates = new ArrayList<>();
+        if (isId(vm.getId())) {
+            predicates.add(cb.equal(root.get("id"), vm.getId()));
+        }
+        //筛选已删除的值-> 1:已删除
+        Predicate condition = cb.equal(root.get("isdelete").as(Integer.class), 0);
+        predicates.add(condition);
+
+        //where
+        query.where(predicates.toArray(new Predicate[]{}));
+        TypedQuery<Business> typedQuery = entityManager.createQuery(query);
+        List <Business> content = typedQuery.getResultList();
+        return content;
+    }
+
 
     @Override
     public Page<BusinessControllerListVM> findByConditions(String name, String code, String bizType, String settleType, String status, Pageable pageable) {
@@ -170,11 +222,11 @@ public class BusinessServiceImpl implements BusinessService {
                 Predicate condition = builder.equal(root.get("status").as(String.class), status);
                 predicates.add(condition);
             }
-            if (StringUtils.isNotBlank(status)){
+            if (StringUtils.isNotBlank(settleType)){
                 Predicate condition = builder.equal(root.get("settleType").as(String.class), settleType);
                 predicates.add(condition);
             }
-            Predicate condition = builder.equal(root.get("isdelete").as(String.class), 0);
+            Predicate condition = builder.equal(root.get("isdelete").as(Integer.class), 0);
             predicates.add(condition);
             if (!predicates.isEmpty()){
                 return builder.and(predicates.toArray(new Predicate[0]));

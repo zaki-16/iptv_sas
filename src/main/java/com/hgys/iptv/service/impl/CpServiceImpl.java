@@ -4,9 +4,8 @@ import com.hgys.iptv.common.AbstractBaseRepositoryImpl;
 import com.hgys.iptv.controller.assemlber.CpControllerAssemlber;
 import com.hgys.iptv.controller.vm.CpAddVM;
 import com.hgys.iptv.controller.vm.CpVM;
-import com.hgys.iptv.model.Cp;
-import com.hgys.iptv.model.CpProduct;
-import com.hgys.iptv.model.Product;
+import com.hgys.iptv.controller.vm.ProductListVM;
+import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.CpProductRepository;
@@ -22,6 +21,8 @@ import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +65,6 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> save(CpAddVM vm){
         try {
-
             //校验cp名称是否已经存在
             Cp byName = cpRepository.findByName(vm.getName());
             if (null != byName) {
@@ -123,23 +123,23 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO<?> update(Cp vo) {
-        if (null == vo.getId()) {
-            return ResultVOUtil.error("1", "主键不能为空");
+    public ResultVO<?> update(Cp cp) {
+        if (null == cp.getId()){
+            ResultVOUtil.error("1","主键不能为空");
         }
-        try {
+        try{
             //验证名称是否已经存在
-            if (StringUtils.isNotBlank(vo.getName())) {
-                Cp byName = cpRepository.findByName(vo.getName().trim());
-                if (null != byName && !byName.getId().equals(vo.getId())) {
-                    ResultVOUtil.error("1", "结算维度名称已经存在");
+            if (StringUtils.isNotBlank(cp.getName())){
+                Product byName = productRepository.findByName(cp.getName().trim());
+                if (null != byName && !byName.getId().equals(cp.getId()) ){
+                    ResultVOUtil.error("1","名称已经存在");
                 }
             }
-            Cp byId = cpRepository.findById(vo.getId()).get();
-            vo.setModifyTime(new Timestamp(System.currentTimeMillis()));
-            UpdateTool.copyNullProperties(byId, vo);
-            cpRepository.saveAndFlush(vo);
-        } catch (Exception e) {
+            Cp byId = cpRepository.findById(cp.getId()).orElseThrow(()-> new IllegalArgumentException("为查询到ID为:" + cp.getId() + "cp信息"));
+            cp.setModifyTime(new Timestamp(System.currentTimeMillis()));
+            UpdateTool.copyNullProperties(byId,cp);
+            cpRepository.saveAndFlush(cp);
+        }catch (Exception e){
             e.printStackTrace();
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
@@ -165,6 +165,7 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
      * @param ids
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> batchLogicDelete(String ids){
         List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
         for (String s : idLists)
@@ -173,23 +174,44 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
     }
 
     /**
-     * cp单查询--根据id
+     * cp单查询--根据id返回单个实例
      * @param id
      * @return
      */
     @Override
     public ResultVO<?> findById(Integer id) {
-        CpVM vm = new CpVM();
-        vm.setId(id);
-        List <Cp> cpp = findBy(vm);
-//        Set<Integer> idSet = new HashSet<>();
-//        idSet.add(id);
-//        List<Product> prods =productRepository.findAllById(idSet);
-//        Cp cp = cpRepository.findById(id).get();
-//        cp.setProductList(prods);
-        if(cpp!=null)
-            return ResultVOUtil.success(cpp);
+        Cp cp = cpRepository.findById(id).get();
+        CpVM cpVM = new CpVM();
+        BeanUtils.copyProperties(cp,cpVM);
+
+        List <CpProduct> PB = findCpProductListBy(id);
+        Set<Integer> pidSet = new HashSet<>();
+        for(CpProduct cpProduct:PB){
+            pidSet.add(cpProduct.getPid());
+        }
+        List<Product> pList = productRepository.findAllById(pidSet);
+        cpVM.setList(pList);
+        if(cp!=null)
+            return ResultVOUtil.success(cpVM);
         return ResultVOUtil.error("1","所查询的cp不存在!");
+    }
+
+    public List<CpProduct> findCpProductListBy(Integer pid) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<CpProduct> query = cb.createQuery(CpProduct.class);
+        Root<CpProduct> cpRoot = query.from(CpProduct.class);
+        query.select(cpRoot);
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(cpRoot.get("cpid"), pid));
+        //where
+        query.where(predicates.toArray(new Predicate[]{}));
+        TypedQuery<CpProduct> typedQuery = entityManager.createQuery(query);
+        List <CpProduct> content = typedQuery.getResultList();
+        return content;
+    }
+
+    public ResultVO<?> findAllOfPage(){
+        return null;
     }
 
     /**
@@ -277,6 +299,27 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
 //        countQuery.where(predicates.toArray(new Predicate[]{}));
 //        Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
 //        return new PageImpl<>(content, null,1);
+    }
+
+    public Page <Cp> findByPage(CpVM request) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Cp> query = cb.createQuery(Cp.class);
+        Root<Cp> cpRoot = query.from(Cp.class);
+        query.select(cpRoot);
+        List<Predicate> predicates = new ArrayList<>();
+        if (isId(request.getId())) {
+            predicates.add(cb.equal(cpRoot.get("id"), request.getId()));
+        }
+        //where
+        query.where(predicates.toArray(new Predicate[]{}));
+        TypedQuery<Cp> typedQuery = entityManager.createQuery(query);
+        List <Cp> content = typedQuery.getResultList();
+//        return content;
+//        CriteriaQuery <Long> countQuery = cb.createQuery(Long.class);
+//        countQuery.select(cb.count(countQuery.from(Product.class)));查数量
+//        countQuery.where(predicates.toArray(new Predicate[]{}));
+//        Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
+        return new PageImpl<Cp>(content, PageRequest.of(request.getPageNum(), request.getPageSize()),1);
     }
 
 

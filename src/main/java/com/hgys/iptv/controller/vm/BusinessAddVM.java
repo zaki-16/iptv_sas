@@ -3,7 +3,7 @@ package com.hgys.iptv.controller.vm;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "结算单维度新增VM")
+@ApiModel(value = "业务修改新增VM")
 public class BusinessAddVM {
     @ApiModelProperty("主键，新增时填写无效")
     private Integer id;
@@ -13,7 +13,7 @@ public class BusinessAddVM {
     private Integer bizType;
     @ApiModelProperty("结算类型")
     private Integer settleType;
-    @ApiModelProperty("结算类型")
+    @ApiModelProperty("状态")
     private Integer status;
 
     public Integer getId() {

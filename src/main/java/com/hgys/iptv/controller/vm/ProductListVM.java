@@ -1,8 +1,11 @@
 package com.hgys.iptv.controller.vm;
 
+import com.hgys.iptv.model.Business;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * @ClassName BusinessListVM
@@ -10,6 +13,7 @@ import java.sql.Timestamp;
  * @Date: 2019/5/9 09:46
  * @Description: TODO
  */
+@Data
 public class ProductListVM {
 
     /** 主键 */
@@ -44,66 +48,31 @@ public class ProductListVM {
     @ApiModelProperty("逻辑删除(0:否；1:是)")
     private Integer isdelete;
 
-    public Integer getId() {
-        return id;
-    }
+    //    分页
+    private Integer pageNum;
+    private Integer pageSize;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    /**
+     * 关联的业务列表
+     */
+    private List<Business> list;
 
-    public String getName() {
-        return name;
-    }
+    /**
+     * 业务表
+     */
+    public static class Business1{
+        /**
+         * 主键
+         */
+        private Integer id;
+        /**
+         * 名称
+         */
+        private String name;
+        /**
+         * 编码
+         */
+        private String code;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public Timestamp getInputTime() {
-        return inputTime;
-    }
-
-    public void setInputTime(Timestamp inputTime) {
-        this.inputTime = inputTime;
-    }
-
-    public Timestamp getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Timestamp modifyTime) {
-        this.modifyTime = modifyTime;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Integer getIsdelete() {
-        return isdelete;
-    }
-
-    public void setIsdelete(Integer isdelete) {
-        this.isdelete = isdelete;
     }
 }
