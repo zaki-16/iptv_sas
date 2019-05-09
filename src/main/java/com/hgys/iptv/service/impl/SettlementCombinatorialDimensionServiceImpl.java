@@ -98,6 +98,7 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultVO<?> batchLogicDelete(String ids) {
         try{
@@ -105,7 +106,7 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
             for (String s : idLists){
                 settlementCombinatorialDimensionMasterRepository.batchLogicDelete(Integer.parseInt(s));
 
-                SettlementCombinatorialDimensionMaster byId = settlementCombinatorialDimensionMasterRepository.findById(s).orElseThrow(
+                SettlementCombinatorialDimensionMaster byId = settlementCombinatorialDimensionMasterRepository.findById(Integer.parseInt(s)).orElseThrow(
                         () -> new IllegalArgumentException("未查询到数据")
                 );
 

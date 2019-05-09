@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -33,5 +34,7 @@ public interface SettlementDimensionRepository extends JpaRepository<SettlementD
     @Modifying
     @Query(value = "update SettlementDimension set isdelete = 1 WHERE id = ?1")
     void batchLogicDelete(int id);
+
+    List<SettlementDimension> findByIsdelete(int isDelete);
 
 }

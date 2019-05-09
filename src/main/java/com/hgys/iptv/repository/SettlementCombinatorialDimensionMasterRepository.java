@@ -23,6 +23,6 @@ public interface SettlementCombinatorialDimensionMasterRepository extends JpaRep
      */
     @Modifying
     @Query(value = "update SettlementCombinatorialDimensionMaster set isdelete = 1 WHERE id = ?1")
-    void batchLogicDelete(int id);
+    void batchLogicDelete(Integer id);
 }
 

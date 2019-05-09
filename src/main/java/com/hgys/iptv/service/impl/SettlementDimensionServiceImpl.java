@@ -3,14 +3,12 @@ package com.hgys.iptv.service.impl;
 import com.hgys.iptv.controller.assemlber.SettlementDimensionControllerAssemlber;
 import com.hgys.iptv.controller.vm.SettlementDimensionAddVM;
 import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
-import com.hgys.iptv.model.SettlementDimension;
+import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.SettlementDimensionRepository;
 import com.hgys.iptv.service.SettlementDimensionService;
-import com.hgys.iptv.util.CodeUtil;
-import com.hgys.iptv.util.ResultVOUtil;
-import com.hgys.iptv.util.UpdateTool;
+import com.hgys.iptv.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.Predicate;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -32,6 +31,9 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
 
     @Autowired
     private SettlementDimensionControllerAssemlber settlementDimensionControllAssemlber;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Override
     public ResultVO<?> insterSettlementDimension(SettlementDimensionAddVM vm) {
@@ -141,8 +143,13 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
 
     @Override
     public List<SettlementDimension> findAll() {
-        return settlementDimensionRepository.findAll();
+        return settlementDimensionRepository.findByIsdelete(0);
     }
 
+    public void a(){
+        JpqlQuery<Cp,Cp> jpqlQuery = new JpqlQuery<>();
+
+//        jpqlQuery.setEntityManager(entityManager).select(Cp.class).from(Cp.class).innerJoin(Product.class,new JoinCondition<>(Product.class, Product_.id,Cp.class, Cp_.id));
+    }
 
 }
