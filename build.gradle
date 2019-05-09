@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.1.4.RELEASE'
     id 'java'
     id "io.franzbecker.gradle-lombok" version "3.0.0"
+//    id "at.comm_unity.gradle.plugins.jpamodelgen" version "1.1.4"
 }
 
 apply plugin: 'io.spring.dependency-management'
