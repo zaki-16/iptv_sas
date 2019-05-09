@@ -72,9 +72,7 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
             List<OrderBusinessComparisonAddLIstVM> list =  vm.getList();
 
             for (OrderBusinessComparisonAddLIstVM v : list){
-                if (StringUtils.isBlank(v.getCp_name())){
-                    return ResultVOUtil.error("1","CP名称不能为空");
-                }else if (StringUtils.isBlank(v.getCp_code())){
+                if (StringUtils.isBlank(v.getCp_code())){
                     return ResultVOUtil.error("1","CP编码不能为空");
                 }
 
@@ -204,12 +202,12 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
             List<Predicate> predicates = new ArrayList<>();
 
             if (StringUtils.isNotBlank(name)) {
-                Predicate condition = builder.like(root.get("name"), name);
+                Predicate condition = builder.like(root.get("name"), "%"+name+"%");
                 predicates.add(condition);
             }
 
             if (StringUtils.isNotBlank(code)) {
-                Predicate condition = builder.like(root.get("code"), code);
+                Predicate condition = builder.like(root.get("code"), "%"+code+"%");
                 predicates.add(condition);
             }
 
@@ -219,12 +217,12 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
             }
 
             if (StringUtils.isNotBlank(businessCode)) {
-                Predicate condition = builder.like(root.get("businessCode"), businessCode);
+                Predicate condition = builder.like(root.get("businessCode"), "%"+businessCode+"%");
                 predicates.add(condition);
             }
 
             if (StringUtils.isNotBlank(businessName)) {
-                Predicate condition = builder.like(root.get("businessName"), businessName);
+                Predicate condition = builder.like(root.get("businessName"), "%"+businessName+"%");
                 predicates.add(condition);
             }
 

@@ -1,13 +1,16 @@
 package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.controller.assemlber.CpControllerAssemlber;
+import com.hgys.iptv.controller.vm.CpAddVM;
 import com.hgys.iptv.controller.vm.CpSaveAndUpdateVM;
 import com.hgys.iptv.controller.vm.CpControllerListVM;
 import com.hgys.iptv.model.Cp;
+import com.hgys.iptv.model.Product;
 import com.hgys.iptv.model.SettlementDimension;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.CpRepository;
+import com.hgys.iptv.repository.ProductRepository;
 import com.hgys.iptv.service.CpService;
 import com.hgys.iptv.util.*;
 import org.apache.commons.lang3.StringUtils;
@@ -23,9 +26,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Auther: wangz
@@ -37,7 +38,10 @@ public class CpServiceImpl implements CpService {
     @Autowired
     private CpRepository cpRepository;
     @Autowired
+    ProductRepository productRepository;
+    @Autowired
     CpControllerAssemlber assemlber;
+
 
     /**
      * cp 新增
@@ -46,35 +50,49 @@ public class CpServiceImpl implements CpService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO<?> save(CpSaveAndUpdateVM vm){
-        //校验cp名称是否已经存在
-        Cp byName = cpRepository.findByName(vm.getName());
-        if (null != byName){
-            return ResultVOUtil.error("1",byName.getName() + "名称已经存在");
-        }
-        String[] cols = {vm.getName(),vm.getStatus().toString()};
-        if(!Validator.validEmptyPass(cols))//必填字段不为空则插入
-            return ResultVOUtil.error("1","有必填字段未填写！");
-        Cp cp = new Cp();
-        /**
-         * 所属产品（必填，列表展示）、
-         */
-        cp.setName(vm.getName());
-        cp.setCpAbbr(vm.getCpAbbr());
-        cp.setStatus(vm.getStatus());
-        cp.setContactNm(vm.getContactNm());
-        cp.setContactTel(vm.getContactTel());
-        cp.setContactMail(vm.getContactMail());
-        cp.setNote(vm.getNote());
-        cp.setRegisTime(new Timestamp(System.currentTimeMillis()));//注册时间
-        cp.setModifyTime(new Timestamp(System.currentTimeMillis()));//最后修改时间
-        cp.setCode(CodeUtil.getOnlyCode("SDS",5));//cp编码
-        cp.setIsdelete(0);//删除状态
+    public ResultVO<?> save(CpAddVM vm){
+        try {
+            //校验cp名称是否已经存在
+            Cp byName = cpRepository.findByName(vm.getName());
+            if (null != byName) {
+                return ResultVOUtil.error("1", byName.getName() + "名称已经存在");
+            }
+            String[] cols = {vm.getName(), vm.getStatus().toString()};
+            if (!Validator.validEmptyPass(cols))//必填字段不为空则插入
+                return ResultVOUtil.error("1", "有必填字段未填写！");
+            Cp cp = new Cp();
+            BeanUtils.copyProperties(vm, cp);
+            cp.setRegisTime(new Timestamp(System.currentTimeMillis()));//注册时间
+            cp.setModifyTime(new Timestamp(System.currentTimeMillis()));//最后修改时间
+            cp.setCode(CodeUtil.getOnlyCode("SDS", 5));//cp编码
+            cp.setIsdelete(0);//删除状态
+            //处理关系
+//        cpid对应的产品列表
+            List<String> idLists = Arrays.asList(StringUtils.split(vm.getIds(), ","));
+            Set<Integer> idSet = new HashSet();
+            for(String s:idLists){
+                idSet.add(Integer.parseInt(s));
+            }
 
-        Cp cp_add = cpRepository.save(cp);
-        if(cp_add !=null)
-            return ResultVOUtil.success(Boolean.TRUE);
-        return ResultVOUtil.error("1","新增失败！");
+//            Iterator<Integer> it =idset.iterator();
+//            List <Product> prods= new ArrayList<>(idLists.size());
+//            while(it.hasNext()){
+//                Product product = productRepository.findById(it.next()).get();
+//                //关联cp到Product
+//                prods.add(product);
+//                cp.getProductList().add(product);
+//            }
+            List<Product> prods =productRepository.findAllById(idSet);
+            for (Product product : prods) {
+                product.getCpList().add(cp);
+                productRepository.save(product);
+            }
+            cpRepository.save(cp);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultVOUtil.error("1","新增失败！");
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
     }
 
 
@@ -141,7 +159,11 @@ public class CpServiceImpl implements CpService {
      */
     @Override
     public ResultVO<?> findById(Integer id) {
+        Set<Integer> idSet = new HashSet<>();
+        idSet.add(id);
+        List<Product> prods =productRepository.findAllById(idSet);
         Cp cp = cpRepository.findById(id).get();
+        cp.setProductList(prods);
         if(cp!=null)
             return ResultVOUtil.success(cp);
         return ResultVOUtil.error("1","所查询的cp不存在!");

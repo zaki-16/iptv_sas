@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @ApiModel(value = "cp新增VM")
 public class CpAddVM {
@@ -42,6 +43,17 @@ public class CpAddVM {
 
     @ApiModelProperty("备注")
     private String note;
+
+    @ApiModelProperty(value = "cp关联的产品集合id字符串")//dataType = "List"
+    private String ids;
+
+    public String getIds() {
+        return ids;
+    }
+
+    public void setIds(String ids) {
+        this.ids = ids;
+    }
 
     public String getName() {
         return name;

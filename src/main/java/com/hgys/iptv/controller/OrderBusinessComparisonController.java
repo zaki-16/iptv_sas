@@ -27,7 +27,7 @@ public class OrderBusinessComparisonController {
 
     @PostMapping("/addOrderBusinessComparison")
     @ApiOperation(value = "新增结算类型-业务定比例",notes = "返回处理结果，false或true")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> addOrderBusinessComparison(@ApiParam(value = "结算类型-业务定比例VM") @RequestBody()OrderBusinessComparisonAddVM vm){
         return orderBusinessComparisonService.addOrderBusinessComparison(vm);
     }
@@ -55,11 +55,11 @@ public class OrderBusinessComparisonController {
     }
 
     @GetMapping("/findById")
-    @ApiOperation(value = "通过编码查询单条记录",notes = "JSON格式数据")
+    @ApiOperation(value = "通过Id查询单条记录",notes = "JSON格式数据")
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> findById(@ApiParam(value = "结算类型-业务定比例Id",required = true) @RequestParam("id")String id){
         if (StringUtils.isBlank(id)){
-            return ResultVOUtil.error("1","结算类型-业务定比例code不能为空");
+            return ResultVOUtil.error("1","结算类型-业务定比例Id不能为空");
         }
         OrderBusinessComparisonQueryVM vm = orderBusinessComparisonService.findById(id);
         return ResultVOUtil.success(vm);
