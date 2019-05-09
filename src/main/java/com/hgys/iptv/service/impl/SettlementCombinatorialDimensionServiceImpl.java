@@ -169,11 +169,11 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
             List<Predicate> predicates = new ArrayList<>();
 
             if (StringUtils.isNotBlank(name)) {
-                Predicate condition = builder.like(root.get("name"), name);
+                Predicate condition = builder.like(root.get("name"), "%"+name+"%");
                 predicates.add(condition);
             }
             if (StringUtils.isNotBlank(code)) {
-                Predicate condition = builder.like(root.get("code"), code);
+                Predicate condition = builder.like(root.get("code"), "%"+code+"%");
                 predicates.add(condition);
             }
 
