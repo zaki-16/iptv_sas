@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 @ApiModel(value = "cp新增VM")
 public class CpAddVM {
@@ -22,6 +21,8 @@ public class CpAddVM {
      * 注销时间（非必填，列表展示）、
      * 备注（非必填，列表不展示）
      */
+    @ApiModelProperty("主键，新增时填写无效")
+    private Integer id;
 
     @ApiModelProperty("名称") @NotBlank(message = "不能为空")
     private String name;
@@ -46,6 +47,14 @@ public class CpAddVM {
 
     @ApiModelProperty(value = "cp关联的产品集合id字符串")//dataType = "List"
     private String ids;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getIds() {
         return ids;

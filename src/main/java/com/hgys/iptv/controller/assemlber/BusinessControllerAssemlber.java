@@ -1,9 +1,7 @@
 package com.hgys.iptv.controller.assemlber;
 
 import com.hgys.iptv.controller.vm.BusinessControllerListVM;
-import com.hgys.iptv.controller.vm.CpControllerListVM;
 import com.hgys.iptv.model.Business;
-import com.hgys.iptv.model.Cp;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 

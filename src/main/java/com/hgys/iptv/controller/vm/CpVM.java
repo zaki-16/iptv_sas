@@ -1,29 +1,16 @@
-package com.hgys.iptv.model;
+package com.hgys.iptv.controller.vm;
 
-import javassist.SerialVersionUID;
-
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.Column;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * CP表，关联产品表和业务表
- *
+ * @ClassName CpVM
  * @Auther: wangz
- * @Date: 2019/5/5 16:16
- * @Description:
+ * @Date: 2019/5/9 10:44
+ * @Description: TODO
  */
-@Entity
-@Table(name="cp")
-public class Cp implements Serializable {
-    private static final long serialVersionUID = -60947913577748968L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false, length = 11)
+public class CpVM {
     private Integer id;
-    @Column(name = "name", unique = true, nullable = false, length = 50)
     private String name;
     private String cpAbbr;
     private String code;
@@ -33,13 +20,9 @@ public class Cp implements Serializable {
     private Timestamp regisTime;
     private Timestamp modifyTime;
     private Timestamp cancelTime;
-    @Column(name = "status", nullable = false, length = 2)
     private Integer status;//1.正常 2.结算 3.异常 4.注销
     private String note;
     private Integer isdelete;//0：未删除 1：已删除
-
-//    @ManyToMany(mappedBy = "cpList",cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
-//    private List<Product> productList = new ArrayList<>();
 
     public Integer getId() {
         return id;

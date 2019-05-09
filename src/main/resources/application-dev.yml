@@ -20,6 +20,11 @@ spring:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       ddl-auto: update
+#    open-in-view: false
+#    properties:
+#      enable_lazy_load_no_trans: false
+  #    current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+
   http:
    encoding:
       charset: utf-8

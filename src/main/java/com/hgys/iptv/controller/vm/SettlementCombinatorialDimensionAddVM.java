@@ -2,12 +2,14 @@ package com.hgys.iptv.controller.vm;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.List;
 
 @ApiModel(value = "结算组合维度新增VM")
+@Data
 public class SettlementCombinatorialDimensionAddVM implements Serializable{
 
     @ApiModelProperty("结算组合维度ID")
@@ -25,45 +27,5 @@ public class SettlementCombinatorialDimensionAddVM implements Serializable{
 
     @ApiModelProperty(value = "结算维度组合集合",dataType = "List")
     private List<SettlementDimensionVM> list;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getRemakes() {
-        return remakes;
-    }
-
-    public void setRemakes(String remakes) {
-        this.remakes = remakes;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public List<SettlementDimensionVM> getList() {
-        return list;
-    }
-
-    public void setList(List<SettlementDimensionVM> list) {
-        this.list = list;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
 }
