@@ -40,7 +40,7 @@ public class CpController {
         return  cpService.save(vo);
     }
 
-    @PutMapping("/UpdateCp")
+    @PostMapping("/UpdateCp")
     @ApiOperation(value = "更新cp",notes = "@return：cp对象")
     public ResultVO<?> updateCp(
             @ApiParam(value = "cp修改VM") @RequestBody CpAddVM vo){

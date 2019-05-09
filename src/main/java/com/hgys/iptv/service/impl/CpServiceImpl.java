@@ -263,7 +263,7 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
                 Predicate condition = builder.equal(root.get("status").as(String.class), status);
                 predicates.add(condition);
             }
-            Predicate condition = builder.equal(root.get("isdelete").as(String.class), 0);
+            Predicate condition = builder.equal(root.get("isdelete").as(Integer.class), 0);
             predicates.add(condition);
             if (!predicates.isEmpty()){
                 return builder.and(predicates.toArray(new Predicate[0]));
