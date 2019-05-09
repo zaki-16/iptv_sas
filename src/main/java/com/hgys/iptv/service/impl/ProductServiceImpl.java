@@ -1,29 +1,38 @@
 package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.controller.assemlber.ProductControllerAssemlber;
+import com.hgys.iptv.controller.vm.ProductAddVM;
 import com.hgys.iptv.controller.vm.ProductControllerListVM;
+import com.hgys.iptv.controller.vm.ProductListVM;
+import com.hgys.iptv.model.Business;
 import com.hgys.iptv.model.Product;
+import com.hgys.iptv.model.ProductBusiness;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.BusinessRepository;
-import com.hgys.iptv.repository.CpRepository;
+import com.hgys.iptv.repository.CpProductRepository;
 import com.hgys.iptv.repository.ProductRepository;
 import com.hgys.iptv.service.ProductService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
+import com.hgys.iptv.util.UpdateTool;
 import com.hgys.iptv.util.Validator;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Auther: wangz
@@ -36,27 +45,37 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
     @Autowired
     ProductControllerAssemlber assemlber;
+    @Autowired
+    CpProductRepository cpProductRepository;
+    @Autowired
+    BusinessRepository businessRepository;
+    @Autowired
+    private EntityManager entityManager;
     /**
      * 新增
-     * @param prod
+     * @param vm
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO<?> save(Product prod){
+    public ResultVO<?> save(ProductAddVM vm){
         //校验名称是否已经存在
-        Product byName = productRepository.findByName(prod.getName());
+        Product byName = productRepository.findByName(vm.getName());
         if (null != byName){
             return ResultVOUtil.error("1",byName + "名称已经存在");
         }
-        String[] cols = {prod.getName(),prod.getPrice().toString(),prod.getStatus().toString()};
+        String[] cols = {vm.getName(),vm.getPrice().toString(),vm.getStatus().toString()};
         if(!Validator.validEmptyPass(cols))//必填字段不为空则插入
             return ResultVOUtil.error("1","有必填字段未填写！");
+        Product prod = new Product();
+        BeanUtils.copyProperties(vm,prod);
         prod.setInputTime(new Timestamp(System.currentTimeMillis()));//注册时间
         prod.setModifyTime(new Timestamp(System.currentTimeMillis()));//最后修改时间
         prod.setCode(CodeUtil.getOnlyCode("SDS",5));//cp编码
         prod.setIsdelete(0);//删除状态
+        //处理 product、business、product_business关系
         Product prod_add = productRepository.save(prod);
+
         if(prod_add !=null)
             return ResultVOUtil.success(Boolean.TRUE);
         return ResultVOUtil.error("1","新增失败！");
@@ -70,11 +89,28 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> update(Product prod) {
-        Product prod_up = productRepository.save(prod);
-        if(prod_up !=null)
-            return ResultVOUtil.success(Boolean.TRUE);
-        return ResultVOUtil.error("1","新增失败！");//jpa会调用isNew()方法判定对象是否已存在
+        if (null == prod.getId()){
+            ResultVOUtil.error("1","主键不能为空");
+        }
+        try{
+            //验证名称是否已经存在
+            if (StringUtils.isNotBlank(prod.getName())){
+                Product byName = productRepository.findByName(prod.getName().trim());
+                if (null != byName && !byName.getId().equals(prod.getId()) ){
+                    ResultVOUtil.error("1","名称已经存在");
+                }
+            }
+            Product byId = productRepository.findById(prod.getId()).orElseThrow(()-> new IllegalArgumentException("为查询到ID为:" + prod.getId() + "产品信息"));
+            prod.setModifyTime(new Timestamp(System.currentTimeMillis()));
+            UpdateTool.copyNullProperties(byId,prod);
+            productRepository.saveAndFlush(prod);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
     }
+
 
     /**
      * 逻辑删除，只更新对象的isdelete字段值 0：未删除 1：已删除
@@ -104,17 +140,43 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * 单查询--根据id
+     * 单查询--根据pid查所有产品和关联的业务列表
      * @param id
      * @return
      */
     @Override
     public ResultVO<?> findById(Integer id) {
         Product prod = productRepository.findById(id).get();
+        ProductListVM productListVM = new ProductListVM();
+        BeanUtils.copyProperties(prod,productListVM);
+
+        List <ProductBusiness> PB = findProductBusinessListBy(id);
+        Set<Integer> bidSet = new HashSet<>();
+        for(ProductBusiness productBusiness:PB){
+            bidSet.add(productBusiness.getBid());
+        }
+        List<Business> bList = businessRepository.findAllById(bidSet);
+        productListVM.setList(bList);
         if(prod!=null)
-            return ResultVOUtil.success(prod);
+            return ResultVOUtil.success(productListVM);
         return ResultVOUtil.error("1","所查询的cp不存在!");
     }
+
+    public List<ProductBusiness> findProductBusinessListBy(Integer pid) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<ProductBusiness> query = cb.createQuery(ProductBusiness.class);
+        Root<ProductBusiness> cpRoot = query.from(ProductBusiness.class);
+        query.select(cpRoot);
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(cpRoot.get("pid"), pid));
+        //where
+        query.where(predicates.toArray(new Predicate[]{}));
+        TypedQuery<ProductBusiness> typedQuery = entityManager.createQuery(query);
+        List <ProductBusiness> content = typedQuery.getResultList();
+        return content;
+    }
+
+
 
     /**
      * 单查询--根据code

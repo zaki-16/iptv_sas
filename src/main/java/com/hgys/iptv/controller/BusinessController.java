@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.controller.vm.BusinessAddVM;
 import com.hgys.iptv.controller.vm.BusinessControllerListVM;
 import com.hgys.iptv.model.Business;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -34,16 +35,16 @@ public class BusinessController {
     @ApiOperation(value = "新增业务",notes = "@return：业务对象")
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> saveBusiness(
-            @ApiParam(value = "业务新增VM")  @RequestBody() BusinessControllerListVM vo){
+            @ApiParam(value = "业务新增VM")  @RequestBody() BusinessAddVM vo){
         Business business = new Business();
         BeanUtils.copyProperties(vo,business);
         return businessService.save(business);
     }
 
-    @PutMapping("/UpdateBusiness")
+    @PostMapping("/UpdateBusiness")
     @ApiOperation(value = "更新业务",notes = "@return：业务对象")
     public ResultVO<?> updateBusiness(
-            @ApiParam(value = "业务修改VM") @RequestBody() BusinessControllerListVM vo){
+            @ApiParam(value = "业务修改VM") @RequestBody() BusinessAddVM vo){
         Business business = new Business();
         BeanUtils.copyProperties(vo,business);
         return businessService.update(business);
@@ -56,13 +57,13 @@ public class BusinessController {
     @ApiOperation(value = "逻辑删除业务",notes = "@return：true/false")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResultVO<?> logicDelete(
-            @ApiParam(value = "业务对象",required = true)Integer id){
+            @ApiParam(value = "业务id",required = true)Integer id){
         return businessService.logicDelete(id);
     }
 
     @DeleteMapping("/batchLogicDeleteBusiness")
     @ApiOperation(value = "批量逻辑删除业务",notes = "@return：true/false")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> batchLogicDelete(String ids){
         return businessService.batchLogicDelete(ids);
     }
@@ -85,9 +86,9 @@ public class BusinessController {
     }
 
 
-//    @GetMapping("/findAllBusiness")
-//    @ApiOperation(value = "查询业务列表",notes = "@return：业务对象列表")
-//    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/findAllBusiness")
+    @ApiOperation(value = "查询业务列表",notes = "@return：业务对象列表")
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> findAll() {
         return businessService.findAll();
     }

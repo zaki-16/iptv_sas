@@ -5,10 +5,14 @@ import com.hgys.iptv.controller.vm.SettlementDimensionAddVM;
 import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
+import com.hgys.iptv.model.qmodel.QSettlementDimension;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.SettlementDimensionRepository;
 import com.hgys.iptv.service.SettlementDimensionService;
 import com.hgys.iptv.util.*;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.Predicate;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -33,7 +38,9 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
     private SettlementDimensionControllerAssemlber settlementDimensionControllAssemlber;
 
     @Autowired
+    @PersistenceContext
     private EntityManager entityManager;
+
 
     @Override
     public ResultVO<?> insterSettlementDimension(SettlementDimensionAddVM vm) {
@@ -144,5 +151,22 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
     @Override
     public List<SettlementDimension> findAll() {
         return settlementDimensionRepository.findByIsdelete(0);
+    }
+
+
+    @Override
+    public List<SettlementDimension> a(){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        QSettlementDimension dimension = QSettlementDimension.settlementDimension;
+        List<SettlementDimension> fetch = queryFactory.select(
+                Projections.bean(
+                        SettlementDimension.class,
+                        dimension.code,
+                        dimension.id,
+                        dimension.name
+                )
+        ).from(dimension).where(dimension.id.eq(1)).fetch();
+
+        return fetch;
     }
 }

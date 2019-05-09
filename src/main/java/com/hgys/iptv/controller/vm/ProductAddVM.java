@@ -18,6 +18,9 @@ public class ProductAddVM {
     @ApiModelProperty("状态")@NotBlank(message = "不能为空")
     private Integer status;
 
+    @ApiModelProperty("状态")
+    private String ids;
+
     public Integer getId() {
         return id;
     }

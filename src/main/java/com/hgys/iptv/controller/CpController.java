@@ -52,9 +52,9 @@ public class CpController {
     /**
      * cp删除--逻辑删除，只更新对象的isdelete字段值 0：未删除 1：已删除
      */
-    @DeleteMapping("/logicDeleteCp")
-    @ApiOperation(value = "逻辑删除cp",notes = "@return：true/false")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    @DeleteMapping("/logicDeleteCp")
+//    @ApiOperation(value = "逻辑删除cp",notes = "@return：true/false")
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResultVO<?> logicDelete(
             @ApiParam(value = "cp对象",required = true)Integer id){
         return cpService.logicDelete(id);

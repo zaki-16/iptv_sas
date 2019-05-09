@@ -1,8 +1,10 @@
 package com.hgys.iptv.controller;
 
 import com.hgys.iptv.exception.BaseException;
+import com.hgys.iptv.model.SettlementDimension;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
+import com.hgys.iptv.service.SettlementDimensionService;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.excel.ExcelForWebUtil;
 import com.hgys.iptv.util.excel.PathConstant;
@@ -10,11 +12,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.ResourceUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +29,9 @@ import java.util.Map;
 @RequestMapping("/demo")
 @Api(value = "Demo",tags = "demo演示接口")
 public class DemoContronller {
+
+    @Autowired
+    private SettlementDimensionService settlementDimensionService;
 
     @GetMapping("demoReturn")
     @ApiOperation(value = "演示接口",notes = "返回json数据类型")
@@ -69,4 +73,12 @@ public class DemoContronller {
         ExcelForWebUtil.exportExcel(response,beanParams,"test.xlsx", PathConstant.getExcelExportResource(),"导出测试文件.xlsx");
 
     }
+
+    @GetMapping("/test")
+    @ApiOperation(value = "QueryDSL  SQL方法测试",notes = "")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<SettlementDimension> updateSettlementDimension(){
+        return settlementDimensionService.a();
+    }
+
 }

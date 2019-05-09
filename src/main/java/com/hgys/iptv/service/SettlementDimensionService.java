@@ -63,4 +63,6 @@ public interface SettlementDimensionService {
      * @return
      */
     List<SettlementDimension> findAll();
+
+    List<SettlementDimension> a();
 }

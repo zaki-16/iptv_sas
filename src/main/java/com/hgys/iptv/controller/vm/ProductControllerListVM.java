@@ -17,7 +17,7 @@ public class ProductControllerListVM {
 
     /** 主键*/
     @ApiModelProperty("主键")
-    private String id;
+    private Integer id;
 
     /** 名称*/
     @ApiModelProperty("名称")
@@ -47,11 +47,11 @@ public class ProductControllerListVM {
     @ApiModelProperty("逻辑删除(0:否；1:是)")
     private Integer isdelete;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
