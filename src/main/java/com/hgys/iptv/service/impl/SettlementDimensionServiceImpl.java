@@ -145,11 +145,4 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
     public List<SettlementDimension> findAll() {
         return settlementDimensionRepository.findByIsdelete(0);
     }
-
-    public void a(){
-        JpqlQuery<Cp,Cp> jpqlQuery = new JpqlQuery<>();
-
-//        jpqlQuery.setEntityManager(entityManager).select(Cp.class).from(Cp.class).innerJoin(Product.class,new JoinCondition<>(Product.class, Product_.id,Cp.class, Cp_.id));
-    }
-
 }
