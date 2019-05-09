@@ -30,10 +30,14 @@ public class Business {
     private Integer isdelete;//0：未删除 1：已删除
 
     @ManyToMany
-    @JoinTable(name="cp_business",joinColumns = {@JoinColumn(name="bid")},inverseJoinColumns={@JoinColumn(name="cpid")})
+    @JoinTable(name="cp_business",
+            joinColumns = {@JoinColumn(name="bid",referencedColumnName="id")},
+            inverseJoinColumns={@JoinColumn(name="cpid",referencedColumnName="id")})
     private List<Cp> cpList;
     @ManyToMany
-    @JoinTable(name="business_product",joinColumns = {@JoinColumn(name="bid")},inverseJoinColumns={@JoinColumn(name="pid")})
+    @JoinTable(name="business_product",
+            joinColumns = {@JoinColumn(name="bid",referencedColumnName="id")},
+            inverseJoinColumns={@JoinColumn(name="pid",referencedColumnName="id")})
     private List<Product> productList;
 
     public Integer getId() {

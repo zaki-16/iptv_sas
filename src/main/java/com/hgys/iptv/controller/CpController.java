@@ -37,7 +37,7 @@ public class CpController {
     @ApiOperation(value = "新增cp",notes = "@return：cp对象")
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> saveCp(
-            @ApiParam(value = "cp新增VM")  @RequestBody CpSaveAndUpdateVM vo){
+            @ApiParam(value = "cp新增VM")  @RequestBody CpAddVM vo){
        return cpService.save(vo);
     }
 

@@ -1,12 +1,8 @@
 package com.hgys.iptv.model;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,12 +33,9 @@ public class Cp {
     private Integer status;//1.正常 2.结算 3.异常 4.注销
     private String note;
     private Integer isdelete;//0：未删除 1：已删除
-    @ManyToMany
-    @JoinTable(name="cp_business",joinColumns = {@JoinColumn(name="cpid")},inverseJoinColumns={@JoinColumn(name="bid")})
-    private List<Business> businessList;
-    @ManyToMany
-    @JoinTable(name="cp_product",joinColumns = {@JoinColumn(name="cpid")},inverseJoinColumns={@JoinColumn(name="pid")})
-    private List<Product> productList;
+
+    @ManyToMany(mappedBy = "cpList",cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
+    private List<Product> productList = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -146,14 +139,6 @@ public class Cp {
 
     public void setIsdelete(Integer isdelete) {
         this.isdelete = isdelete;
-    }
-
-    public List<Business> getBusinessList() {
-        return businessList;
-    }
-
-    public void setBusinessList(List<Business> businessList) {
-        this.businessList = businessList;
     }
 
     public List<Product> getProductList() {

@@ -2,6 +2,7 @@ package com.hgys.iptv.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,12 +25,15 @@ public class Product {
     private Integer status;//0.禁用 1.启用
     private Integer isdelete;//0：未删除 1：已删除
 
-    @ManyToMany(cascade = CascadeType.ALL,fetch= FetchType.EAGER)
-    @JoinTable(name="cp_product",joinColumns = {@JoinColumn(name="pid")},inverseJoinColumns={@JoinColumn(name="cpid")})
-    private List<Cp> cpList;
     @ManyToMany
-    @JoinTable(name="business_product",joinColumns = {@JoinColumn(name="pid")},inverseJoinColumns={@JoinColumn(name="bid")})
-    private List<Business> businessList;
+    @JoinTable(name="cp_product",
+            joinColumns = {@JoinColumn(name="pid",referencedColumnName="id")},
+            inverseJoinColumns={@JoinColumn(name="cpid",referencedColumnName="id")})
+    private List<Cp> cpList = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "productList",cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
+    private List<Business> businessList = new ArrayList<>();;
+
     public Integer getId() {
         return id;
     }
