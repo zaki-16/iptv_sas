@@ -1,6 +1,7 @@
 package com.hgys.iptv.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,8 @@ import java.util.List;
  */
 @Entity
 @Table(name="product")
-public class Product {
+public class Product implements Serializable {
+    private static final long serialVersionUID = -4437702247979414602L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false, length = 11)
@@ -25,14 +27,14 @@ public class Product {
     private Integer status;//0.禁用 1.启用
     private Integer isdelete;//0：未删除 1：已删除
 
-    @ManyToMany
-    @JoinTable(name="cp_product",
-            joinColumns = {@JoinColumn(name="pid",referencedColumnName="id")},
-            inverseJoinColumns={@JoinColumn(name="cpid",referencedColumnName="id")})
-    private List<Cp> cpList = new ArrayList<>();
-
-    @ManyToMany(mappedBy = "productList",cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
-    private List<Business> businessList = new ArrayList<>();;
+//    @ManyToMany
+//    @JoinTable(name="cp_product",
+//            joinColumns = {@JoinColumn(name="pid",referencedColumnName="id")},
+//            inverseJoinColumns={@JoinColumn(name="cpid",referencedColumnName="id")})
+//    private List<Cp> cpList = new ArrayList<>();
+//
+//    @ManyToMany(mappedBy = "productList",cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
+//    private List<Business> businessList = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -98,19 +100,4 @@ public class Product {
         this.isdelete = isdelete;
     }
 
-    public List<Cp> getCpList() {
-        return cpList;
-    }
-
-    public void setCpList(List<Cp> cpList) {
-        this.cpList = cpList;
-    }
-
-    public List<Business> getBusinessList() {
-        return businessList;
-    }
-
-    public void setBusinessList(List<Business> businessList) {
-        this.businessList = businessList;
-    }
 }

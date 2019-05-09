@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.controller.vm.ProductAddVM;
 import com.hgys.iptv.controller.vm.ProductControllerListVM;
 import com.hgys.iptv.model.Product;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -34,7 +35,7 @@ public class ProductController {
     @ApiOperation(value = "新增产品",notes = "@return：产品对象")
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> saveProduct(
-            @ApiParam(value = "产品新增VM")  @RequestBody() ProductControllerListVM vo){
+            @ApiParam(value = "产品新增VM")  @RequestBody() ProductAddVM vo){
         Product prod = new Product();
         BeanUtils.copyProperties(vo,prod);
         return productService.save(prod);
@@ -76,9 +77,9 @@ public class ProductController {
         return productService.findById(id);
     }
 
-    @GetMapping("/findProductByCode")
-    @ApiOperation(value = "按code查询产品",notes = "@return：产品对象")
-    @ResponseStatus(HttpStatus.OK)
+//    @GetMapping("/findProductByCode")
+//    @ApiOperation(value = "按code查询产品",notes = "@return：产品对象")
+//    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> findByCode(
             @ApiParam(value = "产品编码code",required = true) @RequestParam("code")String code) {
         return productService.findByCode(code);

@@ -3,17 +3,19 @@ package com.hgys.iptv.controller.vm;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "结算单维度新增VM")
-public class BusinessAddVM {
+import javax.validation.constraints.NotBlank;
+
+@ApiModel(value = "产品新增VM")
+public class ProductAddVM {
     @ApiModelProperty("主键，新增时填写无效")
     private Integer id;
-    @ApiModelProperty("名称")
+    @ApiModelProperty("名称") @NotBlank(message = "不能为空")
     private String name;
-    @ApiModelProperty("业务类型")
-    private Integer bizType;
-    @ApiModelProperty("结算类型")
-    private Integer settleType;
-    @ApiModelProperty("结算类型")
+
+    @ApiModelProperty("价格")
+    private Double price;
+
+    @ApiModelProperty("状态")@NotBlank(message = "不能为空")
     private Integer status;
 
     public Integer getId() {
@@ -32,20 +34,12 @@ public class BusinessAddVM {
         this.name = name;
     }
 
-    public Integer getBizType() {
-        return bizType;
+    public Double getPrice() {
+        return price;
     }
 
-    public void setBizType(Integer bizType) {
-        this.bizType = bizType;
-    }
-
-    public Integer getSettleType() {
-        return settleType;
-    }
-
-    public void setSettleType(Integer settleType) {
-        this.settleType = settleType;
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     public Integer getStatus() {

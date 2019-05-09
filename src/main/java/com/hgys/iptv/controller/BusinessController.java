@@ -76,18 +76,18 @@ public class BusinessController {
         return businessService.findById(id);
     }
 
-    @GetMapping("/findBusinessByCode")
-    @ApiOperation(value = "按code查询业务",notes = "@return：业务对象")
-    @ResponseStatus(HttpStatus.OK)
+//    @GetMapping("/findBusinessByCode")
+//    @ApiOperation(value = "按code查询业务",notes = "@return：业务对象")
+//    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> findByCode(
             @ApiParam(value = "业务编码code",required = true) @RequestParam("code")String code) {
         return businessService.findByCode(code);
     }
 
 
-    @GetMapping("/findAllBusiness")
-    @ApiOperation(value = "查询业务列表",notes = "@return：业务对象列表")
-    @ResponseStatus(HttpStatus.OK)
+//    @GetMapping("/findAllBusiness")
+//    @ApiOperation(value = "查询业务列表",notes = "@return：业务对象列表")
+//    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> findAll() {
         return businessService.findAll();
     }
@@ -100,7 +100,7 @@ public class BusinessController {
             @ApiParam(value = "业务编码") @RequestParam(value = "code",required = false)String code,
             @ApiParam(value = "业务类型",example = "0:视频类、1:非视频类") @RequestParam(value = "bizType",required = false)String bizType,
             @ApiParam(value = "结算类型",example = "1:按比例结算、2:按订购量结算") @RequestParam(value = "settleType",required = false)String settleType,
-            @ApiParam(value = "状态",example = "0:禁用 1:启用") @RequestParam(value = "status",required = false)String status,
+            @ApiParam(value = "状态",example = "0:启用 1:禁用") @RequestParam(value = "status",required = false)String status,
             @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
             @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
 
