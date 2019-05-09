@@ -2,6 +2,7 @@ package com.hgys.iptv.controller;
 
 import com.hgys.iptv.controller.vm.ProductAddVM;
 import com.hgys.iptv.controller.vm.ProductControllerListVM;
+import com.hgys.iptv.controller.vm.ProductListVM;
 import com.hgys.iptv.model.Product;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.ProductService;
@@ -35,13 +36,11 @@ public class ProductController {
     @ApiOperation(value = "新增产品",notes = "@return：产品对象")
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> saveProduct(
-            @ApiParam(value = "产品新增VM")  @RequestBody() ProductAddVM vo){
-        Product prod = new Product();
-        BeanUtils.copyProperties(vo,prod);
-        return productService.save(prod);
+            @ApiParam(value = "产品新增VM")  @RequestBody() ProductAddVM vm){
+        return productService.save(vm);
     }
 
-    @PutMapping("/UpdateProduct")
+    @PostMapping("/UpdateProduct")
     @ApiOperation(value = "更新产品",notes = "@return：产品对象")
     public ResultVO<?> updateProduct(
             @ApiParam(value = "产品修改VM") @RequestBody() ProductControllerListVM vo){
