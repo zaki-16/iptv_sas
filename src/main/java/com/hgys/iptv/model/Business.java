@@ -1,6 +1,7 @@
 package com.hgys.iptv.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -13,7 +14,8 @@ import java.util.List;
  */
 @Entity
 @Table(name="business")
-public class Business {
+public class Business implements Serializable {
+    private static final long serialVersionUID = 8251997638206868112L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false, length = 11)
@@ -29,16 +31,16 @@ public class Business {
     private Integer status;//0.禁用 1.启用
     private Integer isdelete;//0：未删除 1：已删除
 
-    @ManyToMany
-    @JoinTable(name="cp_business",
-            joinColumns = {@JoinColumn(name="bid",referencedColumnName="id")},
-            inverseJoinColumns={@JoinColumn(name="cpid",referencedColumnName="id")})
-    private List<Cp> cpList;
-    @ManyToMany
-    @JoinTable(name="business_product",
-            joinColumns = {@JoinColumn(name="bid",referencedColumnName="id")},
-            inverseJoinColumns={@JoinColumn(name="pid",referencedColumnName="id")})
-    private List<Product> productList;
+//    @ManyToMany
+//    @JoinTable(name="cp_business",
+//            joinColumns = {@JoinColumn(name="bid",referencedColumnName="id")},
+//            inverseJoinColumns={@JoinColumn(name="cpid",referencedColumnName="id")})
+//    private List<Cp> cpList;
+//    @ManyToMany
+//    @JoinTable(name="business_product",
+//            joinColumns = {@JoinColumn(name="bid",referencedColumnName="id")},
+//            inverseJoinColumns={@JoinColumn(name="pid",referencedColumnName="id")})
+//    private List<Product> productList;
 
     public Integer getId() {
         return id;
@@ -112,19 +114,11 @@ public class Business {
         this.isdelete = isdelete;
     }
 
-    public List<Cp> getCpList() {
-        return cpList;
-    }
-
-    public void setCpList(List<Cp> cpList) {
-        this.cpList = cpList;
-    }
-
-    public List<Product> getProductList() {
-        return productList;
-    }
-
-    public void setProductList(List<Product> productList) {
-        this.productList = productList;
-    }
+//    public List<Product> getProductList() {
+//        return productList;
+//    }
+//
+//    public void setProductList(List<Product> productList) {
+//        this.productList = productList;
+//    }
 }

@@ -118,7 +118,7 @@ public class BusinessServiceImpl implements BusinessService {
      */
     @Override
     public ResultVO<?> findById(Integer id) {
-        Business business = businessRepository.findById(id).get();
+        Business business = businessRepository.findById(id).orElse(null);
         if(business!=null)
             return ResultVOUtil.success(business);
         return ResultVOUtil.error("1","所查询的cp不存在!");
