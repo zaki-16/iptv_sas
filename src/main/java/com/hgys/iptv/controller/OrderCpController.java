@@ -103,7 +103,7 @@ public class OrderCpController {
 
 
 
-    @PutMapping("/updateOrderCp")
+    @PostMapping("/updateOrderCp")
     @ApiOperation(value = "修改结算类型-CP定比例",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> updateOrderCp(@ApiParam(value = "结算类型-CP定比例VM") @RequestBody() OrderCPAddVM vo){

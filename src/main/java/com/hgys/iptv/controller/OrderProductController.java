@@ -60,7 +60,7 @@ public class OrderProductController {
     }
 
 
-    @PostMapping("/batchDeleteop")
+    @DeleteMapping("/batchDeleteop")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
     public ResultVO<?> batchDeleteop(@ApiParam(value = "名称",required = true) @RequestParam("ids")String ids){
 

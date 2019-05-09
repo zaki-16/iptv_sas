@@ -77,7 +77,7 @@ public class OrderBusinessController {
     }
 
 
-    @PutMapping("/updateOrderBusiness")
+    @PostMapping("/updateOrderBusiness")
     @ApiOperation(value = "修改结算类型-业务级",notes = "返回处理结果")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> updateOrderBusiness(@ApiParam(value = "结算类型-业务级VM") @RequestBody() OrderBusinessWithCPAddVM vm){

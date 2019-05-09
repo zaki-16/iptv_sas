@@ -64,7 +64,7 @@ public class OrderQuantityController {
     }
 
 
-    @PostMapping("/batchDelete")
+    @DeleteMapping("/batchDelete")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> batchDelete(@ApiParam(value = "名称",required = true) @RequestParam("ids")String ids){
@@ -95,7 +95,7 @@ public class OrderQuantityController {
 
 
 
-    @PutMapping("/updateOrderQuantity")
+    @PostMapping("/updateOrderQuantity")
     @ApiOperation(value = "修改",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> updateOrderQuantity(@ApiParam(value = "名称") @RequestBody() OrderQuantityAddVM vo){
