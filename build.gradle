@@ -2,7 +2,6 @@ plugins {
     id 'org.springframework.boot' version '2.1.4.RELEASE'
     id 'java'
     id "io.franzbecker.gradle-lombok" version "3.0.0"
-//    id "at.comm_unity.gradle.plugins.jpamodelgen" version "1.1.4"
 }
 
 apply plugin: 'io.spring.dependency-management'
@@ -57,5 +56,8 @@ dependencies {
     compile group: 'org.apache.poi', name: 'poi', version: '3.17'
     compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
     compile group: 'net.sf.jxls', name: 'jxls-core', version: '1.0.6'
+
+    compile group: 'org.hibernate', name: 'hibernate-jpamodelgen', version: '5.2.10.Final'
+
 
 }

@@ -8,7 +8,6 @@ import lombok.Data;
  *
  * @author yangpeng
  */
-@Data
 public class BaseException extends RuntimeException {
 
     private ResultEnum error		= ResultEnum.SYSTEM_INTERNAL_ERROR;
