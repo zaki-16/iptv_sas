@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
@@ -57,7 +57,39 @@ dependencies {
     compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
     compile group: 'net.sf.jxls', name: 'jxls-core', version: '1.0.6'
 
-    compile group: 'org.hibernate', name: 'hibernate-jpamodelgen', version: '5.2.10.Final'
+
+    compile("com.querydsl:querydsl-apt:4.1.4:jpa")
+    compile group: 'com.querydsl', name: 'querydsl-jpa', version: '4.1.4'
+    compile group: 'com.querydsl', name: 'querydsl-core', version: '4.1.4'
+    compile group: 'com.querydsl', name: 'querydsl-sql', version: '4.1.4'
+
+    compileJava {
+        options.compilerArgs << "-s"
+        options.compilerArgs << "$projectDir/generated/java"
 
 
+        doFirst {
+            // make sure that directory exists
+            file(new File(projectDir, "/generated/java")).mkdirs()
+        }
+    }
+
+
+    clean.doLast {
+        // clean-up directory when necessary
+        file(new File(projectDir, "/generated")).deleteDir()
+    }
+
+
+    sourceSets {
+        generated {
+            java {
+                srcDir "$projectDir/generated/java"
+            }
+        }
+    }
 }
+
+
+
+

@@ -1,0 +1,54 @@
+## QueryDSL  SQL写反范文
+=================================================1、单表通过ID查询==============================
+    public List<SettlementDimension> a(){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        QSettlementDimension dimension = QSettlementDimension.settlementDimension; //生成的对象
+        List<SettlementDimension> fetch = queryFactory.select(
+                Projections.bean(
+                        SettlementDimension.class, //返回数据的Vo对象
+                        dimension.code, //要查询的数据
+                        dimension.id,
+                        dimension.name
+                )
+        ).from(dimension).where(dimension.id.eq(1)).fetch();
+        return fetch;
+    }
+    
+=================================================2、自定义字段灵活条件分页查询方式==============================
+public MessageResult pageQueryTest(
+            @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "status", required = false) WithdrawStatus status) {
+        QueryDslContext queryDslContext = new QueryDslContext();
+        //查询字段
+        queryDslContext.add(QWithdrawRecord.withdrawRecord.id.as("id"));
+        queryDslContext.add(QWithdrawRecord.withdrawRecord.fee.as("fee"));
+        queryDslContext.add(QWithdrawRecord.withdrawRecord.arrivedAmount.as("arrivedAmount"));
+        queryDslContext.add(QWithdrawRecord.withdrawRecord.transactionNumber.as("transactionNumber"));
+        queryDslContext.add(QWithdrawRecord.withdrawRecord.createTime.as("createTime"));
+        queryDslContext.add(QWithdrawRecord.withdrawRecord.address.as("address"));
+        queryDslContext.add(QWithdrawRecord.withdrawRecord.remark.as("remark"));
+        queryDslContext.add(QWithdrawRecord.withdrawRecord.status.as("status"));
+        //查询表
+        queryDslContext.add(QWithdrawRecord.withdrawRecord);
+        queryDslContext.add(QMember.member);
+        //查询条件
+        queryDslContext.add(QWithdrawRecord.withdrawRecord.memberId.eq(QMember.member.id));
+        if (status != null)
+            queryDslContext.add(withdrawRecord.status.eq(status));
+        //排序
+        queryDslContext.add(QWithdrawRecord.withdrawRecord.id.desc());
+        PageListMapResult pageListMapResult = withdrawRecordService.queryDslForPageListResultTest(queryDslContext, pageNo, pageSize);
+        return success(pageListMapResult);
+    }
+=================================================3、灵活条件分页查询方式==============================
+        //条件
+        List<Predicate> predicateList = new ArrayList<>();
+        predicateList.add(QAdvertise.advertise.member.id.eq(member.getId()));
+        if (status != null) predicateList.add(QAdvertise.advertise.status.eq(status));
+        if (advertiseType != null) predicateList.add(QAdvertise.advertise.advertiseType.eq(advertiseType));
+        //排序
+        List<OrderSpecifier> orderSpecifierList = new ArrayList<>();
+        orderSpecifierList.add(QAdvertise.advertise.id.desc());
+        //查询
+        PageResult<Advertise> advertisePageResult = advertiseService.queryDsl(pageNo, pageSize, predicateList, QAdvertise.advertise, orderSpecifierList);
