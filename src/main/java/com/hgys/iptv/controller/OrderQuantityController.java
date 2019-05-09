@@ -37,9 +37,6 @@ public class OrderQuantityController {
     @Autowired
     private CpService cpService;
 
-    @Autowired
-    private CpRepository cpRepository;
-
     /**
      * 根据ID查询结算类型-订购量
      * @param code
@@ -107,13 +104,21 @@ public class OrderQuantityController {
 
 
 
-   @GetMapping("/queryCPList")
+  /* @GetMapping("/queryCPList")
     @ApiOperation(value = "查询CP列表")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> queryCPList(){
         List<Cp> all = cpRepository.findAll();
         return ResultVOUtil.success(all);
+    }*/
+
+    @GetMapping("/queryCPList")
+    @ApiOperation(value = "查询CP列表")
+    public ResultVO<?> queryCPList(){
+        ResultVO<?> all = cpService.findAll();
+        return ResultVOUtil.success(all);
     }
+
 
     @GetMapping("/getOrderQuantityWithCp")
     @ApiOperation(value = "通过结算类型订单量与CP关系表的编码查询",notes = "返回json数据")
