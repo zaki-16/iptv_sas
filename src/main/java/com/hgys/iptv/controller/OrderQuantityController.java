@@ -1,8 +1,12 @@
 package com.hgys.iptv.controller;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hgys.iptv.controller.vm.*;
+import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.OrderQuantity;
+import com.hgys.iptv.model.SettlementDimension;
 import com.hgys.iptv.model.vo.ResultVO;
+import com.hgys.iptv.repository.CpRepository;
 import com.hgys.iptv.service.CpService;
 import com.hgys.iptv.service.OrderQuantityService;
 import com.hgys.iptv.util.ResultVOUtil;
@@ -32,6 +36,10 @@ public class OrderQuantityController {
 
     @Autowired
     private CpService cpService;
+
+    @Autowired
+    private CpRepository cpRepository;
+
     /**
      * 根据ID查询结算类型-订购量
      * @param code
@@ -99,22 +107,20 @@ public class OrderQuantityController {
 
 
 
-
-
-    @GetMapping("/queryCPList")
+   @GetMapping("/queryCPList")
     @ApiOperation(value = "查询CP列表")
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> queryCPList(){
-        ResultVO<?> all = cpService.findAll();
+        List<Cp> all = cpRepository.findAll();
         return ResultVOUtil.success(all);
     }
-
 
     @GetMapping("/getOrderQuantityWithCp")
     @ApiOperation(value = "通过结算类型订单量与CP关系表的编码查询",notes = "返回json数据")
     @ResponseStatus(HttpStatus.OK)
     public OrderQuantityWithCPListVM getOrderQuantityWithCp(@ApiParam(value = "编码",required = true) @RequestParam("code")String code){
         if (StringUtils.isBlank(code)){
-            new IllegalArgumentException("结算组合维度不能为空");
+            new IllegalArgumentException("Code不能为空");
         }
 
         return orderquantityService.getOrderQuantityWithCp(code);
