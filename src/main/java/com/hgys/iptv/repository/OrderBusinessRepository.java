@@ -1,16 +1,23 @@
 package com.hgys.iptv.repository;
 
 import com.hgys.iptv.model.OrderBusiness;
+import com.hgys.iptv.model.OrderBusinessComparison;
+import com.hgys.iptv.model.SettlementCombinatorialDimensionMaster;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface OrderBusinessRepository extends BaseRepository<OrderBusiness,Integer> {
+import java.util.Optional;
 
-    /**
-     * 通过ID逻辑删除
-     */
+@Repository
+public interface OrderBusinessRepository extends JpaRepository<OrderBusiness,Object>, JpaSpecificationExecutor<OrderBusiness> {
+
+
+/**
+ * 通过ID逻辑删除
+ */
     @Modifying
     @Query(value = "update OrderBusiness set isdelete = 1 WHERE id = ?1")
     void batchDeleteob(int id);
@@ -22,5 +29,7 @@ public interface OrderBusinessRepository extends BaseRepository<OrderBusiness,In
      * @return
      */
     OrderBusiness findById(String id);
+    Optional<OrderBusiness> findByName(String name);
 
+    Optional<OrderBusiness> findByCode(String code);
 }

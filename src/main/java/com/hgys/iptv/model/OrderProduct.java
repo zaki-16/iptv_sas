@@ -28,7 +28,13 @@ public class OrderProduct implements java.io.Serializable{
     /** 产品级结算编码 */
     private String code;
 
+    @Column(name = "bcode", nullable = true, length = 255)
+    /** 产品编码 */
+    private String bcode;
 
+    @Column(name = "bname", nullable = true, length = 255)
+    /** 产品名称 */
+    private String bname;
     @Column(name = "inputTime", nullable = true, length = 50)
     /** 录入时间*/
     private Timestamp inputTime;
@@ -143,7 +149,21 @@ public class OrderProduct implements java.io.Serializable{
         return code;
     }
 
+    public String getBcode() {
+        return bcode;
+    }
 
+    public String getBname() {
+        return bname;
+    }
+
+    public void setBcode(String bcode) {
+        this.bcode = bcode;
+    }
+
+    public void setBname(String bname) {
+        this.bname = bname;
+    }
 
     public Integer getStatus() {
         return status;
