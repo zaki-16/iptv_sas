@@ -281,7 +281,7 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
             e.printStackTrace();
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
-        return null;
+        return ResultVOUtil.success(Boolean.TRUE);
     }
 
     @Override
