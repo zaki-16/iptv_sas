@@ -14,11 +14,11 @@ public interface OrderCpWithCpRepository extends JpaRepository<OrderCpWithCp,Obj
 
     /**
      * 通过结算组合维度编码查询
-     * @param Code
+     * @param cpcode
      * @return
      */
-    @Query(value = "select o from OrderCpWithCp o where o.code = ?1")
-    List<OrderCpWithCp> findByMasterCode(String Code);
+    @Query(value = "select o from OrderCpWithCp o where o.cpcode = ?1")
+    List<OrderCpWithCp> findByMasterCode(String cpcode);
 
 
     /**
