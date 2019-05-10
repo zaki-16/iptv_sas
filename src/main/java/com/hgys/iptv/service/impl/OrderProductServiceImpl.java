@@ -102,7 +102,7 @@ public class OrderProductServiceImpl implements OrderProductService {
 
             for (OrderProductWithSCDAddLIstVM v : list) {
 
-                if (1 == vm.getMode()) {
+              /*  if (1 == vm.getMode()) {
                     if (StringUtils.isBlank(vm.getSdname())) {
                         return ResultVOUtil.error("1", "单维度名称不能为空");
                     } else if (StringUtils.isBlank(vm.getSdcode())) {
@@ -114,7 +114,7 @@ public class OrderProductServiceImpl implements OrderProductService {
                     } else if (StringUtils.isBlank(vm.getScdcode())){
                         return ResultVOUtil.error("1", "多维度Code不能为空");
                     }
-                }
+                }*/
             }
             //新增主表信息
             OrderProduct comparison = new OrderProduct();
@@ -142,27 +142,6 @@ public class OrderProductServiceImpl implements OrderProductService {
 
         return ResultVOUtil.success(Boolean.TRUE);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
