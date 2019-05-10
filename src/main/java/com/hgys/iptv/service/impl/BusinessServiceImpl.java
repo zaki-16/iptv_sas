@@ -202,7 +202,7 @@ public class BusinessServiceImpl implements BusinessService {
 
 
     @Override
-    public Page<BusinessControllerListVM> findByConditions(String name, String code, String bizType, String settleType, String status, Pageable pageable) {
+    public Page<BusinessControllerListVM> findByConditions(String name, String code, Integer bizType, Integer settleType, Integer status, Pageable pageable) {
         return businessRepository.findAll(((root, query,builder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -211,19 +211,19 @@ public class BusinessServiceImpl implements BusinessService {
                 predicates.add(condition);
             }
             if (StringUtils.isNotBlank(code)){
-                Predicate condition = builder.equal(root.get("code").as(String.class), code);
+                Predicate condition = builder.equal(root.get("code").as(String.class), "%"+code+"%");
                 predicates.add(condition);
             }
-            if (StringUtils.isNotBlank(bizType)){
-                Predicate condition = builder.equal(root.get("bizType").as(String.class), bizType);
+            if (status!=null && bizType>0){
+                Predicate condition = builder.equal(root.get("bizType").as(Integer.class), bizType);
                 predicates.add(condition);
             }
-            if (StringUtils.isNotBlank(status)){
-                Predicate condition = builder.equal(root.get("status").as(String.class), status);
+            if (status!=null && status>0){
+                Predicate condition = builder.equal(root.get("status").as(Integer.class), status);
                 predicates.add(condition);
             }
-            if (StringUtils.isNotBlank(settleType)){
-                Predicate condition = builder.equal(root.get("settleType").as(String.class), settleType);
+            if (status!=null && settleType>0){
+                Predicate condition = builder.equal(root.get("settleType").as(Integer.class), settleType);
                 predicates.add(condition);
             }
             Predicate condition = builder.equal(root.get("isdelete").as(Integer.class), 0);

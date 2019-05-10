@@ -1,6 +1,7 @@
 package com.hgys.iptv.repository;
 
 import com.hgys.iptv.model.Business;
+import com.hgys.iptv.model.SettlementCombinatorialDimensionFrom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface BusinessRepository extends JpaRepository<Business,Integer>, JpaSpecificationExecutor<Business> {
@@ -35,4 +37,6 @@ public interface BusinessRepository extends JpaRepository<Business,Integer>, Jpa
     void logicDelete(int id);
 
     List<Business> findByStatusAndIsdelete(int status, int Isdelete);
+
+
 }
