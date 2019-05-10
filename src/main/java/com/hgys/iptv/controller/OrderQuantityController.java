@@ -38,7 +38,7 @@ public class OrderQuantityController {
     private CpService cpService;
 
     /**
-     * 根据ID查询结算类型-订购量
+     * 根据Code查询结算类型-订购量
      * @param code
      * @return
      */
@@ -55,9 +55,13 @@ public class OrderQuantityController {
     }
 
 
+
+
+
+
     @PostMapping("/addOrderQuantity")
     @ApiOperation(value = "新增",notes = "返回处理结果，false或true")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> addOrderQuantity(@ApiParam(value = "结算类型订单量VM") @RequestBody() OrderQuantityAddVM vo){
 
         return orderquantityService.addOrderQuantity(vo);
@@ -80,15 +84,15 @@ public class OrderQuantityController {
     @GetMapping("/findByConditions")
     @ApiOperation(value = "通过条件，分页查询",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
-    public Page<OrderQuantityWithCPListVM> findByConditions(@ApiParam(value = "名称") @RequestParam(value = "name",required = false )String name,
+    public Page<OrderQuantityAddVM> findByConditions(@ApiParam(value = "名称") @RequestParam(value = "name",required = false )String name,
                                                                 @ApiParam(value = "编码") @RequestParam(value = "code",required = false)String code,
                                                                 @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
                                                                 @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
                                                                 @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
 
         Sort sort = new Sort(Sort.Direction.DESC,"inputTime");
-        Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageNum),sort);
-        Page<OrderQuantityWithCPListVM> byConditions = orderquantityService.findByConditions(name, code, status, pageable);
+        Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
+        Page<OrderQuantityAddVM> byConditions = orderquantityService.findByConditions(name, code, status, pageable);
         return byConditions;
     }
 
@@ -104,19 +108,22 @@ public class OrderQuantityController {
 
 
 
-  /* @GetMapping("/queryCPList")
-    @ApiOperation(value = "查询CP列表")
+    @GetMapping("/findByIds")
+    @ApiOperation(value = "通过结算组合Id编码查询",notes = "返回json数据")
     @ResponseStatus(HttpStatus.OK)
-    public ResultVO<?> queryCPList(){
-        List<Cp> all = cpRepository.findAll();
-        return ResultVOUtil.success(all);
-    }*/
+    public ResultVO<?> findByIds(@ApiParam(value = "结算组合Id编码",required = true) @RequestParam("id")String id){
+        if (StringUtils.isBlank(id)){
+            new IllegalArgumentException(" 不能为空");
+        }
+        OrderQuantityControllerListVM byId = orderquantityService.findByIds(id);
+        return ResultVOUtil.success(byId);
+    }
 
     @GetMapping("/queryCPList")
     @ApiOperation(value = "查询CP列表")
     public ResultVO<?> queryCPList(){
         ResultVO<?> all = cpService.findAll();
-        return ResultVOUtil.success(all);
+        return  all;
     }
 
 

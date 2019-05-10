@@ -5,9 +5,7 @@ import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
-import com.hgys.iptv.repository.BusinessRepository;
-import com.hgys.iptv.repository.OrderBuinessWithCpRepository;
-import com.hgys.iptv.repository.OrderBusinessRepository;
+import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.OrderBusinessService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
@@ -43,6 +41,11 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
     @Autowired
     private OrderBusinessControllerAssemlber orderBusinessControllerAssemlber;
 
+    @Autowired
+    private SmallOrderCpRepository smallOrderCpRepository;
+
+    @Autowired
+    private CpRepository cpRepository;
 
 
     @Override
@@ -77,19 +80,14 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultVO<?> addOrderBusiness(OrderBusinessWithCPAddVM vo) {
-        if (StringUtils.isBlank(vo.getName())){
-            return ResultVOUtil.error("1","名称不能为空");
-        }else if (vo.getList().isEmpty()){
-            return ResultVOUtil.error("1","集合不能为空");
-        }
-        //验证名字是否已经存在
-        Optional<OrderBusiness> byName = orderbusinessRepository.findByName(vo.getName().trim());
-        if (byName.isPresent()){
-            return ResultVOUtil.error("1","名称已经存在");
+        if (StringUtils.isBlank(vo.getName())) {
+            return ResultVOUtil.error("1", "名称不能为空");
+        } else if (vo.getList().isEmpty()) {
+            return ResultVOUtil.error("1", "集合不能为空");
         }
         try {
             //主表数据新增
-            String code = CodeUtil.getOnlyCode("SCD",5);
+            String code = CodeUtil.getOnlyCode("SCD", 5);
             OrderBusiness master = new OrderBusiness();
             master.setCode(code);
             master.setName(vo.getName());
@@ -99,7 +97,6 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
             master.setStatus(vo.getStatus());
             orderbusinessRepository.save(master);
             List<SmallOrderBusinessVM> vos = vo.getList();
-
             //验证权重是否超过100%
             Integer he = 0;
             for (SmallOrderBusinessVM s : vos){
@@ -108,27 +105,38 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
                     new IllegalArgumentException("权重不能超过100%");
                 }
             }
-            //处理附表数据
-            for (SmallOrderBusinessVM s : vos){
+            //处理业务表
+            for (SmallOrderBusinessVM s : vos) {
+                String codes = CodeUtil.getOnlyCode("SCD", 5);
                 OrderBusinessWithCp from = new OrderBusinessWithCp();
+                String buname = businessRepository.findByMasterCodes(s.getBucode());//根据业务ID，查询业务的名称
                 from.setObcode(code);
-                from.setCpcode(s.getCpcode());
                 from.setBucode(s.getBucode());
-                from.setObname(s.getObname());
-                from.setBuname(s.getBuname());
-                from.setCpname(s.getCpname());
-                from.setWeight(s.getWeight());
+                from.setBuname(buname);
                 from.setCreatetime(new Timestamp(System.currentTimeMillis()));
                 from.setIsdelete(0);
+                from.setWeight(s.getWeight());
+                from.setCode(codes);
                 orderBuinessWithCpRepository.save(from);
+                List<SmallOrderBusinessVM.SmallOrderBusinessCPVM> voss = s.getLists();
+                for (SmallOrderBusinessVM.SmallOrderBusinessCPVM cps : voss) {   //处理CP列表
+                    OrderBusinessCp cp = new OrderBusinessCp();
+                    String cpname = cpRepository.findByMasterCodes(cps.getCpcode());//根据CPID 查询CP的名称
+                    cp.setCpcode(cps.getCpcode());
+                    cp.setCpname(cpname);
+                    cp.setBucode(s.getBucode());
+                    cp.setWeight(cps.getWeight());
+                    cp.setObcode(from.getObcode());
+                    smallOrderCpRepository.save(cp);
+                }
             }
-        }catch (Exception e){
-            e.printStackTrace();
-            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
-        }
-        return ResultVOUtil.success(Boolean.TRUE);
-    }
+            }catch(Exception e){
+                e.printStackTrace();
+                return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+            }
+            return ResultVOUtil.success(Boolean.TRUE);
 
+    }
 
 
     @Override
@@ -157,7 +165,7 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
                     return ResultVOUtil.error("1","名称已经存在");
                 }
             }
-            OrderBusiness comparison = orderbusinessRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到id为："+vo.getId()+"业务定比例信息"));
+            OrderBusiness comparison = orderbusinessRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("未查询到id为："+vo.getId()+"业务定比例信息"));
             OrderBusiness o = new OrderBusiness();
             BeanUtils.copyProperties(vo,o);
             o.setModifyTime(new Timestamp(System.currentTimeMillis()));
@@ -165,7 +173,7 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
             orderbusinessRepository.saveAndFlush(o);
             if (!vo.getList().isEmpty()) {
                 List<SmallOrderBusinessVM> list = vo.getList();
-                //先将之前的删除
+                //先将之前的业务删除
                 orderBuinessWithCpRepository.deleteByMasterCode(comparison.getCode().trim());
                 for (SmallOrderBusinessVM v : list){
                     OrderBusinessWithCp cp = new OrderBusinessWithCp();
@@ -173,6 +181,18 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
                     cp.setObcode(comparison.getCode());
                     cp.setCreatetime(new Timestamp(System.currentTimeMillis()));
                     orderBuinessWithCpRepository.saveAndFlush(cp);
+                    List<SmallOrderBusinessVM.SmallOrderBusinessCPVM> voss = v.getLists();
+                    for (SmallOrderBusinessVM.SmallOrderBusinessCPVM cps : voss) {   //处理CP列表
+                        //先将之前的CP删除
+                        smallOrderCpRepository.deleteByMastercodes(cp.getObcode());
+                    OrderBusinessCp cpcp = new OrderBusinessCp();
+                        cpcp.setCpcode(cps.getCpcode());
+                        cpcp.setCpname(cps.getCpname());
+                        cpcp.setBucode(v.getBucode());
+                        cpcp.setWeight(cps.getWeight());
+                        cpcp.setObcode(cp.getObcode());
+                        smallOrderCpRepository.saveAndFlush(cpcp);
+                }
                 }
             }
         }catch (Exception e){
@@ -234,6 +254,40 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
         return vm;
     }
 
+    @Override
+    public OrderBusinessWithCPAddVM findByIds(String id) {
+        OrderBusiness byId = orderbusinessRepository.findById(Integer.parseInt(id)).orElseThrow(
+                () -> new IllegalArgumentException("未查询到结算信息")
+        );
 
+        OrderBusinessWithCPAddVM vm = new OrderBusinessWithCPAddVM();
+        BeanUtils.copyProperties(byId,vm);
+
+        List<OrderBusinessWithCp> byMaster_code = orderBuinessWithCpRepository.findByMasterCode(byId.getCode().trim());
+
+
+        OrderBusinessWithCp bybu = orderBuinessWithCpRepository.findById(Integer.parseInt(id)).orElseThrow(
+                () -> new IllegalArgumentException("未查询到结算信息")
+        );
+
+        List<OrderBusinessCp> bybucode = smallOrderCpRepository.findByBUCode(bybu.getBucode().trim());
+
+        List<SmallOrderBusinessVM> list = new ArrayList<>();
+        List<SmallOrderBusinessVM.SmallOrderBusinessCPVM> lists = new ArrayList<>();
+        for (OrderBusinessWithCp f : byMaster_code){
+            SmallOrderBusinessVM s = new SmallOrderBusinessVM();
+            BeanUtils.copyProperties(f,s);
+            list.add(s);
+            vm.setList(list);
+            for (OrderBusinessCp a : bybucode){
+                SmallOrderBusinessVM.SmallOrderBusinessCPVM cp = new SmallOrderBusinessVM.SmallOrderBusinessCPVM();
+                BeanUtils.copyProperties(a,cp);
+              /*  lists.add(a);
+                vm.setList(lists);*/
+            }
+
+        }
+        return vm;
+    }
 
 }

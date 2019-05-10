@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.List;
 
 @ApiModel(value = "结算类型-业务级新增VM")
@@ -23,12 +24,11 @@ public class OrderBusinessWithCPAddVM implements Serializable{
     @ApiModelProperty("结算类型-业务级状态")
     private Integer status;
 
-    @ApiModelProperty("权重")
-    private Integer weight;
-
-
     @ApiModelProperty(value = "结算类型-业务级集合",dataType = "List")
     private List<SmallOrderBusinessVM> list;
+
+
+
 
     public Integer getId() {
         return id;
@@ -43,9 +43,7 @@ public class OrderBusinessWithCPAddVM implements Serializable{
         return status;
     }
 
-    public Integer getWeight() {
-        return weight;
-    }
+
 
     public List<SmallOrderBusinessVM> getList() {
         return list;
@@ -71,9 +69,7 @@ public class OrderBusinessWithCPAddVM implements Serializable{
         this.status = status;
     }
 
-    public void setWeight(Integer weight) {
-        this.weight = weight;
-    }
+
 
     public void setList(List<SmallOrderBusinessVM> list) {
         this.list = list;

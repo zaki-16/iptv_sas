@@ -40,13 +40,16 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
     @Autowired
     private OrderQuantityWithCpRepository OrderquantityWithCpRepository;
 
-
+    @Autowired
+    private  CpRepository cpRepository;
 
 
     @Override
     public Optional<OrderQuantity> findByCode(String code) {
         return orderquantityRepository.findByCode(code);
     }
+
+
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -67,29 +70,35 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
 
 
     @Override
-    public Page<OrderQuantityWithCPListVM> findByConditions(String name, String code, String status, Pageable pageable) {
+    public Page<OrderQuantityAddVM> findByConditions(String name, String code, String status, Pageable pageable) {
+        Page<OrderQuantityAddVM> map = orderquantityRepository.findAll(((root, query, builder) -> {
 
-        return orderquantityRepository.findAll(((root, query, builder) -> {
+
             List<Predicate> predicates = new ArrayList<>();
 
             if (StringUtils.isNotBlank(name)){
-                Predicate condition = builder.equal(root.get("name"), name);
+                Predicate condition = builder.like(root.get("name"), "%"+name+"%");
                 predicates.add(condition);
             }
             if (StringUtils.isNotBlank(code)){
-                Predicate condition = builder.equal(root.get("code"), code);
+                Predicate condition = builder.like(root.get("code"), "%"+code+"%");
                 predicates.add(condition);
             }
 
             if (StringUtils.isNotBlank(status)){
-                Predicate condition = builder.equal(root.get("status"), status);
+                Predicate condition = builder.equal(root.get("status"), Integer.parseInt(status));
                 predicates.add(condition);
             }
+
+            Predicate condition = builder.equal(root.get("isdelete"), 0);
+            predicates.add(condition);
+
             if (!predicates.isEmpty()){
                 return builder.and(predicates.toArray(new Predicate[0]));
             }
             return builder.conjunction();
-        }),pageable).map(orderQuantityControllerAssemlber::getListVM);
+        }), pageable).map(orderQuantityControllerAssemlber::getListVM);
+        return map;
     }
 
 
@@ -131,7 +140,7 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
 }
 
 
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultVO<?> addOrderQuantity(OrderQuantityAddVM vo) {
         if (StringUtils.isBlank(vo.getName())){
@@ -139,10 +148,14 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
         }else if (null == vo.getList()){
             return ResultVOUtil.error("1","集合不能为空");
         }
-        //验证名字是否已经存在
+        /*//验证名字是否已经存在
         Optional<OrderQuantity> byName = orderquantityRepository.findByName(vo.getName().trim());
         if (byName.isPresent()){
             return ResultVOUtil.error("1","结算名称已经存在");
+        }*/
+        List<SmallOrderCpVM> list =  vo.getList();
+        for (SmallOrderCpVM v : list) {
+          String cpcode=v.getCpcode();
         }
         try {
             //结算类型-订购量表
@@ -159,12 +172,12 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
             //结算类型-订购量表与 CP 关系表
             for (SmallOrderCpVM s : vos){
                 OrderQuantityWithCp oc = new OrderQuantityWithCp();
+                String cpname = cpRepository.findByMasterCodes(s.getCpcode());
                 oc.setCreatetime(new Timestamp(System.currentTimeMillis()));
                 oc.setCpcode(s.getCpcode());
-                oc.setCpname(s.getCpname());
-                oc.setOqcode(s.getOqcode());
+                oc.setCpname(cpname);
+                oc.setOqcode(code);
                 oc.setOqname(s.getOqname());
-                oc.setCode(code);
                 oc.setIsdelete(0);
                 OrderquantityWithCpRepository.save(oc);
             }
@@ -196,9 +209,27 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
         return vm;
     }
 
-   /* @Override
-    public ResultVO<?> queryCPList() {
-        List<Cp> byStatusAndIsdelete = cpRepository.findByStatusAndIsdelete(0, 0);
-        return ResultVOUtil.success(byStatusAndIsdelete);
-    }*/
+
+    @Override
+    public OrderQuantityControllerListVM findByIds(String id) {
+        OrderQuantity byId = orderquantityRepository.findById(Integer.parseInt(id)).orElseThrow(
+                () -> new IllegalArgumentException("未查询到结算信息")
+        );
+
+        OrderQuantityControllerListVM vm = new OrderQuantityControllerListVM();
+        BeanUtils.copyProperties(byId,vm);
+
+        List<OrderQuantityWithCp> byMaster_code = OrderquantityWithCpRepository.findByMasterCode(byId.getCode().trim());
+
+        List<SmallOrderCpVM> list = new ArrayList<>();
+        for (OrderQuantityWithCp f : byMaster_code){
+            SmallOrderCpVM s = new SmallOrderCpVM();
+            BeanUtils.copyProperties(f,s);
+            list.add(s);
+            vm.setList(list);
+        }
+        return vm;
+    }
+
+
 }

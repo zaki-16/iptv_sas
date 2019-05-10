@@ -1,6 +1,8 @@
 package com.hgys.iptv.repository;
 
+import com.hgys.iptv.model.Business;
 import com.hgys.iptv.model.Cp;
+import com.hgys.iptv.model.OrderBusinessWithCp;
 import com.hgys.iptv.model.SettlementDimension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +42,21 @@ public interface CpRepository extends JpaRepository<Cp,Integer>, JpaSpecificatio
     @Modifying
     @Query(value = "update Cp set isdelete = 1 WHERE id = ?1")
     void logicDelete(int id);
+
+
+    /**
+     * 通过结算组合维度编码查询
+     * @param Code
+     * @return
+     */
+    @Query(value = "select o.name from Cp o where o.code = ?1")
+    String findByMasterCodes(String Code);
+
+
+
+    List<Cp> findByStatusAndIsdelete(int status, int Isdelete);
+
+
 
 //    Page<Cp> findAll(Specification<Cp> specification, Pageable pageable);
 

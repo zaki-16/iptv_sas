@@ -2,6 +2,8 @@ package com.hgys.iptv.controller.vm;
 
 import io.swagger.annotations.ApiModelProperty;
 
+import java.sql.Timestamp;
+
 public class SmallOrderCpVM {
 
     /** CP编码 */
@@ -15,7 +17,9 @@ public class SmallOrderCpVM {
     /** orderquantity名称 */
     @ApiModelProperty("oqname")
     private String oqname;
-
+    /** orderquantity名称 */
+    @ApiModelProperty("createtime")
+    private Timestamp createtime;
     /** orderquantity oqcode */
     @ApiModelProperty("oqcode")
     private String oqcode;
@@ -46,6 +50,14 @@ public class SmallOrderCpVM {
 
     public String getOqcode() {
         return oqcode;
+    }
+
+    public Timestamp getCreatetime() {
+        return createtime;
+    }
+
+    public void setCreatetime(Timestamp createtime) {
+        this.createtime = createtime;
     }
 
     public void setCpname(String cpname) {

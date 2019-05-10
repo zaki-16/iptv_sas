@@ -3,6 +3,7 @@ package com.hgys.iptv.service;
 import com.hgys.iptv.controller.vm.OrderQuantityAddVM;
 import com.hgys.iptv.controller.vm.OrderQuantityControllerListVM;
 import com.hgys.iptv.controller.vm.OrderQuantityWithCPListVM;
+import com.hgys.iptv.controller.vm.SettlementCombinatorialDimensionControllerListVM;
 import com.hgys.iptv.model.OrderQuantity;
 import com.hgys.iptv.model.vo.ResultVO;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,14 @@ public interface OrderQuantityService {
      */
     Optional<OrderQuantity> findByCode(String code);
 
+
+    /**
+     * 通过id查询结算组合数据
+     * @param id
+     * @return
+     */
+    OrderQuantityControllerListVM findByIds(String id);
+
     /**
      * 新增
      *
@@ -38,7 +47,7 @@ public interface OrderQuantityService {
      * 根据条件分页查询
      * @return
      */
-    Page<OrderQuantityWithCPListVM> findByConditions(String name, String code, String status, Pageable pageable);
+    Page<OrderQuantityAddVM> findByConditions(String name, String code, String status, Pageable pageable);
 
 
 

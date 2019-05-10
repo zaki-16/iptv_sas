@@ -39,4 +39,6 @@ public interface OrderBuinessWithCpRepository extends JpaRepository<OrderBusines
     @Modifying
     @Query(value = "delete from OrderBusinessWithCp where obcode = ?1")
     void deleteByMasterCode(String obcode);
+
+    OrderBusinessWithCp findById(String id);
 }

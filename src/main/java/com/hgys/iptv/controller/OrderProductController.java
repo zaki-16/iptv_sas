@@ -118,7 +118,7 @@ public class OrderProductController {
     @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> queryProductLists(){
         ResultVO<?> all = productService.findAll();
-        return ResultVOUtil.success(all);
+        return all;
     }
 
     @GetMapping("/queryComDimensionLists")

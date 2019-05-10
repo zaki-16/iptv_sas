@@ -114,8 +114,21 @@ public class OrderBusinessController {
     @ApiOperation(value = "查询CP列表")
     public ResultVO<?> queryCPList(){
         ResultVO<?> all = cpService.findAll();
-        return ResultVOUtil.success(all);
+        return  all;
     }
+
+
+    @GetMapping("/findByIds")
+    @ApiOperation(value = "通过结算组合Id编码查询",notes = "返回json数据")
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO<?> findByIds(@ApiParam(value = "结算组合Id编码",required = true) @RequestParam("id")String id){
+        if (StringUtils.isBlank(id)){
+            new IllegalArgumentException(" 不能为空");
+        }
+        OrderBusinessWithCPAddVM byId = orderbusinessService.findByIds(id);
+        return ResultVOUtil.success(byId);
+    }
+
 
 
 }

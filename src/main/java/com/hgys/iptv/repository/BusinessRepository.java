@@ -35,4 +35,15 @@ public interface BusinessRepository extends JpaRepository<Business,Integer>, Jpa
     void logicDelete(int id);
 
     List<Business> findByStatusAndIsdelete(int status, int Isdelete);
+
+
+
+    /**
+     * 通过业务Code查询业务的名称
+     * @param Code
+     * @return
+     */
+    @Query(value = "select o.name from Business o where o.code = ?1")
+    String findByMasterCodes(String Code);
+
 }

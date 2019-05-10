@@ -18,6 +18,10 @@ public class OrderBusinessWithCp implements java.io.Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    /** 本表唯一codes*/
+    @Column(name = "code", nullable = true, length = 50)
+    private String code;
+
     /** 结算类型-业务级名称*/
     @Column(name = "obname", nullable = true, length = 50)
     private String obname;
@@ -25,15 +29,6 @@ public class OrderBusinessWithCp implements java.io.Serializable{
     @Column(name = "obcode", nullable = true, length = 50)
     /** 结算类型-业务级编码 */
     private String obcode;
-
-
-    /** CP名称*/
-    @Column(name = "cpname", nullable = true, length = 50)
-    private String cpname;
-
-    @Column(name = "cpcode", nullable = true, length = 50)
-    /** CP编码 */
-    private String cpcode;
 
 
     /** 业务名称*/
@@ -89,12 +84,12 @@ public class OrderBusinessWithCp implements java.io.Serializable{
         return obcode;
     }
 
-    public String getCpname() {
-        return cpname;
+    public String getCode() {
+        return code;
     }
 
-    public String getCpcode() {
-        return cpcode;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getBuname() {
@@ -133,6 +128,7 @@ public class OrderBusinessWithCp implements java.io.Serializable{
         return col3;
     }
 
+
     public Integer getIsdelete() {
         return isdelete;
     }
@@ -147,14 +143,6 @@ public class OrderBusinessWithCp implements java.io.Serializable{
 
     public void setObcode(String obcode) {
         this.obcode = obcode;
-    }
-
-    public void setCpname(String cpname) {
-        this.cpname = cpname;
-    }
-
-    public void setCpcode(String cpcode) {
-        this.cpcode = cpcode;
     }
 
     public void setBuname(String buname) {

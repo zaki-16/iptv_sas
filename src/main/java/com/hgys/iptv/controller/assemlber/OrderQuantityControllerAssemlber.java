@@ -1,7 +1,9 @@
 package com.hgys.iptv.controller.assemlber;
 
 
+import com.hgys.iptv.controller.vm.OrderQuantityAddVM;
 import com.hgys.iptv.controller.vm.OrderQuantityWithCPListVM;
+import com.hgys.iptv.controller.vm.SmallOrderCpVM;
 import com.hgys.iptv.model.OrderCpWithCp;
 import com.hgys.iptv.model.OrderQuantity;
 import com.hgys.iptv.model.OrderQuantityWithCp;
@@ -20,14 +22,14 @@ public class OrderQuantityControllerAssemlber {
     @Autowired
     private OrderQuantityWithCpRepository orderQuantityWithCpRepository;
 
-    public OrderQuantityWithCPListVM getListVM(OrderQuantity od){
-        OrderQuantityWithCPListVM odControllListVM = new OrderQuantityWithCPListVM();
+    public OrderQuantityAddVM getListVM(OrderQuantity od){
+        OrderQuantityAddVM odControllListVM = new OrderQuantityAddVM();
         BeanUtils.copyProperties(od,odControllListVM);
         List<OrderQuantityWithCp> byMasterCode = orderQuantityWithCpRepository.findByMasterCode(od.getCode().trim());
 
-        List<OrderQuantityWithCPListVM.OrderQuantityWithCp> list = new ArrayList<>();
+        List<SmallOrderCpVM> list = new ArrayList<>();
         for (OrderQuantityWithCp f : byMasterCode){
-            OrderQuantityWithCPListVM.OrderQuantityWithCp s = new OrderQuantityWithCPListVM.OrderQuantityWithCp();
+            SmallOrderCpVM s = new SmallOrderCpVM();
             BeanUtils.copyProperties(f,s);
             list.add(s);
         }

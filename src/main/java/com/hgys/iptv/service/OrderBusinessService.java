@@ -15,7 +15,12 @@ import java.util.Map;
 
 public interface OrderBusinessService {
 
-
+    /**
+     * 通过id查询结算组合数据
+     * @param id
+     * @return
+     */
+    OrderBusinessWithCPAddVM findByIds(String id);
     /** 通过Id查询*/
     OrderBusiness findById(Integer id);
 

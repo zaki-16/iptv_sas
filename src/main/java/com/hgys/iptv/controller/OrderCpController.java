@@ -116,7 +116,7 @@ public class OrderCpController {
     @ApiOperation(value = "查询CP列表")
     public ResultVO<?> queryCPList(){
         ResultVO<?> all = cpService.findAll();
-        return ResultVOUtil.success(all);
+        return all;
     }
 
 }

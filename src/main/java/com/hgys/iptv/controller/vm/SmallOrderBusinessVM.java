@@ -3,31 +3,14 @@ package com.hgys.iptv.controller.vm;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 public class SmallOrderBusinessVM {
 
 
-
-    @ApiModelProperty("权重")
-    private Integer weight;
-
-    /** cp名称*/
-    @ApiModelProperty("cp名称")
-    private String cpname;
-
-    /** cpcode */
-    @ApiModelProperty("cpcode")
-    private String cpcode;
-
-
-    /** 备注 */
-    @ApiModelProperty("note")
-    private String note;
-
-    /** 结算类型-业务级名称 */
-    @ApiModelProperty("obname")
-    private String obname;
-
+    /** 结算类型-业务级-id */
+    @ApiModelProperty("id")
+    private Integer id;
     /** 结算类型-业务级-obcode */
     @ApiModelProperty("obcode")
     private String obcode;
@@ -40,36 +23,69 @@ public class SmallOrderBusinessVM {
     @ApiModelProperty("bucode")
     private String bucode;
 
+
+    @ApiModelProperty("权重")
+    private Integer weight;
+
     /** 备用字段3 */
     @ApiModelProperty("col3")
     private String col3;
 
-    /** 是否删除 */
-    @ApiModelProperty("isdelete")
-    private Integer isdelete;
 
-    public Integer getWeight() {
-        return weight;
+    @ApiModelProperty(value = "结算类型-业务级CP集合",dataType = "List")
+    private List<SmallOrderBusinessVM.SmallOrderBusinessCPVM> lists;
+
+    public static class SmallOrderBusinessCPVM {
+
+
+        @ApiModelProperty("权重")
+        private Integer weight;
+
+        /** cp名称*/
+        @ApiModelProperty("cp名称")
+        private String cpname;
+
+        /** cpcode */
+        @ApiModelProperty("cpcode")
+        private String cpcode;
+
+        /** 业务Code */
+        @ApiModelProperty("bucode")
+        private String bucode;
+
+        public Integer getWeight() {
+            return weight;
+        }
+
+        public String getCpname() {
+            return cpname;
+        }
+
+        public String getCpcode() {
+            return cpcode;
+        }
+
+        public void setWeight(Integer weight) {
+            this.weight = weight;
+        }
+
+        public void setBucode(String bucode) {
+            this.bucode = bucode;
+        }
+
+        public String getBucode() {
+            return bucode;
+        }
+
+        public void setCpname(String cpname) {
+            this.cpname = cpname;
+        }
+
+        public void setCpcode(String cpcode) {
+            this.cpcode = cpcode;
+        }
+
     }
-
-    public String getCpname() {
-        return cpname;
-    }
-
-    public String getCpcode() {
-        return cpcode;
-    }
-
-
-
-    public String getNote() {
-        return note;
-    }
-
-    public String getObname() {
-        return obname;
-    }
-
     public String getObcode() {
         return obcode;
     }
@@ -84,32 +100,6 @@ public class SmallOrderBusinessVM {
 
     public String getCol3() {
         return col3;
-    }
-
-    public Integer getIsdelete() {
-        return isdelete;
-    }
-
-    public void setWeight(Integer weight) {
-        this.weight = weight;
-    }
-
-    public void setCpname(String cpname) {
-        this.cpname = cpname;
-    }
-
-    public void setCpcode(String cpcode) {
-        this.cpcode = cpcode;
-    }
-
-
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public void setObname(String obname) {
-        this.obname = obname;
     }
 
     public void setObcode(String obcode) {
@@ -128,7 +118,28 @@ public class SmallOrderBusinessVM {
         this.col3 = col3;
     }
 
-    public void setIsdelete(Integer isdelete) {
-        this.isdelete = isdelete;
+    public List<SmallOrderBusinessCPVM> getLists() {
+        return lists;
     }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setLists(List<SmallOrderBusinessCPVM> lists) {
+        this.lists = lists;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
 }
