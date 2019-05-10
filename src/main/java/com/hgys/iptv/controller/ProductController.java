@@ -42,6 +42,7 @@ public class ProductController {
 
     @PostMapping("/UpdateProduct")
     @ApiOperation(value = "更新产品",notes = "@return：产品对象")
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> updateProduct(
             @ApiParam(value = "产品修改VM") @RequestBody() ProductControllerListVM vo){
         Product prod = new Product();
@@ -52,9 +53,9 @@ public class ProductController {
     /**
      * 产品删除--逻辑删除，只更新对象的isdelete字段值 0：未删除 1：已删除
      */
-    @DeleteMapping("/logicDeleteProduct")
-    @ApiOperation(value = "逻辑删除产品",notes = "@return：true/false")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    @DeleteMapping("/logicDeleteProduct")
+//    @ApiOperation(value = "逻辑删除产品",notes = "@return：true/false")
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResultVO<?> logicDelete(
             @ApiParam(value = "产品对象",required = true)Integer id){
         return productService.logicDelete(id);
@@ -62,7 +63,7 @@ public class ProductController {
 
     @DeleteMapping("/batchLogicDeleteProduct")
     @ApiOperation(value = "批量逻辑删除产品",notes = "@return：true/false")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> batchLogicDelete(String ids){
         return productService.batchLogicDelete(ids);
     }
@@ -99,7 +100,7 @@ public class ProductController {
     public Page<ProductControllerListVM> findByConditions(
             @ApiParam(value = "产品名称") @RequestParam(value = "name",required = false )String name,
             @ApiParam(value = "产品编码") @RequestParam(value = "code",required = false)String code,
-            @ApiParam(value = "状态",example = "int型,0:禁用 1:启用") @RequestParam(value = "status",required = false)String status,
+            @ApiParam(value = "状态") @RequestParam(value = "status",required = false)Integer status,
             @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
             @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
 

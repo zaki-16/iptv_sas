@@ -1,10 +1,12 @@
 package com.hgys.iptv.controller.vm;
 
+import com.hgys.iptv.model.Product;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 
 /**
@@ -14,6 +16,7 @@ import java.sql.Timestamp;
  * @Description: TODO
  */
 @ApiModel("集合VM")
+@Data
 public class CpControllerListVM {
 
 
@@ -69,107 +72,45 @@ public class CpControllerListVM {
     @ApiModelProperty("逻辑删除(0:否；1:是)")
     private Integer isdelete;
 
-    public String getId() {
-        return id;
+    private List<CpControllerListVM.Product> list;
+
+    public static class Product{
+        /**
+         * 主键
+         */
+        private Integer id;
+        /**
+         * 名称
+         */
+        private String name;
+        /**
+         * 编码
+         */
+        private String code;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getCpAbbr() {
-        return cpAbbr;
-    }
-
-    public void setCpAbbr(String cpAbbr) {
-        this.cpAbbr = cpAbbr;
-    }
-
-    public String getContactNm() {
-        return contactNm;
-    }
-
-    public void setContactNm(String contactNm) {
-        this.contactNm = contactNm;
-    }
-
-    public String getContactTel() {
-        return contactTel;
-    }
-
-    public void setContactTel(String contactTel) {
-        this.contactTel = contactTel;
-    }
-
-    public String getContactMail() {
-        return contactMail;
-    }
-
-    public void setContactMail(String contactMail) {
-        this.contactMail = contactMail;
-    }
-
-    public Timestamp getRegisTime() {
-        return regisTime;
-    }
-
-    public void setRegisTime(Timestamp regisTime) {
-        this.regisTime = regisTime;
-    }
-
-    public Timestamp getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Timestamp modifyTime) {
-        this.modifyTime = modifyTime;
-    }
-
-    public Timestamp getCancelTime() {
-        return cancelTime;
-    }
-
-    public void setCancelTime(Timestamp cancelTime) {
-        this.cancelTime = cancelTime;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public Integer getIsdelete() {
-        return isdelete;
-    }
-
-    public void setIsdelete(Integer isdelete) {
-        this.isdelete = isdelete;
-    }
 }

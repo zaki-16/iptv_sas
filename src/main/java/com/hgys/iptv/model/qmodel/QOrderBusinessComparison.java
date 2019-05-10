@@ -23,10 +23,6 @@ public class QOrderBusinessComparison extends EntityPathBase<OrderBusinessCompar
 
     public static final QOrderBusinessComparison orderBusinessComparison = new QOrderBusinessComparison("orderBusinessComparison");
 
-    public final StringPath businessCode = createString("businessCode");
-
-    public final StringPath businessName = createString("businessName");
-
     public final StringPath code = createString("code");
 
     public final StringPath col1 = createString("col1");

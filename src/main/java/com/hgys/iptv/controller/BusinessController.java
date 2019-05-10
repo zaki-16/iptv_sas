@@ -43,6 +43,7 @@ public class BusinessController {
 
     @PostMapping("/UpdateBusiness")
     @ApiOperation(value = "更新业务",notes = "@return：业务对象")
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> updateBusiness(
             @ApiParam(value = "业务修改VM") @RequestBody() BusinessAddVM vo){
         Business business = new Business();
@@ -53,9 +54,9 @@ public class BusinessController {
     /**
      * 业务删除--逻辑删除，只更新对象的isdelete字段值 0：未删除 1：已删除
      */
-    @DeleteMapping("/logicDeleteBusiness")
-    @ApiOperation(value = "逻辑删除业务",notes = "@return：true/false")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    @DeleteMapping("/logicDeleteBusiness")
+//    @ApiOperation(value = "逻辑删除业务",notes = "@return：true/false")
+//    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> logicDelete(
             @ApiParam(value = "业务id",required = true)Integer id){
         return businessService.logicDelete(id);
@@ -99,9 +100,9 @@ public class BusinessController {
     public Page<BusinessControllerListVM> findByConditions(
             @ApiParam(value = "业务名称") @RequestParam(value = "name",required = false )String name,
             @ApiParam(value = "业务编码") @RequestParam(value = "code",required = false)String code,
-            @ApiParam(value = "业务类型",example = "0:视频类、1:非视频类") @RequestParam(value = "bizType",required = false)String bizType,
-            @ApiParam(value = "结算类型",example = "1:按比例结算、2:按订购量结算") @RequestParam(value = "settleType",required = false)String settleType,
-            @ApiParam(value = "状态",example = "0:启用 1:禁用") @RequestParam(value = "status",required = false)String status,
+            @ApiParam(value = "业务类型",example = "0:视频类、1:非视频类") @RequestParam(value = "bizType",required = false)Integer bizType,
+            @ApiParam(value = "结算类型",example = "1:按比例结算、2:按订购量结算") @RequestParam(value = "settleType",required = false)Integer settleType,
+            @ApiParam(value = "状态") @RequestParam(value = "status",required = false)Integer status,
             @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
             @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
 

@@ -16,7 +16,7 @@ public interface OrderBusinessComparisonService {
 
     OrderBusinessComparisonQueryVM findById(String id);
 
-    Page<OrderBusinessComparisonQueryVM> findByConditions(String name, String code, String businessCode,String businessName,String status, String mode,Pageable pageable);
+    Page<OrderBusinessComparisonQueryVM> findByConditions(String name, String code,String status, String mode,Pageable pageable);
 
     ResultVO<?> updateOrderBusinessComparison(OrderBusinessComparisonAddVM vm);
 

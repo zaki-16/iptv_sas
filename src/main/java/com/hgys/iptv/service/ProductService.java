@@ -23,7 +23,7 @@ public interface ProductService {
 
     ResultVO<?> findAll();
 
-    Page<ProductControllerListVM> findByConditions(String name, String code, String status, Pageable pageable);
+    Page<ProductControllerListVM> findByConditions(String name, String code, Integer status, Pageable pageable);
 
 
 }

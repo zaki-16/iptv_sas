@@ -21,6 +21,6 @@ public interface BusinessService {
 
     ResultVO<?> findAll();
 
-    Page<BusinessControllerListVM> findByConditions(String name,String code,String bizType,String settleType, String status, Pageable pageable);
+    Page<BusinessControllerListVM> findByConditions(String name,String code,Integer bizType,Integer settleType, Integer status, Pageable pageable);
 
 }
