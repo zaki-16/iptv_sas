@@ -1,5 +1,7 @@
 package com.hgys.iptv.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -11,6 +13,7 @@ import java.util.List;
  */
 @Entity
 @Table(name="product")
+@Data
 public class Product implements Serializable {
     private static final long serialVersionUID = -4437702247979414602L;
     @Id
@@ -20,7 +23,7 @@ public class Product implements Serializable {
     @Column(name = "name", unique = true, nullable = false, length = 50)
     private String name;
     private String code;
-    private Double price;
+    private Integer price;
     private Timestamp inputTime;
     private Timestamp modifyTime;
     @Column(name = "status", nullable = false, length = 2)
@@ -36,68 +39,6 @@ public class Product implements Serializable {
 //    @ManyToMany(mappedBy = "productList",cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
 //    private List<Business> businessList = new ArrayList<>();
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Timestamp getInputTime() {
-        return inputTime;
-    }
-
-    public void setInputTime(Timestamp inputTime) {
-        this.inputTime = inputTime;
-    }
-
-    public Timestamp getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Timestamp modifyTime) {
-        this.modifyTime = modifyTime;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Integer getIsdelete() {
-        return isdelete;
-    }
-
-    public void setIsdelete(Integer isdelete) {
-        this.isdelete = isdelete;
-    }
 
 }

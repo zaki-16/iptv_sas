@@ -38,8 +38,7 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
     private SettlementDimensionControllerAssemlber settlementDimensionControllAssemlber;
 
     @Autowired
-    @PersistenceContext
-    private EntityManager entityManager;
+    private JPAQueryFactory jpaQueryFactory;
 
 
     @Override
@@ -156,9 +155,8 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
 
     @Override
     public List<SettlementDimension> a(){
-        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
         QSettlementDimension dimension = QSettlementDimension.settlementDimension;
-        List<SettlementDimension> fetch = queryFactory.select(
+        List<SettlementDimension> fetch = jpaQueryFactory.select(
                 Projections.bean(
                         SettlementDimension.class,
                         dimension.code,
