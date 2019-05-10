@@ -1,6 +1,6 @@
 package com.hgys.iptv.model.qmodel;
 
-import com.hgys.iptv.model.OrderBusinessWithCp;
+import com.hgys.iptv.model.OrderBusinessCp;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.DateTimePath;
@@ -14,26 +14,28 @@ import static com.querydsl.core.types.PathMetadataFactory.forVariable;
 
 
 /**
- * QOrderBusinessWithCp is a Querydsl query type for OrderBusinessWithCp
+ * QOrderBusinessCp is a Querydsl query type for OrderBusinessCp
  */
 @Generated("com.querydsl.codegen.EntitySerializer")
-public class QOrderBusinessWithCp extends EntityPathBase<OrderBusinessWithCp> {
+public class QOrderBusinessCp extends EntityPathBase<OrderBusinessCp> {
 
-    private static final long serialVersionUID = -2053279041L;
+    private static final long serialVersionUID = 778384729L;
 
-    public static final QOrderBusinessWithCp orderBusinessWithCp = new QOrderBusinessWithCp("orderBusinessWithCp");
+    public static final QOrderBusinessCp orderBusinessCp = new QOrderBusinessCp("orderBusinessCp");
 
     public final StringPath bucode = createString("bucode");
 
     public final StringPath buname = createString("buname");
-
-    public final StringPath code = createString("code");
 
     public final StringPath col1 = createString("col1");
 
     public final NumberPath<Integer> col2 = createNumber("col2", Integer.class);
 
     public final StringPath col3 = createString("col3");
+
+    public final StringPath cpcode = createString("cpcode");
+
+    public final StringPath cpname = createString("cpname");
 
     public final DateTimePath<java.sql.Timestamp> createtime = createDateTime("createtime", java.sql.Timestamp.class);
 
@@ -45,22 +47,20 @@ public class QOrderBusinessWithCp extends EntityPathBase<OrderBusinessWithCp> {
 
     public final StringPath obcode = createString("obcode");
 
-    public final StringPath obname = createString("obname");
-
     public final NumberPath<Integer> status = createNumber("status", Integer.class);
 
     public final NumberPath<Integer> weight = createNumber("weight", Integer.class);
 
-    public QOrderBusinessWithCp(String variable) {
-        super(OrderBusinessWithCp.class, forVariable(variable));
+    public QOrderBusinessCp(String variable) {
+        super(OrderBusinessCp.class, forVariable(variable));
     }
 
-    public QOrderBusinessWithCp(Path<? extends OrderBusinessWithCp> path) {
+    public QOrderBusinessCp(Path<? extends OrderBusinessCp> path) {
         super(path.getType(), path.getMetadata());
     }
 
-    public QOrderBusinessWithCp(PathMetadata metadata) {
-        super(OrderBusinessWithCp.class, metadata);
+    public QOrderBusinessCp(PathMetadata metadata) {
+        super(OrderBusinessCp.class, metadata);
     }
 
 }
