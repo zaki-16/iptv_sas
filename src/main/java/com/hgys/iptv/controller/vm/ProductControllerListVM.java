@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * @ClassName ProductControllerListVM
@@ -13,6 +14,7 @@ import java.sql.Timestamp;
  * @Description: TODO
  */
 @ApiModel("集合VM")
+@Data
 public class ProductControllerListVM {
 
     /** 主键*/
@@ -47,67 +49,47 @@ public class ProductControllerListVM {
     @ApiModelProperty("逻辑删除(0:否；1:是)")
     private Integer isdelete;
 
-    public Integer getId() {
-        return id;
-    }
+    private List<ProductControllerListVM.Business> list;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    /**
+     * 业务表
+     */
+    public static class Business{
+        /**
+         * 主键
+         */
+        private Integer id;
+        /**
+         * 名称
+         */
+        private String name;
+        /**
+         * 编码
+         */
+        private String code;
 
-    public String getName() {
-        return name;
-    }
+        public Integer getId() {
+            return id;
+        }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+        public void setId(Integer id) {
+            this.id = id;
+        }
 
-    public String getCode() {
-        return code;
-    }
+        public String getName() {
+            return name;
+        }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+        public void setName(String name) {
+            this.name = name;
+        }
 
-    public Double getPrice() {
-        return price;
-    }
+        public String getCode() {
+            return code;
+        }
 
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Timestamp getInputTime() {
-        return inputTime;
-    }
-
-    public void setInputTime(Timestamp inputTime) {
-        this.inputTime = inputTime;
-    }
-
-    public Timestamp getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Timestamp modifyTime) {
-        this.modifyTime = modifyTime;
-    }
-
-    public Integer getIsdelete() {
-        return isdelete;
-    }
-
-    public void setIsdelete(Integer isdelete) {
-        this.isdelete = isdelete;
+        public void setCode(String code) {
+            this.code = code;
+        }
     }
 }

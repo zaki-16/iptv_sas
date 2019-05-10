@@ -1,7 +1,8 @@
 package com.hgys.iptv.controller;
 
 import com.hgys.iptv.controller.vm.CpAddVM;
-import com.hgys.iptv.controller.vm.CpSaveAndUpdateVM;
+import com.hgys.iptv.controller.vm.CpControllerListVM;
+import com.hgys.iptv.controller.vm.CpVM;
 import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.CpService;
@@ -42,6 +43,7 @@ public class CpController {
 
     @PostMapping("/UpdateCp")
     @ApiOperation(value = "更新cp",notes = "@return：cp对象")
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> updateCp(
             @ApiParam(value = "cp修改VM") @RequestBody CpAddVM vo){
         Cp cp = new Cp();
@@ -62,7 +64,7 @@ public class CpController {
 
     @DeleteMapping("/batchLogicDeleteCp")
     @ApiOperation(value = "批量逻辑删除cp",notes = "@return：true/false")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> batchLogicDelete(String ids){
         return cpService.batchLogicDelete(ids);
     }
@@ -96,18 +98,16 @@ public class CpController {
     @GetMapping("/findByConditions")
     @ApiOperation(value = "通过条件，分页查询",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
-    public Page<Cp> findByConditions(
+    public Page<CpControllerListVM>findByConditions(
             @ApiParam(value = "cp名称") @RequestParam(value = "name",required = false )String name,
             @ApiParam(value = "cp编码") @RequestParam(value = "code",required = false)String code,
             @ApiParam(value = "cp简称") @RequestParam(value = "cpAbbr",required = false)String cpAbbr,
-            @ApiParam(value = "状态",example = "1:正常、2:结算、3:异常、4:注销") @RequestParam(value = "status",required = false)String status,
+            @ApiParam(value = "状态") @RequestParam(value = "status",required = false)Integer status,
             @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
             @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
 
         Sort sort = new Sort(Sort.Direction.DESC,"regisTime");
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
-        Page<Cp> byConditions = cpService.findByConditions(name,code,cpAbbr, status, pageable);
-        ResultVOUtil.success(byConditions);
-        return byConditions;
+        return cpService.findByConditions(name,code,cpAbbr, status, pageable);
     }
 }

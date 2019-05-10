@@ -57,22 +57,5 @@ public class ProductListVM {
      */
     private List<Business> list;
 
-    /**
-     * 业务表
-     */
-    public static class Business1{
-        /**
-         * 主键
-         */
-        private Integer id;
-        /**
-         * 名称
-         */
-        private String name;
-        /**
-         * 编码
-         */
-        private String code;
 
-    }
 }

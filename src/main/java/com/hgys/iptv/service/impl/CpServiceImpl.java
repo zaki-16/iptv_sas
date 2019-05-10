@@ -2,7 +2,9 @@ package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.common.AbstractBaseRepositoryImpl;
 import com.hgys.iptv.controller.assemlber.CpControllerAssemlber;
+import com.hgys.iptv.controller.assemlber.CpProductListAssemlber;
 import com.hgys.iptv.controller.vm.CpAddVM;
+import com.hgys.iptv.controller.vm.CpControllerListVM;
 import com.hgys.iptv.controller.vm.CpVM;
 import com.hgys.iptv.controller.vm.ProductListVM;
 import com.hgys.iptv.model.*;
@@ -18,6 +20,7 @@ import com.hgys.iptv.util.UpdateTool;
 import com.hgys.iptv.util.Validator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.formula.functions.T;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,11 +53,19 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
     @Autowired
     CpProductRepository cpProductRepository;
     @Autowired
-    CpControllerAssemlber assemlber;
+    CpProductListAssemlber assemlber;
 
     @Autowired
     private EntityManager entityManager;
 
+    private static Map<String,List <CpProduct>> CpProductCathe_ = new HashMap<>();
+    private static Map<String,List <Cp>> CpCathe_ = new HashMap<>();
+    static{
+
+        CpProductCathe_.clear();
+
+        CpCathe_.clear();
+    }
 
     /**
      * cp 新增-插cp，product，cp_product表
@@ -210,8 +221,25 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
         return content;
     }
 
-    public ResultVO<?> findAllOfPage(){
-        return null;
+
+    public Page<Cp> findAllOfPage(CpVM vm){
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Cp> query = cb.createQuery(Cp.class);
+        Root<Cp> cpRoot = query.from(Cp.class);
+        query.select(cpRoot);
+        List<Predicate> predicates = new ArrayList<>();
+
+        //where
+        query.where(predicates.toArray(new Predicate[]{}));
+        TypedQuery<Cp> typedQuery = entityManager.createQuery(query);
+        List <Cp> content = typedQuery.getResultList();
+//        return content;
+//        CriteriaQuery <Long> countQuery = cb.createQuery(Long.class);
+//        countQuery.select(cb.count(countQuery.from(Product.class)));查数量
+//        countQuery.where(predicates.toArray(new Predicate[]{}));
+//        Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
+        Page page =new PageImpl<Cp>(content, PageRequest.of(vm.getPageNum(), vm.getPageSize()),content.size());
+        return page;
     }
 
     /**
@@ -240,7 +268,7 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
     }
 
     @Override
-    public Page<Cp> findByConditions(String name, String code, String cpAbbr, String status, Pageable pageable) {
+    public Page<CpControllerListVM> findByConditions(String name, String code, String cpAbbr, Integer status, Pageable pageable) {
         return cpRepository.findAll(((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -250,7 +278,7 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
             }
 
             if (StringUtils.isNotBlank(code)){
-                Predicate condition = builder.equal(root.get("code").as(String.class), code);
+                Predicate condition = builder.equal(root.get("code").as(String.class), "%"+code+"%");
                 predicates.add(condition);
             }
 
@@ -259,8 +287,8 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
                 predicates.add(condition);
             }
 
-            if (StringUtils.isNotBlank(status)){
-                Predicate condition = builder.equal(root.get("status").as(String.class), status);
+            if (status!=null && status>0){
+                Predicate condition = builder.equal(root.get("status").as(Integer.class), status);
                 predicates.add(condition);
             }
             Predicate condition = builder.equal(root.get("isdelete").as(Integer.class), 0);
@@ -294,33 +322,6 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
         TypedQuery<Cp> typedQuery = entityManager.createQuery(query);
         List <Cp> content = typedQuery.getResultList();
         return content;
-//        CriteriaQuery <Long> countQuery = cb.createQuery(Long.class);
-////        countQuery.select(cb.count(countQuery.from(Product.class)));查数量
-//        countQuery.where(predicates.toArray(new Predicate[]{}));
-//        Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
-//        return new PageImpl<>(content, null,1);
+
     }
-
-    public Page <Cp> findByPage(CpVM request) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Cp> query = cb.createQuery(Cp.class);
-        Root<Cp> cpRoot = query.from(Cp.class);
-        query.select(cpRoot);
-        List<Predicate> predicates = new ArrayList<>();
-        if (isId(request.getId())) {
-            predicates.add(cb.equal(cpRoot.get("id"), request.getId()));
-        }
-        //where
-        query.where(predicates.toArray(new Predicate[]{}));
-        TypedQuery<Cp> typedQuery = entityManager.createQuery(query);
-        List <Cp> content = typedQuery.getResultList();
-//        return content;
-//        CriteriaQuery <Long> countQuery = cb.createQuery(Long.class);
-//        countQuery.select(cb.count(countQuery.from(Product.class)));查数量
-//        countQuery.where(predicates.toArray(new Predicate[]{}));
-//        Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
-        return new PageImpl<Cp>(content, PageRequest.of(request.getPageNum(), request.getPageSize()),1);
-    }
-
-
 }

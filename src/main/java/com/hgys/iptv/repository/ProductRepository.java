@@ -29,6 +29,6 @@ public interface ProductRepository extends JpaRepository<Product,Integer>, JpaSp
      * @return
      */
     @Modifying
-    @Query(value = "update Cp set isdelete = 1 WHERE id = ?1")
+    @Query(value = "update Product set isdelete = 1 WHERE id = ?1")
     void logicDelete(int id);
 }
