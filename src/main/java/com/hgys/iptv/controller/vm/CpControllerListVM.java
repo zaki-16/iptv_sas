@@ -21,6 +21,7 @@ public class CpControllerListVM {
     @ApiModelProperty("主键")
     private Integer id;
 
+
     /** 名称*/
     @ApiModelProperty("名称")
     private String name;
