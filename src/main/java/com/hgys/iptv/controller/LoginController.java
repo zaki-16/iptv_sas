@@ -54,7 +54,7 @@ public class LoginController {
         if(StringUtils.isBlank(password)){
             return JSON.toJSON(ResultVOUtil.error("1","密码不能为空!"));
         }else if(!password.trim().equals(userDetails.getPassword())){
-            return JSON.toJSON(ResultVOUtil.error("1","登录密码错误！"));
+            return JSON.toJSON(ResultVOUtil.error("1","用户或密码错误！"));
         }
         //userDetails.getAuthorities()
         return JSON.toJSON(ResultVOUtil.success("登录成功"));
