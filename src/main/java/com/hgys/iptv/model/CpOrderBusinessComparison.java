@@ -33,7 +33,7 @@ public class CpOrderBusinessComparison implements java.io.Serializable {
     @Column(name = "id", unique = true, nullable = false, length = 10)
     private Integer id;
 
-    /** 业务定比例比编码 */
+    /** 业务编码 */
     @Column(name = "masterCode", nullable = true, length = 50)
     private String masterCode;
 

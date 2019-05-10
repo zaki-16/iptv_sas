@@ -28,7 +28,7 @@ public class OrderBusinessComparisonController {
     @PostMapping("/addOrderBusinessComparison")
     @ApiOperation(value = "新增结算类型-业务定比例",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
-    public ResultVO<?> addOrderBusinessComparison(@ApiParam(value = "结算类型-业务定比例VM") @RequestBody()OrderBusinessComparisonAddVM vm){
+    public ResultVO<?> addOrderBusinessComparison(@ApiParam(value = "结算类型-业务定比例新增VM") @RequestBody()OrderBusinessComparisonAddVM vm){
         return orderBusinessComparisonService.addOrderBusinessComparison(vm);
     }
 
@@ -70,8 +70,6 @@ public class OrderBusinessComparisonController {
     @ResponseStatus(HttpStatus.OK)
     public Page<OrderBusinessComparisonQueryVM> findByConditions(@ApiParam(value = "业务定比例名称") @RequestParam(value = "name",required = false )String name,
                                                                                    @ApiParam(value = "业务定比例编码") @RequestParam(value = "code",required = false)String code,
-                                                                                   @ApiParam(value = "业务编码") @RequestParam(value = "businessCode",required = false)String businessCode,
-                                                                                   @ApiParam(value = "业务名称") @RequestParam(value = "businessName",required = false)String businessName,
                                                                                    @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
                                                                                    @ApiParam(value = "结算方式") @RequestParam(value = "mode",required = false)String mode,
                                                                                    @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
@@ -79,7 +77,7 @@ public class OrderBusinessComparisonController {
 
         Sort sort = new Sort(Sort.Direction.DESC,"inputTime");
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
-        Page<OrderBusinessComparisonQueryVM> byConditions = orderBusinessComparisonService.findByConditions(name, code, businessCode,businessName,status, mode,pageable);
+        Page<OrderBusinessComparisonQueryVM> byConditions = orderBusinessComparisonService.findByConditions(name, code,status, mode,pageable);
         return byConditions;
     }
 
