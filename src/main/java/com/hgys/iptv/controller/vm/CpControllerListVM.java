@@ -1,6 +1,5 @@
 package com.hgys.iptv.controller.vm;
 
-import com.hgys.iptv.model.Product;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
