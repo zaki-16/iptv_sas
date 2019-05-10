@@ -60,6 +60,7 @@ public class OrderProductWithSettlementAddVM implements Serializable {
         this.code = code;
     }
 
+
     /** 修改时间 */
     @ApiModelProperty("修改时间")
     private Timestamp modifyTime;
