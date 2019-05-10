@@ -63,6 +63,12 @@ dependencies {
     compile group: 'com.querydsl', name: 'querydsl-core', version: '4.1.4'
     compile group: 'com.querydsl', name: 'querydsl-sql', version: '4.1.4'
 
+    //poi
+    compile group: 'com.xuxueli', name: 'xxl-excel', version: '1.1.1'
+
+
+
+
     compileJava {
         options.compilerArgs << "-s"
         options.compilerArgs << "$projectDir/generated/java"
