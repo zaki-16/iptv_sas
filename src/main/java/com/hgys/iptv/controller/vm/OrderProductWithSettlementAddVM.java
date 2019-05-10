@@ -33,6 +33,9 @@ public class OrderProductWithSettlementAddVM implements Serializable {
     @Column(name = "sdname", nullable = true, length = 100)
     private String sdname;
 
+    /** code */
+    @Column(name = "code", nullable = true, length = 50)
+    private String code;
     /** 单维度编码 */
     @Column(name = "sdcode", nullable = true, length = 50)
     private String sdcode;
@@ -48,6 +51,15 @@ public class OrderProductWithSettlementAddVM implements Serializable {
     /** 录入时间 */
     @ApiModelProperty("录入时间")
     private Timestamp inputTime;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
 
     /** 修改时间 */
     @ApiModelProperty("修改时间")
