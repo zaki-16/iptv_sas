@@ -53,6 +53,17 @@ public interface CpRepository extends JpaRepository<Cp,Integer>, JpaSpecificatio
     String findByMasterCodes(String Code);
 
 
+     /**
+     * 只查询未删除的cp
+     * @param
+     * @return
+     */
+    @Query(value = "select o from Cp o where o.isdelete = 0")
+    List<Cp> findcplist();
+
+
+
+
 
     List<Cp> findByStatusAndIsdelete(int status, int Isdelete);
 

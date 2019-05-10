@@ -35,7 +35,7 @@ public class OrderCpController {
     private CpService cpService;
 
 
-    @PostMapping("/selectById")
+    @GetMapping("/selectById")
     @ApiOperation(value = "通过id查询",notes = "返回json数据类型")
     public ResultVO<?> findById(@ApiParam(value = "用户ID",required = true) @RequestParam("id")String id){
         if (StringUtils.isBlank(id)){
@@ -48,7 +48,8 @@ public class OrderCpController {
         return ResultVOUtil.success(oc);
     }
 
-    @PostMapping("/batchDeleteoc")
+
+     @DeleteMapping("/batchDeleteoc")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> batchDeleteoc(@ApiParam(value = "名称",required = true) @RequestParam("ids")String ids){
@@ -115,7 +116,7 @@ public class OrderCpController {
     @GetMapping("/queryCPList")
     @ApiOperation(value = "查询CP列表")
     public ResultVO<?> queryCPList(){
-        ResultVO<?> all = cpService.findAll();
+        ResultVO<?> all = cpService.findcplist();
         return all;
     }
 

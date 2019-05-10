@@ -127,9 +127,9 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
     }
 
 
-    /**
+     /**
      * cp 修改
-     * @param vo
+     * @param
      * @return
      */
     @Override
@@ -308,6 +308,14 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
             return builder.conjunction();
         }),pageable).map(assemlber::getListVM);
         return d;
+    }
+
+    @Override
+    public ResultVO<?> findcplist() {
+        List<Cp> cps =cpRepository.findcplist();
+        if(cps!=null)
+            return ResultVOUtil.success(cps);
+        return ResultVOUtil.error("1","所查询的cp不存在!");
     }
 
 

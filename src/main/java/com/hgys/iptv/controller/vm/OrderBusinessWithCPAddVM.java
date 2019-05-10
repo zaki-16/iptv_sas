@@ -27,9 +27,6 @@ public class OrderBusinessWithCPAddVM implements Serializable{
     @ApiModelProperty(value = "结算类型-业务级集合",dataType = "List")
     private List<SmallOrderBusinessVM> list;
 
-
-
-
     public Integer getId() {
         return id;
     }
@@ -38,12 +35,9 @@ public class OrderBusinessWithCPAddVM implements Serializable{
         return name;
     }
 
-
     public Integer getStatus() {
         return status;
     }
-
-
 
     public List<SmallOrderBusinessVM> getList() {
         return list;
@@ -68,8 +62,6 @@ public class OrderBusinessWithCPAddVM implements Serializable{
     public void setStatus(Integer status) {
         this.status = status;
     }
-
-
 
     public void setList(List<SmallOrderBusinessVM> list) {
         this.list = list;
