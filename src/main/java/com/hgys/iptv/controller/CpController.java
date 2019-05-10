@@ -74,7 +74,7 @@ public class CpController {
     @ApiOperation(value = "按id查询cp",notes = "@return：cp对象")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> findById(
-            @ApiParam(value = "cpid",required = true) @RequestParam("id")Integer id) {
+            @ApiParam(value = "id",required = true) @RequestParam("id")Integer id) {
         return cpService.findById(id);
     }
 
