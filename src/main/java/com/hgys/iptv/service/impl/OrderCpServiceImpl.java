@@ -48,11 +48,38 @@ public class OrderCpServiceImpl implements OrderCpService {
     @Autowired
     private CpRepository cpRepository;
 
+
     @Override
-    public OrderCp findById(Integer id) {
-        //如果未查询到返回null
-        return ordercpRepository.findById(id).orElse(null);
+    public OrderCPWithCPListVM findById(String id) {
+        OrderCp byId = ordercpRepository.findById(Integer.parseInt(id)).orElseThrow(
+                () -> new IllegalArgumentException("未查询到结算组合信息")
+        );
+
+        OrderCPWithCPListVM vm = new OrderCPWithCPListVM();
+        BeanUtils.copyProperties(byId,vm);
+
+        List<OrderCpWithCp> byMaster_code = orderCpWithCpRepository.findByMasterCode(byId.getCode().trim());
+
+        List<OrderCPWithCPListVM.OrderCpWithCp> list = new ArrayList<>();
+        for (OrderCpWithCp f : byMaster_code){
+            OrderCPWithCPListVM.OrderCpWithCp s = new OrderCPWithCPListVM.OrderCpWithCp();
+            BeanUtils.copyProperties(f,s);
+            list.add(s);
+            vm.setList(list);
+        }
+        return vm;
     }
+
+
+
+
+
+
+
+
+
+
+
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -199,9 +226,9 @@ if (vo.getSettleaccounts()==0) { //按比例结算
         try{
             //验证名称是否已经存在
             Optional<OrderCp> byName = ordercpRepository.findByName(vo.getName().trim());
-            if (byName.isPresent()){
+           /* if (byName.isPresent()){
                 return ResultVOUtil.error("1","名称已经存在");
-            }
+            }*/
             OrderCp master = ordercpRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到ID为:" + vo.getId() + "信息"));
 
             OrderCp m = new OrderCp();

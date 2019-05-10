@@ -35,7 +35,7 @@ public class OrderCpController {
     private CpService cpService;
 
 
-    @GetMapping("/selectById")
+  /*  @GetMapping("/selectById")
     @ApiOperation(value = "通过id查询",notes = "返回json数据类型")
     public ResultVO<?> findById(@ApiParam(value = "用户ID",required = true) @RequestParam("id")String id){
         if (StringUtils.isBlank(id)){
@@ -46,7 +46,27 @@ public class OrderCpController {
             return ResultVOUtil.error("1","未查询到id为：" + id + "的信息");
         }
         return ResultVOUtil.success(oc);
+    }*/
+
+
+    @GetMapping("/selectById")
+    @ApiOperation(value = "通过结算组合Id编码查询",notes = "返回json数据")
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO<?> findById(@ApiParam(value = "结算组合Id编码",required = true) @RequestParam("id")String id){
+        if (StringUtils.isBlank(id)){
+            new IllegalArgumentException(" 不能为空");
+        }
+        OrderCPWithCPListVM byId = ordercpService.findById(id);
+        return ResultVOUtil.success(byId);
     }
+
+
+
+
+
+
+
+
 
 
      @DeleteMapping("/batchDeleteoc")
@@ -84,11 +104,8 @@ public class OrderCpController {
         return ordercpService.getOrderCp(code);
     }
 
-
-
-
     @GetMapping("/findByConditions")
-    @ApiOperation(value = "通过条件，分页查询结算组合维度",notes = "返回处理结果，false或true")
+    @ApiOperation(value = "通过条件，分页查询",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
     public Page<OrderCPWithCPListVM> findByConditions(@ApiParam(value = "结算单维度名称") @RequestParam(value = "name",required = false )String name,
                                                                                    @ApiParam(value = "编码") @RequestParam(value = "code",required = false)String code,
@@ -101,6 +118,11 @@ public class OrderCpController {
         Page<OrderCPWithCPListVM> byConditions = ordercpService.findByConditions(name, code, status, pageable);
         return byConditions;
     }
+
+
+
+
+
 
 
 

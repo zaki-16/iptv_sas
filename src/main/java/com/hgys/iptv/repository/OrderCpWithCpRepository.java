@@ -13,12 +13,12 @@ import java.util.List;
 public interface OrderCpWithCpRepository extends JpaRepository<OrderCpWithCp,Object>, JpaSpecificationExecutor<OrderCpWithCp> {
 
     /**
-     * 通过结算组合维度编码查询
-     * @param cpcode
+     * 通过结算组合编码查询
+     * @param occode
      * @return
      */
-    @Query(value = "select o from OrderCpWithCp o where o.cpcode = ?1")
-    List<OrderCpWithCp> findByMasterCode(String cpcode);
+    @Query(value = "select o from OrderCpWithCp o where o.occode = ?1")
+    List<OrderCpWithCp> findByMasterCode(String occode);
 
 
     /**

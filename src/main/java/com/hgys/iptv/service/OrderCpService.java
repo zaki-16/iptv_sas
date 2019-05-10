@@ -11,8 +11,18 @@ import org.springframework.data.domain.Pageable;
 
 public interface OrderCpService {
 
-    /*** 通过Id查询*/
-    OrderCp findById(Integer id);
+
+
+
+    /**
+     * 通过id查询结算组合数据
+     * @param id
+     * @return
+     */
+    OrderCPWithCPListVM findById(String id);
+
+
+
 
     /**
      * 新增结算组合维度

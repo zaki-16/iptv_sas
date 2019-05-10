@@ -72,12 +72,11 @@ public class OrderCPWithCPListVM {
 
         /** 金额 */
         @ApiModelProperty("money")
-        private String money;
+        private Integer money;
 
         /** 权重 */
         @ApiModelProperty("weight")
-        private String weight;
-
+        private Integer weight;
 
         public String getCpcode() {
             return cpcode;
@@ -89,14 +88,6 @@ public class OrderCPWithCPListVM {
 
         public String getOcname() {
             return ocname;
-        }
-
-        public String getMoney() {
-            return money;
-        }
-
-        public String getWeight() {
-            return weight;
         }
 
         public Integer getId() {
@@ -123,11 +114,19 @@ public class OrderCPWithCPListVM {
             this.ocname = ocname;
         }
 
-        public void setMoney(String money) {
+        public Integer getMoney() {
+            return money;
+        }
+
+        public Integer getWeight() {
+            return weight;
+        }
+
+        public void setMoney(Integer money) {
             this.money = money;
         }
 
-        public void setWeight(String weight) {
+        public void setWeight(Integer weight) {
             this.weight = weight;
         }
 
