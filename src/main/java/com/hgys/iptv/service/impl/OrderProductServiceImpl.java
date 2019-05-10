@@ -126,6 +126,7 @@ public class OrderProductServiceImpl implements OrderProductService {
             comparison.setCode(code);
             orderproductRepository.save(comparison);
 
+
             //新增从表信息
             for (OrderProductWithSCDAddLIstVM v : list){
                 OrderProductWithSCD cp = new OrderProductWithSCD();
