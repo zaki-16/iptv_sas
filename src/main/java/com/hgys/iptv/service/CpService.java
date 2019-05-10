@@ -25,5 +25,7 @@ public interface CpService {
 
     Page<Cp> findByConditions(String name, String code, String cpAbbr, String status, Pageable pageable);
 
+    ResultVO<?> findcplist();
+
 //    Page<Cp> findListById(Integer id, Pageable pageable);
 }
