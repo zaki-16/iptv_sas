@@ -7,6 +7,7 @@ import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.OrderProductRepository;
 import com.hgys.iptv.repository.OrderProductWithSCDRepository;
+import com.hgys.iptv.repository.ProductRepository;
 import com.hgys.iptv.service.OrderProductService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
@@ -38,12 +39,29 @@ public class OrderProductServiceImpl implements OrderProductService {
     @Autowired
     private OrderProductControllerAssemlber orderProductControllerAssemlber;
 
+    @Autowired
+    private ProductRepository productRepository;
 
 
     @Override
-    public OrderProduct findById(Integer id) {
-        //如果未查询到返回null
-        return orderproductRepository.findById(id).orElse(null);
+    public OrderProductWithSettlementAddVM findById(String id) {
+        OrderProduct byId = orderproductRepository.findById(Integer.parseInt(id)).orElseThrow(
+                () -> new IllegalArgumentException("未查询到结算信息")
+        );
+
+        OrderProductWithSettlementAddVM vm = new OrderProductWithSettlementAddVM();
+        BeanUtils.copyProperties(byId,vm);
+
+        List<OrderProductWithSCD> byMaster_code = orderProductWithSCDRepository.findByMasterCode(byId.getCode().trim());
+
+        List<OrderProductWithSCDAddLIstVM> list = new ArrayList<>();
+        for (OrderProductWithSCD f : byMaster_code){
+            OrderProductWithSCDAddLIstVM s = new OrderProductWithSCDAddLIstVM();
+            BeanUtils.copyProperties(f,s);
+            list.add(s);
+            vm.setList(list);
+        }
+        return vm;
     }
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -72,10 +90,6 @@ public class OrderProductServiceImpl implements OrderProductService {
             //信息校验
             if (StringUtils.isBlank(vm.getName())){
                 return ResultVOUtil.error("1","名称不能为空");
-            }else if (StringUtils.isBlank(vm.getProductcode())){
-                return ResultVOUtil.error("1","产品编码不能为空");
-            }else if (StringUtils.isBlank(vm.getProductname())){
-                return ResultVOUtil.error("1","产品名称不能为空");
             }else if (vm.getList().isEmpty()){
                 return ResultVOUtil.error("1","业务定比例CP信息选择不能为空");
             }else if (null == vm.getMode()){
@@ -89,15 +103,15 @@ public class OrderProductServiceImpl implements OrderProductService {
             for (OrderProductWithSCDAddLIstVM v : list) {
 
                 if (1 == vm.getMode()) {
-                    if (StringUtils.isBlank(v.getSdname())) {
+                    if (StringUtils.isBlank(vm.getSdname())) {
                         return ResultVOUtil.error("1", "单维度名称不能为空");
-                    } else if (StringUtils.isBlank(v.getSdcode())) {
+                    } else if (StringUtils.isBlank(vm.getSdcode())) {
                         return ResultVOUtil.error("1", "单维度Code不能为空");
                     }
                 } else {
-                    if (StringUtils.isBlank(v.getScdname())) {
+                    if (StringUtils.isBlank(vm.getScdname())) {
                         return ResultVOUtil.error("1", "多维度名称不能为空");
-                    } else if (StringUtils.isBlank(v.getScdcode())){
+                    } else if (StringUtils.isBlank(vm.getScdcode())){
                         return ResultVOUtil.error("1", "多维度Code不能为空");
                     }
                 }
@@ -108,15 +122,16 @@ public class OrderProductServiceImpl implements OrderProductService {
             BeanUtils.copyProperties(vm,comparison);
             comparison.setInputTime(new Timestamp(System.currentTimeMillis()));
             comparison.setIsdelete(0);
-            comparison.setBname(vm.getProductname());
             comparison.setCode(code);
             orderproductRepository.save(comparison);
 
             //新增从表信息
             for (OrderProductWithSCDAddLIstVM v : list){
                 OrderProductWithSCD cp = new OrderProductWithSCD();
+                String productname = productRepository.findByMasterCodes(v.getPcode());//根据产品ID,获取产品的名称
                 BeanUtils.copyProperties(v,cp);
                 cp.setOpcode(code);
+                cp.setPname(productname);
                 cp.setCreatetime(new Timestamp(System.currentTimeMillis()));
                 orderProductWithSCDRepository.save(cp);
             }
@@ -127,6 +142,29 @@ public class OrderProductServiceImpl implements OrderProductService {
 
         return ResultVOUtil.success(Boolean.TRUE);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public Page<OrderProductWithSettlementAddVM> findByConditions(String name, String code, String productcode, String productname, String status, String mode, Pageable pageable) {
@@ -181,7 +219,7 @@ public class OrderProductServiceImpl implements OrderProductService {
 
         try{
             //验证名称是否已经存在
-            if (StringUtils.isNotBlank(vo.getName())){
+          /*  if (StringUtils.isNotBlank(vo.getName())){
                 Optional<OrderProduct> byName = orderproductRepository.findByName(vo.getName());
                 if (byName.isPresent()){
                     if (!vo.getId().equals(byName.get().getId())){
@@ -189,7 +227,7 @@ public class OrderProductServiceImpl implements OrderProductService {
                     }
                 }
             }
-
+*/
             OrderProduct comparison = orderproductRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到id为："+vo.getId()+"业务定比例信息"));
             OrderProduct o = new OrderProduct();
 

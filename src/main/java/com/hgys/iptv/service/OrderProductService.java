@@ -11,8 +11,12 @@ import org.springframework.data.domain.Pageable;
 
 public interface OrderProductService {
 
-    /** 通过Id查询*/
-    OrderProduct findById(Integer id);
+    /**
+     * 通过id查询结算组合数据
+     * @param id
+     * @return
+     */
+    OrderProductWithSettlementAddVM findById(String id);
 
     /*** 通过Id,批量逻辑删除*/
     ResultVO<?> batchDeleteop(String ids);

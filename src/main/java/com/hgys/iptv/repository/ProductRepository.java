@@ -31,4 +31,14 @@ public interface ProductRepository extends JpaRepository<Product,Integer>, JpaSp
     @Modifying
     @Query(value = "update Product set isdelete = 1 WHERE id = ?1")
     void logicDelete(int id);
+
+
+
+    /**
+     * 通过code查询名字
+     * @param Code
+     * @return
+     */
+    @Query(value = "select o.name from Product o where o.code = ?1")
+    String findByMasterCodes(String Code);
 }

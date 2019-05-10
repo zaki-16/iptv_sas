@@ -28,23 +28,30 @@ public class OrderProduct implements java.io.Serializable{
     /** 产品级结算编码 */
     private String code;
 
-    @Column(name = "bcode", nullable = true, length = 255)
-    /** 产品编码 */
-    private String bcode;
 
-    @Column(name = "bname", nullable = true, length = 255)
-    /** 产品名称 */
-    private String bname;
     @Column(name = "inputTime", nullable = true, length = 50)
     /** 录入时间*/
     private Timestamp inputTime;
 
+    /** 多维度名称 */
+    @Column(name = "scdname", nullable = true, length = 100)
+    private String scdname;
+
+    /** 多维度编码 */
+    @Column(name = "scdcode", nullable = true, length = 50)
+    private String scdcode;
 
     @Column(name = "modifyTime", nullable = true, length = 50)
     /** 修改时间 */
     private Timestamp modifyTime;
 
+    /** 单维度名称 */
+    @Column(name = "sdname", nullable = true, length = 100)
+    private String sdname;
 
+    /** 单维度编码 */
+    @Column(name = "sdcode", nullable = true, length = 50)
+    private String sdcode;
     @Column(name = "status", nullable = true, length = 2)
     /** 状态 */
     private Integer status;
@@ -149,20 +156,36 @@ public class OrderProduct implements java.io.Serializable{
         return code;
     }
 
-    public String getBcode() {
-        return bcode;
+    public String getScdname() {
+        return scdname;
     }
 
-    public String getBname() {
-        return bname;
+    public void setScdname(String scdname) {
+        this.scdname = scdname;
     }
 
-    public void setBcode(String bcode) {
-        this.bcode = bcode;
+    public void setScdcode(String scdcode) {
+        this.scdcode = scdcode;
     }
 
-    public void setBname(String bname) {
-        this.bname = bname;
+    public void setSdname(String sdname) {
+        this.sdname = sdname;
+    }
+
+    public void setSdcode(String sdcode) {
+        this.sdcode = sdcode;
+    }
+
+    public String getScdcode() {
+        return scdcode;
+    }
+
+    public String getSdname() {
+        return sdname;
+    }
+
+    public String getSdcode() {
+        return sdcode;
     }
 
     public Integer getStatus() {

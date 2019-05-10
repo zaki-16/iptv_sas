@@ -46,18 +46,21 @@ public class OrderProductController {
 
 
 
-    @PostMapping("/selectById")
-    @ApiOperation(value = "通过id查询",notes = "返回json数据类型")
-    public ResultVO<?> findById(@ApiParam(value = "用户ID",required = true) @RequestParam("id")String id){
+
+
+    @GetMapping("/findByIds")
+    @ApiOperation(value = "通过结算组合Id编码查询",notes = "返回json数据")
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO<?> findByIds(@ApiParam(value = "结算组合Id编码",required = true) @RequestParam("id")String id){
         if (StringUtils.isBlank(id)){
-            return ResultVOUtil.error("1","id不能为空");
+            new IllegalArgumentException(" 不能为空");
         }
-        OrderProduct op = orderproductService.findById(Integer.valueOf(id.trim()));
-        if (null == op){
-            return ResultVOUtil.error("1","未查询到id为：" + id + "的信息");
-        }
-        return ResultVOUtil.success(op);
+        OrderProductWithSettlementAddVM byId = orderproductService.findById(id);
+        return ResultVOUtil.success(byId);
     }
+
+
+
 
 
     @DeleteMapping("/batchDeleteop")
@@ -72,12 +75,25 @@ public class OrderProductController {
     }
 
 
+
+
+
+
     @PostMapping("/addOrderProduct")
-    @ApiOperation(value = "新增结算类型-产品级",notes = "返回处理结果，false或true")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResultVO<?> addOrderProduct(@ApiParam(value = "结算类型-产品级VM") @RequestBody() OrderProductWithSettlementAddVM vm){
-        return orderproductService.addOrderBusinessComparison(vm);
+    @ApiOperation(value = "新增",notes = "返回处理结果，false或true")
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO<?> addOrderProduct(@ApiParam(value = "结算类型订单量VM") @RequestBody() OrderProductWithSettlementAddVM vo){
+
+        return orderproductService.addOrderBusinessComparison(vo);
     }
+
+
+
+
+
+
+
+
 
     @GetMapping("/findByConditions")
     @ApiOperation(value = "通过条件，分页查询结算类型-产品级",notes = "JSON类型格式数据")

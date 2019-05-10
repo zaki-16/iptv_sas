@@ -3,7 +3,9 @@ package com.hgys.iptv.controller.vm;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.persistence.Column;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.List;
 
 @ApiModel("结算类型-产品级新增VM")
@@ -27,16 +29,47 @@ public class OrderProductWithSettlementAddVM implements Serializable {
     @ApiModelProperty("备注")
     private String note;
 
-    /** 业务编码 */
-    @ApiModelProperty("业务编码")
-    private String productcode;
+    /** 单维度名称 */
+    @Column(name = "sdname", nullable = true, length = 100)
+    private String sdname;
 
-    /** 业务名称 */
-    @ApiModelProperty("业务名称")
-    private String productname;
+    /** 单维度编码 */
+    @Column(name = "sdcode", nullable = true, length = 50)
+    private String sdcode;
 
-    @ApiModelProperty("维度信息集合")
+    /** 多维度名称 */
+    @Column(name = "scdname", nullable = true, length = 100)
+    private String scdname;
+
+    /** 多维度编码 */
+    @Column(name = "scdcode", nullable = true, length = 50)
+    private String scdcode;
+
+    /** 录入时间 */
+    @ApiModelProperty("录入时间")
+    private Timestamp inputTime;
+
+    /** 修改时间 */
+    @ApiModelProperty("修改时间")
+    private Timestamp modifyTime;
+    @ApiModelProperty("产品信息集合")
     private List<OrderProductWithSCDAddLIstVM> list;
+
+    public Timestamp getInputTime() {
+        return inputTime;
+    }
+
+    public Timestamp getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setInputTime(Timestamp inputTime) {
+        this.inputTime = inputTime;
+    }
+
+    public void setModifyTime(Timestamp modifyTime) {
+        this.modifyTime = modifyTime;
+    }
 
     public Integer getId() {
         return id;
@@ -58,16 +91,40 @@ public class OrderProductWithSettlementAddVM implements Serializable {
         return note;
     }
 
-    public String getProductcode() {
-        return productcode;
-    }
-
-    public String getProductname() {
-        return productname;
-    }
-
     public List<OrderProductWithSCDAddLIstVM> getList() {
         return list;
+    }
+
+    public void setSdname(String sdname) {
+        this.sdname = sdname;
+    }
+
+    public void setSdcode(String sdcode) {
+        this.sdcode = sdcode;
+    }
+
+    public void setScdname(String scdname) {
+        this.scdname = scdname;
+    }
+
+    public void setScdcode(String scdcode) {
+        this.scdcode = scdcode;
+    }
+
+    public String getSdname() {
+        return sdname;
+    }
+
+    public String getSdcode() {
+        return sdcode;
+    }
+
+    public String getScdname() {
+        return scdname;
+    }
+
+    public String getScdcode() {
+        return scdcode;
     }
 
     public void setId(Integer id) {
@@ -88,14 +145,6 @@ public class OrderProductWithSettlementAddVM implements Serializable {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public void setProductcode(String productcode) {
-        this.productcode = productcode;
-    }
-
-    public void setProductname(String productname) {
-        this.productname = productname;
     }
 
     public void setList(List<OrderProductWithSCDAddLIstVM> list) {

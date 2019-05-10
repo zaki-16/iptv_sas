@@ -4,22 +4,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Column;
+import java.sql.Timestamp;
 
 @ApiModel("结算类型-产品级新增VM(单纬度维度,多维度关系)")
 public class OrderProductWithSCDAddLIstVM {
 
     @ApiModelProperty("主键")
     private Integer id;
-
-    /** 单维度名称 */
-    @Column(name = "sdname", nullable = true, length = 100)
-    private String sdname;
-
-    /** 单维度编码 */
-    @Column(name = "sdcode", nullable = true, length = 50)
-    private String sdcode;
-
-
     /** 产品名称 */
     @Column(name = "pname", nullable = true, length = 100)
     private String pname;
@@ -36,52 +27,14 @@ public class OrderProductWithSCDAddLIstVM {
     @Column(name = "opcode", nullable = true, length = 50)
     private String opcode;
 
-    /** 多维度名称 */
-    @Column(name = "scdname", nullable = true, length = 100)
-    private String scdname;
-
-    /** 多维度编码 */
-    @Column(name = "scdcode", nullable = true, length = 50)
-    private String scdcode;
-
+    @ApiModelProperty("创建时间")
+    private Timestamp createtime;
     public Integer getId() {
         return id;
     }
 
-    public String getSdname() {
-        return sdname;
-    }
-
-    public String getSdcode() {
-        return sdcode;
-    }
-
-    public String getScdname() {
-        return scdname;
-    }
-
-    public String getScdcode() {
-        return scdcode;
-    }
-
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public void setSdname(String sdname) {
-        this.sdname = sdname;
-    }
-
-    public void setSdcode(String sdcode) {
-        this.sdcode = sdcode;
-    }
-
-    public void setScdname(String scdname) {
-        this.scdname = scdname;
-    }
-
-    public void setScdcode(String scdcode) {
-        this.scdcode = scdcode;
     }
 
     public void setPname(String pname) {
@@ -90,6 +43,14 @@ public class OrderProductWithSCDAddLIstVM {
 
     public void setPcode(String pcode) {
         this.pcode = pcode;
+    }
+
+    public Timestamp getCreatetime() {
+        return createtime;
+    }
+
+    public void setCreatetime(Timestamp createtime) {
+        this.createtime = createtime;
     }
 
     public String getPname() {
