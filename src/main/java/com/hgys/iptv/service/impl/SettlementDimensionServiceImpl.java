@@ -168,7 +168,7 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
                 )
         ).from(dimension).offset(0).limit(10).fetchResults();
         Pageable pageable = PageRequest.of(0 ,10);
-        Page<SettlementDimension> pageImpianto = new PageImpl<SettlementDimension>(fetch.getResults(), pageable, fetch.getTotal());
+        Page<SettlementDimension> pageImpianto = new PageImpl<>(fetch.getResults(), pageable, fetch.getTotal());
         return pageImpianto;
     }
 }
