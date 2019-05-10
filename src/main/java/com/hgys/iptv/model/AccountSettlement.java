@@ -87,6 +87,14 @@ public class AccountSettlement implements java.io.Serializable {
     @Column(name = "isdelete", nullable = true, length = 10)
     private Integer isdelete;
 
+    /** 结算开始时间 */
+    @Column(name = "set_startTime", nullable = true, length = 10)
+    private Timestamp setStartTime;
+
+    /** 结算结束时间 */
+    @Column(name = "set_endTime", nullable = true, length = 10)
+    private Timestamp setEndTime;
+
     /**
      * 获取主键
      * 
@@ -351,5 +359,21 @@ public class AccountSettlement implements java.io.Serializable {
      */
     public void setIsdelete(Integer isdelete) {
         this.isdelete = isdelete;
+    }
+
+    public Timestamp getSetStartTime() {
+        return setStartTime;
+    }
+
+    public void setSetStartTime(Timestamp setStartTime) {
+        this.setStartTime = setStartTime;
+    }
+
+    public Timestamp getSetEndTime() {
+        return setEndTime;
+    }
+
+    public void setSetEndTime(Timestamp setEndTime) {
+        this.setEndTime = setEndTime;
     }
 }

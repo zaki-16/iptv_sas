@@ -207,11 +207,11 @@ public class BusinessServiceImpl implements BusinessService {
             List<Predicate> predicates = new ArrayList<>();
 
             if (StringUtils.isNotBlank(name)){
-                Predicate condition = builder.equal(root.get("name").as(String.class), "%"+name+"%");
+                Predicate condition = builder.like(root.get("name").as(String.class), "%"+name+"%");
                 predicates.add(condition);
             }
             if (StringUtils.isNotBlank(code)){
-                Predicate condition = builder.equal(root.get("code").as(String.class), "%"+code+"%");
+                Predicate condition = builder.like(root.get("code").as(String.class), "%"+code+"%");
                 predicates.add(condition);
             }
             if (status!=null && bizType>0){

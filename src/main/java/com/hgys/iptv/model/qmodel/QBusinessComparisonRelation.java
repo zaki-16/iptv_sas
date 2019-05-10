@@ -3,10 +3,10 @@ package com.hgys.iptv.model.qmodel;
 import com.hgys.iptv.model.BusinessComparisonRelation;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.dsl.DateTimePath;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
-import com.querydsl.core.types.dsl.TimePath;
 
 import javax.annotation.Generated;
 
@@ -27,7 +27,7 @@ public class QBusinessComparisonRelation extends EntityPathBase<BusinessComparis
 
     public final StringPath businessName = createString("businessName");
 
-    public final TimePath<java.sql.Time> create_time = createTime("create_time", java.sql.Time.class);
+    public final DateTimePath<java.sql.Timestamp> create_time = createDateTime("create_time", java.sql.Timestamp.class);
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
