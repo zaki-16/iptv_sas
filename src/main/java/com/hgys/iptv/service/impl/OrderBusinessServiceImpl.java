@@ -265,28 +265,23 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
 
         List<OrderBusinessWithCp> byMaster_code = orderBuinessWithCpRepository.findByMasterCode(byId.getCode().trim());
 
-
-        OrderBusinessWithCp bybu = orderBuinessWithCpRepository.findById(Integer.parseInt(id)).orElseThrow(
-                () -> new IllegalArgumentException("未查询到结算信息")
-        );
-
-        List<OrderBusinessCp> bybucode = smallOrderCpRepository.findByBUCode(bybu.getBucode().trim());
+        List<OrderBusinessCp> byMasterCodes = smallOrderCpRepository.findByMasterCodes(byId.getCode().trim());
 
         List<SmallOrderBusinessVM> list = new ArrayList<>();
-        List<SmallOrderBusinessVM.SmallOrderBusinessCPVM> lists = new ArrayList<>();
-        for (OrderBusinessWithCp f : byMaster_code){
+        for (OrderBusinessWithCp f : byMaster_code) {
             SmallOrderBusinessVM s = new SmallOrderBusinessVM();
-            BeanUtils.copyProperties(f,s);
+            BeanUtils.copyProperties(f, s);
             list.add(s);
-            vm.setList(list);
-            for (OrderBusinessCp a : bybucode){
-                SmallOrderBusinessVM.SmallOrderBusinessCPVM cp = new SmallOrderBusinessVM.SmallOrderBusinessCPVM();
-                BeanUtils.copyProperties(a,cp);
-              /*  lists.add(a);
-                vm.setList(lists);*/
-            }
+            List<SmallOrderBusinessVM.SmallOrderBusinessCPVM> lists = new ArrayList<>();
+            for (OrderBusinessCp ff : byMasterCodes) {
+                SmallOrderBusinessVM.SmallOrderBusinessCPVM a = new SmallOrderBusinessVM.SmallOrderBusinessCPVM();
+                BeanUtils.copyProperties(ff, a);
+                lists.add(a);
+                s.setLists(lists);
 
+            }
         }
+        vm.setList(list);
         return vm;
     }
 

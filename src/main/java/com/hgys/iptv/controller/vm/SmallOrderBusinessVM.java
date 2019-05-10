@@ -35,7 +35,7 @@ public class SmallOrderBusinessVM {
     @ApiModelProperty(value = "结算类型-业务级CP集合",dataType = "List")
     private List<SmallOrderBusinessVM.SmallOrderBusinessCPVM> lists;
 
-    public static class SmallOrderBusinessCPVM {
+    public static class SmallOrderBusinessCPVM{
 
 
         @ApiModelProperty("权重")

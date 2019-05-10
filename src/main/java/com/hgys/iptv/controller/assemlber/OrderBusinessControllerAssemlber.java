@@ -36,16 +36,16 @@ public class OrderBusinessControllerAssemlber {
             SmallOrderBusinessVM s = new SmallOrderBusinessVM();
             BeanUtils.copyProperties(f, s);
             list.add(s);
-        }
-        List<SmallOrderBusinessVM.SmallOrderBusinessCPVM> lists = new ArrayList<>();
-        for (OrderBusinessCp ff : byMasterCodes) {
-            SmallOrderBusinessVM.SmallOrderBusinessCPVM a = new SmallOrderBusinessVM.SmallOrderBusinessCPVM();
-            BeanUtils.copyProperties(ff, a);
-            lists.add(a);
+            List<SmallOrderBusinessVM.SmallOrderBusinessCPVM> lists = new ArrayList<>();
+            for (OrderBusinessCp ff : byMasterCodes) {
+                SmallOrderBusinessVM.SmallOrderBusinessCPVM a = new SmallOrderBusinessVM.SmallOrderBusinessCPVM();
+                BeanUtils.copyProperties(ff, a);
+                lists.add(a);
+                s.setLists(lists);
 
+        }
         }
         vm.setList(list);
-
         return vm;
     }
 }

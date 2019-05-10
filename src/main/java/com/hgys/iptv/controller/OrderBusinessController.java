@@ -33,6 +33,7 @@ public class OrderBusinessController {
     private CpService cpService;
 
 
+/*
     @PostMapping("/selectById")
     @ApiOperation(value = "通过id查询",notes = "返回json数据类型")
     public ResultVO<?> findById(@ApiParam(value = "用户ID",required = true) @RequestParam("id")String id){
@@ -45,6 +46,7 @@ public class OrderBusinessController {
         }
         return ResultVOUtil.success(ob);
     }
+*/
 
 
 
