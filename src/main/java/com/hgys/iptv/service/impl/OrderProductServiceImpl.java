@@ -116,6 +116,7 @@ public class OrderProductServiceImpl implements OrderProductService {
                     }
                 }*/
             }
+
             //新增主表信息
             OrderProduct comparison = new OrderProduct();
             String code = CodeUtil.getOnlyCode("OBP",5);
