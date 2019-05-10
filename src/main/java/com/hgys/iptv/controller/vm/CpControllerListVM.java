@@ -1,6 +1,5 @@
 package com.hgys.iptv.controller.vm;
 
-import com.hgys.iptv.model.Product;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,11 +17,10 @@ import java.util.List;
 @ApiModel("集合VM")
 @Data
 public class CpControllerListVM {
-
-
     /** 主键*/
     @ApiModelProperty("主键")
-    private String id;
+    private Integer id;
+
 
     /** 名称*/
     @ApiModelProperty("名称")
