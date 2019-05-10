@@ -10,12 +10,15 @@ import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.SettlementDimensionRepository;
 import com.hgys.iptv.service.SettlementDimensionService;
 import com.hgys.iptv.util.*;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -154,17 +157,18 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
 
 
     @Override
-    public List<SettlementDimension> a(){
+    public Page<SettlementDimension> a(){
         QSettlementDimension dimension = QSettlementDimension.settlementDimension;
-        List<SettlementDimension> fetch = jpaQueryFactory.select(
+        QueryResults<SettlementDimension> fetch = jpaQueryFactory.select(
                 Projections.bean(
                         SettlementDimension.class,
                         dimension.code,
                         dimension.id,
                         dimension.name
                 )
-        ).from(dimension).where(dimension.id.eq(1)).fetch();
-
-        return fetch;
+        ).from(dimension).offset(0).limit(10).fetchResults();
+        Pageable pageable = PageRequest.of(0 ,10);
+        Page<SettlementDimension> pageImpianto = new PageImpl<>(fetch.getResults(), pageable, fetch.getTotal());
+        return pageImpianto;
     }
 }

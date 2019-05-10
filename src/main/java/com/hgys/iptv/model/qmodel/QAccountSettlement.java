@@ -47,6 +47,10 @@ public class QAccountSettlement extends EntityPathBase<AccountSettlement> {
 
     public final NumberPath<Integer> set_type = createNumber("set_type", Integer.class);
 
+    public final DateTimePath<java.sql.Timestamp> setEndTime = createDateTime("setEndTime", java.sql.Timestamp.class);
+
+    public final DateTimePath<java.sql.Timestamp> setStartTime = createDateTime("setStartTime", java.sql.Timestamp.class);
+
     public final NumberPath<Integer> status = createNumber("status", Integer.class);
 
     public final NumberPath<Integer> total_sum = createNumber("total_sum", Integer.class);

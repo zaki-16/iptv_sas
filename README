@@ -52,3 +52,25 @@ public MessageResult pageQueryTest(
         orderSpecifierList.add(QAdvertise.advertise.id.desc());
         //查询
         PageResult<Advertise> advertisePageResult = advertiseService.queryDsl(pageNo, pageSize, predicateList, QAdvertise.advertise, orderSpecifierList);
+        
+==============================4、多表查询，采用dsl的方式,返回单个实体的page列表，单实体中有其他实体==============================
+            public Page<DemoStudent> pageStudentClassListPredicate(Predicate predicate, Pageable pageable){
+                QDemoStudent qDemoStudent = QDemoStudent.demoStudent;
+                QDemoClass qDemoClass = QDemoClass.demoClass;
+                JPAQuery<Tuple> jpaQuery = queryFactory.select(qDemoStudent,qDemoClass)
+                        .from(qDemoStudent).leftJoin(qDemoClass).on(qDemoStudent.classGuid.eq(qDemoClass.classGuid))
+                        .where(predicate)
+                        .orderBy(qDemoStudent.age.desc())
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize());
+                QueryResults<Tuple> result=jpaQuery.fetchResults();
+                List<DemoStudent> lsStudent=new ArrayList <DemoStudent>();
+                for (Tuple row : result.getResults()) {
+                    DemoStudent student= row.get(qDemoStudent);
+                    student.setDemoClass(row.get(qDemoClass));
+                    lsStudent.add(student);
+                }
+                Page<DemoStudent> pageDemoStudent=new PageImpl < DemoStudent >(lsStudent,pageable,result.getTotal());
+                return pageDemoStudent;
+            }
+        
