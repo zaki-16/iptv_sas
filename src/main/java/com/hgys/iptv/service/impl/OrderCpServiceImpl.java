@@ -9,6 +9,7 @@ import com.hgys.iptv.model.SettlementCombinatorialDimensionFrom;
 import com.hgys.iptv.model.SettlementCombinatorialDimensionMaster;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
+import com.hgys.iptv.repository.CpRepository;
 import com.hgys.iptv.repository.OrderCpRepository;
 import com.hgys.iptv.repository.OrderCpWithCpRepository;
 import com.hgys.iptv.service.OrderCpService;
@@ -44,6 +45,8 @@ public class OrderCpServiceImpl implements OrderCpService {
     @Autowired
     private OrderCpWithCpControllerAssemlber orderCpWithCpControllerAssemlber;
 
+    @Autowired
+    private CpRepository cpRepository;
 
     @Override
     public OrderCp findById(Integer id) {
@@ -109,10 +112,12 @@ if (vo.getSettleaccounts()==0) { //按比例结算
             //处理附表数据
             for (SmallCPOrderVM s : vos){
                 OrderCpWithCp from = new OrderCpWithCp();
+                String cpname = cpRepository.findByMasterCodes(s.getCpcode());//根据COID查询CP名称
                 from.setOccode(code);
                 from.setCpcode(s.getCpcode());
                 from.setOcname(s.getOcname());
                 from.setWeight(s.getWeight());
+                from.setCpname(cpname);
                 from.setCreatetime(new Timestamp(System.currentTimeMillis()));
                 from.setMoney(s.getMoney());
                 from.setSettleaccounts(s.getSettleaccounts());
