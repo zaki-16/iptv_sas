@@ -18,11 +18,9 @@ import java.util.List;
 @ApiModel("集合VM")
 @Data
 public class CpControllerListVM {
-
-
     /** 主键*/
     @ApiModelProperty("主键")
-    private String id;
+    private Integer id;
 
     /** 名称*/
     @ApiModelProperty("名称")

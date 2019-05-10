@@ -269,21 +269,22 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
 
     @Override
     public Page<CpControllerListVM> findByConditions(String name, String code, String cpAbbr, Integer status, Pageable pageable) {
-        return cpRepository.findAll(((root, query, builder) -> {
+
+        Page<CpControllerListVM> d=cpRepository.findAll(((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
             if (StringUtils.isNotBlank(name)){
-                Predicate condition = builder.equal(root.get("name").as(String.class), "%"+name+"%");
+                Predicate condition = builder.like(root.get("name").as(String.class), "%"+name+"%");
                 predicates.add(condition);
             }
 
             if (StringUtils.isNotBlank(code)){
-                Predicate condition = builder.equal(root.get("code").as(String.class), "%"+code+"%");
+                Predicate condition = builder.like(root.get("code").as(String.class), "%"+code+"%");
                 predicates.add(condition);
             }
 
             if (StringUtils.isNotBlank(cpAbbr)){
-                Predicate condition = builder.equal(root.get("cpAbbr").as(String.class), "%"+cpAbbr+"%");
+                Predicate condition = builder.like(root.get("cpAbbr").as(String.class), "%"+cpAbbr+"%");
                 predicates.add(condition);
             }
 
@@ -296,9 +297,17 @@ public class CpServiceImpl extends AbstractBaseRepositoryImpl implements CpServi
             if (!predicates.isEmpty()){
                 return builder.and(predicates.toArray(new Predicate[0]));
             }
-//            return query.where(predicates.toArray(new Predicate[predicates.size()])).getRestriction();
+            //in
+            // if (taskIds.size() > 0)
+            // { CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("id"));
+            // for (String id : taskIds)
+            // { in.value(id); }
+            // finalConditions = criteriaBuilder.and(finalConditions, in); }
+            // return query.where(finalConditions).getRestriction();
+
             return builder.conjunction();
         }),pageable).map(assemlber::getListVM);
+        return d;
     }
 
 
