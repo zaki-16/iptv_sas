@@ -46,19 +46,24 @@ public class ExcelForWebUtil {
 			e.printStackTrace();
 		}
 	}
-	
-	public static void saveExcel(String savePath,String savefileName,Map<String, Object> beanParams, String templementFile, String dir) 
-			throws ParsePropertyException,InvalidFormatException, IOException {
-		String url = dir + File.separator + templementFile;
-		FileInputStream fin = new FileInputStream(url);
-		XLSTransformer transformer = new XLSTransformer();
-		Workbook workBook = transformer.transformXLS(fin, beanParams);
-		File f = new File(savePath+File.separator+savefileName);
-		if(f.isFile()){
-			f.createNewFile();
+
+	public static void workBookExportExcel(HttpServletResponse response,Workbook workBook,String fileName) {
+		try {
+			response.setContentType("application/octet-stream;charset=utf-8");
+			response.setHeader("Content-Disposition", "attachment;filename="
+					+ new String(fileName.getBytes(), "iso-8859-1") + ".xls");
+			ServletOutputStream out = response.getOutputStream();
+			workBook.write(out);
+			out.flush();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e){
+			e.printStackTrace();
 		}
-		FileOutputStream fos = new FileOutputStream(f);
-		workBook.write(fos);
 	}
-	
+
 }
