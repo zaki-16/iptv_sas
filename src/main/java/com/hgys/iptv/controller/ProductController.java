@@ -3,6 +3,7 @@ package com.hgys.iptv.controller;
 import com.hgys.iptv.controller.vm.ProductAddVM;
 import com.hgys.iptv.controller.vm.ProductControllerListVM;
 import com.hgys.iptv.controller.vm.ProductListVM;
+import com.hgys.iptv.controller.vm.ProductVM;
 import com.hgys.iptv.model.Product;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.ProductService;
@@ -44,10 +45,8 @@ public class ProductController {
     @ApiOperation(value = "更新产品",notes = "@return：产品对象")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> updateProduct(
-            @ApiParam(value = "产品修改VM") @RequestBody() ProductControllerListVM vo){
-        Product prod = new Product();
-        BeanUtils.copyProperties(vo,prod);
-        return productService.update(prod);
+            @ApiParam(value = "产品修改VM") @RequestBody() ProductAddVM vm){
+        return productService.update(vm);
     }
 
 //    /**
@@ -97,7 +96,7 @@ public class ProductController {
     @GetMapping("/findByConditions")
     @ApiOperation(value = "通过条件，分页查询",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
-    public Page<ProductControllerListVM> findByConditions(
+    public Page<ProductVM> findByConditions(
             @ApiParam(value = "产品名称") @RequestParam(value = "name",required = false )String name,
             @ApiParam(value = "产品编码") @RequestParam(value = "code",required = false)String code,
             @ApiParam(value = "状态") @RequestParam(value = "status",required = false)Integer status,
@@ -106,8 +105,6 @@ public class ProductController {
 
         Sort sort = new Sort(Sort.Direction.DESC,"inputTime");
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
-        Page<ProductControllerListVM> byConditions = productService.findByConditions(name,code,status, pageable);
-        ResultVOUtil.success(byConditions);
-        return byConditions;
+        return productService.findByConditions(name,code,status, pageable);
     }
 }

@@ -2,6 +2,7 @@ package com.hgys.iptv.controller;
 
 import com.hgys.iptv.controller.vm.BusinessAddVM;
 import com.hgys.iptv.controller.vm.BusinessControllerListVM;
+import com.hgys.iptv.controller.vm.BusinessVM;
 import com.hgys.iptv.model.Business;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.BusinessService;
@@ -43,10 +44,8 @@ public class BusinessController {
     @ApiOperation(value = "更新业务",notes = "@return：业务对象")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> updateBusiness(
-            @ApiParam(value = "业务修改VM") @RequestBody() BusinessAddVM vo){
-        Business business = new Business();
-        BeanUtils.copyProperties(vo,business);
-        return businessService.update(business);
+            @ApiParam(value = "业务修改VM") @RequestBody() BusinessAddVM vm){
+        return businessService.update(vm);
     }
 
     /**
@@ -95,7 +94,7 @@ public class BusinessController {
     @GetMapping("/findByConditions")
     @ApiOperation(value = "通过条件，分页查询",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
-    public Page<BusinessControllerListVM> findByConditions(
+    public Page<BusinessVM> findByConditions(
             @ApiParam(value = "业务名称") @RequestParam(value = "name",required = false )String name,
             @ApiParam(value = "业务编码") @RequestParam(value = "code",required = false)String code,
             @ApiParam(value = "业务类型",example = "0:视频类、1:非视频类") @RequestParam(value = "bizType",required = false)Integer bizType,
@@ -106,9 +105,7 @@ public class BusinessController {
 
         Sort sort = new Sort(Sort.Direction.DESC,"inputTime");
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
-        Page<BusinessControllerListVM> byConditions = businessService.findByConditions(name,code,bizType,settleType,status, pageable);
-        ResultVOUtil.success(byConditions);
-        return byConditions;
+        return businessService.findByConditions(name,code,bizType,settleType,status, pageable);
     }
 
 }

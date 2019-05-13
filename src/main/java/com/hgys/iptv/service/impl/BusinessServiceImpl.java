@@ -3,9 +3,7 @@ package com.hgys.iptv.service.impl;
 import com.hgys.iptv.common.AbstractBaseServiceImpl;
 import com.hgys.iptv.controller.assemlber.BusinessControllerAssemlber;
 import com.hgys.iptv.controller.vm.BusinessAddVM;
-import com.hgys.iptv.controller.vm.BusinessControllerListVM;
 import com.hgys.iptv.controller.vm.BusinessVM;
-import com.hgys.iptv.controller.vm.CpVM;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -78,13 +76,26 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
         business.setCode(CodeUtil.getOnlyCode("SDS",5));//cp编码
         business.setIsdelete(0);//删除状态
         Business biz_add = businessRepository.save(business);
+        //处理 business关联的中间表的映射关系
+        handleRelation(vm,biz_add.getId());
+
+        if(biz_add !=null)
+            return ResultVOUtil.success(Boolean.TRUE);
+        return ResultVOUtil.error("1","新增失败！");
+    }
+    /**
+     * 处理 business关联的中间表的映射关系
+     * @param vm--维护数据来源
+     * @param id--要维护的业务id
+     */
+    private void handleRelation(BusinessAddVM vm, Integer id){
         //------------------------处理关系
         List<String> pidLists = Arrays.asList(StringUtils.split(vm.getPids(), ","));
         //2.插product_business中间表
         List<ProductBusiness> pbs =new ArrayList<>();
         pidLists.forEach(pid->{
             ProductBusiness pb = new ProductBusiness();
-            pb.setBid(biz_add.getId());
+            pb.setBid(id);
             pb.setPid(Integer.parseInt(pid));
             pbs.add(pb);
         });
@@ -95,40 +106,39 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
         List<String> cpidLists = Arrays.asList(StringUtils.split(vm.getCpids(), ","));
         cpidLists.forEach(cpid->{
             CpBusiness cpBusiness = new CpBusiness();
-            cpBusiness.setBid(Integer.parseInt(cpid));
+            cpBusiness.setBid(id);
             cpBusiness.setCpid(Integer.parseInt(cpid));
             cpBizs.add(cpBusiness);
         });
         cpBusinessRepository.saveAll(cpBizs);
-
-        if(biz_add !=null)
-            return ResultVOUtil.success(Boolean.TRUE);
-        return ResultVOUtil.error("1","新增失败！");
     }
-
     /**
      * 修改
-     * @param business
+     * @param vm
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO<?> update(Business business) {
-        if (null == business.getId()){
+    public ResultVO<?> update(BusinessAddVM vm) {
+        if (null == vm.getId()){
             ResultVOUtil.error("1","主键不能为空");
         }
         try{
-            //验证名称是否已经存在
-            if (StringUtils.isNotBlank(business.getName())){
-                Business byName = businessRepository.findByName(business.getName().trim());
-                if (null != byName && !byName.getId().equals(business.getId()) ){
-                    ResultVOUtil.error("1","名称已经存在");
-                }
-            }
+            Business business = new Business();
+            BeanUtils.copyProperties(vm,business);
+//            //验证名称是否已经存在
+//            if (StringUtils.isNotBlank(business.getName())){
+//                Business byName = businessRepository.findByName(business.getName().trim());
+//                if (null != byName && !byName.getId().equals(business.getId()) ){
+//                    ResultVOUtil.error("1","名称已经存在");
+//                }
+//            }
             Business byId = businessRepository.findById(business.getId()).orElseThrow(()-> new IllegalArgumentException("为查询到ID为:" + business.getId() + "业务信息"));
             business.setModifyTime(new Timestamp(System.currentTimeMillis()));
             UpdateTool.copyNullProperties(byId,business);
             businessRepository.saveAndFlush(business);
+            //处理 business关联的中间表的映射关系
+            handleRelation(vm,vm.getId());
         }catch (Exception e){
             e.printStackTrace();
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
@@ -195,7 +205,7 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
         vm.setCpList(cpList);
 
         if(business!=null)
-            return ResultVOUtil.success(business);
+            return ResultVOUtil.success(vm);
         return ResultVOUtil.error("1","所查询的业务列表不存在!");
     }
 
@@ -228,7 +238,7 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
 
 
     @Override
-    public Page<BusinessControllerListVM> findByConditions(String name, String code, Integer bizType, Integer settleType, Integer status, Pageable pageable) {
+    public Page<BusinessVM> findByConditions(String name, String code, Integer bizType, Integer settleType, Integer status, Pageable pageable) {
         return businessRepository.findAll(((root, query,builder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
