@@ -64,10 +64,6 @@ dependencies {
 
     //poi，xuxueli工具包
     compile group: 'com.xuxueli', name: 'xxl-excel', version: '1.1.1'
-    //hutool工具包
-    compile 'cn.hutool:hutool-all:4.5.9'
-    
-
 
 
     compileJava {
