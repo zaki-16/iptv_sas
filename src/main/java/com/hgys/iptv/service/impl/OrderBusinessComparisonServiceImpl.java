@@ -137,6 +137,7 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
                     BeanUtils.copyProperties(business,compa);
                     compa.setMasterCode(v.getBusinessCode());
                     compa.setCreate_time(new Timestamp(System.currentTimeMillis()));
+                    compa.setCp_name(StringUtils.trimToEmpty(cpRepository.findByCode(business.getCp_code().trim()).getName()));
 
                     cpOrderBusinessComparisonRepository.save(compa);
                 }
