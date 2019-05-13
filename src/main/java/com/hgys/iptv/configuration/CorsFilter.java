@@ -37,14 +37,13 @@ public class CorsFilter implements Filter {
         HttpServletRequest request= (HttpServletRequest) servletRequest;
         HttpServletResponse response= (HttpServletResponse) servletResponse;
 //        指定访问访问的域
-//        List<String> allowedOrigins = new ArrayList<>();//Arrays.asList("http://www.test.com:8099");
+//        List<String> allowedOrigins = Arrays.asList("http://www.test.com:8099");
 //        allowedOrigins.add("http://www.testa.com:81");
 //        allowedOrigins.add("http://132.232.138.176:1688");
         String origin = request.getHeader("Origin");
         logger.info(origin+" 请求访问.");
         response.setHeader("Access-Control-Allow-Origin",origin);
         response.setHeader("Vary", "Origin");
-//        response.setHeader("Access-Control-Allow-Origin",""); //允许跨域访问的域 本机测试
         response.setHeader("Access-Control-Allow-Methods","POST,GET,OPTIONS,DELETE,PUT"); //允许使用的请求方法
         response.setHeader("Access-Control-Expose-Headers","*");
         response.setHeader("Access-Control-Allow-Headers","Content-Type, Content-Length, Authorization, Accept, X-Requested-With , Origin");
