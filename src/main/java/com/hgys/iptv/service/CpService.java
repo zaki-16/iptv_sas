@@ -15,7 +15,7 @@ public interface CpService {
 
     ResultVO<?> update(Cp cp);
 
-    ResultVO<?> logicDelete(Integer id);
+//    ResultVO<?> logicDelete(Integer id);
 
     ResultVO<?> batchLogicDelete(String ids);
 
@@ -27,7 +27,6 @@ public interface CpService {
 
     Page<CpControllerListVM>  findByConditions(String name, String code, String cpAbbr, Integer status, Pageable pageable);
 
-     ResultVO<?> findcplist();
+    ResultVO<?> findcplist();
 
-//    Page<Cp> findListById(Integer id, Pageable pageable);
 }

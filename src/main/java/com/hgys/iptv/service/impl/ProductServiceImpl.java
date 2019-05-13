@@ -1,18 +1,18 @@
 package com.hgys.iptv.service.impl;
 
+import com.hgys.iptv.common.AbstractBaseServiceImpl;
 import com.hgys.iptv.controller.assemlber.ProductBusinessListAssemlber;
+import com.hgys.iptv.controller.vm.CpVM;
 import com.hgys.iptv.controller.vm.ProductAddVM;
 import com.hgys.iptv.controller.vm.ProductControllerListVM;
 import com.hgys.iptv.controller.vm.ProductListVM;
 import com.hgys.iptv.model.Business;
+import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.Product;
 import com.hgys.iptv.model.ProductBusiness;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
-import com.hgys.iptv.repository.BusinessRepository;
-import com.hgys.iptv.repository.CpProductRepository;
-import com.hgys.iptv.repository.ProductBusinessRepository;
-import com.hgys.iptv.repository.ProductRepository;
+import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.ProductService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
@@ -41,17 +41,20 @@ import java.util.*;
  * @Description:/
  */
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl extends AbstractBaseServiceImpl implements ProductService {
     @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    ProductBusinessListAssemlber assemlber;
-    @Autowired
-    CpProductRepository cpProductRepository;
+    ProductRepository productRepository;
     @Autowired
     BusinessRepository businessRepository;
     @Autowired
+    CpProductRepository cpProductRepository;
+    @Autowired
+    CpBusinessRepository cpBusinessRepository;
+    @Autowired
     ProductBusinessRepository productBusinessRepository;
+
+    @Autowired
+    ProductBusinessListAssemlber assemlber;
     @Autowired
     private EntityManager entityManager;
     /**
@@ -62,11 +65,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> save(ProductAddVM vm){
-        //校验名称是否已经存在
-        Product byName = productRepository.findByName(vm.getName());
-        if (null != byName){
-            return ResultVOUtil.error("1",byName + "名称已经存在");
-        }
+//        //校验名称是否已经存在
+//        Product byName = productRepository.findByName(vm.getName());
+//        if (null != byName){
+//            return ResultVOUtil.error("1",byName + "名称已经存在");
+//        }
         String[] cols = {vm.getName(),vm.getPrice().toString(),vm.getStatus().toString()};
         if(!Validator.validEmptyPass(cols))//必填字段不为空则插入
             return ResultVOUtil.error("1","有必填字段未填写！");
@@ -159,8 +162,17 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> batchLogicDelete(String ids){
         List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
-        for (String s : idLists)
-            productRepository.logicDelete(Integer.parseInt(s));
+        Set<Integer> idSets = new HashSet<>();
+        idLists.forEach(cpid->{
+            idSets.add(Integer.parseInt(cpid));
+        });
+        for (Integer id : idSets){
+            productRepository.logicDelete(id);
+            //删除cp_product关系映射
+            cpProductRepository.deleteAllByPid(id);
+            //删除product_business关系映射
+            productBusinessRepository.deleteAllByPid(id);
+        }
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
@@ -171,6 +183,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public ResultVO<?> findById(Integer id) {
+
         Product prod = productRepository.findById(id).get();
         ProductListVM productListVM = new ProductListVM();
         BeanUtils.copyProperties(prod,productListVM);
@@ -201,8 +214,6 @@ public class ProductServiceImpl implements ProductService {
         return content;
     }
 
-
-
     /**
      * 单查询--根据code
      * @param code
@@ -222,7 +233,9 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public ResultVO<?> findAll() {
-        List<Product> prods = productRepository.findAll();
+        Map<String,Object> vm = new HashMap<>();
+        vm.put("isdelete",0);
+        List<?> prods =findByCriteria(Product.class,vm);
         if(prods!=null&&prods.size()>0)
             return ResultVOUtil.success(prods);
         return ResultVOUtil.error("1","所查询的产品列表不存在!");

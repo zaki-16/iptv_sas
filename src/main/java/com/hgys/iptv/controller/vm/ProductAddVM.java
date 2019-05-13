@@ -14,7 +14,7 @@ public class ProductAddVM {
     private String name;
 
     @ApiModelProperty("价格")
-    private Double price;
+    private Integer price;
 
     @ApiModelProperty("状态")@NotBlank(message = "不能为空")
     private Integer status;

@@ -3,6 +3,8 @@ package com.hgys.iptv.controller.vm;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -70,8 +72,8 @@ public class CpControllerListVM {
     @ApiModelProperty("逻辑删除(0:否；1:是)")
     private Integer isdelete;
 
-    private List<CpControllerListVM.Product> list;
-
+    private List<CpControllerListVM.Product> pList;
+    @Getter@Setter
     public static class Product{
         /**
          * 主键
@@ -86,29 +88,23 @@ public class CpControllerListVM {
          */
         private String code;
 
-        public Integer getId() {
-            return id;
-        }
+    }
 
-        public void setId(Integer id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getCode() {
-            return code;
-        }
-
-        public void setCode(String code) {
-            this.code = code;
-        }
+    private List<CpControllerListVM.Business> bList;
+    @Getter@Setter
+    public static class Business{
+        /**
+         * 主键
+         */
+        private Integer id;
+        /**
+         * 名称
+         */
+        private String name;
+        /**
+         * 编码
+         */
+        private String code;
     }
 
 }

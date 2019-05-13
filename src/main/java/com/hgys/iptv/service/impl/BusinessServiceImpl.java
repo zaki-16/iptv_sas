@@ -1,19 +1,12 @@
 package com.hgys.iptv.service.impl;
 
+import com.hgys.iptv.common.AbstractBaseServiceImpl;
 import com.hgys.iptv.controller.assemlber.BusinessControllerAssemlber;
-import com.hgys.iptv.controller.assemlber.CpControllerAssemlber;
-import com.hgys.iptv.controller.vm.BusinessAddVM;
 import com.hgys.iptv.controller.vm.BusinessControllerListVM;
-import com.hgys.iptv.controller.vm.CpVM;
 import com.hgys.iptv.model.Business;
-import com.hgys.iptv.model.Business;
-import com.hgys.iptv.model.Cp;
-import com.hgys.iptv.model.SettlementDimension;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
-import com.hgys.iptv.repository.BusinessRepository;
-import com.hgys.iptv.repository.CpRepository;
-import com.hgys.iptv.repository.ProductRepository;
+import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.BusinessService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
@@ -27,17 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.hgys.iptv.service.impl.CpServiceImpl.isId;
+import java.util.*;
 
 /**
  * @Auther: wangz
@@ -45,9 +30,18 @@ import static com.hgys.iptv.service.impl.CpServiceImpl.isId;
  * @Description:
  */
 @Service
-public class BusinessServiceImpl implements BusinessService {
+public class BusinessServiceImpl extends AbstractBaseServiceImpl implements BusinessService {
     @Autowired
-    private BusinessRepository businessRepository;
+    ProductRepository productRepository;
+    @Autowired
+    BusinessRepository businessRepository;
+    @Autowired
+    CpProductRepository cpProductRepository;
+    @Autowired
+    CpBusinessRepository cpBusinessRepository;
+    @Autowired
+    ProductBusinessRepository productBusinessRepository;
+
     @Autowired
     private EntityManager entityManager;
     @Autowired
@@ -135,10 +129,17 @@ public class BusinessServiceImpl implements BusinessService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> batchLogicDelete(String ids){
         List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
-        for (String s : idLists){
-            businessRepository.logicDelete(Integer.parseInt(s));
+        Set<Integer> idSets = new HashSet<>();
+        idLists.forEach(cpid->{
+            idSets.add(Integer.parseInt(cpid));
+        });
+        for (Integer id : idSets){
+            productRepository.logicDelete(id);
+            //删除cp_business关系映射
+            cpBusinessRepository.deleteAllByBid(id);
+            //删除product_business关系映射
+            productBusinessRepository.deleteAllByBid(id);
         }
-
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
@@ -152,7 +153,7 @@ public class BusinessServiceImpl implements BusinessService {
         Business business = businessRepository.findById(id).orElse(null);
         if(business!=null)
             return ResultVOUtil.success(business);
-        return ResultVOUtil.error("1","所查询的cp不存在!");
+        return ResultVOUtil.error("1","所查询的业务列表不存在!");
     }
 
     /**
@@ -174,30 +175,12 @@ public class BusinessServiceImpl implements BusinessService {
      */
     @Override
     public ResultVO<?> findAll() {
-        List<Business> buss = findBy(new BusinessAddVM());
+        Map<String,Object> vm = new HashMap<>();
+        vm.put("isdelete",0);
+        List<?> buss =findByCriteria(Business.class,vm);
         if(buss!=null&&buss.size()>0)
             return ResultVOUtil.success(buss);
         return ResultVOUtil.error("1","所查询的产品列表不存在!");
-    }
-
-    public List <Business> findBy(BusinessAddVM vm) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Business> query = cb.createQuery(Business.class);
-        Root<Business> root = query.from(Business.class);
-        query.select(root);
-        List<Predicate> predicates = new ArrayList<>();
-        if (isId(vm.getId())) {
-            predicates.add(cb.equal(root.get("id"), vm.getId()));
-        }
-        //筛选已删除的值-> 1:已删除
-        Predicate condition = cb.equal(root.get("isdelete").as(Integer.class), 0);
-        predicates.add(condition);
-
-        //where
-        query.where(predicates.toArray(new Predicate[]{}));
-        TypedQuery<Business> typedQuery = entityManager.createQuery(query);
-        List <Business> content = typedQuery.getResultList();
-        return content;
     }
 
 

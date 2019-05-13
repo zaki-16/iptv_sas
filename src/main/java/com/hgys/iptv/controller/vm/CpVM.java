@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller.vm;
 
+import com.hgys.iptv.model.Business;
 import com.hgys.iptv.model.Product;
 import lombok.Data;
 
@@ -32,5 +33,7 @@ public class CpVM {
     private Integer pageNum;
     private Integer pageSize;
 
-    private List<Product> list;
+    private List<Product> pList;
+
+    private List<Business> bList;
 }

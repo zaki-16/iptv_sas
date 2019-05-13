@@ -26,7 +26,7 @@ public class ProductListVM {
 
     /** 名称*/
     @ApiModelProperty("名称")
-    private Double price;
+    private Integer price;
 
     /** 编码*/
     @ApiModelProperty("编码")
