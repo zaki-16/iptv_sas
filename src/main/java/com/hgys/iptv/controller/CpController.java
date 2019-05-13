@@ -45,10 +45,8 @@ public class CpController {
     @ApiOperation(value = "更新cp",notes = "@return：cp对象")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> updateCp(
-            @ApiParam(value = "cp修改VM") @RequestBody CpAddVM vo){
-        Cp cp = new Cp();
-        BeanUtils.copyProperties(vo,cp);
-        return cpService.update(cp);
+            @ApiParam(value = "cp修改VM") @RequestBody CpAddVM vm){
+        return cpService.update(vm);
     }
 
 

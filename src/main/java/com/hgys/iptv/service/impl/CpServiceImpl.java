@@ -5,6 +5,7 @@ import com.hgys.iptv.controller.assemlber.CpProductListAssemlber;
 import com.hgys.iptv.controller.vm.CpAddVM;
 import com.hgys.iptv.controller.vm.CpControllerListVM;
 import com.hgys.iptv.controller.vm.CpVM;
+import com.hgys.iptv.controller.vm.ProductAddVM;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -76,28 +77,8 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             cp.setCode(CodeUtil.getOnlyCode("SDS", 5));//cp编码
             cp.setIsdelete(0);//删除状态
             Cp cp_ = cpRepository.save(cp);
-            //------------------------处理关系
-            List<String> pidLists = Arrays.asList(StringUtils.split(vm.getPids(), ","));
-            //2.插cp-product中间表
-            List<CpProduct> cpProds =new ArrayList<>();
-            pidLists.forEach(pid->{
-                CpProduct cpProduct = new CpProduct();
-                cpProduct.setCpid(cp_.getId());
-                cpProduct.setPid(Integer.parseInt(pid));
-                cpProds.add(cpProduct);
-            });
-            cpProductRepository.saveAll(cpProds);
-            //------------------------------------------
-            //3.插cp-business中间表
-            List<CpBusiness> cpBizs =new ArrayList<>();
-            List<String> bidLists = Arrays.asList(StringUtils.split(vm.getBids(), ","));
-            bidLists.forEach(bid->{
-                CpBusiness cpBusiness = new CpBusiness();
-                cpBusiness.setBid(Integer.parseInt(bid));
-                cpBusiness.setCpid(cp_.getId());
-                cpBizs.add(cpBusiness);
-            });
-            cpBusinessRepository.saveAll(cpBizs);
+            //处理cp关联的中间表的映射关系
+            handleRelation(vm,cp_.getId());
         }catch (Exception e){
             e.printStackTrace();
             return ResultVOUtil.error("1","新增失败！");
@@ -105,6 +86,35 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
+    /**
+     * 处理cp关联的中间表的映射关系
+     * @param vm--维护数据来源
+     * @param id--要维护的产品id
+     */
+    private void handleRelation(CpAddVM vm, Integer id){
+//------------------------处理关系
+        List<String> pidLists = Arrays.asList(StringUtils.split(vm.getPids(), ","));
+        //2.插cp-product中间表
+        List<CpProduct> cpProds =new ArrayList<>();
+        pidLists.forEach(pid->{
+            CpProduct cpProduct = new CpProduct();
+            cpProduct.setCpid(id);
+            cpProduct.setPid(Integer.parseInt(pid));
+            cpProds.add(cpProduct);
+        });
+        cpProductRepository.saveAll(cpProds);
+        //------------------------------------------
+        //3.插cp-business中间表
+        List<CpBusiness> cpBizs =new ArrayList<>();
+        List<String> bidLists = Arrays.asList(StringUtils.split(vm.getBids(), ","));
+        bidLists.forEach(bid->{
+            CpBusiness cpBusiness = new CpBusiness();
+            cpBusiness.setBid(Integer.parseInt(bid));
+            cpBusiness.setCpid(id);
+            cpBizs.add(cpBusiness);
+        });
+        cpBusinessRepository.saveAll(cpBizs);
+    }
 
      /**
      * cp 修改
@@ -113,8 +123,8 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO<?> update(Cp cp) {
-        if (null == cp.getId()){
+    public ResultVO<?> update(CpAddVM vm) {
+        if (null == vm.getId()){
             ResultVOUtil.error("1","主键不能为空");
         }
         try{
@@ -125,6 +135,8 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
 //                    ResultVOUtil.error("1","名称已经存在");
 //                }
 //            }
+            Cp cp = new Cp();
+            BeanUtils.copyProperties(vm,cp);
             //注销==4
             if(cp.getStatus()!=null && cp.getStatus()==4){
                 cp.setCancelTime(new Timestamp(System.currentTimeMillis()));
@@ -134,6 +146,8 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             cp.setModifyTime(new Timestamp(System.currentTimeMillis()));
             UpdateTool.copyNullProperties(byId,cp);
             cpRepository.saveAndFlush(cp);
+            //处理cp关联的中间表的映射关系
+            handleRelation(vm,vm.getId());
         }catch (Exception e){
             e.printStackTrace();
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);

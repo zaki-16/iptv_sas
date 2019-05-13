@@ -1,11 +1,13 @@
 package com.hgys.iptv.controller.assemlber;
 
 import com.hgys.iptv.controller.vm.CpControllerListVM;
-import com.hgys.iptv.controller.vm.ProductControllerListVM;
 import com.hgys.iptv.model.Business;
 import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.Product;
-import com.hgys.iptv.repository.*;
+import com.hgys.iptv.repository.BusinessRepository;
+import com.hgys.iptv.repository.CpBusinessRepository;
+import com.hgys.iptv.repository.CpProductRepository;
+import com.hgys.iptv.repository.ProductRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

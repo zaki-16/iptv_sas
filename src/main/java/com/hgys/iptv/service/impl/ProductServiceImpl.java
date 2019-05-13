@@ -75,14 +75,31 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
         prod.setIsdelete(0);//删除状态
         //插产品表--立即返回该对象
         Product prod_add = productRepository.save(prod);
-        //------------------------处理关系
+
+        //处理product关联的中间表的映射关系
+        handleRelation(vm,prod_add.getId());
+
+        if(prod_add !=null)
+            return ResultVOUtil.success(Boolean.TRUE);
+        return ResultVOUtil.error("1","新增失败！");
+    }
+
+    /**
+     * 处理product关联的中间表的映射关系
+     * @param vm--维护数据来源
+     * @param id--要维护的产品id
+     */
+    private void handleRelation(ProductAddVM vm,Integer id){
+//------------------------处理关系
+        if(vm.getCpids()==null && vm.getBids()==null)//没有关联关系直接
+            return;
         List<String> cpidLists = Arrays.asList(StringUtils.split(vm.getCpids(), ","));
         //2.插cp-product中间表
         List<CpProduct> cpProds =new ArrayList<>();
         cpidLists.forEach(cpid->{
             CpProduct cpProduct = new CpProduct();
             cpProduct.setCpid(Integer.parseInt(cpid));
-            cpProduct.setPid(prod_add.getId());
+            cpProduct.setPid(id);
             cpProds.add(cpProduct);
         });
         cpProductRepository.saveAll(cpProds);
@@ -92,40 +109,39 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
         List<String> bidLists = Arrays.asList(StringUtils.split(vm.getBids(), ","));
         bidLists.forEach(bid->{
             ProductBusiness pb = new ProductBusiness();
-            pb.setPid(prod_add.getId());
+            pb.setPid(id);
             pb.setBid(Integer.parseInt(bid));
             pbList.add(pb);
         });
         productBusinessRepository.saveAll(pbList);
-
-        if(prod_add !=null)
-            return ResultVOUtil.success(Boolean.TRUE);
-        return ResultVOUtil.error("1","新增失败！");
     }
-
     /**
      * 修改
-     * @param prod
+     * @param vm
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO<?> update(Product prod) {
-        if (null == prod.getId()){
+    public ResultVO<?> update(ProductAddVM vm) {
+        if (null == vm.getId()){
             ResultVOUtil.error("1","主键不能为空");
         }
         try{
+            Product prod = new Product();
+            BeanUtils.copyProperties(vm,prod);
             //验证名称是否已经存在
-            if (StringUtils.isNotBlank(prod.getName())){
-                Product byName = productRepository.findByName(prod.getName().trim());
-                if (null != byName && !byName.getId().equals(prod.getId()) ){
-                    ResultVOUtil.error("1","名称已经存在");
-                }
-            }
-            Product byId = productRepository.findById(prod.getId()).orElseThrow(()-> new IllegalArgumentException("为查询到ID为:" + prod.getId() + "产品信息"));
+//            if (StringUtils.isNotBlank(prod.getName())){
+//                Product byName = productRepository.findByName(prod.getName().trim());
+//                if (null != byName && !byName.getId().equals(prod.getId()) ){
+//                    ResultVOUtil.error("1","名称已经存在");
+//                }
+//            }
+            Product byId = productRepository.findById(vm.getId()).orElseThrow(()-> new IllegalArgumentException("为查询到ID为:" + prod.getId() + "产品信息"));
             prod.setModifyTime(new Timestamp(System.currentTimeMillis()));
             UpdateTool.copyNullProperties(byId,prod);
-            productRepository.saveAndFlush(prod);
+            Product product_up = productRepository.saveAndFlush(prod);
+            //处理product关联的中间表的映射关系
+            handleRelation(vm,product_up.getId());
         }catch (Exception e){
             e.printStackTrace();
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
@@ -224,7 +240,7 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
     }
 
     @Override
-    public Page<ProductControllerListVM> findByConditions(String name,String code, Integer status, Pageable pageable) {
+    public Page<ProductVM> findByConditions(String name,String code, Integer status, Pageable pageable) {
         return productRepository.findAll(((root, query,builder) -> {
             List<Predicate> predicates = new ArrayList<>();
 

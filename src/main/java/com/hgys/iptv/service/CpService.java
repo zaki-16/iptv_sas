@@ -13,7 +13,7 @@ public interface CpService {
 
     ResultVO<?> save(CpAddVM cp);
 
-    ResultVO<?> update(Cp cp);
+    ResultVO<?> update(CpAddVM cp);
 
 //    ResultVO<?> logicDelete(Integer id);
 

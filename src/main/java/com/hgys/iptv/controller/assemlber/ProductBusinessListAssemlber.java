@@ -1,17 +1,12 @@
 package com.hgys.iptv.controller.assemlber;
 
-import com.hgys.iptv.controller.vm.ProductControllerListVM;
-import com.hgys.iptv.model.Business;
+import com.hgys.iptv.controller.vm.ProductVM;
 import com.hgys.iptv.model.Product;
-import com.hgys.iptv.repository.BusinessRepository;
-import com.hgys.iptv.repository.ProductBusinessRepository;
+import com.hgys.iptv.model.vo.ResultVO;
+import com.hgys.iptv.service.impl.ProductServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @ClassName ProductBusinessListAssemlber
@@ -22,23 +17,14 @@ import java.util.Set;
 @Component
 public class ProductBusinessListAssemlber {
     @Autowired
-    private BusinessRepository businessRepository;
-    @Autowired
-    private ProductBusinessRepository productBusinessRepository;
+    private ProductServiceImpl service;
 
-    public ProductControllerListVM getListVM(Product vo){
-        ProductControllerListVM vm = new ProductControllerListVM();
-        BeanUtils.copyProperties(vo,vm);
-        Set<Integer> bidSet= productBusinessRepository.findAllBid(vo.getId());
-        List<Business> businessList = businessRepository.findAllById(bidSet);
-        List<ProductControllerListVM.Business> list = new ArrayList<>();
-        for (Business b : businessList){
-            ProductControllerListVM.Business pb_ = new ProductControllerListVM.Business();
-            BeanUtils.copyProperties(b,pb_);
-            list.add(pb_);
-        }
-        vm.setList(list);
-        return vm;
+    public ProductVM getListVM(Product vo){
+        ProductVM vm = new ProductVM();
+        BeanUtils.copyProperties(vo, vm);
+        ResultVO<?> result = service.findById(vo.getId());
+        return (ProductVM) result.getData();
     }
+
 
 }

@@ -2,6 +2,7 @@ package com.hgys.iptv.service;
 
 import com.hgys.iptv.controller.vm.ProductAddVM;
 import com.hgys.iptv.controller.vm.ProductControllerListVM;
+import com.hgys.iptv.controller.vm.ProductVM;
 import com.hgys.iptv.model.Product;
 import com.hgys.iptv.model.vo.ResultVO;
 import org.springframework.data.domain.Page;
@@ -11,7 +12,7 @@ public interface ProductService {
 
     ResultVO<?> save(ProductAddVM prod);
 
-    ResultVO<?> update(Product prod);
+    ResultVO<?> update(ProductAddVM prod);
 
 //    ResultVO<?> logicDelete(Integer id);
 
@@ -23,7 +24,7 @@ public interface ProductService {
 
     ResultVO<?> findAll();
 
-    Page<ProductControllerListVM> findByConditions(String name, String code, Integer status, Pageable pageable);
+    Page<ProductVM> findByConditions(String name, String code, Integer status, Pageable pageable);
 
 
 }
