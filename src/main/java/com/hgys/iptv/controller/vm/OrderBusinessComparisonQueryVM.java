@@ -40,6 +40,10 @@ public class OrderBusinessComparisonQueryVM {
     @ApiModelProperty("修改时间")
     private Timestamp modifyTime;
 
+    /** 是否删除 */
+    @ApiModelProperty("是否删除")
+    private Integer isdelete;
+
     @ApiModelProperty("业务定比例与业务关系")
     List<OrderBusinessComparisonBusinessAddVM> list;
 

@@ -23,10 +23,6 @@ public class QOrderProduct extends EntityPathBase<OrderProduct> {
 
     public static final QOrderProduct orderProduct = new QOrderProduct("orderProduct");
 
-    public final StringPath bcode = createString("bcode");
-
-    public final StringPath bname = createString("bname");
-
     public final StringPath code = createString("code");
 
     public final StringPath col1 = createString("col1");
@@ -46,6 +42,14 @@ public class QOrderProduct extends EntityPathBase<OrderProduct> {
     public final StringPath name = createString("name");
 
     public final StringPath note = createString("note");
+
+    public final StringPath scdcode = createString("scdcode");
+
+    public final StringPath scdname = createString("scdname");
+
+    public final StringPath sdcode = createString("sdcode");
+
+    public final StringPath sdname = createString("sdname");
 
     public final NumberPath<Integer> status = createNumber("status", Integer.class);
 
