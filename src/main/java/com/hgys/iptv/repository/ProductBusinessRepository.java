@@ -20,6 +20,9 @@ public interface ProductBusinessRepository extends JpaRepository<ProductBusiness
     @Query(value = "select pb.bid from ProductBusiness pb where pb.pid = ?1")
     Set<Integer> findAllBid(Integer pid);
 
+    @Query(value = "select pb.pid from ProductBusiness pb where pb.bid = ?1")
+    Set<Integer> findAllPid(Integer bid);
+
     //    按pid删中间表
     @Query("delete from ProductBusiness where pid=?1")
     @Modifying

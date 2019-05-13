@@ -19,6 +19,9 @@ public interface CpBusinessRepository extends JpaRepository<CpBusiness,Integer>,
     @Query(value = "select cpb.bid from CpBusiness cpb where cpb.cpid=?1")
     Set<Integer> findAllBid(Integer cpid);
 
+    @Query(value = "select cpb.cpid from CpBusiness cpb where cpb.bid=?1")
+    Set<Integer> findAllCpid(Integer bid);
+
 //    按cpid删中间表
     @Query("delete from CpBusiness where cpid=?1")
     @Modifying

@@ -19,7 +19,9 @@ public class ProductAddVM {
     @ApiModelProperty("状态")@NotBlank(message = "不能为空")
     private Integer status;
 
-    @ApiModelProperty("状态")
-    private String ids;
+    @ApiModelProperty(value = "产品关联的cp集合id字符串")//dataType = "List"
+    private String cpids;
 
+    @ApiModelProperty(value = "产品关联的业务集合id字符串")//dataType = "List"
+    private String bids;
 }

@@ -7,10 +7,6 @@ package com.hgys.iptv.common;
  * @Description: TODO
  */
 
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Criteria;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +17,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.sql.SQLException;
 import java.util.*;
 
 @NoRepositoryBean
@@ -104,64 +99,64 @@ public abstract class AbstractBaseServiceImpl {
         return new PageImpl<T>(list, PageRequest.of(start, limit), count);
     }
 
-    /**
-     * 使用hql进行分页查询
-     * @param start
-     * @param limit
-     * @param hql
-     * @param params
-     * @return
-     * @throws SQLException
-     */
-    public List<Map<String, Object>> findPageByHql(String hql, int start, int limit, Object[] params, LinkedHashMap<String, String> order) {
-        if(StringUtils.isEmpty(hql)) {
-            return null;
-        } else {
-            Session session = (Session)this.entityManager.getDelegate();
-            StringBuffer sb = new StringBuffer(hql);
-            if (order != null) {
-                Set<String> orderNames = order.keySet();
-                Iterator<String> orderNamesIter = orderNames.iterator();
-                if (orderNames.size() != 0) {
-                    sb.append(" order by ");
-                }
-                while (orderNamesIter.hasNext()) {
-                    String orderName = orderNamesIter.next();
-                    sb.append(orderName);
-                    sb.append(" ");
-                    sb.append(order.get(orderName));
-                    if (orderNamesIter.hasNext()) {
-                        sb.append(",");
-                    }
-                }
-            }
-            org.hibernate.Query query = session.createQuery(sb.toString());
-            setHQueryParameter(params,query);
-            query.setFirstResult(start * limit).setMaxResults(limit);
-            return query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP).list();
-        }
-    }
-
-    /**
-     * 使用sql进行分页查询
-     * @param sql
-     * @param firstIndex
-     * @param maxResult
-     * @param queryParams
-     * @return
-     * @throws SQLException
-     */
-    public List<Map<String, Object>> findPageBySql(String sql, int firstIndex, int maxResult, Object[] queryParams) {
-        if(StringUtils.isEmpty(sql)) {
-            return null;
-        } else {
-            Session session = (Session)this.entityManager.getDelegate();
-            SQLQuery query = session.createSQLQuery(sql);
-            setHQueryParameter(queryParams,query);
-            setHQueryPage(firstIndex,maxResult,query);
-            return query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP).list();
-        }
-    }
+//    /**
+//     * 使用hql进行分页查询
+//     * @param start
+//     * @param limit
+//     * @param hql
+//     * @param params
+//     * @return
+//     * @throws SQLException
+//     */
+//    public List<Map<String, Object>> findPageByHql(String hql, int start, int limit, Object[] params, LinkedHashMap<String, String> order) {
+//        if(StringUtils.isEmpty(hql)) {
+//            return null;
+//        } else {
+//            Session session = (Session)this.entityManager.getDelegate();
+//            StringBuffer sb = new StringBuffer(hql);
+//            if (order != null) {
+//                Set<String> orderNames = order.keySet();
+//                Iterator<String> orderNamesIter = orderNames.iterator();
+//                if (orderNames.size() != 0) {
+//                    sb.append(" order by ");
+//                }
+//                while (orderNamesIter.hasNext()) {
+//                    String orderName = orderNamesIter.next();
+//                    sb.append(orderName);
+//                    sb.append(" ");
+//                    sb.append(order.get(orderName));
+//                    if (orderNamesIter.hasNext()) {
+//                        sb.append(",");
+//                    }
+//                }
+//            }
+//            org.hibernate.Query query = session.createQuery(sb.toString());
+//            setHQueryParameter(params,query);
+//            query.setFirstResult(start * limit).setMaxResults(limit);
+//            return query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP).list();
+//        }
+//    }
+//
+//    /**
+//     * 使用sql进行分页查询
+//     * @param sql
+//     * @param firstIndex
+//     * @param maxResult
+//     * @param queryParams
+//     * @return
+//     * @throws SQLException
+//     */
+//    public List<Map<String, Object>> findPageBySql(String sql, int firstIndex, int maxResult, Object[] queryParams) {
+//        if(StringUtils.isEmpty(sql)) {
+//            return null;
+//        } else {
+//            Session session = (Session)this.entityManager.getDelegate();
+//            SQLQuery query = session.createSQLQuery(sql);
+//            setHQueryParameter(queryParams,query);
+//            setHQueryPage(firstIndex,maxResult,query);
+//            return query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP).list();
+//        }
+//    }
 
     /**
      *

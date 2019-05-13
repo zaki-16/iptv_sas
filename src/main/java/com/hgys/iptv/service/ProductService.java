@@ -13,7 +13,7 @@ public interface ProductService {
 
     ResultVO<?> update(Product prod);
 
-    ResultVO<?> logicDelete(Integer id);
+//    ResultVO<?> logicDelete(Integer id);
 
     ResultVO<?> batchLogicDelete(String ids);
 

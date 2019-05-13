@@ -19,6 +19,9 @@ public interface CpProductRepository extends JpaRepository<CpProduct,Integer>, J
     @Query(value = "select cpp.pid from CpProduct cpp where cpp.cpid=?1")
     Set<Integer> findAllPid(Integer cpid);
 
+    @Query(value = "select cpid from CpProduct where pid=?1")
+    Set<Integer> findAllCpid(Integer pid);
+
 
     //    按cpid删中间表
     @Query("delete from CpProduct cpp where cpp.cpid=?1")

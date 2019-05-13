@@ -59,10 +59,10 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
     public ResultVO<?> save(CpAddVM vm){
         try {
             //校验cp名称是否已经存在
-            Cp byName = cpRepository.findByName(vm.getName());
-            if (null != byName) {
-                return ResultVOUtil.error("1", byName.getName() + "名称已经存在");
-            }
+//            Cp byName = cpRepository.findByName(vm.getName());
+//            if (null != byName) {
+//                return ResultVOUtil.error("1", byName.getName() + "名称已经存在");
+//            }
             //校验必填字段是否填写
             String[] cols = {vm.getName(), vm.getStatus().toString(),vm.getContactNm()};
             if (!Validator.validEmptyPass(cols))//必填字段不为空则插入
