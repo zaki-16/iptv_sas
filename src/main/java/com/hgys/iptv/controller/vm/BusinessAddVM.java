@@ -2,7 +2,9 @@ package com.hgys.iptv.controller.vm;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
+@Data
 @ApiModel(value = "业务修改新增VM")
 public class BusinessAddVM {
     @ApiModelProperty("主键，新增时填写无效")
@@ -15,6 +17,12 @@ public class BusinessAddVM {
     private Integer settleType;
     @ApiModelProperty("状态")
     private Integer status;
+
+    @ApiModelProperty(value = "业务关联的产品集合id字符串")//dataType = "List"
+    private String pids;
+
+    @ApiModelProperty(value = "业务关联的cp集合id字符串")//dataType = "List"
+    private String cpids;
 
     public Integer getId() {
         return id;

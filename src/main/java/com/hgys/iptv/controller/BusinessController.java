@@ -35,10 +35,8 @@ public class BusinessController {
     @ApiOperation(value = "新增业务",notes = "@return：业务对象")
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> saveBusiness(
-            @ApiParam(value = "业务新增VM")  @RequestBody() BusinessAddVM vo){
-        Business business = new Business();
-        BeanUtils.copyProperties(vo,business);
-        return businessService.save(business);
+            @ApiParam(value = "业务新增VM")  @RequestBody() BusinessAddVM vm){
+        return businessService.save(vm);
     }
 
     @PostMapping("/UpdateBusiness")
@@ -57,10 +55,10 @@ public class BusinessController {
 //    @DeleteMapping("/logicDeleteBusiness")
 //    @ApiOperation(value = "逻辑删除业务",notes = "@return：true/false")
 //    @ResponseStatus(HttpStatus.OK)
-    public ResultVO<?> logicDelete(
-            @ApiParam(value = "业务id",required = true)Integer id){
-        return businessService.logicDelete(id);
-    }
+//    public ResultVO<?> logicDelete(
+//            @ApiParam(value = "业务id",required = true)Integer id){
+//        return businessService.logicDelete(id);
+//    }
 
     @DeleteMapping("/batchLogicDeleteBusiness")
     @ApiOperation(value = "批量逻辑删除业务",notes = "@return：true/false")

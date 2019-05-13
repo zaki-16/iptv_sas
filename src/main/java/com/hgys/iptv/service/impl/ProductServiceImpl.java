@@ -1,18 +1,14 @@
 package com.hgys.iptv.service.impl;
 
+import com.hgys.iptv.common.AbstractBaseServiceImpl;
 import com.hgys.iptv.controller.assemlber.ProductBusinessListAssemlber;
 import com.hgys.iptv.controller.vm.ProductAddVM;
 import com.hgys.iptv.controller.vm.ProductControllerListVM;
-import com.hgys.iptv.controller.vm.ProductListVM;
-import com.hgys.iptv.model.Business;
-import com.hgys.iptv.model.Product;
-import com.hgys.iptv.model.ProductBusiness;
+import com.hgys.iptv.controller.vm.ProductVM;
+import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
-import com.hgys.iptv.repository.BusinessRepository;
-import com.hgys.iptv.repository.CpProductRepository;
-import com.hgys.iptv.repository.ProductBusinessRepository;
-import com.hgys.iptv.repository.ProductRepository;
+import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.ProductService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
@@ -27,11 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -41,17 +33,22 @@ import java.util.*;
  * @Description:/
  */
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl extends AbstractBaseServiceImpl implements ProductService {
     @Autowired
-    private ProductRepository productRepository;
+    private CpRepository cpRepository;
     @Autowired
-    ProductBusinessListAssemlber assemlber;
-    @Autowired
-    CpProductRepository cpProductRepository;
+    ProductRepository productRepository;
     @Autowired
     BusinessRepository businessRepository;
     @Autowired
+    CpProductRepository cpProductRepository;
+    @Autowired
+    CpBusinessRepository cpBusinessRepository;
+    @Autowired
     ProductBusinessRepository productBusinessRepository;
+
+    @Autowired
+    ProductBusinessListAssemlber assemlber;
     @Autowired
     private EntityManager entityManager;
     /**
@@ -62,43 +59,44 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> save(ProductAddVM vm){
-        //校验名称是否已经存在
-        Product byName = productRepository.findByName(vm.getName());
-        if (null != byName){
-            return ResultVOUtil.error("1",byName + "名称已经存在");
-        }
+//        //校验名称是否已经存在
+//        Product byName = productRepository.findByName(vm.getName());
+//        if (null != byName){
+//            return ResultVOUtil.error("1",byName + "名称已经存在");
+//        }
         String[] cols = {vm.getName(),vm.getPrice().toString(),vm.getStatus().toString()};
         if(!Validator.validEmptyPass(cols))//必填字段不为空则插入
             return ResultVOUtil.error("1","有必填字段未填写！");
         Product prod = new Product();
         BeanUtils.copyProperties(vm,prod);
-
         prod.setModifyTime(new Timestamp(System.currentTimeMillis()));//最后修改时间
         prod.setInputTime(new Timestamp(System.currentTimeMillis()));//录入时间
         prod.setCode(CodeUtil.getOnlyCode("SDS",5));//产品编码
         prod.setIsdelete(0);//删除状态
-        //处理 product、business、product_business关系
-        List<String> idLists  =Arrays.asList(StringUtils.split(vm.getIds(),","));
-        Set<Integer> idSet = new HashSet();
-        for(String s:idLists){
-            idSet.add(Integer.parseInt(s));
-        }
-        List<Business> bussList =businessRepository.findAllById(idSet);
         //插产品表--立即返回该对象
         Product prod_add = productRepository.save(prod);
-        //将所有中间表对象 收集 ->saveAll()
-        List<ProductBusiness> pbs =new ArrayList<>();
-        for(Business business:bussList){
-            //中间表对象--维护双方主键
+        //------------------------处理关系
+        List<String> cpidLists = Arrays.asList(StringUtils.split(vm.getCpids(), ","));
+        //2.插cp-product中间表
+        List<CpProduct> cpProds =new ArrayList<>();
+        cpidLists.forEach(cpid->{
+            CpProduct cpProduct = new CpProduct();
+            cpProduct.setCpid(Integer.parseInt(cpid));
+            cpProduct.setPid(prod_add.getId());
+            cpProds.add(cpProduct);
+        });
+        cpProductRepository.saveAll(cpProds);
+        //------------------------------------------
+        //3.插product-business中间表
+        List<ProductBusiness> pbList =new ArrayList<>();
+        List<String> bidLists = Arrays.asList(StringUtils.split(vm.getBids(), ","));
+        bidLists.forEach(bid->{
             ProductBusiness pb = new ProductBusiness();
             pb.setPid(prod_add.getId());
-            pb.setBid(business.getId());
-            pbs.add(pb);
-        }
-        //插业务表
-        businessRepository.saveAll(bussList);
-        //插中间表
-        productBusinessRepository.saveAll(pbs);
+            pb.setBid(Integer.parseInt(bid));
+            pbList.add(pb);
+        });
+        productBusinessRepository.saveAll(pbList);
 
         if(prod_add !=null)
             return ResultVOUtil.success(Boolean.TRUE);
@@ -136,20 +134,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-    /**
-     * 逻辑删除，只更新对象的isdelete字段值 0：未删除 1：已删除
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public ResultVO<?> logicDelete(Integer id){
-        try {
-            productRepository.logicDelete(id);
-        }catch (Exception e){
-            e.printStackTrace();
-            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
-        }
-        return ResultVOUtil.success(Boolean.TRUE);
-    }
+//    /**
+//     * 逻辑删除，只更新对象的isdelete字段值 0：未删除 1：已删除
+//     */
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public ResultVO<?> logicDelete(Integer id){
+//        try {
+//            productRepository.logicDelete(id);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+//        }
+//        return ResultVOUtil.success(Boolean.TRUE);
+//    }
 
     /**
      * 批量逻辑删除
@@ -159,8 +157,17 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> batchLogicDelete(String ids){
         List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
-        for (String s : idLists)
-            productRepository.logicDelete(Integer.parseInt(s));
+        Set<Integer> idSets = new HashSet<>();
+        idLists.forEach(cpid->{
+            idSets.add(Integer.parseInt(cpid));
+        });
+        for (Integer id : idSets){
+            productRepository.logicDelete(id);
+            //删除cp_product关系映射
+            cpProductRepository.deleteAllByPid(id);
+            //删除product_business关系映射
+            productBusinessRepository.deleteAllByPid(id);
+        }
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
@@ -172,35 +179,21 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResultVO<?> findById(Integer id) {
         Product prod = productRepository.findById(id).get();
-        ProductListVM productListVM = new ProductListVM();
+        ProductVM productListVM = new ProductVM();
         BeanUtils.copyProperties(prod,productListVM);
-
-        List <ProductBusiness> PB = findProductBusinessListBy(id);
-        Set<Integer> bidSet = new HashSet<>();
-        for(ProductBusiness productBusiness:PB){
-            bidSet.add(productBusiness.getBid());
-        }
+        //查关联cp
+        Set<Integer> cpidSet = cpProductRepository.findAllCpid(id);
+        List<Cp> cpList = cpRepository.findAllById(cpidSet);
+        productListVM.setCpList(cpList);
+        //查关联业务：先查中间表->bidSet->findAll
+        Set<Integer> bidSet = productBusinessRepository.findAllBid(id);
         List<Business> bList = businessRepository.findAllById(bidSet);
-        productListVM.setList(bList);
+        productListVM.setBList(bList);
+
         if(prod!=null)
             return ResultVOUtil.success(productListVM);
         return ResultVOUtil.error("1","所查询的cp不存在!");
     }
-
-    public List<ProductBusiness> findProductBusinessListBy(Integer pid) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<ProductBusiness> query = cb.createQuery(ProductBusiness.class);
-        Root<ProductBusiness> cpRoot = query.from(ProductBusiness.class);
-        query.select(cpRoot);
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(cpRoot.get("pid"), pid));
-        //where
-        query.where(predicates.toArray(new Predicate[]{}));
-        TypedQuery<ProductBusiness> typedQuery = entityManager.createQuery(query);
-        List <ProductBusiness> content = typedQuery.getResultList();
-        return content;
-    }
-
 
 
     /**
@@ -222,7 +215,9 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public ResultVO<?> findAll() {
-        List<Product> prods = productRepository.findAll();
+        Map<String,Object> vm = new HashMap<>();
+        vm.put("isdelete",0);
+        List<?> prods =findByCriteria(Product.class,vm);
         if(prods!=null&&prods.size()>0)
             return ResultVOUtil.success(prods);
         return ResultVOUtil.error("1","所查询的产品列表不存在!");

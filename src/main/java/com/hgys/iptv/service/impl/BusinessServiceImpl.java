@@ -1,25 +1,22 @@
 package com.hgys.iptv.service.impl;
 
+import com.hgys.iptv.common.AbstractBaseServiceImpl;
 import com.hgys.iptv.controller.assemlber.BusinessControllerAssemlber;
-import com.hgys.iptv.controller.assemlber.CpControllerAssemlber;
 import com.hgys.iptv.controller.vm.BusinessAddVM;
 import com.hgys.iptv.controller.vm.BusinessControllerListVM;
+import com.hgys.iptv.controller.vm.BusinessVM;
 import com.hgys.iptv.controller.vm.CpVM;
-import com.hgys.iptv.model.Business;
-import com.hgys.iptv.model.Business;
-import com.hgys.iptv.model.Cp;
-import com.hgys.iptv.model.SettlementDimension;
+import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
-import com.hgys.iptv.repository.BusinessRepository;
-import com.hgys.iptv.repository.CpRepository;
-import com.hgys.iptv.repository.ProductRepository;
+import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.BusinessService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
 import com.hgys.iptv.util.Validator;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,17 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.hgys.iptv.service.impl.CpServiceImpl.isId;
+import java.util.*;
 
 /**
  * @Auther: wangz
@@ -45,37 +34,74 @@ import static com.hgys.iptv.service.impl.CpServiceImpl.isId;
  * @Description:
  */
 @Service
-public class BusinessServiceImpl implements BusinessService {
+public class BusinessServiceImpl extends AbstractBaseServiceImpl implements BusinessService {
     @Autowired
-    private BusinessRepository businessRepository;
+    private CpRepository cpRepository;
+    @Autowired
+    ProductRepository productRepository;
+    @Autowired
+    BusinessRepository businessRepository;
+    @Autowired
+    CpProductRepository cpProductRepository;
+    @Autowired
+    CpBusinessRepository cpBusinessRepository;
+    @Autowired
+    ProductBusinessRepository productBusinessRepository;
+
     @Autowired
     private EntityManager entityManager;
     @Autowired
     BusinessControllerAssemlber assemlber;
     /**
      * 新增
-     * @param business
+     * @param vm
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO<?> save(Business business){
+    public ResultVO<?> save(BusinessAddVM vm){
         //校验名称是否已经存在
-        Business byName = businessRepository.findByName(business.getName());
-        if (null != byName){
-            return ResultVOUtil.error("1",byName + "名称已经存在");
-        }
+//        Business byName = businessRepository.findByName(business.getName());
+//        if (null != byName){
+//            return ResultVOUtil.error("1",byName + "名称已经存在");
+//        }
         //必填字段：业务名臣，业务类型，结算类型，状态
-        String[] cols = {business.getName(),business.getBizType().toString(),
-                business.getSettleType().toString(),business.getStatus().toString()};
+        String[] cols = {vm.getName(),vm.getBizType().toString(),
+                vm.getSettleType().toString(),vm.getStatus().toString()};
         if(!Validator.validEmptyPass(cols))//必填字段不为空则插入
             return ResultVOUtil.error("1","有必填字段未填写！");
+        //1.存cp主表并返回
+        Business business = new Business();
+        BeanUtils.copyProperties(vm, business);
         business.setModifyTime(new Timestamp(System.currentTimeMillis()));//最后修改时间
         business.setInputTime(new Timestamp(System.currentTimeMillis()));//注册时间
         business.setCode(CodeUtil.getOnlyCode("SDS",5));//cp编码
         business.setIsdelete(0);//删除状态
-        Business buss_add = businessRepository.save(business);
-        if(buss_add !=null)
+        Business biz_add = businessRepository.save(business);
+        //------------------------处理关系
+        List<String> pidLists = Arrays.asList(StringUtils.split(vm.getPids(), ","));
+        //2.插product_business中间表
+        List<ProductBusiness> pbs =new ArrayList<>();
+        pidLists.forEach(pid->{
+            ProductBusiness pb = new ProductBusiness();
+            pb.setBid(biz_add.getId());
+            pb.setPid(Integer.parseInt(pid));
+            pbs.add(pb);
+        });
+        productBusinessRepository.saveAll(pbs);
+        //------------------------------------------
+        //3.插cp-business中间表
+        List<CpBusiness> cpBizs =new ArrayList<>();
+        List<String> cpidLists = Arrays.asList(StringUtils.split(vm.getCpids(), ","));
+        cpidLists.forEach(cpid->{
+            CpBusiness cpBusiness = new CpBusiness();
+            cpBusiness.setBid(Integer.parseInt(cpid));
+            cpBusiness.setCpid(Integer.parseInt(cpid));
+            cpBizs.add(cpBusiness);
+        });
+        cpBusinessRepository.saveAll(cpBizs);
+
+        if(biz_add !=null)
             return ResultVOUtil.success(Boolean.TRUE);
         return ResultVOUtil.error("1","新增失败！");
     }
@@ -110,22 +136,22 @@ public class BusinessServiceImpl implements BusinessService {
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
-    /**
-     * 逻辑删除，只更新对象的isdelete字段值 0：未删除 1：已删除
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public ResultVO<?> logicDelete(Integer id){
-        try {
-            System.out.println("in");
-            businessRepository.logicDelete(id);
-            System.out.println("");
-        }catch (Exception e){
-            e.printStackTrace();
-            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
-        }
-        return ResultVOUtil.success(Boolean.TRUE);
-    }
+//    /**
+//     * 逻辑删除，只更新对象的isdelete字段值 0：未删除 1：已删除
+//     */
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public ResultVO<?> logicDelete(Integer id){
+//        try {
+//            System.out.println("in");
+//            businessRepository.logicDelete(id);
+//            System.out.println("");
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+//        }
+//        return ResultVOUtil.success(Boolean.TRUE);
+//    }
 
     /**
      * 批量逻辑删除
@@ -135,10 +161,17 @@ public class BusinessServiceImpl implements BusinessService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> batchLogicDelete(String ids){
         List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
-        for (String s : idLists){
-            businessRepository.logicDelete(Integer.parseInt(s));
+        Set<Integer> idSets = new HashSet<>();
+        idLists.forEach(cpid->{
+            idSets.add(Integer.parseInt(cpid));
+        });
+        for (Integer id : idSets){
+            productRepository.logicDelete(id);
+            //删除cp_business关系映射
+            cpBusinessRepository.deleteAllByBid(id);
+            //删除product_business关系映射
+            productBusinessRepository.deleteAllByBid(id);
         }
-
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
@@ -150,9 +183,20 @@ public class BusinessServiceImpl implements BusinessService {
     @Override
     public ResultVO<?> findById(Integer id) {
         Business business = businessRepository.findById(id).orElse(null);
+        BusinessVM vm = new BusinessVM();
+        BeanUtils.copyProperties(business,vm);
+        //查关联的产品--先按cpid查cp_product中间表查出pid集合-->按pid去 findAllById
+        Set<Integer> pidSet = cpProductRepository.findAllPid(id);
+        List<Product> pList = productRepository.findAllById(pidSet);
+        vm.setPList(pList);
+        //查关联的cp
+        Set<Integer> cpidSet = cpBusinessRepository.findAllBid(id);
+        List<Cp> cpList = cpRepository.findAllById(cpidSet);
+        vm.setCpList(cpList);
+
         if(business!=null)
             return ResultVOUtil.success(business);
-        return ResultVOUtil.error("1","所查询的cp不存在!");
+        return ResultVOUtil.error("1","所查询的业务列表不存在!");
     }
 
     /**
@@ -174,30 +218,12 @@ public class BusinessServiceImpl implements BusinessService {
      */
     @Override
     public ResultVO<?> findAll() {
-        List<Business> buss = findBy(new BusinessAddVM());
+        Map<String,Object> vm = new HashMap<>();
+        vm.put("isdelete",0);
+        List<?> buss =findByCriteria(Business.class,vm);
         if(buss!=null&&buss.size()>0)
             return ResultVOUtil.success(buss);
         return ResultVOUtil.error("1","所查询的产品列表不存在!");
-    }
-
-    public List <Business> findBy(BusinessAddVM vm) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Business> query = cb.createQuery(Business.class);
-        Root<Business> root = query.from(Business.class);
-        query.select(root);
-        List<Predicate> predicates = new ArrayList<>();
-        if (isId(vm.getId())) {
-            predicates.add(cb.equal(root.get("id"), vm.getId()));
-        }
-        //筛选已删除的值-> 1:已删除
-        Predicate condition = cb.equal(root.get("isdelete").as(Integer.class), 0);
-        predicates.add(condition);
-
-        //where
-        query.where(predicates.toArray(new Predicate[]{}));
-        TypedQuery<Business> typedQuery = entityManager.createQuery(query);
-        List <Business> content = typedQuery.getResultList();
-        return content;
     }
 
 

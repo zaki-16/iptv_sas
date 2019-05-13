@@ -2,10 +2,12 @@ package com.hgys.iptv.controller.vm;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
 @ApiModel(value = "cp新增VM")
+@Data
 public class CpAddVM {
     /**
      * CP名称（必填，列表展示）、
@@ -33,7 +35,7 @@ public class CpAddVM {
     @ApiModelProperty("状态")@NotBlank(message = "不能为空")
     private Integer status;
 
-    @ApiModelProperty("联系人")
+    @ApiModelProperty("联系人")@NotBlank(message = "不能为空")
     private String contactNm;
 
     @ApiModelProperty("手机号")
@@ -46,77 +48,10 @@ public class CpAddVM {
     private String note;
 
     @ApiModelProperty(value = "cp关联的产品集合id字符串")//dataType = "List"
-    private String ids;
+    private String pids;
 
-    public Integer getId() {
-        return id;
-    }
+    @ApiModelProperty(value = "cp关联的业务集合id字符串")//dataType = "List"
+    private String bids;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
-    public String getIds() {
-        return ids;
-    }
-
-    public void setIds(String ids) {
-        this.ids = ids;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCpAbbr() {
-        return cpAbbr;
-    }
-
-    public void setCpAbbr(String cpAbbr) {
-        this.cpAbbr = cpAbbr;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getContactNm() {
-        return contactNm;
-    }
-
-    public void setContactNm(String contactNm) {
-        this.contactNm = contactNm;
-    }
-
-    public String getContactTel() {
-        return contactTel;
-    }
-
-    public void setContactTel(String contactTel) {
-        this.contactTel = contactTel;
-    }
-
-    public String getContactMail() {
-        return contactMail;
-    }
-
-    public void setContactMail(String contactMail) {
-        this.contactMail = contactMail;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
 }

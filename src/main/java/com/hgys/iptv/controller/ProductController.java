@@ -50,16 +50,16 @@ public class ProductController {
         return productService.update(prod);
     }
 
-    /**
-     * 产品删除--逻辑删除，只更新对象的isdelete字段值 0：未删除 1：已删除
-     */
-//    @DeleteMapping("/logicDeleteProduct")
-//    @ApiOperation(value = "逻辑删除产品",notes = "@return：true/false")
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResultVO<?> logicDelete(
-            @ApiParam(value = "产品对象",required = true)Integer id){
-        return productService.logicDelete(id);
-    }
+//    /**
+//     * 产品删除--逻辑删除，只更新对象的isdelete字段值 0：未删除 1：已删除
+//     */
+////    @DeleteMapping("/logicDeleteProduct")
+////    @ApiOperation(value = "逻辑删除产品",notes = "@return：true/false")
+////    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    public ResultVO<?> logicDelete(
+//            @ApiParam(value = "产品对象",required = true)Integer id){
+//        return productService.logicDelete(id);
+//    }
 
     @DeleteMapping("/batchLogicDeleteProduct")
     @ApiOperation(value = "批量逻辑删除产品",notes = "@return：true/false")
