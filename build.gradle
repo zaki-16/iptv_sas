@@ -57,15 +57,16 @@ dependencies {
     compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
     compile group: 'net.sf.jxls', name: 'jxls-core', version: '1.0.6'
 
-
+    //querydsl包
     compile("com.querydsl:querydsl-apt:4.1.4:jpa")
     compile group: 'com.querydsl', name: 'querydsl-jpa', version: '4.1.4'
     compile group: 'com.querydsl', name: 'querydsl-core', version: '4.1.4'
     compile group: 'com.querydsl', name: 'querydsl-sql', version: '4.1.4'
 
-    //poi
+    //poi，xuxueli工具包
     compile group: 'com.xuxueli', name: 'xxl-excel', version: '1.1.1'
-
+    //hutool工具包
+    compile 'cn.hutool:hutool-all:4.5.9'
 
 
 
