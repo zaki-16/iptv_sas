@@ -41,8 +41,6 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
     compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
 
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-
     compile group: 'com.google.guava', name: 'guava', version: '27.1-jre'
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
@@ -68,8 +66,6 @@ dependencies {
     compile group: 'com.xuxueli', name: 'xxl-excel', version: '1.1.1'
     //hutool工具包
     compile 'cn.hutool:hutool-all:4.5.9'
-    // openkit第三方工具包
-    compile group: 'cc.openkit', name: 'open_kit', version: '1.1.18'
     
 
 
