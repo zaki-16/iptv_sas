@@ -64,5 +64,5 @@ public interface SettlementDimensionService {
      */
     List<SettlementDimension> findAll();
 
-    Page<SettlementDimension> a();
+    Page<SettlementDimension> test();
 }

@@ -157,7 +157,7 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
 
 
     @Override
-    public Page<SettlementDimension> a(){
+    public Page<SettlementDimension> test(){
         QSettlementDimension dimension = QSettlementDimension.settlementDimension;
         QueryResults<SettlementDimension> fetch = jpaQueryFactory.select(
                 Projections.bean(

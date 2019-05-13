@@ -19,7 +19,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -80,7 +79,7 @@ public class DemoContronller {
     @ApiOperation(value = "QueryDSL  SQL方法测试",notes = "")
     @ResponseStatus(HttpStatus.CREATED)
     public Page<SettlementDimension> updateSettlementDimension(){
-        return settlementDimensionService.a();
+        return settlementDimensionService.test();
     }
 
     @GetMapping("/testExcel")
