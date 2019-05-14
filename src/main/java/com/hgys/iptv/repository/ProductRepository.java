@@ -50,6 +50,6 @@ public interface ProductRepository extends JpaRepository<Product,Integer>, JpaSp
      * @return
      */
     @Query(value = "select o from Product o where o.isdelete = 0")
-    List<Product> findcplist();
+    List<Product> findplist();
 
 }

@@ -264,5 +264,11 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
             return builder.conjunction();
         }),pageable).map(assemlber::getListVM);
     }
-
+    @Override
+    public ResultVO<?> findplist() {
+        List<Product> cps =productRepository.findplist();
+        if(cps!=null)
+            return ResultVOUtil.success(cps);
+        return ResultVOUtil.error("1","所查询的cp不存在!");
+    }
 }
