@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @ApiModel("分配结算产品级单维度新增VM")
 @Data
 public class OrderProductDimensionAddVM {
@@ -37,5 +39,5 @@ public class OrderProductDimensionAddVM {
      * 产品结算金额
      */
     @ApiModelProperty("结算金额（单位：元）")
-    private short money;
+    private BigDecimal money;
 }

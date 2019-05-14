@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @ApiModel("分配结算业务定比例结算新增VM")
 @Data
 public class BusinessBelielAddVM {
@@ -23,5 +25,5 @@ public class BusinessBelielAddVM {
      * 业务收入
      */
     @ApiModelProperty("业务收入")
-    private short money;
+    private BigDecimal money;
 }

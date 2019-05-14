@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @ApiModel("分配结算订购量结算新增VM")
 @Data
 public class CpOrderCpAddVM {
@@ -14,5 +16,5 @@ public class CpOrderCpAddVM {
     private String cpname;
 
     @ApiModelProperty("订购量")
-    private Integer quantity;
+    private BigDecimal quantity;
 }
