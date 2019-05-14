@@ -24,15 +24,15 @@ public class SettleByBusiness implements Serializable {
     private Integer id;
 
     /** CP名称*/
-    @Column(name = "cpName", nullable = false, length = 50)
+    @Column(name = "cpName", nullable = false,columnDefinition="varchar(50) COMMENT 'cp名称'")
     private String cpName;
 
     /** CP编码*/
-    @Column(name = "cpCode", nullable = false, length = 100)
+    @Column(name = "cpCode", nullable = false,columnDefinition="varchar(100) COMMENT 'cp编码'")
     private String cpCode;
 
     /**总收入--需放大1000倍计算*/
-    @Column(name = "grossIncome", nullable = false, length = 20)
+    @Column(name = "grossIncome", nullable = false,columnDefinition="int(20) COMMENT '总收入'")
     private Integer grossIncome;
 
     /** 备用字段1 */

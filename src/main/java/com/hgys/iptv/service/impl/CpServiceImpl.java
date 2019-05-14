@@ -1,20 +1,15 @@
 package com.hgys.iptv.service.impl;
 
-import com.hgys.iptv.common.AbstractBaseServiceImpl;
 import com.hgys.iptv.controller.assemlber.CpProductListAssemlber;
 import com.hgys.iptv.controller.vm.CpAddVM;
 import com.hgys.iptv.controller.vm.CpControllerListVM;
 import com.hgys.iptv.controller.vm.CpVM;
-import com.hgys.iptv.controller.vm.ProductAddVM;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.CpService;
-import com.hgys.iptv.util.CodeUtil;
-import com.hgys.iptv.util.ResultVOUtil;
-import com.hgys.iptv.util.UpdateTool;
-import com.hgys.iptv.util.Validator;
+import com.hgys.iptv.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import javax.persistence.criteria.Predicate;
 import java.sql.Timestamp;
 import java.util.*;
@@ -74,7 +68,7 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             BeanUtils.copyProperties(vm, cp);
             cp.setRegisTime(new Timestamp(System.currentTimeMillis()));//注册时间
             cp.setModifyTime(new Timestamp(System.currentTimeMillis()));//最后修改时间
-            cp.setCode(CodeUtil.getOnlyCode("SDS", 5));//cp编码
+            cp.setCode(CodeUtil.getOnlyCode("CP", 5));//cp编码
             cp.setIsdelete(0);//删除状态
             Cp cp_ = cpRepository.save(cp);
             //处理cp关联的中间表的映射关系
@@ -88,18 +82,24 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
 
     /**
      * 处理cp关联的中间表的映射关系
+     * 注意重复绑定
      * @param vm--维护数据来源
      * @param id--要维护的产品id
      */
-    private void handleRelation(CpAddVM vm, Integer id){
+    @Transactional(rollbackFor = Exception.class)
+    protected void handleRelation(CpAddVM vm, Integer id){
 //------------------------处理关系
         List<String> pidLists = Arrays.asList(StringUtils.split(vm.getPids(), ","));
         //2.插cp-product中间表
         List<CpProduct> cpProds =new ArrayList<>();
+        //校验cpid-pid组合是否已在 CpProduct 中存在--save方法会调用isNew
         pidLists.forEach(pid->{
             CpProduct cpProduct = new CpProduct();
             cpProduct.setCpid(id);
             cpProduct.setPid(Integer.parseInt(pid));
+//            if(cpProductRepository.countByCpidAndPid(id,Integer.parseInt(pid))>0){
+//                System.out.println("有重复组合");
+//            }
             cpProds.add(cpProduct);
         });
         cpProductRepository.saveAll(cpProds);

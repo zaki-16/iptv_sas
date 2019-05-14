@@ -1,6 +1,6 @@
 package com.hgys.iptv;
 
-import com.hgys.iptv.common.VerifyServlet;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -10,6 +10,8 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
 import javax.persistence.EntityManager;
+import java.math.BigDecimal;
+import java.util.regex.Pattern;
 
 @SpringBootApplication
         (exclude={
@@ -18,16 +20,18 @@ import javax.persistence.EntityManager;
         org.activiti.runtime.api.conf.TaskRuntimeAutoConfiguration.class
 })
 public class IptvSasApplication {
-    public static void main(String[] args) { SpringApplication.run(IptvSasApplication.class, args); }
+    public static void main(String[] args) {
+        SpringApplication.run(IptvSasApplication.class, args);
+    }
     /**
      * 注入验证码servlet
      */
     //@Bean
-    public ServletRegistrationBean indexServletRegistration() {
-        ServletRegistrationBean registration = new ServletRegistrationBean(new VerifyServlet());
-        registration.addUrlMappings("/getVerifyCode");
-        return registration;
-    }
+//    public ServletRegistrationBean indexServletRegistration() {
+//        ServletRegistrationBean registration = new ServletRegistrationBean(new VerifyServlet());
+//        registration.addUrlMappings("/getVerifyCode");
+//        return registration;
+//    }
 
     /**
      * 注入JPAQueryFactory

@@ -1,16 +1,9 @@
-package com.hgys.iptv.common;
-
-/**
-
- * @Auther: wangz
- * @Date: 2019/5/9 11:33
- * @Description: TODO
- */
+package com.hgys.iptv.util;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -19,7 +12,13 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.*;
 
-@NoRepositoryBean
+/**
+
+ * @Auther: wangz
+ * @Date: 2019/5/9 11:33
+ * @Description: TODO
+ */
+@Component
 public abstract class AbstractBaseServiceImpl {
 
     @PersistenceContext
@@ -48,6 +47,31 @@ public abstract class AbstractBaseServiceImpl {
         TypedQuery<Object> typedQuery = entityManager.createQuery(query);
         List <Object> content = typedQuery.getResultList();
         return content;
+    }
+
+    public Page<Object> findByCriteriaOfPage(Class clazz, Map<String,Object> map, PageBean pageBean) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object> query = cb.createQuery((clazz));
+        Root<Object> root = query.from(clazz);
+        query.select(root);
+        List<Predicate> predicates = new ArrayList<>();
+        if(map!=null && map.size()>0){
+            for(Map.Entry<String,Object>entry:map.entrySet()){
+                predicates.add(cb.equal(root.get(entry.getKey()), entry.getValue()));
+            }
+        }
+        //where
+        query.where(predicates.toArray(new Predicate[]{}));
+        TypedQuery<Object> typedQuery = entityManager.createQuery(query);
+        List <Object> content = typedQuery.getResultList();
+
+//        CriteriaQuery <Long> countQuery = cb.createQuery(Long.class);
+//        countQuery.select(cb.count(countQuery.from(clazz)));//查数量
+//        countQuery.where(predicates.toArray(new Predicate[]{}));
+//        Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
+        Page page =new PageImpl<Object>(content, PageRequest.of(pageBean.getCurrentPage()-1,pageBean.getPageSize()),Long.valueOf(content.size()));
+        page.getTotalElements();
+        return page;
     }
 
     /**
