@@ -1,6 +1,5 @@
 package com.hgys.iptv.controller;
 
-import com.hgys.iptv.controller.vm.AccountSettlementAddVM;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.AccountSettlementService;
 import com.hgys.iptv.util.ResultVOUtil;
@@ -13,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.sql.Timestamp;
 
 @RestController()
