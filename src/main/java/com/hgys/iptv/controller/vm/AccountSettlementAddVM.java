@@ -3,6 +3,7 @@ package com.hgys.iptv.controller.vm;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 
@@ -14,8 +15,8 @@ public class AccountSettlementAddVM {
     @ApiModelProperty("名称")
     private String name;
 
-    /** 1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定•结算类型：从订购量结算、业务级结算、产品级结算、CP定比例结算、业务定比例结算 */
-    @ApiModelProperty("1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定•结算类型：从订购量结算、业务级结算、产品级结算、CP定比例结算、业务定比例结算")
+    /** 1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算 */
+    @ApiModelProperty("1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算")
     private Integer set_type;
 
     /** 结算规则编码 */
@@ -41,5 +42,9 @@ public class AccountSettlementAddVM {
     /** 结算结束时间 */
     @ApiModelProperty("结算结束时间")
     private Timestamp setEndTime;
+
+    /** 文件 */
+    @ApiModelProperty("Excel文件")
+    private MultipartFile multipartFile;
 
 }
