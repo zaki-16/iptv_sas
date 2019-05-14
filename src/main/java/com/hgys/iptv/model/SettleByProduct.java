@@ -39,24 +39,24 @@ public class SettleByProduct implements Serializable {
     private Integer id;
 
     /** CP名称*/
-    @Column(name = "cpName", nullable = false, length = 50)
+    @Column(name = "cpName", nullable = false,columnDefinition="varchar(50) COMMENT 'CP名称'")
     private String cpName;
 
     /** CP编码*/
-    @Column(name = "cpCode", nullable = false, length = 100)
+    @Column(name = "cpCode", nullable = false,columnDefinition="varchar(100) COMMENT 'CP编码'")
     private String cpCode;
 
     /** 产品名称*/
-    @Column(name = "prodName", nullable = false, length = 50)
+    @Column(name = "prodName", nullable = false,columnDefinition="varchar(50) COMMENT '产品名称'")
     private String prodName;
 
     /** 产品编码*/
-    @Column(name = "prodCode", nullable = false, length = 100)
+    @Column(name = "prodCode", nullable = false,columnDefinition="varchar(100) COMMENT '产品编码'")
     private String prodCode;
 
 
     /**产品结算金额--需放大1000倍计算*/
-    @Column(name = "prodIncome", nullable = false, length = 20)
+    @Column(name = "prodIncome", nullable = false,columnDefinition="int(20) COMMENT '产品收入'")
     private Integer prodIncome;
 
     /**维度组合k：维度名称，v:权重--单维度是特殊的多维度，权重为100%*/

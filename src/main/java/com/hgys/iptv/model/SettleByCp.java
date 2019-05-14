@@ -26,20 +26,20 @@ public class SettleByCp implements Serializable {
     private Integer id;
 
     /** CP名称*/
-    @Column(name = "cpName", nullable = false, length = 50)
+    @Column(name = "cpName", nullable = false,columnDefinition="varchar(50)COMMENT 'CP名称'")
     private String cpName;
 
     /** CP编码*/
-    @Column(name = "cpCode", nullable = false, length = 100)
+    @Column(name = "cpCode", nullable = false,columnDefinition="varchar(100) COMMENT 'CP编码'")
     private String cpCode;
 
     /** 计算类型：按比例结算，按金额结算--选定后可以返回客户也可隐藏，但只能选定一种结算方式
      * 其实可以不加，直接校验总额*/
-    @Column(name = "settleType", nullable = false, length = 2)
+    @Column(name = "settleType", nullable = false,columnDefinition="int(2) COMMENT '结算类型'")
     private Integer settleType;
 
     /**总收入--需放大1000倍计算*/
-    @Column(name = "grossIncome", nullable = false, length = 20)
+    @Column(name = "grossIncome", nullable = false,columnDefinition="int(20) COMMENT '总收入'")
     private Integer grossIncome;
 
     /** 备用字段1 */

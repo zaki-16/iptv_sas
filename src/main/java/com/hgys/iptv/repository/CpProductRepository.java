@@ -35,4 +35,11 @@ public interface CpProductRepository extends JpaRepository<CpProduct,Integer>, J
     @Transactional
     void deleteAllByPid(Integer cpid);
 
+    /**校验cpid-pid组合是否已存在*/
+    Long countByCpidAndPid(Integer cpid,Integer pid);
+
+
+    @Query(value = "SELECT COUNT(1) FROM cp_product WHERE cpid=?1 AND pid=?1 limit 1",nativeQuery = true)
+    Integer isExist(Integer id1,Integer id2);
+
 }

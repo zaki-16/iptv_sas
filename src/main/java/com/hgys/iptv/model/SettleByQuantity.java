@@ -27,19 +27,19 @@ public class SettleByQuantity implements Serializable {
     private Integer id;
 
     /** CP名称*/
-    @Column(name = "cpName", nullable = false, length = 50)
+    @Column(name = "cpName", nullable = false,columnDefinition="varchar(50) COMMENT 'CP名称'")
     private String cpName;
 
     /** CP编码*/
-    @Column(name = "cpCode", nullable = false, length = 100)
+    @Column(name = "cpCode", nullable = false,columnDefinition="varchar(100) COMMENT 'CP编码'")
     private String cpCode;
 
     /**cp订购量*/
-    @Column(name = "cpQuantity", nullable = false, length = 11)
+    @Column(name = "cpQuantity", nullable = false,columnDefinition="int(20) COMMENT 'cp订购量'")
     private Integer cpQuantity;
 
     /**总收入--需放大1000倍计算*/
-    @Column(name = "grossIncome", nullable = false, length = 20)
+    @Column(name = "grossIncome", nullable = false,columnDefinition="int(20) COMMENT '总收入'")
     private Integer grossIncome;
 
     /** 备用字段1 */

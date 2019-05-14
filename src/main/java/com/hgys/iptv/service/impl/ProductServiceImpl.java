@@ -1,19 +1,14 @@
 package com.hgys.iptv.service.impl;
 
-import com.hgys.iptv.common.AbstractBaseServiceImpl;
 import com.hgys.iptv.controller.assemlber.ProductBusinessListAssemlber;
 import com.hgys.iptv.controller.vm.ProductAddVM;
-import com.hgys.iptv.controller.vm.ProductControllerListVM;
 import com.hgys.iptv.controller.vm.ProductVM;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.ProductService;
-import com.hgys.iptv.util.CodeUtil;
-import com.hgys.iptv.util.ResultVOUtil;
-import com.hgys.iptv.util.UpdateTool;
-import com.hgys.iptv.util.Validator;
+import com.hgys.iptv.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +66,7 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
         BeanUtils.copyProperties(vm,prod);
         prod.setModifyTime(new Timestamp(System.currentTimeMillis()));//最后修改时间
         prod.setInputTime(new Timestamp(System.currentTimeMillis()));//录入时间
-        prod.setCode(CodeUtil.getOnlyCode("SDS",5));//产品编码
+        prod.setCode(CodeUtil.getOnlyCode("PROD",5));//产品编码
         prod.setIsdelete(0);//删除状态
         //插产品表--立即返回该对象
         Product prod_add = productRepository.save(prod);

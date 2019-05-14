@@ -1,6 +1,5 @@
 package com.hgys.iptv.service.impl;
 
-import com.hgys.iptv.common.AbstractBaseServiceImpl;
 import com.hgys.iptv.controller.assemlber.BusinessControllerAssemlber;
 import com.hgys.iptv.controller.vm.BusinessAddVM;
 import com.hgys.iptv.controller.vm.BusinessVM;
@@ -9,10 +8,7 @@ import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.BusinessService;
-import com.hgys.iptv.util.CodeUtil;
-import com.hgys.iptv.util.ResultVOUtil;
-import com.hgys.iptv.util.UpdateTool;
-import com.hgys.iptv.util.Validator;
+import com.hgys.iptv.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +69,7 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
         BeanUtils.copyProperties(vm, business);
         business.setModifyTime(new Timestamp(System.currentTimeMillis()));//最后修改时间
         business.setInputTime(new Timestamp(System.currentTimeMillis()));//注册时间
-        business.setCode(CodeUtil.getOnlyCode("SDS",5));//cp编码
+        business.setCode(CodeUtil.getOnlyCode("BIZ",5));//cp编码
         business.setIsdelete(0);//删除状态
         Business biz_add = businessRepository.save(business);
         //处理 business关联的中间表的映射关系
