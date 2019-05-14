@@ -31,7 +31,7 @@ public class ProductControllerListVM {
 
     /** 名称*/
     @ApiModelProperty("价格")
-    private Integer price;
+    private String price;
 
     /** 状态 */
     @ApiModelProperty("状态")

@@ -23,7 +23,7 @@ public class ProductQueryVM {
 
     /** 名称*/
     @ApiModelProperty("名称")
-    private Integer price;
+    private String price;
 
     /** 编码*/
     @ApiModelProperty("编码")

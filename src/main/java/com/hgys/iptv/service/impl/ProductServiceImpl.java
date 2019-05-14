@@ -59,7 +59,7 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
 //        if (null != byName){
 //            return ResultVOUtil.error("1",byName + "名称已经存在");
 //        }
-        String[] cols = {vm.getName(),vm.getPrice().toString(),vm.getStatus().toString()};
+        String[] cols = {vm.getName(),vm.getPrice(),vm.getStatus().toString()};
         if(!Validator.validEmptyPass(cols))//必填字段不为空则插入
             return ResultVOUtil.error("1","有必填字段未填写！");
         Product prod = new Product();

@@ -37,6 +37,10 @@ public class SettleEnginerServiceImpl extends AbstractBaseServiceImpl implements
      */
     @Override
     public SettleMetaResource settleByBusiness(SettleByBusinessDTO settleByBusinessDTO) {
+        //统一返回对象类型
+        SettleMetaResource resource = new SettleMetaResource();
+        //总收入
+        String grossIncome = settleByBusinessDTO.getGrossIncome();
         return null;
     }
     /**
