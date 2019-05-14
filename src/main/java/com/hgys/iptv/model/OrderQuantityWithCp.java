@@ -59,6 +59,10 @@ public class OrderQuantityWithCp implements java.io.Serializable{
     @Column(name = "isdelete", nullable = true, length = 2)
     private Integer isdelete;
 
+    /**订购量*/
+    @Column(name = "quantity", nullable = true, length = 11)
+    private Integer quantity;
+
     public Integer getId() {
         return id;
     }
@@ -143,5 +147,13 @@ public class OrderQuantityWithCp implements java.io.Serializable{
 
     public void setIsdelete(Integer isdelete) {
         this.isdelete = isdelete;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }

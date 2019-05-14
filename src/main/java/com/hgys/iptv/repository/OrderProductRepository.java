@@ -27,4 +27,6 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct,Objec
      * @return
      */
     OrderProduct findById(String id);
+
+    OrderProduct findByCode(String code);
 }
