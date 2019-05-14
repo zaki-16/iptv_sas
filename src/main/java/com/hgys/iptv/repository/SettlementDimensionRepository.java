@@ -45,4 +45,16 @@ public interface SettlementDimensionRepository extends JpaRepository<SettlementD
      */
     @Query(value = "select o.name from SettlementDimension o where o.code = ?1")
     String findsdCodes(String Code);
+
+
+
+    /**
+     * 通过结算组合维度编码查询
+     * @param code
+     * @return
+     */
+    @Query(value = "select o from SettlementDimension o where o.code = ?1")
+    List<SettlementDimension> findBydCode(String code);
+
+
 }

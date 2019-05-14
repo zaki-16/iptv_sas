@@ -50,7 +50,7 @@ public class OrderProductWithSettlementAddVM implements Serializable {
     @Column(name = "scdcode", nullable = true, length = 50)
     private String scdcode;
 
-  /** 录入时间 */
+    /** 录入时间 */
     @ApiModelProperty("录入时间")
     private Timestamp inputTime;
 
@@ -63,7 +63,7 @@ public class OrderProductWithSettlementAddVM implements Serializable {
     }
 
 
-    /** 修改时间   */
+    /** 修改 时间   */
     @ApiModelProperty("修改时间")
     private Timestamp modifyTime;
     @ApiModelProperty("产品信息集合")
@@ -85,11 +85,11 @@ public class OrderProductWithSettlementAddVM implements Serializable {
         return modifyTime;
     }
 
-   public void setInputTime(Timestamp inputTime) {
+    public void setInputTime(Timestamp inputTime) {
         this.inputTime = inputTime;
     }
 
-   public void setModifyTime(Timestamp modifyTime) {
+    public void setModifyTime(Timestamp modifyTime) {
         this.modifyTime = modifyTime;
     }
 

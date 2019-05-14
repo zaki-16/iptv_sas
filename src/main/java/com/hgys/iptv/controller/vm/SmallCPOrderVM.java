@@ -11,7 +11,7 @@ public class SmallCPOrderVM {
     private Integer money;
 
     @ApiModelProperty("权重")
-    private Integer weight;
+    private String weight;
 
     /** cp名称*/
     @ApiModelProperty("cp名称")
@@ -51,9 +51,7 @@ public class SmallCPOrderVM {
         return money;
     }
 
-    public Integer getWeight() {
-        return weight;
-    }
+
 
     public String getCpname() {
         return cpname;
@@ -93,7 +91,11 @@ public class SmallCPOrderVM {
         this.money = money;
     }
 
-    public void setWeight(Integer weight) {
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
         this.weight = weight;
     }
 

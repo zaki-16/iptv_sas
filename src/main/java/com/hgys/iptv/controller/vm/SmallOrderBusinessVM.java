@@ -25,7 +25,7 @@ public class SmallOrderBusinessVM {
 
 
     @ApiModelProperty("权重")
-    private Integer weight;
+    private String weight;
 
     /** 备用字段3 */
     @ApiModelProperty("col3")
@@ -39,7 +39,7 @@ public class SmallOrderBusinessVM {
 
 
         @ApiModelProperty("权重")
-        private Integer weight;
+        private String weight;
 
         /** cp名称*/
         @ApiModelProperty("cp名称")
@@ -53,7 +53,7 @@ public class SmallOrderBusinessVM {
         @ApiModelProperty("bucode")
         private String bucode;
 
-        public Integer getWeight() {
+        public String getWeight() {
             return weight;
         }
 
@@ -65,7 +65,7 @@ public class SmallOrderBusinessVM {
             return cpcode;
         }
 
-        public void setWeight(Integer weight) {
+        public void setWeight(String weight) {
             this.weight = weight;
         }
 
@@ -122,8 +122,8 @@ public class SmallOrderBusinessVM {
         return lists;
     }
 
-    public Integer getWeight() {
-        return weight;
+    public void setWeight(String weight) {
+        this.weight = weight;
     }
 
     public Integer getId() {
@@ -138,8 +138,7 @@ public class SmallOrderBusinessVM {
         this.lists = lists;
     }
 
-    public void setWeight(Integer weight) {
-        this.weight = weight;
+    public String getWeight() {
+        return weight;
     }
-
 }
