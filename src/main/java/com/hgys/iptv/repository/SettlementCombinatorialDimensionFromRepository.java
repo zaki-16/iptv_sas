@@ -35,4 +35,7 @@ public interface SettlementCombinatorialDimensionFromRepository extends JpaRepos
     @Modifying
     @Query(value = "delete from SettlementCombinatorialDimensionFrom where master_code = ?1")
     void deleteByMasterCode(String code);
+
+
+
 }

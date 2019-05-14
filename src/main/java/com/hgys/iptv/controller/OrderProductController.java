@@ -11,6 +11,7 @@ import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.SettlementCombinatorialDimensionMasterRepository;
 import com.hgys.iptv.service.OrderProductService;
 import com.hgys.iptv.service.ProductService;
+import com.hgys.iptv.service.SettlementCombinatorialDimensionService;
 import com.hgys.iptv.service.SettlementDimensionService;
 import com.hgys.iptv.util.ResultVOUtil;
 import io.swagger.annotations.Api;
@@ -37,6 +38,9 @@ public class OrderProductController {
 
     @Autowired
     private SettlementDimensionService settlementDimensionService;
+
+    @Autowired
+    private SettlementCombinatorialDimensionService settlementCombinatorialDimensionService;
 
     @Autowired
     private ProductService productService;
@@ -133,16 +137,26 @@ public class OrderProductController {
     @ApiOperation(value = "查产品列表")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> queryProductLists(){
-        ResultVO<?> all = productService.findAll();
+        ResultVO<?> all = productService.findplist();
         return all;
     }
 
-    @GetMapping("/queryComDimensionLists")
+  /*  @GetMapping("/queryComDimensionLists")
     @ApiOperation(value = "查询多维度列表")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> queryComDimensionLists(){
         List<SettlementCombinatorialDimensionMaster> all = settlementCombinatorialDimensionMasterRepository.findAll();
         return ResultVOUtil.success(all);
+    }*/
+
+
+    @GetMapping("/queryComDimensionLists")
+    @ApiOperation(value = "查询多维度列表")
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO<?> queryComDimensionLists(){
+        ResultVO<?> all = settlementCombinatorialDimensionService.findcdslist();
+        return all;
     }
+
 
 }

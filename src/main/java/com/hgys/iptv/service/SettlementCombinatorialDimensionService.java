@@ -56,4 +56,8 @@ public interface SettlementCombinatorialDimensionService {
      * @return
      */
     ResultVO<?> getSettlementDimensionList(String code);
+
+
+
+    ResultVO<?> findcdslist();
 }

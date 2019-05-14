@@ -246,4 +246,12 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
         List<SettlementCombinatorialDimensionFrom> byMasterCode = settlementCombinatorialDimensionFromRepository.findByMasterCode(code);
         return ResultVOUtil.success(byMasterCode);
     }
+    @Override
+    public ResultVO<?> findcdslist() {
+        List<SettlementCombinatorialDimensionMaster> cps =settlementCombinatorialDimensionMasterRepository.findcdslist();
+        if(cps!=null)
+            return ResultVOUtil.success(cps);
+        return ResultVOUtil.error("1","所查询的不存在!");
+    }
+
 }

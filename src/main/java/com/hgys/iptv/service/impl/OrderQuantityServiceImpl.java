@@ -125,8 +125,10 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
                 orderquantityRepository.deleteByMasterCode(master.getCode().trim());
                 for (SmallOrderCpVM v : list){
                     OrderQuantityWithCp from = new OrderQuantityWithCp();
+                    String cpname = cpRepository.findByMasterCodes(v.getCpcode());
                     BeanUtils.copyProperties(v,from);
                     from.setOqcode(master.getCode());
+                    from.setCpname(cpname);
                     from.setCreatetime(new Timestamp(System.currentTimeMillis()));
                     from.setIsdelete(0);
                     OrderquantityWithCpRepository.saveAndFlush(from);

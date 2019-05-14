@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class TimerCounter {
-	
+
 	private long time1 = 0L;
 
 	@Pointcut("execution(* com.hgys.iptv.controller..*.*(..))")

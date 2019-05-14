@@ -52,13 +52,13 @@ public class OrderBusinessController {
 
     @DeleteMapping("/batchDeleteob")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> batchDeleteob(@ApiParam(value = "结算类型-业务定比例ids",required = true) @RequestParam("ids")String ids){
         if (StringUtils.isBlank(ids)){
             return ResultVOUtil.error("1","结算类型-业务定比例ids不能为空");
         }
-
-        return orderbusinessService.batchDeleteob(ids);
+        ResultVO<?> resultVO = orderbusinessService.batchDeleteob(ids);
+        return resultVO;
     }
 
 
@@ -115,8 +115,8 @@ public class OrderBusinessController {
     @GetMapping("/queryCPList")
     @ApiOperation(value = "查询CP列表")
     public ResultVO<?> queryCPList(){
-        ResultVO<?> all = cpService.findAll();
-        return  all;
+        ResultVO<?> all = cpService.findcplist();
+        return all;
     }
 
 
