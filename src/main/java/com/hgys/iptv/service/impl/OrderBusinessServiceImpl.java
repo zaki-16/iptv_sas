@@ -86,7 +86,7 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
             return ResultVOUtil.error("1", "集合不能为空");
         }
         try {
-            //主表数据新增
+            //主表数 据新增
             String code = CodeUtil.getOnlyCode("SCD", 5);
             OrderBusiness master = new OrderBusiness();
             master.setCode(code);
