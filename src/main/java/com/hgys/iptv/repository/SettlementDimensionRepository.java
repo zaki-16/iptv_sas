@@ -37,4 +37,12 @@ public interface SettlementDimensionRepository extends JpaRepository<SettlementD
 
     List<SettlementDimension> findByIsdelete(int isDelete);
 
+
+    /**
+     * 通过code查询名字
+     * @param Code
+     * @return
+     */
+    @Query(value = "select o.name from SettlementDimension o where o.code = ?1")
+    String findsdCodes(String Code);
 }

@@ -27,9 +27,10 @@ public class OrderProductWithSCDAddLIstVM {
     @Column(name = "opcode", nullable = true, length = 50)
     private String opcode;
 
-    @ApiModelProperty("创建时间")
+   @ApiModelProperty("创建时间")
     private Timestamp createtime;
-    public Integer getId() {
+
+   public Integer getId() {
         return id;
     }
 

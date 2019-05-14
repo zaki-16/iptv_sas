@@ -68,6 +68,11 @@ public class OrderProduct implements java.io.Serializable{
     @Column(name = "col2", nullable = true, length = 11)
     private Integer col2;
 
+    /** 结算方式(1:按单维度结算;2:多维度结算) */
+    @Column(name = "mode", nullable = true, length = 2)
+    private Integer mode;
+
+
     /** 备用字段3 */
     @Column(name = "col3", nullable = true, length = 50)
     private String col3;
@@ -90,6 +95,14 @@ public class OrderProduct implements java.io.Serializable{
 
     public Timestamp getInputTime() {
         return inputTime;
+    }
+
+    public Integer getMode() {
+        return mode;
+    }
+
+    public void setMode(Integer mode) {
+        this.mode = mode;
     }
 
     public void setInputTime(Timestamp inputTime) {

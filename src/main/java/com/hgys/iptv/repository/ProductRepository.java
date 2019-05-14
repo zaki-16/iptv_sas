@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Integer>, JpaSpecificationExecutor<Product> {
     /**
@@ -41,4 +43,13 @@ public interface ProductRepository extends JpaRepository<Product,Integer>, JpaSp
      */
     @Query(value = "select o.name from Product o where o.code = ?1")
     String findByMasterCodes(String Code);
+
+    /**
+     * 只查询未删除的产品
+     * @param
+     * @return
+     */
+    @Query(value = "select o from Product o where o.isdelete = 0")
+    List<Product> findcplist();
+
 }

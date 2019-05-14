@@ -177,8 +177,10 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
                 orderBuinessWithCpRepository.deleteByMasterCode(comparison.getCode().trim());
                 for (SmallOrderBusinessVM v : list){
                     OrderBusinessWithCp cp = new OrderBusinessWithCp();
+                    String buname = businessRepository.findByMasterCodes(v.getBucode());//根据业务ID，查询业务的名称
                     BeanUtils.copyProperties(v,cp);
                     cp.setObcode(comparison.getCode());
+                    cp.setBuname(buname);
                     cp.setCreatetime(new Timestamp(System.currentTimeMillis()));
                     orderBuinessWithCpRepository.saveAndFlush(cp);
                     List<SmallOrderBusinessVM.SmallOrderBusinessCPVM> voss = v.getLists();
@@ -186,11 +188,13 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
                         //先将之前的CP删除
                         smallOrderCpRepository.deleteByMastercodes(cp.getObcode());
                     OrderBusinessCp cpcp = new OrderBusinessCp();
+                        String cpname = cpRepository.findByMasterCodes(cps.getCpcode());//根据CPID 查询CP的名称
                         cpcp.setCpcode(cps.getCpcode());
                         cpcp.setCpname(cps.getCpname());
                         cpcp.setBucode(v.getBucode());
                         cpcp.setWeight(cps.getWeight());
                         cpcp.setObcode(cp.getObcode());
+                        cpcp.setCpname(cpname);
                         smallOrderCpRepository.saveAndFlush(cpcp);
                 }
                 }
@@ -262,11 +266,8 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
 
         OrderBusinessWithCPAddVM vm = new OrderBusinessWithCPAddVM();
         BeanUtils.copyProperties(byId,vm);
-
         List<OrderBusinessWithCp> byMaster_code = orderBuinessWithCpRepository.findByMasterCode(byId.getCode().trim());
-
         List<OrderBusinessCp> byMasterCodes = smallOrderCpRepository.findByMasterCodes(byId.getCode().trim());
-
         List<SmallOrderBusinessVM> list = new ArrayList<>();
         for (OrderBusinessWithCp f : byMaster_code) {
             SmallOrderBusinessVM s = new SmallOrderBusinessVM();

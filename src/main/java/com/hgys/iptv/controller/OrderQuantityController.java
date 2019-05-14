@@ -119,11 +119,12 @@ public class OrderQuantityController {
         return ResultVOUtil.success(byId);
     }
 
+
     @GetMapping("/queryCPList")
     @ApiOperation(value = "查询CP列表")
     public ResultVO<?> queryCPList(){
-        ResultVO<?> all = cpService.findAll();
-        return  all;
+        ResultVO<?> all = cpService.findcplist();
+        return all;
     }
 
 

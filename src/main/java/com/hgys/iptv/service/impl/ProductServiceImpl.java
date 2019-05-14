@@ -201,7 +201,13 @@ public class ProductServiceImpl implements ProductService {
         return content;
     }
 
-
+    @Override
+    public ResultVO<?> findplist() {
+        List<Product> cps =productRepository.findcplist();
+        if(cps!=null)
+            return ResultVOUtil.success(cps);
+        return ResultVOUtil.error("1","所查询的产品不存在!");
+    }
 
     /**
      * 单查询--根据code

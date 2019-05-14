@@ -131,7 +131,7 @@ if (vo.getSettleaccounts()==0) { //按比例结算
     Integer he = 0;
     for (SmallCPOrderVM s : vos) {
         he += he + s.getWeight();
-        if (he > 100 || he<100 ) {
+        if (he > 100  ) {
             new IllegalArgumentException("权重合必须为100%");
         }
     }

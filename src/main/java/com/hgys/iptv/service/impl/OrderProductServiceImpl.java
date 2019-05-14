@@ -5,9 +5,7 @@ import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
-import com.hgys.iptv.repository.OrderProductRepository;
-import com.hgys.iptv.repository.OrderProductWithSCDRepository;
-import com.hgys.iptv.repository.ProductRepository;
+import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.OrderProductService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
@@ -41,6 +39,12 @@ public class OrderProductServiceImpl implements OrderProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private SettlementDimensionRepository settlementDimensionRepository;
+
+    @Autowired
+    private SettlementCombinatorialDimensionMasterRepository settlementCombinatorialDimensionMasterRepository;
 
 
     @Override
@@ -119,15 +123,19 @@ public class OrderProductServiceImpl implements OrderProductService {
 
             //新增主表信息
             OrderProduct comparison = new OrderProduct();
+            String sdname = settlementDimensionRepository.findsdCodes(vm.getSdcode());//根据单维度ID,获取单维度的名称
+            String scdname = settlementCombinatorialDimensionMasterRepository.findscdCodes(vm.getScdcode());//根据多维度ID,获取多维度的名称
             String code = CodeUtil.getOnlyCode("OBP",5);
             BeanUtils.copyProperties(vm,comparison);
             comparison.setInputTime(new Timestamp(System.currentTimeMillis()));
             comparison.setIsdelete(0);
             comparison.setCode(code);
+            comparison.setScdname(scdname);
+            comparison.setSdname(sdname);
             orderproductRepository.save(comparison);
 
 
-            //新增从表信息
+            // 新增从表信息
             for (OrderProductWithSCDAddLIstVM v : list){
                 OrderProductWithSCD cp = new OrderProductWithSCD();
                 String productname = productRepository.findByMasterCodes(v.getPcode());//根据产品ID,获取产品的名称
@@ -184,6 +192,9 @@ public class OrderProductServiceImpl implements OrderProductService {
 
             Predicate condition = builder.equal(root.get("isdelete"), 0);
             predicates.add(condition);
+            if (!predicates.isEmpty()){
+                return builder.and(predicates.toArray(new Predicate[0]));
+            }
             return builder.conjunction();
         }), pageable).map(orderProductControllerAssemlber::getListVM);
         return map;
@@ -211,8 +222,11 @@ public class OrderProductServiceImpl implements OrderProductService {
 */
             OrderProduct comparison = orderproductRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到id为："+vo.getId()+"业务定比例信息"));
             OrderProduct o = new OrderProduct();
-
+            String sdname = settlementDimensionRepository.findsdCodes(vo.getSdcode());//根据单维度ID,获取单维度的名称
+            String scdname = settlementCombinatorialDimensionMasterRepository.findscdCodes(vo.getScdcode());//根据多维度ID,获取多维度的名称
             BeanUtils.copyProperties(vo,o);
+            o.setScdname(scdname);
+            o.setSdname(sdname);
             o.setModifyTime(new Timestamp(System.currentTimeMillis()));
             UpdateTool.copyNullProperties(comparison,o);
             orderproductRepository.saveAndFlush(o);
@@ -224,8 +238,10 @@ public class OrderProductServiceImpl implements OrderProductService {
 
                 for (OrderProductWithSCDAddLIstVM v : list){
                     OrderProductWithSCD cp = new OrderProductWithSCD();
+                    String productname = productRepository.findByMasterCodes(v.getPcode());//根据产品ID,获取产品的名称
                     BeanUtils.copyProperties(v,cp);
                     cp.setOpcode(comparison.getCode());
+                    cp.setPname(productname);
                     cp.setCreatetime(new Timestamp(System.currentTimeMillis()));
 
                     orderProductWithSCDRepository.saveAndFlush(cp);
