@@ -20,7 +20,7 @@ public class Business implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false, length = 11)
     private Integer id;
-    @Column(name = "name", unique = true, nullable = false, length = 50)
+    @Column(name = "name",nullable = false, length = 50)
     private String name;
     private String code;
     private Integer bizType;//1.视频类 2.非视频类

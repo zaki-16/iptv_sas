@@ -31,6 +31,9 @@ public class OrderCPWithCPListVM {
     /** 状态 */
     @ApiModelProperty("状态")
     private Integer status;
+    /** 结算类型0：按比例，1：按金额 */
+    @ApiModelProperty("结算类型")
+    private Integer settleaccounts;
 
     /** 备注 */
     @ApiModelProperty("备注")
@@ -215,5 +218,13 @@ public class OrderCPWithCPListVM {
 
     public void setList(List<OrderCPWithCPListVM.OrderCpWithCp> list) {
         this.list = list;
+    }
+
+    public Integer getSettleaccounts() {
+        return settleaccounts;
+    }
+
+    public void setSettleaccounts(Integer settleaccounts) {
+        this.settleaccounts = settleaccounts;
     }
 }

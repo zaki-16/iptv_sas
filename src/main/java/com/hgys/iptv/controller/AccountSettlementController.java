@@ -5,12 +5,14 @@ import com.hgys.iptv.model.OrderProduct;
 import com.hgys.iptv.model.bean.CpOrderCpExcelDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionListDTO;
+import com.hgys.iptv.model.bean.ShopDTO;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.OrderProductRepository;
 import com.hgys.iptv.service.AccountSettlementService;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.excel.ExcelForWebUtil;
 import com.xuxueli.poi.excel.ExcelExportUtil;
+import com.xuxueli.poi.excel.ExcelImportUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -19,8 +21,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController()
@@ -37,8 +43,7 @@ public class AccountSettlementController {
     @RequestMapping(value = "/accountSettlement", method = RequestMethod.POST, headers = "content-type=multipart/form-data")
     @ApiOperation(value = "新增分配结算",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResultVO<?> addAccountSettlement(@ApiParam(value = "新增分配结算VM") @ModelAttribute AccountSettlementAddVM vm){
-
+    public ResultVO<?> addAccountSettlement(@ApiParam(value = "新增分配结算VM") @RequestBody AccountSettlementAddVM vm){
         if (StringUtils.isBlank("")){
             return ResultVOUtil.error("1","分配结算name不能为空");
         }
@@ -46,18 +51,15 @@ public class AccountSettlementController {
         if (StringUtils.isBlank("")){
             return ResultVOUtil.error("1","分配结算setRuleCode不能为空");
         }
-
         return accountSettlementService.addAccountSettlement();
     }
 
     @GetMapping("/excelExport")
-    @ApiOperation(value = "根据选择查询数据并返回excel",notes = "返回处理结果，false或true")
+    @ApiOperation(value = "根据选择查询数据并返回excel",notes = "如果查询到数据则会返回execl文件，如没有数据则不会返回文件")
     @ResponseStatus(HttpStatus.CREATED)
     public void excelExport(@ApiParam(value = "分配结算类型",required = true) @RequestParam(value = "type") Integer type,
                             @ApiParam(value = "编码",required = true) @RequestParam(value = "code") String code,
                             HttpServletResponse response){
-
-
         if (type == 1){
             List<CpOrderCpExcelDTO> dtos = (List<CpOrderCpExcelDTO>) accountSettlementService.excelExport(type, code);
             //浏览器返回Excel
@@ -77,9 +79,65 @@ public class AccountSettlementController {
                 Workbook sheets = ExcelExportUtil.exportWorkbook(result);
                 ExcelForWebUtil.workBookExportExcel(response,sheets,"产品级多维度结算");
             }
-
         }
+    }
 
+    @PostMapping("/excelImport")
+    @ApiOperation(value = "导入数据",notes = "如果查询到数据则会返回execl文件，如没有数据则不会返回文件")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResultVO<?> excelImport(@ApiParam(value = "分配结算类型",required = true) @RequestParam(value = "type") Integer type,
+                            @ApiParam(value = "编码",required = true) @RequestParam(value = "code") String code,
+                            @ApiParam(value = "Excel",required = true) @RequestParam MultipartFile multipartFile) throws IOException {
+
+
+        if (type == 1){
+            List<Object> list = ExcelImportUtil.importExcel(multipartFile.getInputStream(), CpOrderCpExcelDTO.class);
+            List<CpOrderCpExcelDTO> dtos = new ArrayList<>();
+            for (Object o : list){
+                CpOrderCpExcelDTO dto = (CpOrderCpExcelDTO)o;
+                dtos.add(dto);
+            }
+            //验证数据可靠性，通过返回数据
+            ResultVO<?> resultVO = accountSettlementService.checkCp(dtos);
+            if ("0".equals(resultVO.getCode())){
+                return ResultVOUtil.success(dtos);
+            }else {
+                return resultVO;
+            }
+        }else if (type == 3){
+            //查询是单维度还是多维度
+            OrderProduct byCode = orderProductRepository.findByCode(code);
+            if (byCode.getMode() == 1){
+                List<Object> list = ExcelImportUtil.importExcel(multipartFile.getInputStream(), OrderProductDimensionDTO.class);
+                List<OrderProductDimensionDTO> dtos = new ArrayList<>();
+                for (Object o : list){
+                    OrderProductDimensionDTO dto = (OrderProductDimensionDTO)o;
+                    dtos.add(dto);
+                }
+                //验证数据可靠性，通过返回数据
+                ResultVO<?> resultVO = accountSettlementService.checkCpAndDimension(dtos);
+                if ("0".equals(resultVO.getCode())){
+                    return ResultVOUtil.success(dtos);
+                }else {
+                    return resultVO;
+                }
+            }else {
+                List<Object> list = ExcelImportUtil.importExcel(multipartFile.getInputStream(), OrderProductDimensionListDTO.class);
+                List<OrderProductDimensionListDTO> dtos = new ArrayList<>();
+                for (Object o : list){
+                    OrderProductDimensionListDTO dto = (OrderProductDimensionListDTO)o;
+                    dtos.add(dto);
+                }
+                //验证数据可靠性，通过返回数据
+                ResultVO<?> resultVO = accountSettlementService.checkCpAndDimensionList(dtos);
+                if ("0".equals(resultVO.getCode())){
+                    return ResultVOUtil.success(dtos);
+                }else {
+                    return resultVO;
+                }
+            }
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
     }
 
 }
