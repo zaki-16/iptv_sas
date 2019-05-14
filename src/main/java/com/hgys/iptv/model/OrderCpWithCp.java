@@ -54,8 +54,8 @@ public class OrderCpWithCp implements java.io.Serializable{
     private String occode;
 
     /** 权重 */
-    @Column(name = "weight", nullable = true, length = 2)
-    private Integer weight;
+    @Column(name = "weight", nullable = true, length = 30)
+    private String weight;
 
     /** 金额 */
     @Column(name = "money", nullable = true, length = 11)
@@ -97,7 +97,7 @@ public class OrderCpWithCp implements java.io.Serializable{
         return note;
     }
 
-    public Integer getWeight() {
+    public String getWeight() {
         return weight;
     }
 
@@ -105,7 +105,7 @@ public class OrderCpWithCp implements java.io.Serializable{
         this.occode = occode;
     }
 
-    public void setWeight(Integer weight) {
+    public void setWeight(String weight) {
         this.weight = weight;
     }
 

@@ -3,6 +3,7 @@ package com.hgys.iptv.controller;
 import com.hgys.iptv.controller.vm.OrderBusinessComparisonAddVM;
 import com.hgys.iptv.controller.vm.OrderBusinessComparisonQueryVM;
 import com.hgys.iptv.controller.vm.OrderProductWithSettlementAddVM;
+import com.hgys.iptv.controller.vm.OrderProductWithSettlementfindVM;
 import com.hgys.iptv.model.OrderProduct;
 import com.hgys.iptv.model.Product;
 import com.hgys.iptv.model.SettlementCombinatorialDimensionMaster;
@@ -102,18 +103,18 @@ public class OrderProductController {
     @GetMapping("/findByConditions")
     @ApiOperation(value = "通过条件，分页查询结算类型-产品级",notes = "JSON类型格式数据")
     @ResponseStatus(HttpStatus.OK)
-    public Page<OrderProductWithSettlementAddVM> findByConditions(@ApiParam(value = "结算类型-产品级名称") @RequestParam(value = "name",required = false )String name,
-                                                                 @ApiParam(value = "结算类型-产品级编码") @RequestParam(value = "code",required = false)String code,
-                                                                 @ApiParam(value = "产品编码") @RequestParam(value = "productcode",required = false)String productcode,
-                                                                 @ApiParam(value = "产品名称") @RequestParam(value = "productname",required = false)String productname,
-                                                                 @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
-                                                                 @ApiParam(value = "结算方式") @RequestParam(value = "mode",required = false)String mode,
-                                                                 @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
-                                                                 @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
+    public Page<OrderProductWithSettlementfindVM> findByConditions(@ApiParam(value = "结算类型-产品级名称") @RequestParam(value = "name",required = false )String name,
+                                                                   @ApiParam(value = "结算类型-产品级编码") @RequestParam(value = "code",required = false)String code,
+                                                                   @ApiParam(value = "产品编码") @RequestParam(value = "productcode",required = false)String productcode,
+                                                                   @ApiParam(value = "产品名称") @RequestParam(value = "productname",required = false)String productname,
+                                                                   @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
+                                                                   @ApiParam(value = "结算方式") @RequestParam(value = "mode",required = false)String mode,
+                                                                   @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
+                                                                   @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
 
         Sort sort = new Sort(Sort.Direction.DESC,"inputTime");
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
-        Page<OrderProductWithSettlementAddVM> byConditions = orderproductService.findByConditions(name, code, productcode,productname,status, mode,pageable);
+        Page<OrderProductWithSettlementfindVM> byConditions = orderproductService.findByConditions(name, code, productcode,productname,status, mode,pageable);
         return byConditions;
     }
 

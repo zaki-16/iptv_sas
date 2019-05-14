@@ -97,14 +97,14 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
             master.setStatus(vo.getStatus());
             orderbusinessRepository.save(master);
             List<SmallOrderBusinessVM> vos = vo.getList();
-            //验证权重是否超过100%
+        /*    //验证权重是否超过100%
             Integer he = 0;
             for (SmallOrderBusinessVM s : vos){
                 he += he + s.getWeight();
                 if (he > 100){
                     new IllegalArgumentException("权重不能超过100%");
                 }
-            }
+            }*/
             //处理业务表
             for (SmallOrderBusinessVM s : vos) {
                 String codes = CodeUtil.getOnlyCode("SCD", 5);

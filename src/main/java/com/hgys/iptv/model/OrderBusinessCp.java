@@ -44,9 +44,9 @@ public class OrderBusinessCp implements java.io.Serializable{
     private Timestamp createtime;
 
 
-    @Column(name = "weight", nullable = true, length =3)
+    @Column(name = "weight", nullable = true, length =50)
     /** 权重 */
-    private Integer weight;
+    private String weight;
 
     @Column(name = "status", nullable = true, length = 2)
     /** 状态 */
@@ -104,9 +104,7 @@ public class OrderBusinessCp implements java.io.Serializable{
         return createtime;
     }
 
-    public Integer getWeight() {
-        return weight;
-    }
+
 
     public Integer getStatus() {
         return status;
@@ -157,7 +155,11 @@ public class OrderBusinessCp implements java.io.Serializable{
         this.createtime = createtime;
     }
 
-    public void setWeight(Integer weight) {
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
         this.weight = weight;
     }
 

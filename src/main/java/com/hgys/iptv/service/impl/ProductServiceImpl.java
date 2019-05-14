@@ -269,6 +269,6 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
         List<Product> cps =productRepository.findplist();
         if(cps!=null)
             return ResultVOUtil.success(cps);
-        return ResultVOUtil.error("1","所查询的cp不存在!");
+        return ResultVOUtil.error("1","所查询的不存在!");
     }
 }

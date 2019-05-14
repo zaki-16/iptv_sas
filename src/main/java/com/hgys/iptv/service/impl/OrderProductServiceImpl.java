@@ -156,8 +156,8 @@ public class OrderProductServiceImpl implements OrderProductService {
 
 
     @Override
-    public Page<OrderProductWithSettlementAddVM> findByConditions(String name, String code, String productcode, String productname, String status, String mode, Pageable pageable) {
-        Page<OrderProductWithSettlementAddVM> map = orderproductRepository.findAll(((root, query, builder) -> {
+    public Page<OrderProductWithSettlementfindVM> findByConditions(String name, String code, String productcode, String productname, String status, String mode, Pageable pageable) {
+        Page<OrderProductWithSettlementfindVM> map = orderproductRepository.findAll(((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
             if (StringUtils.isNotBlank(name)) {

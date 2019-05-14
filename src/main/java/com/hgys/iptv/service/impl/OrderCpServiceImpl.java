@@ -126,7 +126,7 @@ public class OrderCpServiceImpl implements OrderCpService {
             ordercpRepository.save(master);
 
             List<SmallCPOrderVM> vos = vo.getList();
-if (vo.getSettleaccounts()==0) { //按比例结算
+/*if (vo.getSettleaccounts()==0) { //按比例结算
     //验证权重是否超过100%
     Integer he = 0;
     for (SmallCPOrderVM s : vos) {
@@ -135,7 +135,7 @@ if (vo.getSettleaccounts()==0) { //按比例结算
             new IllegalArgumentException("权重合必须为100%");
         }
     }
-}
+}*/
             //处理附表数据
             for (SmallCPOrderVM s : vos){
                 OrderCpWithCp from = new OrderCpWithCp();
