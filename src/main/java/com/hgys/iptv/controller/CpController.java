@@ -45,22 +45,10 @@ public class CpController {
     @ApiOperation(value = "更新cp",notes = "@return：cp对象")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO<?> updateCp(
-            @ApiParam(value = "cp修改VM") @RequestBody CpAddVM vo){
-        Cp cp = new Cp();
-        BeanUtils.copyProperties(vo,cp);
-        return cpService.update(cp);
+            @ApiParam(value = "cp修改VM") @RequestBody CpAddVM vm){
+        return cpService.update(vm);
     }
 
-    /**
-     * cp删除--逻辑删除，只更新对象的isdelete字段值 0：未删除 1：已删除
-     */
-//    @DeleteMapping("/logicDeleteCp")
-//    @ApiOperation(value = "逻辑删除cp",notes = "@return：true/false")
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResultVO<?> logicDelete(
-            @ApiParam(value = "cp对象",required = true)Integer id){
-        return cpService.logicDelete(id);
-    }
 
     @DeleteMapping("/batchLogicDeleteCp")
     @ApiOperation(value = "批量逻辑删除cp",notes = "@return：true/false")

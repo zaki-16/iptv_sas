@@ -27,8 +27,6 @@ public class QOrderProductWithSCD extends EntityPathBase<OrderProductWithSCD> {
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
-    public final StringPath masterCode = createString("masterCode");
-
     public final StringPath opcode = createString("opcode");
 
     public final StringPath opname = createString("opname");
@@ -36,14 +34,6 @@ public class QOrderProductWithSCD extends EntityPathBase<OrderProductWithSCD> {
     public final StringPath pcode = createString("pcode");
 
     public final StringPath pname = createString("pname");
-
-    public final StringPath scdcode = createString("scdcode");
-
-    public final StringPath scdname = createString("scdname");
-
-    public final StringPath sdcode = createString("sdcode");
-
-    public final StringPath sdname = createString("sdname");
 
     public QOrderProductWithSCD(String variable) {
         super(OrderProductWithSCD.class, forVariable(variable));

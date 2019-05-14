@@ -13,7 +13,7 @@ import java.io.IOException;
  * @ClassName CorsFilter
  * @Auther: wangz
  * @Date: 2019/5/7 18:28
- * @Description: TODO
+ * @Description: TODO 跨域处理
  */
 @Component
 public class CorsFilter implements Filter {
@@ -26,12 +26,6 @@ public class CorsFilter implements Filter {
     }
 
     /**
-     * Access to XMLHttpRequest at 'http://localhost:8080/iptv/login' from origin 'http://www.test.com:8099'
-     * has been blocked by CORS policy:
-     * The value of the 'Access-Control-Allow-Origin'
-     * header in the response must not be the wildcard '*' when the request's credentials mode is
-     * 'include'. The credentials mode of requests initiated by
-     * the XMLHttpRequest is controlled by the withCredentials attribute.
      * @param servletRequest
      * @param servletResponse
      * @param filterChain
@@ -42,9 +36,14 @@ public class CorsFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request= (HttpServletRequest) servletRequest;
         HttpServletResponse response= (HttpServletResponse) servletResponse;
-        response.setHeader("Access-Control-Allow-Origin","http://www.testa.com:81"); //允许跨域访问的域http://www.testa.com:81/
-        response.setHeader("Access-Control-Allow-Origin","http://132.232.138.176:1688"); //允许跨域访问的域http://www.testa.com:81/
-//        response.setHeader("Access-Control-Allow-Origin","http://www.test.com:8099"); //允许跨域访问的域 本机测试
+//        指定访问访问的域
+//        List<String> allowedOrigins = Arrays.asList("http://www.test.com:8099");
+//        allowedOrigins.add("http://www.testa.com:81");
+//        allowedOrigins.add("http://132.232.138.176:1688");
+        String origin = request.getHeader("Origin");
+        logger.info(origin+" 请求访问.");
+        response.setHeader("Access-Control-Allow-Origin",origin);
+        response.setHeader("Vary", "Origin");
         response.setHeader("Access-Control-Allow-Methods","POST,GET,OPTIONS,DELETE,PUT"); //允许使用的请求方法
         response.setHeader("Access-Control-Expose-Headers","*");
         response.setHeader("Access-Control-Allow-Headers","Content-Type, Content-Length, Authorization, Accept, X-Requested-With , Origin");

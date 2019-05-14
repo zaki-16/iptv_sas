@@ -12,11 +12,9 @@
 
 package com.hgys.iptv.model;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import javax.persistence.*;
 
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  * 结算类型-业务定比例与业务关系表(business_comparison_relation)

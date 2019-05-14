@@ -10,12 +10,15 @@ import com.hgys.iptv.model.BusinessComparisonRelation;
 import com.hgys.iptv.model.CpOrderBusinessComparison;
 import com.hgys.iptv.model.OrderBusinessComparison;
 import com.hgys.iptv.model.enums.ResultEnum;
+import com.hgys.iptv.model.qmodel.QBusinessComparisonRelation;
+import com.hgys.iptv.model.qmodel.QCpOrderBusinessComparison;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.OrderBusinessComparisonService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +54,9 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
 
     @Autowired
     private CpRepository cpRepository;
+
+    @Autowired
+    private JPAQueryFactory queryFactory;
 
     /**
      * 新增
@@ -137,6 +143,7 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
                     BeanUtils.copyProperties(business,compa);
                     compa.setMasterCode(v.getBusinessCode());
                     compa.setCreate_time(new Timestamp(System.currentTimeMillis()));
+                    compa.setCp_name(StringUtils.trimToEmpty(cpRepository.findByCode(business.getCp_code().trim()).getName()));
 
                     cpOrderBusinessComparisonRepository.save(compa);
                 }
@@ -264,19 +271,24 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
                 predicates.add(condition);
             }
 
-            if (StringUtils.isNotBlank(status)) {
+            if (StringUtils.isNotBlank(mode)) {
                 Predicate condition = builder.equal(root.get("mode"), Integer.parseInt(mode));
                 predicates.add(condition);
             }
 
             Predicate condition = builder.equal(root.get("isdelete"), 0);
             predicates.add(condition);
+
+            if (!predicates.isEmpty()){
+                return builder.and(predicates.toArray(new Predicate[0]));
+            }
             return builder.conjunction();
         }), pageable).map(orderBusinessComparisonControllerAssemlber::getListVM);
         return map;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> updateOrderBusinessComparison(OrderBusinessComparisonAddVM vo) {
         if (null == vo.getId()){
             ResultVOUtil.error("1","主键不能为空");
@@ -293,7 +305,13 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
                 }
             }
 
-            OrderBusinessComparison comparison = orderBusinessComparisonRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("为查询到id为："+vo.getId()+"业务定比例信息"));
+            Optional<OrderBusinessComparison> byId = orderBusinessComparisonRepository.findById(vo.getId());
+            OrderBusinessComparison comparison = null;
+            if (byId.isPresent()){
+                comparison = byId.get();
+            }else{
+                return ResultVOUtil.error("0002","未查询到id:" + vo.getId() + "结算类型-业务定比例信息");
+            }
             OrderBusinessComparison o = new OrderBusinessComparison();
 
             BeanUtils.copyProperties(vo,o);
@@ -304,22 +322,25 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
             if (!vo.getList().isEmpty()) {
                 List<OrderBusinessComparisonBusinessAddVM> list = vo.getList();
                 //先将之前业务删除，对现在数据新增
-                businessComparisonRelationRepository.deleteByMasterCode(comparison.getCode());
+                long execute = queryFactory.delete(QBusinessComparisonRelation.businessComparisonRelation).where(QBusinessComparisonRelation.businessComparisonRelation.masterCode.eq(comparison.getCode())).execute();
+                System.err.println(execute);
                 for (OrderBusinessComparisonBusinessAddVM addVM : list){
                     BusinessComparisonRelation relation = new BusinessComparisonRelation();
                     BeanUtils.copyProperties(addVM,relation);
                     relation.setMasterCode(comparison.getCode());
                     relation.setMasterName(comparison.getName());
                     relation.setBusinessName(StringUtils.trimToEmpty(businessRepository.findByCode(addVM.getBusinessCode().trim()).getName()));
+                    relation.setCreate_time(new Timestamp(System.currentTimeMillis()));
+                    businessComparisonRelationRepository.saveAndFlush(relation);
 
-                    cpOrderBusinessComparisonRepository.deleteByMasterCode(addVM.getBusinessCode().trim());
+                    long execute1 = queryFactory.delete(QCpOrderBusinessComparison.cpOrderBusinessComparison).where(QCpOrderBusinessComparison.cpOrderBusinessComparison.masterCode.eq(addVM.getBusinessCode().trim())).execute();
+                    System.err.println(execute1);
                     List<OrderBusinessComparisonAddListVM> listVMS = addVM.getList();
                     for (OrderBusinessComparisonAddListVM v : listVMS){
                         CpOrderBusinessComparison cp = new CpOrderBusinessComparison();
                         BeanUtils.copyProperties(v,cp);
                         cp.setMasterCode(addVM.getBusinessCode());
                         cp.setCp_name(StringUtils.trimToEmpty(cpRepository.findByCode(v.getCp_code().trim()).getName()));
-                        cp.setMasterCode(comparison.getCode());
                         cp.setCreate_time(new Timestamp(System.currentTimeMillis()));
 
                         cpOrderBusinessComparisonRepository.saveAndFlush(cp);

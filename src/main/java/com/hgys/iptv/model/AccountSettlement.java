@@ -1,10 +1,10 @@
 /*
  * Welcome to use the TableGo Tools.
- * 
+ *
  * http://vipbooks.iteye.com
  * http://blog.csdn.net/vipbooks
  * http://www.cnblogs.com/vipbooks
- * 
+ *
  * Author:bianj
  * Email:edinsker@163.com
  * Version:5.8.8
@@ -19,7 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 /**
  * 分赃结算表(account_settlement)
- * 
+ *
  * @author yance
  * @version 1.0.0 2019-05-09
  */
@@ -97,7 +97,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 获取主键
-     * 
+     *
      * @return 主键
      */
     public Integer getId() {
@@ -106,7 +106,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 设置主键
-     * 
+     *
      * @param id
      *          主键
      */
@@ -116,7 +116,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 获取编码
-     * 
+     *
      * @return 编码
      */
     public String getCode() {
@@ -125,7 +125,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 设置编码
-     * 
+     *
      * @param code
      *          编码
      */
@@ -135,7 +135,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 获取名称
-     * 
+     *
      * @return 名称
      */
     public String getName() {
@@ -144,7 +144,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 设置名称
-     * 
+     *
      * @param name
      *          名称
      */
@@ -154,7 +154,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 获取1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定•结算类型：从订购量结算、业务级结算、产品级结算、CP定比例结算、业务定比例结算
-     * 
+     *
      * @return 1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定•结算类型
      */
     public Integer getSet_type() {
@@ -163,7 +163,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 设置1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定•结算类型：从订购量结算、业务级结算、产品级结算、CP定比例结算、业务定比例结算
-     * 
+     *
      * @param set_type
      *          1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定•结算类型
      */
@@ -173,7 +173,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 获取结算规则编码
-     * 
+     *
      * @return 结算规则编码
      */
     public String getSet_ruleCode() {
@@ -182,7 +182,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 设置结算规则编码
-     * 
+     *
      * @param set_ruleCode
      *          结算规则编码
      */
@@ -192,7 +192,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 获取结算规则名称
-     * 
+     *
      * @return 结算规则名称
      */
     public String getSet_ruleName() {
@@ -201,7 +201,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 设置结算规则名称
-     * 
+     *
      * @param set_ruleName
      *          结算规则名称
      */
@@ -211,7 +211,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 获取结算时间
-     * 
+     *
      * @return 结算时间
      */
     public Timestamp getInputTime() {
@@ -220,7 +220,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 设置结算时间
-     * 
+     *
      * @param inputTime
      *          结算时间
      */
@@ -230,7 +230,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 获取修改时间
-     * 
+     *
      * @return 修改时间
      */
     public Timestamp getModifyTime() {
@@ -239,7 +239,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 设置修改时间
-     * 
+     *
      * @param modifyTime
      *          修改时间
      */
@@ -249,7 +249,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 获取1:已录入;2:待审核;3:初审通过;4:复审通过;5:终审通过;6:驳回
-     * 
+     *
      * @return 1:已录入;2:待审核;3:初审通过;4:复审通过;5:终审通过;6:驳回
      */
     public Integer getStatus() {
@@ -258,7 +258,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 设置1:已录入;2:待审核;3:初审通过;4:复审通过;5:终审通过;6:驳回
-     * 
+     *
      * @param status
      *          1:已录入;2:待审核;3:初审通过;4:复审通过;5:终审通过;6:驳回
      */
@@ -268,7 +268,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 获取备注
-     * 
+     *
      * @return 备注
      */
     public String getRemakes() {
@@ -277,7 +277,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 设置备注
-     * 
+     *
      * @param remakes
      *          备注
      */
@@ -287,7 +287,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 获取总金额
-     * 
+     *
      * @return 总金额
      */
     public Integer getTotal_sum() {
@@ -296,7 +296,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 设置总金额
-     * 
+     *
      * @param total_sum
      *          总金额
      */
@@ -306,7 +306,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 获取预留字段1
-     * 
+     *
      * @return 预留字段1
      */
     public String getCol1() {
@@ -315,7 +315,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 设置预留字段1
-     * 
+     *
      * @param col1
      *          预留字段1
      */
@@ -325,7 +325,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 获取预留字段2
-     * 
+     *
      * @return 预留字段2
      */
     public String getCol2() {
@@ -334,7 +334,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 设置预留字段2
-     * 
+     *
      * @param col2
      *          预留字段2
      */
@@ -344,7 +344,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 获取逻辑删除标识
-     * 
+     *
      * @return 逻辑删除标识
      */
     public Integer getIsdelete() {
@@ -353,7 +353,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /**
      * 设置逻辑删除标识
-     * 
+     *
      * @param isdelete
      *          逻辑删除标识
      */
