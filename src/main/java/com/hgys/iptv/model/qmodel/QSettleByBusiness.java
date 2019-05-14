@@ -1,5 +1,6 @@
 package com.hgys.iptv.model.qmodel;
 
+import com.hgys.iptv.model.SettleByBusiness;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.EntityPathBase;
