@@ -3,9 +3,9 @@ package com.hgys.iptv.controller.vm;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Data
 @ApiModel(value = "分配结算新增VM")
@@ -36,15 +36,34 @@ public class AccountSettlementAddVM {
     private String remakes;
 
     /** 结算开始时间 */
-    @ApiModelProperty("结算开始时间")
-    private Timestamp setStartTime;
+    @ApiModelProperty("结算开始时间(2019-01-01 12:12:12)")
+    private String startTime;
 
     /** 结算结束时间 */
-    @ApiModelProperty("结算结束时间")
-    private Timestamp setEndTime;
+    @ApiModelProperty("结算结束时间(2019-01-01 12:12:12)")
+    private String endTime;
 
-    /** 文件 */
-    @ApiModelProperty("Excel文件")
-    private MultipartFile multipartFile;
+    /**分配结算业务级结算总收入*/
+    @ApiModelProperty("分配结算业务级结算总收入")
+    private short businessMoney;
 
+    /**分配结算CP定比例结算总收入*/
+    @ApiModelProperty("分配结算CP定比例结算总收入")
+    private short cpAllMoney;
+
+    /**分配结算订购量信息集合*/
+    @ApiModelProperty("分配结算订购量信息集合")
+    private List<CpOrderCpAddVM> cpAddVMS;
+
+    /**分配结算产品级单维度结算信息集合*/
+    @ApiModelProperty("分配结算产品级单维度信息集合")
+    private List<OrderProductDimensionAddVM> dimensionAddVM;
+
+    /**分配结算产品级多维度信息集合*/
+    @ApiModelProperty("分配结算产品级单维度信息集合")
+    private List<OrderProductDimensionListAddVM> dimensionListAddVMS;
+
+    /**分配结算业务定比例结算信息集合*/
+    @ApiModelProperty("分配结算业务定比例结算信息集合")
+    private List<BusinessBelielAddVM> belielAddVMS;
 }

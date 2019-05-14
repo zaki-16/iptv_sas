@@ -8,11 +8,9 @@ import com.hgys.iptv.model.qmodel.QCpProduct;
 import com.hgys.iptv.model.qmodel.QOrderProductWithSCD;
 import com.hgys.iptv.model.qmodel.QProduct;
 import com.hgys.iptv.model.vo.ResultVO;
-import com.hgys.iptv.repository.OrderProductRepository;
-import com.hgys.iptv.repository.OrderProductWithSCDRepository;
-import com.hgys.iptv.repository.OrderQuantityWithCpRepository;
-import com.hgys.iptv.repository.SettlementCombinatorialDimensionFromRepository;
+import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.AccountSettlementService;
+import com.hgys.iptv.util.ResultVOUtil;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.BeanUtils;
@@ -23,6 +21,7 @@ import com.hgys.iptv.model.bean.OrderProductDimensionDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class AccountSettlementServiceImpl implements AccountSettlementService {
@@ -42,6 +41,11 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
     @Autowired
     private SettlementCombinatorialDimensionFromRepository settlementCombinatorialDimensionFromRepository;
 
+    @Autowired
+    private CpRepository cpRepository;
+
+    @Autowired
+    private SettlementDimensionRepository settlementDimensionRepository;
 
     /**
      * 新增分配结算
@@ -126,5 +130,77 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             }
         }
         return null;
+    }
+
+    /**
+     * 检查CP是否存在
+     * @param dtos
+     * @return
+     */
+    @Override
+    public ResultVO<?> checkCp(List<CpOrderCpExcelDTO> dtos) {
+        int i = 1;
+        for (CpOrderCpExcelDTO dto : dtos){
+            i += i;
+            Cp cp = cpRepository.findByCode(dto.getCpcode().trim());
+            if (null == cp){
+                return ResultVOUtil.error("1","第" + i + "条数据，CP不存在!");
+            }
+        }
+        return ResultVOUtil.success();
+    }
+
+    /**
+     * 检查CP和单维度是否存在
+     * @param dtos
+     * @return
+     */
+    @Override
+    public ResultVO<?> checkCpAndDimension(List<OrderProductDimensionDTO> dtos) {
+        int i = 1;
+        for (OrderProductDimensionDTO dto : dtos){
+            i += i;
+            Cp cp = cpRepository.findByCode(dto.getCpcode().trim());
+            if (null == cp){
+                return ResultVOUtil.error("1","第" + i + "条数据，CP不存在!");
+            }
+            Optional<SettlementDimension> byCode = settlementDimensionRepository.findByCode(dto.getDimensionCode().trim());
+            if (!byCode.isPresent()){
+                return ResultVOUtil.error("1","第" + i + "条数据，维度不存在!");
+            }
+        }
+        return ResultVOUtil.success();
+    }
+
+    /**
+     * 检查CP和多维度是否存在
+     * @param dtos
+     * @return
+     */
+    @Override
+    public ResultVO<?> checkCpAndDimensionList(List<OrderProductDimensionListDTO> dtos) {
+        int i = 1;
+        for (OrderProductDimensionListDTO dto : dtos){
+            i += i;
+            Cp cp = cpRepository.findByCode(dto.getCpcode().trim());
+            if (null == cp){
+                return ResultVOUtil.error("1","第" + i + "条数据，CP不存在!");
+            }
+            Optional<SettlementDimension> byCode = settlementDimensionRepository.findByCode(dto.getDimensionACode().trim());
+            if (!byCode.isPresent()){
+                return ResultVOUtil.error("1","第" + i + "条数据，维度A不存在!");
+            }
+
+            Optional<SettlementDimension> byCode1 = settlementDimensionRepository.findByCode(dto.getDimensionBCode().trim());
+            if (!byCode1.isPresent()){
+                return ResultVOUtil.error("1","第" + i + "条数据，维度B不存在!");
+            }
+
+            Optional<SettlementDimension> byCode2 = settlementDimensionRepository.findByCode(dto.getDimensionCCode().trim());
+            if (!byCode2.isPresent()){
+                return ResultVOUtil.error("1","第" + i + "条数据，维度C不存在!");
+            }
+        }
+        return ResultVOUtil.success();
     }
 }
