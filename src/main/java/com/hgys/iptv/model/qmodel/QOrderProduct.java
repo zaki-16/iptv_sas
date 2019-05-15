@@ -37,6 +37,8 @@ public class QOrderProduct extends EntityPathBase<OrderProduct> {
 
     public final NumberPath<Integer> isdelete = createNumber("isdelete", Integer.class);
 
+    public final NumberPath<Integer> mode = createNumber("mode", Integer.class);
+
     public final DateTimePath<java.sql.Timestamp> modifyTime = createDateTime("modifyTime", java.sql.Timestamp.class);
 
     public final StringPath name = createString("name");

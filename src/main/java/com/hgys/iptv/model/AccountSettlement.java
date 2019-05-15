@@ -12,6 +12,7 @@
 
 package com.hgys.iptv.model;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import javax.persistence.*;
 
@@ -73,7 +74,7 @@ public class AccountSettlement implements java.io.Serializable {
 
     /** 总金额 */
     @Column(name = "total_sum", nullable = true, length = 10)
-    private Integer total_sum;
+    private BigDecimal total_sum;
 
     /** 预留字段1 */
     @Column(name = "col1", nullable = true, length = 100)
@@ -290,7 +291,7 @@ public class AccountSettlement implements java.io.Serializable {
      *
      * @return 总金额
      */
-    public Integer getTotal_sum() {
+    public BigDecimal getTotal_sum() {
         return this.total_sum;
     }
 
@@ -300,7 +301,7 @@ public class AccountSettlement implements java.io.Serializable {
      * @param total_sum
      *          总金额
      */
-    public void setTotal_sum(Integer total_sum) {
+    public void setTotal_sum(BigDecimal total_sum) {
         this.total_sum = total_sum;
     }
 

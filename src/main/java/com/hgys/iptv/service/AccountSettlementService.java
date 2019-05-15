@@ -1,5 +1,6 @@
 package com.hgys.iptv.service;
 
+import com.hgys.iptv.controller.vm.AccountSettlementAddVM;
 import com.hgys.iptv.model.bean.CpOrderCpExcelDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionListDTO;
@@ -9,7 +10,7 @@ import java.util.List;
 
 public interface AccountSettlementService {
 
-    ResultVO<?> addAccountSettlement();
+    ResultVO<?> addAccountSettlement(AccountSettlementAddVM vm);
 
     List<?> excelExport(Integer type,String code);
 
@@ -18,4 +19,6 @@ public interface AccountSettlementService {
     ResultVO<?> checkCpAndDimension(List<OrderProductDimensionDTO> dtos);
 
     ResultVO<?> checkCpAndDimensionList(List<OrderProductDimensionListDTO> dtos);
+
+    ResultVO<?> batchLogicDelete(String ids);
 }

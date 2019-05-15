@@ -33,7 +33,7 @@ public class QCpOrderBusinessComparison extends EntityPathBase<CpOrderBusinessCo
 
     public final StringPath masterCode = createString("masterCode");
 
-    public final NumberPath<Integer> money = createNumber("money", Integer.class);
+    public final NumberPath<java.math.BigDecimal> money = createNumber("money", java.math.BigDecimal.class);
 
     public final NumberPath<Integer> proportion = createNumber("proportion", Integer.class);
 

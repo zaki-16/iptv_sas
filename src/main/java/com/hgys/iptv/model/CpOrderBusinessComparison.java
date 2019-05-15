@@ -1,10 +1,10 @@
 /*
  * Welcome to use the TableGo Tools.
- * 
+ *
  * http://vipbooks.iteye.com
  * http://blog.csdn.net/vipbooks
  * http://www.cnblogs.com/vipbooks
- * 
+ *
  * Author:bianj
  * Email:edinsker@163.com
  * Version:5.8.8
@@ -13,11 +13,12 @@
 package com.hgys.iptv.model;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 /**
  * 结算类型-业务定比例,结算规则表(cp_order_business_comparison)
- * 
+ *
  * @author yance
  * @version 1.0.0 2019-05-07
  */
@@ -51,7 +52,7 @@ public class CpOrderBusinessComparison implements java.io.Serializable {
 
     /** 金额 */
     @Column(name = "money", nullable = true, length = 10)
-    private Integer money;
+    private BigDecimal money;
 
     /** 创建时间 */
     @Column(name = "create_time", nullable = true, length = 26)
@@ -59,7 +60,7 @@ public class CpOrderBusinessComparison implements java.io.Serializable {
 
     /**
      * 获取主键
-     * 
+     *
      * @return 主键
      */
     public Integer getId() {
@@ -68,7 +69,7 @@ public class CpOrderBusinessComparison implements java.io.Serializable {
 
     /**
      * 设置主键
-     * 
+     *
      * @param id
      *          主键
      */
@@ -78,7 +79,7 @@ public class CpOrderBusinessComparison implements java.io.Serializable {
 
     /**
      * 获取业务定比例比编码
-     * 
+     *
      * @return 业务定比例比编码
      */
     public String getMasterCode() {
@@ -87,7 +88,7 @@ public class CpOrderBusinessComparison implements java.io.Serializable {
 
     /**
      * 设置业务定比例比编码
-     * 
+     *
      * @param masterCode
      *          业务定比例比编码
      */
@@ -97,7 +98,7 @@ public class CpOrderBusinessComparison implements java.io.Serializable {
 
     /**
      * 获取cp编码
-     * 
+     *
      * @return cp编码
      */
     public String getCp_code() {
@@ -106,7 +107,7 @@ public class CpOrderBusinessComparison implements java.io.Serializable {
 
     /**
      * 设置cp编码
-     * 
+     *
      * @param cp_code
      *          cp编码
      */
@@ -116,7 +117,7 @@ public class CpOrderBusinessComparison implements java.io.Serializable {
 
     /**
      * 获取cp名称
-     * 
+     *
      * @return cp名称
      */
     public String getCp_name() {
@@ -125,7 +126,7 @@ public class CpOrderBusinessComparison implements java.io.Serializable {
 
     /**
      * 设置cp名称
-     * 
+     *
      * @param cp_name
      *          cp名称
      */
@@ -135,7 +136,7 @@ public class CpOrderBusinessComparison implements java.io.Serializable {
 
     /**
      * 获取所占比例
-     * 
+     *
      * @return 所占比例
      */
     public Integer getProportion() {
@@ -144,7 +145,7 @@ public class CpOrderBusinessComparison implements java.io.Serializable {
 
     /**
      * 设置所占比例
-     * 
+     *
      * @param proportion
      *          所占比例
      */
@@ -154,26 +155,26 @@ public class CpOrderBusinessComparison implements java.io.Serializable {
 
     /**
      * 获取金额
-     * 
+     *
      * @return 金额
      */
-    public Integer getMoney() {
+    public BigDecimal getMoney() {
         return this.money;
     }
 
     /**
      * 设置金额
-     * 
+     *
      * @param money
      *          金额
      */
-    public void setMoney(Integer money) {
+    public void setMoney(BigDecimal money) {
         this.money = money;
     }
 
     /**
      * 获取创建时间
-     * 
+     *
      * @return 创建时间
      */
     public Timestamp getCreate_time() {
@@ -182,7 +183,7 @@ public class CpOrderBusinessComparison implements java.io.Serializable {
 
     /**
      * 设置创建时间
-     * 
+     *
      * @param create_time
      *          创建时间
      */

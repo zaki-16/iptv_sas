@@ -1,18 +1,17 @@
 package com.hgys.iptv.service.impl;
 
+import com.hgys.iptv.controller.vm.AccountSettlementAddVM;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.bean.CpOrderCpExcelDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionListDTO;
-import com.hgys.iptv.model.qmodel.QCp;
-import com.hgys.iptv.model.qmodel.QCpProduct;
-import com.hgys.iptv.model.qmodel.QOrderProductWithSCD;
-import com.hgys.iptv.model.qmodel.QProduct;
+import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.AccountSettlementService;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hgys.iptv.model.bean.OrderProductDimensionDTO;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,14 +47,18 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
     @Autowired
     private SettlementDimensionRepository settlementDimensionRepository;
 
+    @Autowired
+    private AccountSettlementRepository accountSettlementRepository;
+
     /**
      * 新增分配结算
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO<?> addAccountSettlement() {
-        return null;
+    public ResultVO<?> addAccountSettlement(AccountSettlementAddVM vm) {
+
+        return ResultVOUtil.success(Boolean.TRUE);
     }
 
     @Override
@@ -202,5 +206,21 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             }
         }
         return ResultVOUtil.success();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public ResultVO<?> batchLogicDelete(String ids) {
+        try{
+            List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
+            for (String s : idLists){
+                accountSettlementRepository.batchLogicDelete(Integer.parseInt(s));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+        }
+
+        return ResultVOUtil.success(Boolean.TRUE);
     }
 }
