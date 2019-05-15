@@ -139,7 +139,13 @@ public class SettleEnginerServiceImpl extends AbstractBaseServiceImpl implements
      * 用户可以自定义组合（跳转至结算组合维度新增页面）。
      */
     @Override
-    public SettleMetaResource settleByProduct(SettleDTO settleDTO) {
+    public SettleMetaResource settleByProdWithSingleDime(SettleDTO settleDTO) {
+        return null;
+
+    }
+
+    @Override
+    public SettleMetaResource settleByProdWithCombDime(SettleDTO settleDTO) {
         return null;
 
     }
