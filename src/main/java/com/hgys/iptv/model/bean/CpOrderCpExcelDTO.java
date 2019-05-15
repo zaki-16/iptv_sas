@@ -6,6 +6,8 @@ import lombok.Data;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
+import java.math.BigDecimal;
+
 @ExcelSheet(name = "订购量结算", headColor = HSSFColor.HSSFColorPredefined.LIGHT_GREEN)
 @Data
 public class CpOrderCpExcelDTO {
@@ -16,5 +18,5 @@ public class CpOrderCpExcelDTO {
     private String cpname;
 
     @ExcelField(name = "订购量")
-    private Integer quantity;
+    private BigDecimal quantity;
 }

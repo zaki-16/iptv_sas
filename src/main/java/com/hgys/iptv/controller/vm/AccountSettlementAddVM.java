@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -45,11 +46,11 @@ public class AccountSettlementAddVM {
 
     /**分配结算业务级结算总收入*/
     @ApiModelProperty("分配结算业务级结算总收入")
-    private short businessMoney;
+    private BigDecimal businessMoney;
 
     /**分配结算CP定比例结算总收入*/
     @ApiModelProperty("分配结算CP定比例结算总收入")
-    private short cpAllMoney;
+    private BigDecimal cpAllMoney;
 
     /**分配结算订购量信息集合*/
     @ApiModelProperty("分配结算订购量信息集合")
@@ -60,7 +61,7 @@ public class AccountSettlementAddVM {
     private List<OrderProductDimensionAddVM> dimensionAddVM;
 
     /**分配结算产品级多维度信息集合*/
-    @ApiModelProperty("分配结算产品级单维度信息集合")
+    @ApiModelProperty("分配结算产品级多维度信息集合")
     private List<OrderProductDimensionListAddVM> dimensionListAddVMS;
 
     /**分配结算业务定比例结算信息集合*/

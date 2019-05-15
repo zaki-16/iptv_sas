@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @ApiModel("分配结算产品级多维度新增VM")
 @Data
 public class OrderProductDimensionListAddVM {
@@ -22,33 +24,33 @@ public class OrderProductDimensionListAddVM {
 
     /** 产品名称 */
     @ApiModelProperty("产品名称")
-    private String pname;
+    private String productName;
 
     /** 产品编码 */
     @ApiModelProperty("产品编码")
-    private String pcode;
+    private String productCode;
 
     /**
      * 维度A编码
      */
     @ApiModelProperty("维度A编码")
-    private String dimensionACode;
+    private String dimACode;
 
     /**
      * 维度B编码
      */
     @ApiModelProperty("维度B编码")
-    private String dimensionBCode;
+    private String dimBCode;
 
     /**
      * 维度C编码
      */
     @ApiModelProperty("维度C编码")
-    private String dimensionCCode;
+    private String dimCCode;
 
     /**
      * 产品结算金额
      */
     @ApiModelProperty("结算金额（单位：元）")
-    private short money;
+    private BigDecimal setMoney;
 }

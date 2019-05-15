@@ -23,7 +23,7 @@ public class Product implements Serializable {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
     private String code;
-    private Integer price;
+    private String price;
     private Timestamp inputTime;
     private Timestamp modifyTime;
     @Column(name = "status", nullable = false, length = 2)

@@ -21,7 +21,7 @@ public class ProductVM {
     private Integer id;
     private String name;
     private String code;
-    private Integer price;
+    private String price;
     private Timestamp inputTime;
     private Timestamp modifyTime;
     private Integer status;//0.禁用 1.启用

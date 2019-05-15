@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @ApiModel("业务类型-业务定比例新增VM(cp关系)")
 @Data
 public class OrderBusinessComparisonAddListVM{
@@ -29,5 +31,5 @@ public class OrderBusinessComparisonAddListVM{
 
     /** 金额 */
     @ApiModelProperty("金额")
-    private Integer money;
+    private BigDecimal money;
 }

@@ -43,6 +43,8 @@ public class QOrderQuantityWithCp extends EntityPathBase<OrderQuantityWithCp> {
 
     public final StringPath oqname = createString("oqname");
 
+    public final NumberPath<Integer> quantity = createNumber("quantity", Integer.class);
+
     public QOrderQuantityWithCp(String variable) {
         super(OrderQuantityWithCp.class, forVariable(variable));
     }
