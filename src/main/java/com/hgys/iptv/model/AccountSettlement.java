@@ -72,10 +72,6 @@ public class AccountSettlement implements java.io.Serializable {
     @Column(name = "remakes", nullable = true, length = 200)
     private String remakes;
 
-    /** 总金额 */
-    @Column(name = "total_sum", nullable = true, length = 10)
-    private BigDecimal total_sum;
-
     /** 预留字段1 */
     @Column(name = "col1", nullable = true, length = 100)
     private String col1;
@@ -284,25 +280,6 @@ public class AccountSettlement implements java.io.Serializable {
      */
     public void setRemakes(String remakes) {
         this.remakes = remakes;
-    }
-
-    /**
-     * 获取总金额
-     *
-     * @return 总金额
-     */
-    public BigDecimal getTotal_sum() {
-        return this.total_sum;
-    }
-
-    /**
-     * 设置总金额
-     *
-     * @param total_sum
-     *          总金额
-     */
-    public void setTotal_sum(BigDecimal total_sum) {
-        this.total_sum = total_sum;
     }
 
     /**
