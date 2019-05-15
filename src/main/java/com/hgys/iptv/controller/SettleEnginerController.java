@@ -21,10 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/settle")
 @Api(value = "SettleEnginerController",tags = "结算策略Api接口")
 public class SettleEnginerController {
-
     @Autowired
     private SettleEnginerService service;
-
     /**
      * 根据结算类型和结算方式统一调度结算规则引擎
      *     约定-
@@ -47,34 +45,30 @@ public class SettleEnginerController {
     public void settleRulerDispatcher(SettleDTO settleDTO){
         Integer settleType = settleDTO.getSettleType();
         Integer settleModeType = settleDTO.getSettleModeType();
-
         if(settleType==1){// CP定比例结算
             if(settleModeType==0){//没有进一步细分规则
                 service.settleByCp(settleDTO);
             }
         }else if(settleType==2){//业务级结算
             if(settleModeType==0){//没有进一步细分规则
-
+                service.settleByBusiness(settleDTO);
             }
         }else if(settleType==3){// 业务定比例结算
             if(settleModeType==1){//业务级-按比例
-
+                service.settleByBusinessWithRatio(settleDTO);
             }else if(settleModeType==2){//业务级-按金额
-
+                service.settleByBusinessWithAmount(settleDTO);
             }
         }else if(settleType==4){// 订购量结算
-            if(settleModeType==1){
-
-            }else if(settleModeType==2){
-
+            if(settleModeType==0){
+                service.settleByQuantity(settleDTO);
             }
         }else if(settleType==5){// 产品级结算
             if(settleModeType==1){//产品级-单维度
-
+                service.settleByProdWithSingleDime(settleDTO);
             }else if(settleModeType==2){//产品级-多维度
-
+                service.settleByProdWithCombDime(settleDTO);
             }
         }
-
     }
 }

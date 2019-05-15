@@ -8,7 +8,7 @@ import lombok.Data;
  *         ->分账完成后，返回统一结果实体 SettleMetaResource
  *
  * 新增分账-其实就是新增规则-
- * @ClassName SettleDTO
+ * 1@ClassName SettleDTO
  * @Auther: wangz
  * @Date: 2019/5/14 23:14
  * @Description: TODO
@@ -27,7 +27,7 @@ public class SettleDTO {
     /**结算方式类型
      * 无=0，即直接根据结算类型就可完成分账的方式，如cp定比例
      * 定比例=1
-     * 定金额=2
+     * 定金额=2    `
      * */
     private Integer settleModeType;
 

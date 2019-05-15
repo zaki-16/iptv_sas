@@ -24,9 +24,13 @@ public interface SettleEnginerService {
      */
     SettleMetaResource settleByCp(SettleDTO settleDTO);
     /**
-     * 产品级结算--要有各维度权重
+     * 产品级结算--单维度
      */
-    SettleMetaResource settleByProduct(SettleDTO settleDTO);
+    SettleMetaResource settleByProdWithSingleDime(SettleDTO settleDTO);
+    /**
+     * 产品级结算--组合维度
+     */
+    SettleMetaResource settleByProdWithCombDime(SettleDTO settleDTO);
     /**
      * 订购量结算
      */
