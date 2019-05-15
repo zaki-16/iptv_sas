@@ -44,7 +44,7 @@ public interface SmallOrderCpRepository extends JpaRepository<OrderBusinessCp,Ob
      * @param Code
      * @return
      */
-    @Query(value = "select o from OrderBusinessCp o where o.obcode = ?1")
+    @Query(value = "select o from OrderBusinessCp o where o.bucode = ?1")
     List<OrderBusinessCp> findByMasterCodes(String Code);
 
 }

@@ -4,12 +4,17 @@ import com.hgys.iptv.controller.assemlber.OrderBusinessControllerAssemlber;
 import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
+import com.hgys.iptv.model.qmodel.QBusinessComparisonRelation;
+import com.hgys.iptv.model.qmodel.QCpOrderBusinessComparison;
+import com.hgys.iptv.model.qmodel.QOrderBusinessCp;
+import com.hgys.iptv.model.qmodel.QOrderBusinessWithCp;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.OrderBusinessService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +51,9 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
 
     @Autowired
     private CpRepository cpRepository;
+
+    @Autowired
+    private JPAQueryFactory queryFactory;
 
 
     @Override
@@ -145,7 +153,7 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
         return ResultVOUtil.success(byStatusAndIsdelete);
     }
 
-    @Override
+/*    @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> updateOrderBusiness(OrderBusinessWithCPAddVM vo) {
         if (null == vo.getId()){
@@ -158,13 +166,13 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
             ResultVOUtil.error("1","业务名称不能为空");
         }
         try{
-            //验证名称是否已经存在
+          *//*  //验证名称是否已经存在
             Optional<OrderBusiness> byName = orderbusinessRepository.findByName(vo.getName());
             if (byName.isPresent()){
                 if (!vo.getId().equals(byName.get().getId())){
                     return ResultVOUtil.error("1","名称已经存在");
                 }
-            }
+            }*//*
             OrderBusiness comparison = orderbusinessRepository.findById(vo.getId()).orElseThrow(() -> new IllegalArgumentException("未查询到id为："+vo.getId()+"业务定比例信息"));
             OrderBusiness o = new OrderBusiness();
             BeanUtils.copyProperties(vo,o);
@@ -204,7 +212,84 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
+    }*/
+
+
+
+
+
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO<?> updateOrderBusiness(OrderBusinessWithCPAddVM vo) {
+        if (null == vo.getId()){
+            ResultVOUtil.error("1","主键不能为空");
+        }
+
+        try{
+
+            Optional<OrderBusiness> byId = orderbusinessRepository.findById(vo.getId());
+            OrderBusiness comparison = null;
+            if (byId.isPresent()){
+                comparison = byId.get();
+            }else{
+                return ResultVOUtil.error("0002","未查询到id:" + vo.getId() + "结算类型-业务定比例信息");
+            }
+            OrderBusiness o = new OrderBusiness();
+
+            BeanUtils.copyProperties(vo,o);
+            o.setModifyTime(new Timestamp(System.currentTimeMillis()));
+            UpdateTool.copyNullProperties(comparison,o);
+            orderbusinessRepository.saveAndFlush(o);
+
+            if (!vo.getList().isEmpty()) {
+                List<SmallOrderBusinessVM> list = vo.getList();
+                //先将之前业务删除，对现在数据新增
+                long execute = queryFactory.delete(QOrderBusinessWithCp.orderBusinessWithCp).where(QOrderBusinessWithCp.orderBusinessWithCp.obcode.eq(comparison.getCode())).execute();
+                System.err.println(execute);
+                for (SmallOrderBusinessVM addVM : list){
+                    OrderBusinessWithCp relation = new OrderBusinessWithCp();
+                    BeanUtils.copyProperties(addVM,relation);
+                    relation.setObcode(comparison.getCode());
+                    relation.setObname(comparison.getName());
+                    relation.setBuname(StringUtils.trimToEmpty(businessRepository.findByCode(addVM.getBucode().trim()).getName()));
+                    relation.setCreatetime(new Timestamp(System.currentTimeMillis()));
+                    orderBuinessWithCpRepository.saveAndFlush(relation);
+
+                    long execute1 = queryFactory.delete(QOrderBusinessCp.orderBusinessCp).where(QOrderBusinessCp.orderBusinessCp.bucode.eq(addVM.getBucode().trim())).execute();
+                    System.err.println(execute1);
+                    List<SmallOrderBusinessVM.SmallOrderBusinessCPVM> listVMS = addVM.getLists();
+                    for (SmallOrderBusinessVM.SmallOrderBusinessCPVM v : listVMS){
+                        OrderBusinessCp cp = new OrderBusinessCp();
+                        BeanUtils.copyProperties(v,cp);
+                        cp.setBucode(addVM.getBucode());
+                        cp.setCpname(StringUtils.trimToEmpty(cpRepository.findByCode(v.getCpcode().trim()).getName()));
+                        cp.setCreatetime(new Timestamp(System.currentTimeMillis()));
+
+                        smallOrderCpRepository.saveAndFlush(cp);
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
     @Override
     public Page<OrderBusinessWithCPAddVM> findByConditions(String name, String code,   String status,  Pageable pageable) {
         Page<OrderBusinessWithCPAddVM> map = orderbusinessRepository.findAll(((root, query, builder) -> {
@@ -262,7 +347,7 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
         return vm;
     }
 
-    @Override
+ /*   @Override
     public OrderBusinessWithCPAddVM findByIds(String id) {
         OrderBusiness byId = orderbusinessRepository.findById(Integer.parseInt(id)).orElseThrow(
                 () -> new IllegalArgumentException("未查询到结算信息")
@@ -289,5 +374,60 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
         vm.setList(list);
         return vm;
     }
+*/
+
+
+
+
+
+
+
+    /**
+     * 通过id查询
+     * @param id
+     * @return
+     */
+    @Override
+    public OrderBusinessWithCPAddVM findByIds(String id) {
+        OrderBusiness comparison = orderbusinessRepository.findById(Integer.parseInt(id)).orElseThrow(
+                () -> new IllegalArgumentException("未查询到结算类型-业务定比例信息")
+        );
+
+        OrderBusinessWithCPAddVM vm = new OrderBusinessWithCPAddVM();
+        BeanUtils.copyProperties(comparison,vm);
+
+        //查询业务信息
+        List<OrderBusinessWithCp> relations = orderBuinessWithCpRepository.findByMasterCode(comparison.getCode());
+        List<SmallOrderBusinessVM> list = new ArrayList<>();
+        for (OrderBusinessWithCp r : relations){
+            SmallOrderBusinessVM addVM = new SmallOrderBusinessVM();
+            BeanUtils.copyProperties(r,addVM);
+
+            //查询业务下Cp
+            List<OrderBusinessCp> byMasterCode = smallOrderCpRepository.findByMasterCodes(r.getBucode());
+            List<SmallOrderBusinessVM.SmallOrderBusinessCPVM> vms = new ArrayList<>();
+            for (OrderBusinessCp f : byMasterCode){
+                SmallOrderBusinessVM.SmallOrderBusinessCPVM o = new SmallOrderBusinessVM.SmallOrderBusinessCPVM();
+                BeanUtils.copyProperties(f,o);
+                vms.add(o);
+                addVM.setLists(vms);
+            }
+            list.add(addVM);
+        }
+        vm.setList(list);
+
+        return vm;
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 }

@@ -28,24 +28,25 @@ public class OrderBusinessControllerAssemlber {
     public OrderBusinessWithCPAddVM getListVM(OrderBusiness sc) {
         OrderBusinessWithCPAddVM vm = new OrderBusinessWithCPAddVM();
         BeanUtils.copyProperties(sc, vm);
-        List<OrderBusinessWithCp> byMasterCode = orderBuinessWithCpRepository.findByMasterCode(sc.getCode().trim());
-        List<OrderBusinessCp> byMasterCodes = smallOrderCpRepository.findByMasterCodes(sc.getCode().trim());
-
+        //查询业务信息
+        List<OrderBusinessWithCp> relations = orderBuinessWithCpRepository.findByMasterCode(sc.getCode().trim());
         List<SmallOrderBusinessVM> list = new ArrayList<>();
-        for (OrderBusinessWithCp f : byMasterCode) {
-            SmallOrderBusinessVM s = new SmallOrderBusinessVM();
-            BeanUtils.copyProperties(f, s);
-            list.add(s);
-            List<SmallOrderBusinessVM.SmallOrderBusinessCPVM> lists = new ArrayList<>();
-            for (OrderBusinessCp ff : byMasterCodes) {
-                SmallOrderBusinessVM.SmallOrderBusinessCPVM a = new SmallOrderBusinessVM.SmallOrderBusinessCPVM();
-                BeanUtils.copyProperties(ff, a);
-                lists.add(a);
-                s.setLists(lists);
-
-        }
+        for (OrderBusinessWithCp r : relations){
+            SmallOrderBusinessVM addVM = new SmallOrderBusinessVM();
+            BeanUtils.copyProperties(r,addVM);
+            //查询业务下Cp
+            List<OrderBusinessCp> byMasterCodes = smallOrderCpRepository.findByMasterCodes(addVM.getBucode().trim());
+            List<SmallOrderBusinessVM.SmallOrderBusinessCPVM> vms = new ArrayList<>();
+            for (OrderBusinessCp f : byMasterCodes){
+                SmallOrderBusinessVM.SmallOrderBusinessCPVM o = new SmallOrderBusinessVM.SmallOrderBusinessCPVM();
+                BeanUtils.copyProperties(f,o);
+                vms.add(o);
+                addVM.setLists(vms);
+            }
+            list.add(addVM);
         }
         vm.setList(list);
+
         return vm;
     }
 }
