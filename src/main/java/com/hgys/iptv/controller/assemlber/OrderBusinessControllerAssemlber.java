@@ -28,7 +28,7 @@ public class OrderBusinessControllerAssemlber {
     public OrderBusinessWithCPAddVM getListVM(OrderBusiness sc) {
         OrderBusinessWithCPAddVM vm = new OrderBusinessWithCPAddVM();
         BeanUtils.copyProperties(sc, vm);
-        //查询业务信息
+        //查询业 务信息
         List<OrderBusinessWithCp> relations = orderBuinessWithCpRepository.findByMasterCode(sc.getCode().trim());
         List<SmallOrderBusinessVM> list = new ArrayList<>();
         for (OrderBusinessWithCp r : relations){
