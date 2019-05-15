@@ -21,13 +21,15 @@ public class OrderBusinessWithCPAddVM implements Serializable{
     @ApiModelProperty("结算类型-业务级备注")
     private String note;
 
+    @ApiModelProperty("结算类型-业务级Code")
+    private String code;
+
     @ApiModelProperty("结算类型-业务级状态")
     private Integer status;
 
     /** 录入时间 */
     @ApiModelProperty("录入时间")
     private Timestamp inputTime;
-
 
     /** 修改时间   */
     @ApiModelProperty("修改时间")
@@ -86,6 +88,14 @@ public class OrderBusinessWithCPAddVM implements Serializable{
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public void setList(List<SmallOrderBusinessVM> list) {
