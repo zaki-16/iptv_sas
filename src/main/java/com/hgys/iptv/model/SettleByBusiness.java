@@ -31,9 +31,9 @@ public class SettleByBusiness implements Serializable {
     @Column(name = "cpCode", nullable = false,columnDefinition="varchar(100) COMMENT 'cp编码'")
     private String cpCode;
 
-    /**总收入--需放大1000倍计算*/
-    @Column(name = "grossIncome", nullable = false,columnDefinition="int(20) COMMENT '总收入'")
-    private Integer grossIncome;
+    /**总收入*/
+    @Column(name = "grossIncome", nullable = false,columnDefinition="varchar(50) COMMENT '总收入'")
+    private String grossIncome;
 
     /** 备用字段1 */
     @Column(name = "col1", nullable = true, length = 100)

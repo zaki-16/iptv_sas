@@ -56,8 +56,8 @@ public class SettleByProduct implements Serializable {
 
 
     /**产品结算金额--需放大1000倍计算*/
-    @Column(name = "prodIncome", nullable = false,columnDefinition="int(20) COMMENT '产品收入'")
-    private Integer prodIncome;
+    @Column(name = "prodIncome", nullable = false,columnDefinition="varchar(50) COMMENT '产品收入'")
+    private String prodIncome;
 
     /**维度组合k：维度名称，v:权重--单维度是特殊的多维度，权重为100%*/
 //    private Map<String,Object> dimensionMap = new HashMap<>();
