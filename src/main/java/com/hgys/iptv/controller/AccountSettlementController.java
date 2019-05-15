@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,14 +43,39 @@ public class AccountSettlementController {
     @ApiOperation(value = "新增分配结算",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> addAccountSettlement(@ApiParam(value = "新增分配结算VM") @RequestBody AccountSettlementAddVM vm){
-        if (StringUtils.isBlank("")){
-            return ResultVOUtil.error("1","分配结算name不能为空");
+        //数据校验（1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算）
+        if (StringUtils.isBlank(vm.getName())){
+            ResultVOUtil.error("1","分配结算订购量信息集合不能为空！");
         }
-
-        if (StringUtils.isBlank("")){
-            return ResultVOUtil.error("1","分配结算setRuleCode不能为空");
+        if (1 == vm.getSet_type()){
+            if (vm.getCpAddVMS().isEmpty()){
+                ResultVOUtil.error("1","分配结算订购量信息集合不能为空！");
+            }
+        }else if (2 == vm.getSet_type()){
+            if (StringUtils.isBlank(vm.getBusinessMoney().toString())){
+                ResultVOUtil.error("1","分配结算业务级结算总收入不能为空！");
+            }
+        }else if (3 == vm.getSet_type()){
+            OrderProduct byCode = orderProductRepository.findByCode(vm.getSet_ruleCode().trim());
+            //查看是单维度还是多维度
+            Integer mode = byCode.getMode();
+            if (mode == 1){
+                if (vm.getDimensionAddVM().isEmpty()){
+                    ResultVOUtil.error("1","分配结算产品级单维度信息集合不能为空！");
+                }else {
+                    ResultVOUtil.error("1","分配结算产品级多维度信息集合不能为空！");
+                }
+            }
+        }else if (4 == vm.getSet_type()){
+            if (StringUtils.isBlank(vm.getCpAllMoney().toString())){
+                ResultVOUtil.error("1","分配结算CP定比例结算总收入不能为空！");
+            }
+        }else if (5 == vm.getSet_type()){
+            if (vm.getBelielAddVMS().isEmpty()){
+                ResultVOUtil.error("1","分配结算业务定比例结算信息集合不能为空！");
+            }
         }
-        return accountSettlementService.addAccountSettlement();
+        return accountSettlementService.addAccountSettlement(vm);
     }
 
     @GetMapping("/excelExport")
@@ -138,6 +162,19 @@ public class AccountSettlementController {
             }
         }
         return ResultVOUtil.success(Boolean.TRUE);
+    }
+
+    @DeleteMapping("/batchLogicDelete")
+    @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO batchLogicDelete(@ApiParam(value = "结算单维度ids",required = true) @RequestParam("ids")String ids){
+
+        if (StringUtils.isBlank(ids)){
+            return ResultVOUtil.error("1","结算单维度ids不能为空");
+        }
+
+        ResultVO<?> resultVO = accountSettlementService.batchLogicDelete(ids);
+        return resultVO;
     }
 
 }
