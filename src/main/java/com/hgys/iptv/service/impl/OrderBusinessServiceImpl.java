@@ -323,7 +323,7 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
 
     /**
      * 通过code查询
-     * @param  code
+     * @param code
      * @return
      */
     @Override

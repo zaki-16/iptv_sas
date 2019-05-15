@@ -30,7 +30,7 @@ public interface SmallOrderCpRepository extends JpaRepository<OrderBusinessCp,Ob
 
 
     /**
-     * 通过结算组合维度编码 查询
+     * 通过结算组合维度编码查询
      * @param Code
      * @return
      */
