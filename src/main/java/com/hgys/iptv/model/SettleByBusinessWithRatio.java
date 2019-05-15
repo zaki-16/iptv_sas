@@ -46,8 +46,8 @@ public class SettleByBusinessWithRatio implements Serializable {
     private String businessCode;
 
     /**业务收入--需放大1000倍计算*/
-    @Column(name = "businessIncome", nullable = false,columnDefinition="int(20) COMMENT '业务收入'")
-    private Integer businessIncome;
+    @Column(name = "businessIncome", nullable = false,columnDefinition="varchar(50) COMMENT '业务收入'")
+    private String businessIncome;
 
     /** 备用字段1 */
     @Column(name = "col1", nullable = true, length = 100)
