@@ -70,7 +70,6 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
 
     @Autowired
     private SettlementProductManyRepository settlementProductManyRepository;
-
     /**
      * 新增分配结算
      * @return
@@ -106,6 +105,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                     BeanUtils.copyProperties(addVM,order);
                     order.setMasterCode(code);
                     order.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                    order.setOrderMoney(vm.getOrderMoney());
                     settlementOrderRepository.save(order);
                 }
             }else if (2 == vm.getSet_type()){
@@ -129,7 +129,6 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                         settlementProductSingleRepository.save(single);
                     }
                 }else if (!vm.getDimensionListAddVMS().isEmpty()){
-                    //多维度
                     List<OrderProductDimensionListAddVM> listAddVMS = vm.getDimensionListAddVMS();
                     for (OrderProductDimensionListAddVM listAddVM : listAddVMS){
                         SettlementProductMany many = new SettlementProductMany();
@@ -140,11 +139,9 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                     }
                 }
             }else if (4 == vm.getSet_type()){
-                //4、新增CP定比例结算源数据
-                //查询是金额结算还是比列结算方式
 
             }else if (5 == vm.getSet_type()){
-                //5、新增业务定比例结算
+
             }
         }catch (Exception e){
             e.printStackTrace();

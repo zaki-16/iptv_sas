@@ -52,6 +52,10 @@ public class SettlementOrder implements java.io.Serializable {
     @Column(name = "orderQuantity", nullable = true, length = 12)
     private BigDecimal orderQuantity;
 
+    /** 总收入 */
+    @Column(name = "orderMoney", nullable = true, length = 12)
+    private BigDecimal orderMoney;
+
     /** 创建时间 */
     @Column(name = "createTime", nullable = true, length = 26)
     private Timestamp createTime;
@@ -168,5 +172,13 @@ public class SettlementOrder implements java.io.Serializable {
      */
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
+    }
+
+    public BigDecimal getOrderMoney() {
+        return orderMoney;
+    }
+
+    public void setOrderMoney(BigDecimal orderMoney) {
+        this.orderMoney = orderMoney;
     }
 }

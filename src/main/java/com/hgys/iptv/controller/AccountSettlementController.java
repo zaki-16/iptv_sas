@@ -44,24 +44,26 @@ public class AccountSettlementController {
     public ResultVO<?> addAccountSettlement(@ApiParam(value = "新增分配结算VM") @RequestBody AccountSettlementAddVM vm){
         //数据校验（1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算）
         if (StringUtils.isBlank(vm.getName())){
-            ResultVOUtil.error("1","分配结算名称不能为空！");
+            return ResultVOUtil.error("1","分配结算名称不能为空！");
         }else if (null == vm.getSet_type()){
-            ResultVOUtil.error("1","分配结算类型不能为空！");
+            return ResultVOUtil.error("1","分配结算类型不能为空！");
         }else if (StringUtils.isBlank(vm.getSet_ruleCode())){
-            ResultVOUtil.error("1","分配结算结算规则编码不能为空！");
+            return ResultVOUtil.error("1","分配结算结算规则编码不能为空！");
         }else if (StringUtils.isBlank(vm.getStartTime())){
-            ResultVOUtil.error("1","分配结算结算开始时间不能为空！");
+            return ResultVOUtil.error("1","分配结算结算开始时间不能为空！");
         }else if (StringUtils.isBlank(vm.getEndTime())){
-            ResultVOUtil.error("1","分配结算结算截止时间不能为空！");
+           return ResultVOUtil.error("1","分配结算结算截止时间不能为空！");
         }
 
         if (1 == vm.getSet_type()){
             if (vm.getCpAddVMS().isEmpty()){
-                ResultVOUtil.error("1","分配结算订购量信息集合不能为空！");
+                return ResultVOUtil.error("1","分配结算订购量信息集合不能为空！");
+            }else if (null == vm.getOrderMoney()){
+                return ResultVOUtil.error("1","分配结算订购量结算总收入不能为空！");
             }
         }else if (2 == vm.getSet_type()){
             if (StringUtils.isBlank(vm.getBusinessMoney().toString())){
-                ResultVOUtil.error("1","分配结算业务级结算总收入不能为空！");
+               return ResultVOUtil.error("1","分配结算业务级结算总收入不能为空！");
             }
         }else if (3 == vm.getSet_type()){
             OrderProduct byCode = orderProductRepository.findByCode(vm.getSet_ruleCode().trim());
@@ -69,18 +71,18 @@ public class AccountSettlementController {
             Integer mode = byCode.getMode();
             if (mode == 1){
                 if (vm.getDimensionAddVM().isEmpty()){
-                    ResultVOUtil.error("1","分配结算产品级单维度信息集合不能为空！");
+                    return ResultVOUtil.error("1","分配结算产品级单维度信息集合不能为空！");
                 }else {
-                    ResultVOUtil.error("1","分配结算产品级多维度信息集合不能为空！");
+                    return ResultVOUtil.error("1","分配结算产品级多维度信息集合不能为空！");
                 }
             }
         }else if (4 == vm.getSet_type()){
             if (StringUtils.isBlank(vm.getCpAllMoney().toString())){
-                ResultVOUtil.error("1","分配结算CP定比例结算总收入不能为空！");
+               return ResultVOUtil.error("1","分配结算CP定比例结算总收入不能为空！");
             }
         }else if (5 == vm.getSet_type()){
             if (vm.getBelielAddVMS().isEmpty()){
-                ResultVOUtil.error("1","分配结算业务定比例结算信息集合不能为空！");
+                return ResultVOUtil.error("1","分配结算业务定比例结算信息集合不能为空！");
             }
         }
         return accountSettlementService.addAccountSettlement(vm);
