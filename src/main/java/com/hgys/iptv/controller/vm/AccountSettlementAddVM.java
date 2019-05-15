@@ -61,7 +61,7 @@ public class AccountSettlementAddVM {
     private List<OrderProductDimensionAddVM> dimensionAddVM;
 
     /**分配结算产品级多维度信息集合*/
-    @ApiModelProperty("分配结算产品级单维度信息集合")
+    @ApiModelProperty("分配结算产品级多维度信息集合")
     private List<OrderProductDimensionListAddVM> dimensionListAddVMS;
 
     /**分配结算业务定比例结算信息集合*/

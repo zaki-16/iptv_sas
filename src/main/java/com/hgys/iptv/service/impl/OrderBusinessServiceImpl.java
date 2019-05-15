@@ -227,6 +227,10 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
 
             Predicate condition = builder.equal(root.get("isdelete"), 0);
             predicates.add(condition);
+            if (!predicates.isEmpty()){
+                return builder.and(predicates.toArray(new Predicate[0]));
+            }
+
             return builder.conjunction();
         }), pageable).map(orderBusinessControllerAssemlber::getListVM);
         return map;

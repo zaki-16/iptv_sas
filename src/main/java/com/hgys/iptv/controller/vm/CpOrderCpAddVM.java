@@ -16,5 +16,5 @@ public class CpOrderCpAddVM {
     private String cpname;
 
     @ApiModelProperty("订购量")
-    private BigDecimal quantity;
+    private BigDecimal orderQuantity;
 }
