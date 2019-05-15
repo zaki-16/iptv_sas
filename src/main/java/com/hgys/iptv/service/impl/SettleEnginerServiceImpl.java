@@ -1,8 +1,7 @@
 package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.controller.vm.OrderCPWithCPListVM;
-import com.hgys.iptv.model.dto.SettleByBusinessDTO;
-import com.hgys.iptv.model.dto.SettleByCpDTO;
+import com.hgys.iptv.model.dto.SettleDTO;
 import com.hgys.iptv.model.dto.SettleMetaResource;
 import com.hgys.iptv.service.OrderCpService;
 import com.hgys.iptv.service.SettleEnginerService;
@@ -29,6 +28,7 @@ public class SettleEnginerServiceImpl extends AbstractBaseServiceImpl implements
     @Autowired
     private OrderCpService orderCpService;
 
+
     /**
      * 业务级结算
      * 结算规则：列出所有已有业务，多选。
@@ -36,11 +36,11 @@ public class SettleEnginerServiceImpl extends AbstractBaseServiceImpl implements
      * 提交时校验业务权重之和必须100%，CP在该业务结算百分比值之和必须100%。
      */
     @Override
-    public SettleMetaResource settleByBusiness(SettleByBusinessDTO settleByBusinessDTO) {
+    public SettleMetaResource settleByBusiness(SettleDTO settleDTO) {
         //统一返回对象类型
         SettleMetaResource resource = new SettleMetaResource();
         //总收入
-        String grossIncome = settleByBusinessDTO.getGrossIncome();
+        String grossIncome = settleDTO.getGrossIncome();
         return null;
     }
     /**
@@ -51,7 +51,7 @@ public class SettleEnginerServiceImpl extends AbstractBaseServiceImpl implements
      * 选择按金额结算，继而选择业务，继而选择CP并填入结算金额。
      */
     @Override
-    public SettleMetaResource settleByBusinessWithAmount() {
+    public SettleMetaResource settleByBusinessWithAmount(SettleDTO settleDTO) {
         return null;
 
     }
@@ -59,7 +59,7 @@ public class SettleEnginerServiceImpl extends AbstractBaseServiceImpl implements
      * 业务级结算--按比例
      */
     @Override
-    public SettleMetaResource settleByBusinessWithRatio() {
+    public SettleMetaResource settleByBusinessWithRatio(SettleDTO settleDTO) {
         return null;
 
     }
@@ -72,15 +72,15 @@ public class SettleEnginerServiceImpl extends AbstractBaseServiceImpl implements
      * 选择按金额结算，继而选择CP并填入结算金额。
      */
     @Override
-    public SettleMetaResource settleByCp(SettleByCpDTO settleByCpDTO) {
+    public SettleMetaResource settleByCp(SettleDTO settleDTO) {
         //统一返回对象类型
         SettleMetaResource resource = new SettleMetaResource();
         //总收入
-        String grossIncome = settleByCpDTO.getGrossIncome();
+        String grossIncome = settleDTO.getGrossIncome();
         //cp结算编码
-        String orderCpCode = settleByCpDTO.getOrderCpCode();
+        String settleCode = settleDTO.getSettleRuleCode();
         //根据cp结算编码查询对应cp结算预设列表---------改
-        OrderCPWithCPListVM orderCPWithCPListVM = orderCpService.findById(orderCpCode);
+        OrderCPWithCPListVM orderCPWithCPListVM = orderCpService.findById(settleCode);
         //获取结算类型
         Integer settleType = orderCPWithCPListVM.getSettleaccounts();
         //获取参与分账的cp列表
@@ -139,7 +139,7 @@ public class SettleEnginerServiceImpl extends AbstractBaseServiceImpl implements
      * 用户可以自定义组合（跳转至结算组合维度新增页面）。
      */
     @Override
-    public SettleMetaResource settleByProduct() {
+    public SettleMetaResource settleByProduct(SettleDTO settleDTO) {
         return null;
 
     }
@@ -149,7 +149,7 @@ public class SettleEnginerServiceImpl extends AbstractBaseServiceImpl implements
      * CP的订购量占所有CP总订购量的比值，该比值乘以总收入，得到CP结算金额。
      */
     @Override
-    public SettleMetaResource settleByQuantity() {
+    public SettleMetaResource settleByQuantity(SettleDTO settleDTO) {
         return null;
 
     }
