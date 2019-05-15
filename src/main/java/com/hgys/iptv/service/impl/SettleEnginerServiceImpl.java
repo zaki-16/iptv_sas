@@ -26,7 +26,9 @@ import java.util.List;
 public class SettleEnginerServiceImpl extends AbstractBaseServiceImpl implements SettleEnginerService {
 
     @Autowired
-    private OrderCpService orderCpService;
+    private OrderCpService orderCpService;//cp定比例
+//
+//    private OrderBusinessService orderBusinessService;//业务级
 
 
     /**
@@ -41,6 +43,7 @@ public class SettleEnginerServiceImpl extends AbstractBaseServiceImpl implements
         SettleMetaResource resource = new SettleMetaResource();
         //总收入
         String grossIncome = settleDTO.getGrossIncome();
+        String settleRuleCode = settleDTO.getSettleRuleCode();
         return null;
     }
     /**
@@ -75,14 +78,19 @@ public class SettleEnginerServiceImpl extends AbstractBaseServiceImpl implements
     public SettleMetaResource settleByCp(SettleDTO settleDTO) {
         //统一返回对象类型
         SettleMetaResource resource = new SettleMetaResource();
+        //结算名称
+        String settleName = settleDTO.getSettleName();
+        resource.setSettleName(settleName);
         //总收入
         String grossIncome = settleDTO.getGrossIncome();
+
         //cp结算编码
         String settleCode = settleDTO.getSettleRuleCode();
         //根据cp结算编码查询对应cp结算预设列表---------改
         OrderCPWithCPListVM orderCPWithCPListVM = orderCpService.findById(settleCode);
         //获取结算类型
         Integer settleType = orderCPWithCPListVM.getSettleaccounts();
+        Integer settleaccounts = orderCPWithCPListVM.getSettleaccounts();
         //获取参与分账的cp列表
         List<OrderCPWithCPListVM.OrderCpWithCp> withCps = orderCPWithCPListVM.getList();
 

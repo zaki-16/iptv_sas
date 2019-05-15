@@ -19,6 +19,8 @@ import java.io.Serializable;
 public class SettleByCp implements Serializable {
     private static final long serialVersionUID = 5544663334406108024L;
 
+
+
     /** 主键 */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +34,10 @@ public class SettleByCp implements Serializable {
     /** CP编码*/
     @Column(name = "cpCode", nullable = false,columnDefinition="varchar(100) COMMENT 'CP编码'")
     private String cpCode;
+
+    /** 权重*/
+    @Column(name = "weight", nullable = false,columnDefinition="varchar(100) COMMENT 'CP权重'")
+    private String weight;
 
     /** 计算类型：按比例结算，按金额结算--选定后可以返回客户也可隐藏，但只能选定一种结算方式
      * 其实可以不加，直接校验总额*/
