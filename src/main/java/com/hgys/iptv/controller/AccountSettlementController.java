@@ -5,7 +5,6 @@ import com.hgys.iptv.model.OrderProduct;
 import com.hgys.iptv.model.bean.CpOrderCpExcelDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionListDTO;
-import com.hgys.iptv.model.bean.ShopDTO;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.OrderProductRepository;
 import com.hgys.iptv.service.AccountSettlementService;

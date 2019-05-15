@@ -13,17 +13,21 @@ public class BusinessBelielAddVM {
      * 业务名称
      */
     @ApiModelProperty("业务名称")
-    private String name;
+    private String businessName;
 
     /**
      * 业务编码
      */
     @ApiModelProperty("业务编码")
-    private String code;
+    private String businessCode;
+
+    /** 1:比例结算；2:金额结算 */
+    @ApiModelProperty("1:比例结算；2:金额结算")
+    private Integer type;
 
     /**
      * 业务收入
      */
     @ApiModelProperty("业务收入")
-    private BigDecimal money;
+    private BigDecimal businessMoney;
 }

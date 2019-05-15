@@ -49,7 +49,7 @@ public class QOrderBusinessCp extends EntityPathBase<OrderBusinessCp> {
 
     public final NumberPath<Integer> status = createNumber("status", Integer.class);
 
-    public final NumberPath<Integer> weight = createNumber("weight", Integer.class);
+    public final StringPath weight = createString("weight");
 
     public QOrderBusinessCp(String variable) {
         super(OrderBusinessCp.class, forVariable(variable));

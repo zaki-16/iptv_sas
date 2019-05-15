@@ -47,7 +47,7 @@ public class QOrderCpWithCp extends EntityPathBase<OrderCpWithCp> {
 
     public final NumberPath<Integer> settleaccounts = createNumber("settleaccounts", Integer.class);
 
-    public final NumberPath<Integer> weight = createNumber("weight", Integer.class);
+    public final StringPath weight = createString("weight");
 
     public QOrderCpWithCp(String variable) {
         super(OrderCpWithCp.class, forVariable(variable));
