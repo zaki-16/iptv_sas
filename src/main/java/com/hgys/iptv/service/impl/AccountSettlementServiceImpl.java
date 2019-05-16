@@ -3,35 +3,32 @@ package com.hgys.iptv.service.impl;
 import com.hgys.iptv.controller.assemlber.AccountSettlementAssemlber;
 import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.*;
-import com.hgys.iptv.model.QCp;
-import com.hgys.iptv.model.QCpProduct;
-import com.hgys.iptv.model.QOrderBusinessComparison;
-import com.hgys.iptv.model.QOrderCp;
-import com.hgys.iptv.model.QOrderProductWithSCD;
-import com.hgys.iptv.model.QProduct;
 import com.hgys.iptv.model.bean.CpOrderCpExcelDTO;
+import com.hgys.iptv.model.bean.OrderProductDimensionDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionListDTO;
 import com.hgys.iptv.model.enums.ResultEnum;
+import com.hgys.iptv.model.qmodel.*;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.AccountSettlementService;
 import com.hgys.iptv.util.CodeUtil;
-import org.apache.commons.collections.map.HashedMap;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.hgys.iptv.model.bean.OrderProductDimensionDTO;
+
 import javax.persistence.criteria.Predicate;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AccountSettlementServiceImpl implements AccountSettlementService {
@@ -302,18 +299,9 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
      */
     @Override
     public ResultVO<?> checkCpAndDimension(List<OrderProductDimensionDTO> dtos) {
-        int i = 0;
-        //同一产品的金额需要一直，否则不符合规则
-        Map<String, BigDecimal> checkMoney = new HashedMap();
+        int i = 1;
         for (OrderProductDimensionDTO dto : dtos){
-            i = i + 1;
-            if (null == checkMoney.get(dto.getPcode())){
-                checkMoney.put(dto.getPcode(),dto.getMoney());
-            }else {
-                if (checkMoney.get(dto.getPcode()).compareTo(dto.getMoney()) != 0){
-                    return ResultVOUtil.error("1","第" + i + "行产品金额不合法!");
-                }
-            }
+            i += i;
             Cp cp = cpRepository.findByCode(dto.getCpcode().trim());
             if (null == cp){
                 return ResultVOUtil.error("1","第" + i + "条数据，CP不存在!");
@@ -333,19 +321,9 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
      */
     @Override
     public ResultVO<?> checkCpAndDimensionList(List<OrderProductDimensionListDTO> dtos) {
-        int i = 0;
-        //同一产品的金额需要一直，否则不符合规则
-        Map<String, BigDecimal> checkMoney = new HashedMap();
+        int i = 1;
         for (OrderProductDimensionListDTO dto : dtos){
-            i = i + 1;
-            if (null == checkMoney.get(dto.getPcode())){
-                checkMoney.put(dto.getPcode(),dto.getMoney());
-            }else {
-                if (checkMoney.get(dto.getPcode()).compareTo(dto.getMoney()) != 0){
-                    return ResultVOUtil.error("1","第" + i + "行产品金额不合法!");
-                }
-            }
-
+            i += i;
             Cp cp = cpRepository.findByCode(dto.getCpcode().trim());
             if (null == cp){
                 return ResultVOUtil.error("1","第" + i + "条数据，CP不存在!");
@@ -456,7 +434,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                 vm.setBelielAddVMS(list);
             }
         }
-          return vm;
+        return vm;
     }
 
     @Override

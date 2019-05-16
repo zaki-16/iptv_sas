@@ -20,7 +20,7 @@ public class SelfAuthenticationProvider implements AuthenticationProvider {
         String userName = (String) authentication.getPrincipal(); // 这个获取表单输入中返回的用户名;
         String password = (String) authentication.getCredentials(); // 这个是表单中输入的密码；
 
-      //  String encodePwd = new BCryptPasswordEncoder().encode("1016");
+        //  String encodePwd = new BCryptPasswordEncoder().encode("1016");
         UserDetails userInfo = userDetailsService.loadUserByUsername(userName);
 
         if (!userInfo.getPassword().equals(password)) {
