@@ -1,5 +1,6 @@
 package com.hgys.iptv.service.impl;
 
+import com.hgys.iptv.controller.assemlber.AccountSettlementAssemlber;
 import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.QCp;
@@ -23,18 +24,17 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.hgys.iptv.model.bean.OrderProductDimensionDTO;
 import javax.persistence.criteria.Predicate;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Service
 public class AccountSettlementServiceImpl implements AccountSettlementService {
 
     @Autowired
@@ -106,7 +106,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             account.setSetEndTime(Timestamp.valueOf(vm.getEndTime()));
             AccountSettlement save = accountSettlementRepository.save(account);
 
-            ////1、新增订购量结算源数据
+            //1、新增订购量结算源数据
             if (1 == vm.getSet_type()){
                 List<CpOrderCpAddVM> cpAddVMS = vm.getCpAddVMS();
                 for (CpOrderCpAddVM addVM : cpAddVMS){
@@ -200,9 +200,6 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             e.printStackTrace();
             return ResultVOUtil.error("1","系统内部错误");
         }
-
-        //1、新增订购量结算源数据
-
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
@@ -474,28 +471,5 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
         }), pageable).map(accountSettlementAssemlber::getListVM);
         return map;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
