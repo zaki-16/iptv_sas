@@ -1,13 +1,11 @@
 package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.model.Permission;
-import com.hgys.iptv.model.Role;
+import com.hgys.iptv.model.bean.MenuTree;
 import com.hgys.iptv.model.dto.SysPermissionDTO;
-import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.SysPermissionService;
 import com.hgys.iptv.util.ResultVOUtil;
-import com.hgys.iptv.util.UpdateTool;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -91,5 +89,9 @@ public class SysPermissionServiceImpl extends SysServiceImpl implements SysPermi
         if(all.size()>0)
             return ResultVOUtil.success(all);
         return ResultVOUtil.error("1","所查询列表不存在!");
+    }
+
+    public List<MenuTree> loadTree(){
+        return null;
     }
 }
