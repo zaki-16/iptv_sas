@@ -1,15 +1,16 @@
 package com.hgys.iptv.service.impl;
 
-import com.hgys.iptv.controller.assemlber.AccountSettlementAssemlber;
 import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.*;
+import com.hgys.iptv.model.QCp;
+import com.hgys.iptv.model.QCpProduct;
+import com.hgys.iptv.model.QOrderBusinessComparison;
+import com.hgys.iptv.model.QOrderCp;
+import com.hgys.iptv.model.QOrderProductWithSCD;
+import com.hgys.iptv.model.QProduct;
 import com.hgys.iptv.model.bean.CpOrderCpExcelDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionListDTO;
 import com.hgys.iptv.model.enums.ResultEnum;
-import com.hgys.iptv.model.qmodel.QCp;
-import com.hgys.iptv.model.qmodel.QCpProduct;
-import com.hgys.iptv.model.qmodel.QOrderProductWithSCD;
-import com.hgys.iptv.model.qmodel.QProduct;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.AccountSettlementService;
@@ -74,6 +75,9 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
     @Autowired
     private SettlementProductManyRepository settlementProductManyRepository;
 
+    @Autowired
+    private SettlementBusinessRepository settlementBusinessRepository;
+
     /**
      * 新增分配结算
      *
@@ -83,13 +87,13 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> addAccountSettlement(AccountSettlementAddVM vm) {
         /** 1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算 */
-        try {
+        try{
             /**
              * 新增分账结算源数据
              */
             //1、先新增分配结算信息
             AccountSettlement account = new AccountSettlement();
-            String code = CodeUtil.getOnlyCode("FZ", 5); //分账结算编码
+            String code = CodeUtil.getOnlyCode("FZ",5); //分账结算编码
             account.setCode(code);
             account.setName(vm.getName());
             account.setInputTime(new Timestamp(System.currentTimeMillis()));
@@ -102,18 +106,18 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             account.setSetEndTime(Timestamp.valueOf(vm.getEndTime()));
             AccountSettlement save = accountSettlementRepository.save(account);
 
-            //2、新增订购量结算源数据
-            if (1 == vm.getSet_type()) {
+            ////1、新增订购量结算源数据
+            if (1 == vm.getSet_type()){
                 List<CpOrderCpAddVM> cpAddVMS = vm.getCpAddVMS();
-                for (CpOrderCpAddVM addVM : cpAddVMS) {
+                for (CpOrderCpAddVM addVM : cpAddVMS){
                     SettlementOrder order = new SettlementOrder();
-                    BeanUtils.copyProperties(addVM, order);
+                    BeanUtils.copyProperties(addVM,order);
                     order.setMasterCode(code);
                     order.setCreateTime(new Timestamp(System.currentTimeMillis()));
                     order.setOrderMoney(vm.getOrderMoney());
                     settlementOrderRepository.save(order);
                 }
-            } else if (2 == vm.getSet_type()) {
+            }else if (2 == vm.getSet_type()){
                 //2、新增业务级结算源数据
                 SettlementMoney money = new SettlementMoney();
                 money.setMasterCode(code);
@@ -121,36 +125,80 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                 money.setType(0);
                 money.setMoney(vm.getBusinessMoney());
                 settlementMoneyRepository.save(money);
-            } else if (3 == vm.getSet_type()) {
+            }else if (3 == vm.getSet_type()){
                 //3、新增产品级结算结算源数据
                 //单维度
-                if (!vm.getDimensionAddVM().isEmpty()) {
+                if (!vm.getDimensionAddVM().isEmpty()){
                     List<OrderProductDimensionAddVM> dimensionAddVM = vm.getDimensionAddVM();
-                    for (OrderProductDimensionAddVM addVM : dimensionAddVM) {
+                    for (OrderProductDimensionAddVM addVM : dimensionAddVM){
                         SettlementProductSingle single = new SettlementProductSingle();
-                        BeanUtils.copyProperties(addVM, single);
+                        BeanUtils.copyProperties(addVM,single);
                         single.setCreateTime(new Timestamp(System.currentTimeMillis()));
                         single.setMasterCode(code);
                         settlementProductSingleRepository.save(single);
                     }
-                } else if (!vm.getDimensionListAddVMS().isEmpty()) {
+                }else if (!vm.getDimensionListAddVMS().isEmpty()){
                     List<OrderProductDimensionListAddVM> listAddVMS = vm.getDimensionListAddVMS();
-                    for (OrderProductDimensionListAddVM listAddVM : listAddVMS) {
+                    for (OrderProductDimensionListAddVM listAddVM : listAddVMS){
                         SettlementProductMany many = new SettlementProductMany();
-                        BeanUtils.copyProperties(listAddVM, many);
+                        BeanUtils.copyProperties(listAddVM,many);
                         many.setMasterCode(code);
                         many.setCreateTime(new Timestamp(System.currentTimeMillis()));
                         settlementProductManyRepository.save(many);
                     }
                 }
-            } else if (4 == vm.getSet_type()) {
+            }else if (4 == vm.getSet_type()){
+                //查询是按金额结算还是比列结算
+                QOrderCp qOrderCp = QOrderCp.orderCp;
+                OrderCp orderCp = queryFactory.selectFrom(qOrderCp)
+                        .where(qOrderCp.code.eq(vm.getSet_ruleCode().trim())).fetchFirst();
 
-            } else if (5 == vm.getSet_type()) {
-
+                if (0 == orderCp.getSettleaccounts()){
+                    SettlementMoney money = new SettlementMoney();
+                    money.setMasterCode(code);
+                    money.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                    money.setType(1);
+                    money.setMoney(vm.getCpAllMoney());
+                    settlementMoneyRepository.save(money);
+                }else if (1 == orderCp.getSettleaccounts()){
+                    SettlementMoney money = new SettlementMoney();
+                    money.setMasterCode(code);
+                    money.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                    money.setType(2);
+                    money.setMoney(vm.getCpAllMoney());
+                    settlementMoneyRepository.save(money);
+                }
+            }else if (5 == vm.getSet_type()){
+                //判断是按金额结算还是比列结算
+                QOrderBusinessComparison qOrderBusinessComparison = QOrderBusinessComparison.orderBusinessComparison;
+                OrderBusinessComparison comparison = queryFactory.selectFrom(qOrderBusinessComparison)
+                        .where(qOrderBusinessComparison.code.eq(vm.getSet_ruleCode().trim())).fetchFirst();
+                //1:比例结算；2:金额结算
+                if (1 == comparison.getMode()){
+                    List<BusinessBelielAddVM> belielAddVMS = vm.getBelielAddVMS();
+                    for (BusinessBelielAddVM addVM : belielAddVMS){
+                        SettlementBusiness business = new SettlementBusiness();
+                        BeanUtils.copyProperties(addVM,business);
+                        business.setType(1);
+                        business.setMasterCode(code);
+                        business.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                        settlementBusinessRepository.save(business);
+                    }
+                }else if (2 == comparison.getMode()){
+                    List<BusinessBelielAddVM> belielAddVMS = vm.getBelielAddVMS();
+                    for (BusinessBelielAddVM addVM : belielAddVMS){
+                        SettlementBusiness business = new SettlementBusiness();
+                        BeanUtils.copyProperties(addVM,business);
+                        business.setType(2);
+                        business.setMasterCode(code);
+                        business.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                        settlementBusinessRepository.save(business);
+                    }
+                }
             }
-        } catch (Exception e) {
+        }catch (Exception e){
             e.printStackTrace();
-            return ResultVOUtil.error("1", "系统内部错误");
+            return ResultVOUtil.error("1","系统内部错误");
         }
 
         //1、新增订购量结算源数据
@@ -161,25 +209,25 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
     @Override
     public List<?> excelExport(Integer type, String code) {
         //1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算
-        if (type == 1) {
+        if (type == 1){
             List<OrderQuantityWithCp> cpList = quantityWithCpRepository.findByMasterCode(code.trim());
             List<CpOrderCpExcelDTO> dtos = new ArrayList<>();
-            for (OrderQuantityWithCp cp : cpList) {
+            for (OrderQuantityWithCp cp : cpList){
                 CpOrderCpExcelDTO dto = new CpOrderCpExcelDTO();
-                BeanUtils.copyProperties(cp, dto);
+                BeanUtils.copyProperties(cp,dto);
                 dtos.add(dto);
             }
             return dtos;
-        } else if (type == 3) {
+        }else if (type == 3){
 
             OrderProduct byCode = orderProductRepository.findByCode(code);
-            if (null != byCode) {
+            if (null != byCode){
                 //查看是单维度还是多维度
                 Integer mode = byCode.getMode();
                 //查询所有的产品
                 List<OrderProductWithSCD> byMasterCode = scdRepository.findByMasterCode(code.trim());
                 //查询产品下所有的cp
-                if (mode == 1) {
+                if (mode == 1){
                     QCpProduct qCpProduct = QCpProduct.cpProduct; //产品和cp关系表
                     QOrderProductWithSCD qScd = QOrderProductWithSCD.orderProductWithSCD;
                     QCp qCp = QCp.cp; //cp表
@@ -195,12 +243,12 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                             .innerJoin(qCp).on(qCpProduct.cpid.eq(qCp.id)).fetch();
 
                     List<OrderProductDimensionDTO> result = new ArrayList<>();
-                    for (OrderProductDimensionDTO dto : fetch) {
+                    for (OrderProductDimensionDTO dto : fetch){
                         dto.setDimensionCode(byCode.getSdcode());
                         result.add(dto);
                     }
                     return result;
-                } else {
+                }else {
                     QCpProduct qCpProduct = QCpProduct.cpProduct; //产品和cp关系表
                     QOrderProductWithSCD qScd = QOrderProductWithSCD.orderProductWithSCD;
                     QCp qCp = QCp.cp; //cp表
@@ -218,7 +266,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                     List<OrderProductDimensionListDTO> result = new ArrayList<>();
                     //查询多维度下单维度
                     List<SettlementCombinatorialDimensionFrom> froms = settlementCombinatorialDimensionFromRepository.findByMasterCode(byCode.getScdcode().trim());
-                    for (OrderProductDimensionListDTO dto : fetch) {
+                    for (OrderProductDimensionListDTO dto : fetch){
                         dto.setDimensionACode(froms.get(0).getDim_code());
                         dto.setDimensionBCode(froms.get(1).getDim_code());
                         dto.setDimensionCCode(froms.get(2).getDim_code());
@@ -226,7 +274,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                     }
                     return result;
                 }
-            } else {
+            }else {
                 return null;
             }
         }
@@ -235,18 +283,17 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
 
     /**
      * 检查CP是否存在
-     *
      * @param dtos
      * @return
      */
     @Override
     public ResultVO<?> checkCp(List<CpOrderCpExcelDTO> dtos) {
         int i = 1;
-        for (CpOrderCpExcelDTO dto : dtos) {
+        for (CpOrderCpExcelDTO dto : dtos){
             i += i;
             Cp cp = cpRepository.findByCode(dto.getCpcode().trim());
-            if (null == cp) {
-                return ResultVOUtil.error("1", "第" + i + "条数据，CP不存在!");
+            if (null == cp){
+                return ResultVOUtil.error("1","第" + i + "条数据，CP不存在!");
             }
         }
         return ResultVOUtil.success();
@@ -254,22 +301,21 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
 
     /**
      * 检查CP和单维度是否存在
-     *
      * @param dtos
      * @return
      */
     @Override
     public ResultVO<?> checkCpAndDimension(List<OrderProductDimensionDTO> dtos) {
         int i = 1;
-        for (OrderProductDimensionDTO dto : dtos) {
+        for (OrderProductDimensionDTO dto : dtos){
             i += i;
             Cp cp = cpRepository.findByCode(dto.getCpcode().trim());
-            if (null == cp) {
-                return ResultVOUtil.error("1", "第" + i + "条数据，CP不存在!");
+            if (null == cp){
+                return ResultVOUtil.error("1","第" + i + "条数据，CP不存在!");
             }
             Optional<SettlementDimension> byCode = settlementDimensionRepository.findByCode(dto.getDimensionCode().trim());
-            if (!byCode.isPresent()) {
-                return ResultVOUtil.error("1", "第" + i + "条数据，维度不存在!");
+            if (!byCode.isPresent()){
+                return ResultVOUtil.error("1","第" + i + "条数据，维度不存在!");
             }
         }
         return ResultVOUtil.success();
@@ -277,32 +323,31 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
 
     /**
      * 检查CP和多维度是否存在
-     *
      * @param dtos
      * @return
      */
     @Override
     public ResultVO<?> checkCpAndDimensionList(List<OrderProductDimensionListDTO> dtos) {
         int i = 1;
-        for (OrderProductDimensionListDTO dto : dtos) {
+        for (OrderProductDimensionListDTO dto : dtos){
             i += i;
             Cp cp = cpRepository.findByCode(dto.getCpcode().trim());
-            if (null == cp) {
-                return ResultVOUtil.error("1", "第" + i + "条数据，CP不存在!");
+            if (null == cp){
+                return ResultVOUtil.error("1","第" + i + "条数据，CP不存在!");
             }
             Optional<SettlementDimension> byCode = settlementDimensionRepository.findByCode(dto.getDimensionACode().trim());
-            if (!byCode.isPresent()) {
-                return ResultVOUtil.error("1", "第" + i + "条数据，维度A不存在!");
+            if (!byCode.isPresent()){
+                return ResultVOUtil.error("1","第" + i + "条数据，维度A不存在!");
             }
 
             Optional<SettlementDimension> byCode1 = settlementDimensionRepository.findByCode(dto.getDimensionBCode().trim());
-            if (!byCode1.isPresent()) {
-                return ResultVOUtil.error("1", "第" + i + "条数据，维度B不存在!");
+            if (!byCode1.isPresent()){
+                return ResultVOUtil.error("1","第" + i + "条数据，维度B不存在!");
             }
 
             Optional<SettlementDimension> byCode2 = settlementDimensionRepository.findByCode(dto.getDimensionCCode().trim());
-            if (!byCode2.isPresent()) {
-                return ResultVOUtil.error("1", "第" + i + "条数据，维度C不存在!");
+            if (!byCode2.isPresent()){
+                return ResultVOUtil.error("1","第" + i + "条数据，维度C不存在!");
             }
         }
         return ResultVOUtil.success();
@@ -311,12 +356,12 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultVO<?> batchLogicDelete(String ids) {
-        try {
-            List<String> idLists = Arrays.asList(StringUtils.split(ids, ","));
-            for (String s : idLists) {
+        try{
+            List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
+            for (String s : idLists){
                 accountSettlementRepository.batchLogicDelete(Integer.parseInt(s));
             }
-        } catch (Exception e) {
+        }catch (Exception e){
             e.printStackTrace();
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
