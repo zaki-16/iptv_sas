@@ -15,6 +15,7 @@ import com.xuxueli.poi.excel.ExcelImportUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,10 @@ import org.springframework.data.domain.Sort;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController()
 @RequestMapping("/accountSettlementController")
@@ -100,6 +103,11 @@ public class AccountSettlementController {
                             HttpServletResponse response){
         if (type == 1){
             List<CpOrderCpExcelDTO> dtos = (List<CpOrderCpExcelDTO>) accountSettlementService.excelExport(type, code);
+            //如果没有查询出数据，放置一个空对象，放置exexl不能导出
+            if (dtos.isEmpty()){
+                CpOrderCpExcelDTO dto = new CpOrderCpExcelDTO();
+                dtos.add(dto);
+            }
             //浏览器返回Excel
             Workbook sheets = ExcelExportUtil.exportWorkbook(dtos);
             ExcelForWebUtil.workBookExportExcel(response,sheets,"订购量结算");
@@ -108,11 +116,21 @@ public class AccountSettlementController {
             OrderProduct byCode = orderProductRepository.findByCode(code);
             if (byCode.getMode() == 1){
                 List<OrderProductDimensionDTO> result = (List<OrderProductDimensionDTO>) accountSettlementService.excelExport(type,code);
+                //如果没有查询出数据，放置一个空对象，放置exexl不能导出
+                if (result.isEmpty()){
+                    OrderProductDimensionDTO dto = new OrderProductDimensionDTO();
+                    result.add(dto);
+                }
                 //浏览器返回Excel
                 Workbook sheets = ExcelExportUtil.exportWorkbook(result);
                 ExcelForWebUtil.workBookExportExcel(response,sheets,"产品级单维度结算");
             }else {
                 List<OrderProductDimensionListDTO> result = (List<OrderProductDimensionListDTO>) accountSettlementService.excelExport(type,code);
+                //如果没有查询出数据，放置一个空对象，放置exexl不能导出
+                if (result.isEmpty()){
+                    OrderProductDimensionListDTO dto = new OrderProductDimensionListDTO();
+                    result.add(dto);
+                }
                 //浏览器返回Excel
                 Workbook sheets = ExcelExportUtil.exportWorkbook(result);
                 ExcelForWebUtil.workBookExportExcel(response,sheets,"产品级多维度结算");
@@ -152,6 +170,7 @@ public class AccountSettlementController {
                     OrderProductDimensionDTO dto = (OrderProductDimensionDTO)o;
                     dtos.add(dto);
                 }
+
                 //验证数据可靠性，通过返回数据
                 ResultVO<?> resultVO = accountSettlementService.checkCpAndDimension(dtos);
                 if ("0".equals(resultVO.getCode())){
