@@ -1,13 +1,21 @@
 package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.controller.vm.AccountSettlementAddVM;
+import com.hgys.iptv.controller.vm.CpOrderCpAddVM;
+import com.hgys.iptv.controller.vm.OrderProductDimensionAddVM;
+import com.hgys.iptv.controller.vm.OrderProductDimensionListAddVM;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.bean.CpOrderCpExcelDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionListDTO;
 import com.hgys.iptv.model.enums.ResultEnum;
+import com.hgys.iptv.model.qmodel.QCp;
+import com.hgys.iptv.model.qmodel.QCpProduct;
+import com.hgys.iptv.model.qmodel.QOrderProductWithSCD;
+import com.hgys.iptv.model.qmodel.QProduct;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.AccountSettlementService;
+import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,6 +26,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import com.hgys.iptv.model.bean.OrderProductDimensionDTO;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,6 +59,17 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
     @Autowired
     private AccountSettlementRepository accountSettlementRepository;
 
+    @Autowired
+    private SettlementOrderRepository settlementOrderRepository;
+
+    @Autowired
+    private SettlementMoneyRepository settlementMoneyRepository;
+
+    @Autowired
+    private SettlementProductSingleRepository settlementProductSingleRepository;
+
+    @Autowired
+    private SettlementProductManyRepository settlementProductManyRepository;
     /**
      * 新增分配结算
      * @return
@@ -57,6 +77,78 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> addAccountSettlement(AccountSettlementAddVM vm) {
+        /** 1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算 */
+        try{
+            /**
+             * 新增分账结算源数据
+             */
+            //1、先新增分配结算信息
+            AccountSettlement account = new AccountSettlement();
+            String code = CodeUtil.getOnlyCode("FZ",5); //分账结算编码
+            account.setCode(code);
+            account.setName(vm.getName());
+            account.setInputTime(new Timestamp(System.currentTimeMillis()));
+            account.setIsdelete(0);
+            account.setSet_ruleCode(vm.getSet_ruleCode());
+            account.setRemakes(StringUtils.trimToEmpty(vm.getRemakes()));
+            account.setStatus(1);
+            account.setSet_type(vm.getSet_type());
+            account.setSetStartTime(Timestamp.valueOf(vm.getStartTime()));
+            account.setSetEndTime(Timestamp.valueOf(vm.getEndTime()));
+            AccountSettlement save = accountSettlementRepository.save(account);
+
+            //2、新增订购量结算源数据
+            if (1 == vm.getSet_type()){
+                List<CpOrderCpAddVM> cpAddVMS = vm.getCpAddVMS();
+                for (CpOrderCpAddVM addVM : cpAddVMS){
+                    SettlementOrder order = new SettlementOrder();
+                    BeanUtils.copyProperties(addVM,order);
+                    order.setMasterCode(code);
+                    order.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                    order.setOrderMoney(vm.getOrderMoney());
+                    settlementOrderRepository.save(order);
+                }
+            }else if (2 == vm.getSet_type()){
+                //2、新增业务级结算源数据
+                SettlementMoney money = new SettlementMoney();
+                money.setMasterCode(code);
+                money.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                money.setType(0);
+                money.setMoney(vm.getBusinessMoney());
+                settlementMoneyRepository.save(money);
+            }else if (3 == vm.getSet_type()){
+                //3、新增产品级结算结算源数据
+                //单维度
+                if (!vm.getDimensionAddVM().isEmpty()){
+                    List<OrderProductDimensionAddVM> dimensionAddVM = vm.getDimensionAddVM();
+                    for (OrderProductDimensionAddVM addVM : dimensionAddVM){
+                        SettlementProductSingle single = new SettlementProductSingle();
+                        BeanUtils.copyProperties(addVM,single);
+                        single.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                        single.setMasterCode(code);
+                        settlementProductSingleRepository.save(single);
+                    }
+                }else if (!vm.getDimensionListAddVMS().isEmpty()){
+                    List<OrderProductDimensionListAddVM> listAddVMS = vm.getDimensionListAddVMS();
+                    for (OrderProductDimensionListAddVM listAddVM : listAddVMS){
+                        SettlementProductMany many = new SettlementProductMany();
+                        BeanUtils.copyProperties(listAddVM,many);
+                        many.setMasterCode(code);
+                        many.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                        settlementProductManyRepository.save(many);
+                    }
+                }
+            }else if (4 == vm.getSet_type()){
+
+            }else if (5 == vm.getSet_type()){
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultVOUtil.error("1","系统内部错误");
+        }
+
+        //1、新增订购量结算源数据
 
         return ResultVOUtil.success(Boolean.TRUE);
     }

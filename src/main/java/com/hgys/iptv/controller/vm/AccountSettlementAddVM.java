@@ -48,6 +48,10 @@ public class AccountSettlementAddVM {
     @ApiModelProperty("分配结算业务级结算总收入")
     private BigDecimal businessMoney;
 
+    /**分配结算订购量结算总收入*/
+    @ApiModelProperty("分配结算订购量结算总收入")
+    private BigDecimal orderMoney;
+
     /**分配结算CP定比例结算总收入*/
     @ApiModelProperty("分配结算CP定比例结算总收入")
     private BigDecimal cpAllMoney;

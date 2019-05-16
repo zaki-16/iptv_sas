@@ -49,8 +49,8 @@ public class SettleUtil {
         return bd1.add(bd2).doubleValue();
     }
 
-    public static double add(BigDecimal d1, BigDecimal d2) {
-        return d1.add(d2).doubleValue();
+    public static BigDecimal add(BigDecimal d1, BigDecimal d2) {
+        return d1.add(d2).setScale(2);
     }
 
     /**
