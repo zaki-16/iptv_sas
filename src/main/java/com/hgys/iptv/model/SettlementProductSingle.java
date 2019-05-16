@@ -64,6 +64,11 @@ public class SettlementProductSingle implements java.io.Serializable {
     @Column(name = "dimName", nullable = true, length = 100)
     private String dimName;
 
+    /**
+     * 维度权重，该字段用户vo映射，不放入数据库
+     */
+    private Integer dimWeith;
+
     /** 结算金额 */
     @Column(name = "setMoney", nullable = true, length = 12)
     private BigDecimal setMoney;
@@ -260,5 +265,13 @@ public class SettlementProductSingle implements java.io.Serializable {
      */
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getDimWeith() {
+        return dimWeith;
+    }
+
+    public void setDimWeith(Integer dimWeith) {
+        this.dimWeith = dimWeith;
     }
 }

@@ -33,6 +33,8 @@ public class QSettlementOrder extends EntityPathBase<SettlementOrder> {
 
     public final StringPath masterCode = createString("masterCode");
 
+    public final NumberPath<java.math.BigDecimal> orderMoney = createNumber("orderMoney", java.math.BigDecimal.class);
+
     public final NumberPath<java.math.BigDecimal> orderQuantity = createNumber("orderQuantity", java.math.BigDecimal.class);
 
     public QSettlementOrder(String variable) {

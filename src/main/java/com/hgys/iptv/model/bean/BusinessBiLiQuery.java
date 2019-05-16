@@ -5,16 +5,16 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class SettlementBusinessQuery {
-    /**
-     * cp名称
-     */
-    private String cpName;
-
+public class BusinessBiLiQuery {
     /**
      * cp编码
      */
-    private String cpCode;
+    private String cpcode;
+
+    /**
+     * cp名称
+     */
+    private String cpname;
 
     /**
      * 业务编码
@@ -27,17 +27,12 @@ public class SettlementBusinessQuery {
     private String businessName;
 
     /**
-     * 业务权重
-     */
-    private String businessWeight;
-
-    /**
-     * cp权重
-     */
-    private String cpWeight;
-
-    /**
-     * cp所在金额
+     * 金额
      */
     private BigDecimal money;
+
+    /**
+     * 所占比例
+     */
+    private Integer proportion;
 }
