@@ -29,4 +29,16 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct,Objec
     OrderProduct findById(String id);
 
     OrderProduct findByCode(String code);
+
+
+    /**
+     * 通过code 查询mode
+     * @param code
+     * @return
+     */
+    @Query(value = "select o.mode from OrderProduct o where o.code = ?1")
+    int findBymode(String code);
+
+
+
 }

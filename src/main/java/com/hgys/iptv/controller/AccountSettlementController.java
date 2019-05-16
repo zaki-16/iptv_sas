@@ -21,6 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -185,6 +189,34 @@ public class AccountSettlementController {
 
         ResultVO<?> resultVO = accountSettlementService.batchLogicDelete(ids);
         return resultVO;
+    }
+
+
+
+    @GetMapping("/findById")
+    @ApiOperation(value = "通过Id查询单条记录",notes = "JSON格式数据")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResultVO<?> findById(@ApiParam(value = "分配结算Id",required = true) @RequestParam("id")String id){
+        if (StringUtils.isBlank(id)){
+            return ResultVOUtil.error("1","分配结算Id不能为空");
+        }
+        AccountSettlementAddVM vm = accountSettlementService.findById(id);
+        return ResultVOUtil.success(vm);
+    }
+
+    @GetMapping("/findByConditions")
+    @ApiOperation(value = "通过条件，分页查询",notes = "JSON类型格式数据")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<AccountSettlementAddVM> findByConditions(@ApiParam(value = "名称") @RequestParam(value = "name",required = false )String name,
+                                                                 @ApiParam(value = "编码") @RequestParam(value = "code",required = false)String code,
+                                                                 @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
+                                                                 @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
+                                                                 @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
+
+        Sort sort = new Sort(Sort.Direction.DESC,"inputTime");
+        Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
+        Page<AccountSettlementAddVM> byConditions = accountSettlementService.findByConditions(name, code,status,pageable);
+        return byConditions;
     }
 
 }
