@@ -1,17 +1,16 @@
 package com.hgys.iptv.service.impl;
 
-import com.hgys.iptv.controller.vm.AccountSettlementAddVM;
-import com.hgys.iptv.controller.vm.CpOrderCpAddVM;
-import com.hgys.iptv.controller.vm.OrderProductDimensionAddVM;
-import com.hgys.iptv.controller.vm.OrderProductDimensionListAddVM;
+import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.*;
+import com.hgys.iptv.model.QCp;
+import com.hgys.iptv.model.QCpProduct;
+import com.hgys.iptv.model.QOrderBusinessComparison;
+import com.hgys.iptv.model.QOrderCp;
+import com.hgys.iptv.model.QOrderProductWithSCD;
+import com.hgys.iptv.model.QProduct;
 import com.hgys.iptv.model.bean.CpOrderCpExcelDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionListDTO;
 import com.hgys.iptv.model.enums.ResultEnum;
-import com.hgys.iptv.model.qmodel.QCp;
-import com.hgys.iptv.model.qmodel.QCpProduct;
-import com.hgys.iptv.model.qmodel.QOrderProductWithSCD;
-import com.hgys.iptv.model.qmodel.QProduct;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.AccountSettlementService;
@@ -70,6 +69,9 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
 
     @Autowired
     private SettlementProductManyRepository settlementProductManyRepository;
+
+    @Autowired
+    private SettlementBusinessRepository settlementBusinessRepository;
     /**
      * 新增分配结算
      * @return
@@ -97,7 +99,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             account.setSetEndTime(Timestamp.valueOf(vm.getEndTime()));
             AccountSettlement save = accountSettlementRepository.save(account);
 
-            //2、新增订购量结算源数据
+            ////1、新增订购量结算源数据
             if (1 == vm.getSet_type()){
                 List<CpOrderCpAddVM> cpAddVMS = vm.getCpAddVMS();
                 for (CpOrderCpAddVM addVM : cpAddVMS){
@@ -139,16 +141,60 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                     }
                 }
             }else if (4 == vm.getSet_type()){
+                //查询是按金额结算还是比列结算
+                QOrderCp qOrderCp = QOrderCp.orderCp;
+                OrderCp orderCp = queryFactory.selectFrom(qOrderCp)
+                        .where(qOrderCp.code.eq(vm.getSet_ruleCode().trim())).fetchFirst();
 
+                if (0 == orderCp.getSettleaccounts()){
+                    SettlementMoney money = new SettlementMoney();
+                    money.setMasterCode(code);
+                    money.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                    money.setType(1);
+                    money.setMoney(vm.getCpAllMoney());
+                    settlementMoneyRepository.save(money);
+                }else if (1 == orderCp.getSettleaccounts()){
+                    SettlementMoney money = new SettlementMoney();
+                    money.setMasterCode(code);
+                    money.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                    money.setType(2);
+                    money.setMoney(vm.getCpAllMoney());
+                    settlementMoneyRepository.save(money);
+                }
             }else if (5 == vm.getSet_type()){
-
+                //判断是按金额结算还是比列结算
+                QOrderBusinessComparison qOrderBusinessComparison = QOrderBusinessComparison.orderBusinessComparison;
+                OrderBusinessComparison comparison = queryFactory.selectFrom(qOrderBusinessComparison)
+                        .where(qOrderBusinessComparison.code.eq(vm.getSet_ruleCode().trim())).fetchFirst();
+                //1:比例结算；2:金额结算
+                if (1 == comparison.getMode()){
+                    List<BusinessBelielAddVM> belielAddVMS = vm.getBelielAddVMS();
+                    for (BusinessBelielAddVM addVM : belielAddVMS){
+                        SettlementBusiness business = new SettlementBusiness();
+                        BeanUtils.copyProperties(addVM,business);
+                        business.setType(1);
+                        business.setMasterCode(code);
+                        business.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                        settlementBusinessRepository.save(business);
+                    }
+                }else if (2 == comparison.getMode()){
+                    List<BusinessBelielAddVM> belielAddVMS = vm.getBelielAddVMS();
+                    for (BusinessBelielAddVM addVM : belielAddVMS){
+                        SettlementBusiness business = new SettlementBusiness();
+                        BeanUtils.copyProperties(addVM,business);
+                        business.setType(2);
+                        business.setMasterCode(code);
+                        business.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                        settlementBusinessRepository.save(business);
+                    }
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
             return ResultVOUtil.error("1","系统内部错误");
         }
 
-        //1、新增订购量结算源数据
+
 
         return ResultVOUtil.success(Boolean.TRUE);
     }
