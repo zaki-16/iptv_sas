@@ -23,6 +23,10 @@ public class SettleDTO {
      * 订购量结算=4
      * 产品级结算=5
      * */
+
+    /**结算规则名称*/
+    private String settleName;
+
     private Integer settleType;
     /**结算方式类型
      * 无=0，即直接根据结算类型就可完成分账的方式，如cp定比例
@@ -34,7 +38,7 @@ public class SettleDTO {
     /**结算规则编号*/
     private String settleRuleCode;
 
-    /**业务总收入*/
+    /**总收入*/
     private String grossIncome;
 
 

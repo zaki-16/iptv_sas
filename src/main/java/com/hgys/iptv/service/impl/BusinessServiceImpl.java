@@ -84,7 +84,8 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
      * @param vm--维护数据来源
      * @param id--要维护的业务id
      */
-    private void handleRelation(BusinessAddVM vm, Integer id){
+    @Transactional(rollbackFor = Exception.class)
+    protected void handleRelation(BusinessAddVM vm, Integer id){
         //------------------------处理关系
         List<String> pidLists = Arrays.asList(StringUtils.split(vm.getPids(), ","));
         //2.插product_business中间表
@@ -133,6 +134,9 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
             business.setModifyTime(new Timestamp(System.currentTimeMillis()));
             UpdateTool.copyNullProperties(byId,business);
             businessRepository.saveAndFlush(business);
+            //先删除后插入
+            productBusinessRepository.deleteAllByBid(business.getId());
+            cpBusinessRepository.deleteAllByBid(business.getId());
             //处理 business关联的中间表的映射关系
             handleRelation(vm,vm.getId());
         }catch (Exception e){

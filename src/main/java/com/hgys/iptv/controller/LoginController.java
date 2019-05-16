@@ -1,11 +1,7 @@
 package com.hgys.iptv.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.security.UserDetailsServiceImpl;
-import com.hgys.iptv.model.Role;
-import com.hgys.iptv.model.User;
-import com.hgys.iptv.service.LoginService;
 import com.hgys.iptv.util.ResultVOUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,10 +10,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.Map;
+import javax.servlet.http.HttpSession;
+import java.security.Security;
 
 
 /**
@@ -29,7 +31,7 @@ import java.util.Map;
 @Api(value = "LoginController",tags = "登录管理Api接口")
 public class LoginController {
     @Autowired
-    private LoginService loginService;
+    private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
@@ -48,49 +50,26 @@ public class LoginController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public Object login(
-            @ApiParam(value = "登录名") String username,
-            @ApiParam(value = "登录密码") String password){
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            @ApiParam(value = "登录名")
+            @RequestParam("username")String username,
+            @ApiParam(value = "登录密码")
+            @RequestParam("password")String password){
         if(StringUtils.isBlank(password)){
             return JSON.toJSON(ResultVOUtil.error("1","密码不能为空!"));
-        }else if(!password.trim().equals(userDetails.getPassword())){
+        }
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        System.out.println(userDetails.getUsername()+"具有的权限 ： "+userDetails.getAuthorities());
+
+        if(!passwordEncoder.matches(password.trim(),userDetails.getPassword())){
             return JSON.toJSON(ResultVOUtil.error("1","用户或密码错误！"));
         }
-        //userDetails.getAuthorities()
+
+        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+        ServletRequestAttributes attr = (ServletRequestAttributes) requestAttributes;
+        HttpSession session= attr.getRequest().getSession(true); // true == allow create
+        System.out.println(session.getAttributeNames());
         return JSON.toJSON(ResultVOUtil.success("登录成功"));
     }
 
-    /**
-     * 用户控制
-     * @param map
-     * @return
-     */
-    @PostMapping("/addUser")
-    @ApiOperation(value = "添加用户,请求参数为表单json")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public User addUser(@RequestParam Map<String, Object> map) {
-        return loginService.addUser(map);
-    }
-
-
-    /**
-     * 角色控制
-     * @param map
-     * @return
-     */
-    @PostMapping("/addRole")
-    @ApiOperation(value = "添加角色,请求参数为表单json")
-    @ResponseStatus(HttpStatus.OK)
-    public Role addRole(@RequestParam Map<String, Object> map) {
-        return loginService.addRole(map);
-    }
-
-    @GetMapping("/findAllRoles")
-    @ApiOperation(value = "查询角色列表",notes = "@return :角色列表")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResultVO<Role> findAllRole(){
-        return ResultVOUtil.success(loginService.findAllRole());
-    }
 
 }
