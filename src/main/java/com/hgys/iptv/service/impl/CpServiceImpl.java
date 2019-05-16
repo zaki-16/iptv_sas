@@ -146,6 +146,9 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             cp.setModifyTime(new Timestamp(System.currentTimeMillis()));
             UpdateTool.copyNullProperties(byId,cp);
             cpRepository.saveAndFlush(cp);
+            //先删除后插入
+            cpProductRepository.deleteAllByCpid(cp.getId());
+            cpBusinessRepository.deleteAllByCpid(cp.getId());
             //处理cp关联的中间表的映射关系
             handleRelation(vm,vm.getId());
         }catch (Exception e){

@@ -12,7 +12,6 @@ spring:
     url: jdbc:mysql://192.168.31.191:5696/iptv_sas?characterEncoding=utf-8&useSSl=false&serverTimezone=GMT
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
-
   jpa:
     show-sql: true
     #spring data jpa 默认命名策略是 ImprovedNamingStrategy ，即用下划线转换驼峰名，容易造成mysql找不到字段
@@ -37,5 +36,7 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
     encoding: UTF-8
+
+
 
 

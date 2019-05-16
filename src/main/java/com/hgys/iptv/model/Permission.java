@@ -1,67 +1,40 @@
 package com.hgys.iptv.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
-import java.util.List;
+import java.sql.Timestamp;
+import java.util.*;
 
 @Entity
 @Table(name="sys_permission")
+@Data
 public class Permission {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false, length = 20)
-    private Long id;
-    //权限名
-    @Column(name = "name",length = 200)
-    private String name;
+    @Column(name = "id", unique = true, nullable = false, length = 11)
+    private Integer id;
+    //权限描述
+    @Column(name = "description",length = 50)
+    private String description;
     //权限字符，如query，update等
-    @Column(name = "permission", unique = true, nullable = false, length = 200)
-    private String permission;
-    //资源路径
-    @Column(name = "uri", length = 100)
-    private String uri;
+    @Column(name = "name", nullable = false, length = 50)
+    private String name;
 
-    //角色-权限==多对多，被维护
-    @ManyToMany()
-    @JoinTable(name="sys_role_permission",joinColumns = {@JoinColumn(name="permission_id")},inverseJoinColumns={@JoinColumn(name="role_id")})
-    private List<Role> roles;
+    @Column(name = "status",length = 2)
+    private Integer status;//0:启用，1：禁用
 
-    public Long getId() {
-        return id;
-    }
+    private Timestamp createdTime;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private Timestamp modifyTime;
 
-    public String getName() {
-        return name;
-    }
+//    //资源路径--
+//    @Column(name = "uri", length = 100)
+//    private String uri;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+//    //角色-权限==多对多，被维护
+//    @ManyToMany(mappedBy = "permissions")
+////    @JoinTable(name="sys_role_permission",joinColumns = {@JoinColumn(name="permission_id")},inverseJoinColumns={@JoinColumn(name="role_id")})
+//    private Set<Role> roles = new HashSet<>();
 
-    public String getPermission() {
-        return permission;
-    }
-
-    public void setPermission(String permission) {
-        this.permission = permission;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
 }
