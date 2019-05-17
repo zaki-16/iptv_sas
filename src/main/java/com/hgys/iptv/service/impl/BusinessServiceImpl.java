@@ -177,17 +177,23 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> batchLogicDelete(String ids){
-        List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
-        Set<Integer> idSets = new HashSet<>();
-        idLists.forEach(cpid->{
-            idSets.add(Integer.parseInt(cpid));
-        });
-        for (Integer id : idSets){
-            businessRepository.logicDelete(id);
-            //删除cp_business关系映射
-            cpBusinessRepository.deleteAllByBid(id);
-            //删除product_business关系映射
-            productBusinessRepository.deleteAllByBid(id);
+        try {
+            List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
+            if(idLists.size()>0){
+                Set<Integer> idSets = new HashSet<>();
+                idLists.forEach(cpid->{
+                    idSets.add(Integer.parseInt(cpid));
+                });
+                for (Integer id : idSets){
+                    businessRepository.logicDelete(id);
+                    //删除cp_business关系映射
+                    cpBusinessRepository.deleteAllByBid(id);
+                    //删除product_business关系映射
+                    productBusinessRepository.deleteAllByBid(id);
+                }
+            }
+        }catch (Exception e){
+            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
     }

@@ -24,6 +24,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import springfox.documentation.spring.web.json.Json;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -76,6 +77,7 @@ public class LoginController {
             return ResultVOUtil.error("1","密码不能为空!");
 //            return JSON.toJSON(ResultVOUtil.error("1","用户或密码错误！"));
         }
+        System.out.println(request.getParameter("username"));
         /**
          * 登录成功后记录会话
          */
@@ -91,6 +93,9 @@ public class LoginController {
         info.setDisplayName(byUsername.getDisplayName());
         //存 session
         request.getSession().setAttribute(CURRENT_USER,info);
+        // 将session存进cookie
+        Cookie cookie = new Cookie(username,request.getSession().getId());
+        cookie.setMaxAge(60*30);//30分钟
         return ResultVOUtil.success("登录成功");
     }
 
