@@ -1,11 +1,12 @@
 package com.hgys.iptv.model.qmodel;
 
-import com.hgys.iptv.model.Permission;
 import com.hgys.iptv.model.Role;
-import com.hgys.iptv.model.User;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
-import com.querydsl.core.types.dsl.*;
+import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
 
 import javax.annotation.Generated;
 
@@ -22,15 +23,17 @@ public class QRole extends EntityPathBase<Role> {
 
     public static final QRole role = new QRole("role");
 
+    public final DateTimePath<java.sql.Timestamp> createdTime = createDateTime("createdTime", java.sql.Timestamp.class);
+
     public final StringPath description = createString("description");
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+    public final NumberPath<Integer> id = createNumber("id", Integer.class);
+
+    public final DateTimePath<java.sql.Timestamp> modifyTime = createDateTime("modifyTime", java.sql.Timestamp.class);
 
     public final StringPath name = createString("name");
 
-    public final ListPath<Permission, QPermission> permissions = this.<Permission, QPermission>createList("permissions", Permission.class, QPermission.class, PathInits.DIRECT2);
-
-    public final ListPath<User, QUser> users = this.<User, QUser>createList("users", User.class, QUser.class, PathInits.DIRECT2);
+    public final NumberPath<Integer> status = createNumber("status", Integer.class);
 
     public QRole(String variable) {
         super(Role.class, forVariable(variable));

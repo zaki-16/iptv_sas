@@ -1,10 +1,12 @@
 package com.hgys.iptv.model.qmodel;
 
-import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.User;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
-import com.querydsl.core.types.dsl.*;
+import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
 
 import javax.annotation.Generated;
 
@@ -21,13 +23,21 @@ public class QUser extends EntityPathBase<User> {
 
     public static final QUser user = new QUser("user");
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+    public final DateTimePath<java.sql.Timestamp> createdTime = createDateTime("createdTime", java.sql.Timestamp.class);
+
+    public final StringPath displayName = createString("displayName");
+
+    public final NumberPath<Integer> id = createNumber("id", Integer.class);
+
+    public final DateTimePath<java.sql.Timestamp> modifyTime = createDateTime("modifyTime", java.sql.Timestamp.class);
 
     public final StringPath password = createString("password");
 
-    public final ListPath<Role, QRole> roles = this.<Role, QRole>createList("roles", Role.class, QRole.class, PathInits.DIRECT2);
+    public final StringPath realName = createString("realName");
 
     public final StringPath salt = createString("salt");
+
+    public final NumberPath<Integer> status = createNumber("status", Integer.class);
 
     public final StringPath username = createString("username");
 
