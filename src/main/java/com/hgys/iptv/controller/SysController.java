@@ -70,6 +70,14 @@ public class SysController {
         return sysUserService.deleteUserById(id);
     }
 
+    //
+    @PostMapping("/modifyPassword")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "修改密码")
+    public ResultVO modifyPassword(String username,String password_old,String password_new1,String password_new2) {
+        return sysUserService.modifyPassword(username,password_old,password_new1,password_new2);
+    }
+
 
     /*
     --------------------------------角色------------------------------------------
