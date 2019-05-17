@@ -31,4 +31,6 @@ public interface AccountSettlementService {
      */
     Page<AccountSettlementAddVM> findByConditions(String name, String code, String status, Pageable pageable);
 
+    ResultVO<?> updateAccountSet(AccountSettlementAddVM vm);
+
 }

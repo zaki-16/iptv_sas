@@ -15,7 +15,6 @@ import com.xuxueli.poi.excel.ExcelImportUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +28,8 @@ import org.springframework.data.domain.Sort;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController()
 @RequestMapping("/accountSettlementController")
@@ -236,6 +233,61 @@ public class AccountSettlementController {
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
         Page<AccountSettlementAddVM> byConditions = accountSettlementService.findByConditions(name, code,status,pageable);
         return byConditions;
+    }
+
+    /**
+     * 修改
+     * @param vm
+     * @return
+     */
+    @PostMapping("/updateAccountSet")
+    @ApiOperation(value = "分账结算结算修改",notes = "返回处理结果")
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO<?> updateAccountSet(@ApiParam(value = "修改分配结算VM") @RequestBody AccountSettlementAddVM vm){
+        //数据校验（1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算）
+        if (StringUtils.isBlank(vm.getName())){
+            return ResultVOUtil.error("1","分配结算名称不能为空！");
+        }else if (null == vm.getSet_type()){
+            return ResultVOUtil.error("1","分配结算类型不能为空！");
+        }else if (StringUtils.isBlank(vm.getSet_ruleCode())){
+            return ResultVOUtil.error("1","分配结算结算规则编码不能为空！");
+        }else if (StringUtils.isBlank(vm.getStartTime())){
+            return ResultVOUtil.error("1","分配结算结算开始时间不能为空！");
+        }else if (StringUtils.isBlank(vm.getEndTime())){
+            return ResultVOUtil.error("1","分配结算结算截止时间不能为空！");
+        }
+
+        if (1 == vm.getSet_type()){
+            if (vm.getCpAddVMS().isEmpty()){
+                return ResultVOUtil.error("1","分配结算订购量信息集合不能为空！");
+            }else if (null == vm.getOrderMoney()){
+                return ResultVOUtil.error("1","分配结算订购量结算总收入不能为空！");
+            }
+        }else if (2 == vm.getSet_type()){
+            if (StringUtils.isBlank(vm.getBusinessMoney().toString())){
+                return ResultVOUtil.error("1","分配结算业务级结算总收入不能为空！");
+            }
+        }else if (3 == vm.getSet_type()){
+            OrderProduct byCode = orderProductRepository.findByCode(vm.getSet_ruleCode().trim());
+            //查看是单维度还是多维度
+            Integer mode = byCode.getMode();
+            if (mode == 1){
+                if (vm.getDimensionAddVM().isEmpty()){
+                    return ResultVOUtil.error("1","分配结算产品级单维度信息集合不能为空！");
+                }else {
+                    return ResultVOUtil.error("1","分配结算产品级多维度信息集合不能为空！");
+                }
+            }
+        }else if (4 == vm.getSet_type()){
+            if (StringUtils.isBlank(vm.getCpAllMoney().toString())){
+                return ResultVOUtil.error("1","分配结算CP定比例结算总收入不能为空！");
+            }
+        }else if (5 == vm.getSet_type()){
+            if (vm.getBelielAddVMS().isEmpty()){
+                return ResultVOUtil.error("1","分配结算业务定比例结算信息集合不能为空！");
+            }
+        }
+        return accountSettlementService.updateAccountSet(vm);
     }
 
 }

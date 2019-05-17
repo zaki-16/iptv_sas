@@ -3,12 +3,20 @@ package com.hgys.iptv.service.impl;
 import com.hgys.iptv.controller.assemlber.AccountSettlementAssemlber;
 import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.*;
+import com.hgys.iptv.model.QAccountSettlement;
 import com.hgys.iptv.model.QCp;
 import com.hgys.iptv.model.QCpProduct;
+import com.hgys.iptv.model.QCpSettlementMoney;
 import com.hgys.iptv.model.QOrderBusinessComparison;
 import com.hgys.iptv.model.QOrderCp;
 import com.hgys.iptv.model.QOrderProductWithSCD;
 import com.hgys.iptv.model.QProduct;
+import com.hgys.iptv.model.QSettlement;
+import com.hgys.iptv.model.QSettlementBusiness;
+import com.hgys.iptv.model.QSettlementMoney;
+import com.hgys.iptv.model.QSettlementOrder;
+import com.hgys.iptv.model.QSettlementProductMany;
+import com.hgys.iptv.model.QSettlementProductSingle;
 import com.hgys.iptv.model.bean.CpOrderCpExcelDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionListDTO;
@@ -18,6 +26,7 @@ import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.AccountSettlementService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
+import com.hgys.iptv.util.UpdateTool;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -471,6 +480,156 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             return builder.conjunction();
         }), pageable).map(accountSettlementAssemlber::getListVM);
         return map;
+    }
+
+    @Override
+    public ResultVO<?> updateAccountSet(AccountSettlementAddVM vm) {
+        /** 1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算 */
+        try{
+            //查询分账结算信息
+            QAccountSettlement qAccountSettlement = QAccountSettlement.accountSettlement;
+            AccountSettlement accountSettlement = queryFactory.selectFrom(qAccountSettlement)
+                    .where(qAccountSettlement.id.eq(vm.getId())).fetchOne();
+
+            UpdateTool.copyNullProperties(vm,accountSettlement);
+            accountSettlement.setModifyTime(new Timestamp(System.currentTimeMillis()));
+            if (StringUtils.isNotBlank(vm.getStartTime())){
+                accountSettlement.setSetStartTime(Timestamp.valueOf(vm.getStartTime()));
+            }
+            if (StringUtils.isNotBlank(vm.getEndTime())){
+                accountSettlement.setSetEndTime(Timestamp.valueOf(vm.getEndTime()));
+            }
+            accountSettlement.setStatus(1);
+            AccountSettlement ac = accountSettlementRepository.saveAndFlush(accountSettlement);
+            String code = ac.getCode();
+            //1、先删除之前的订购量结算源数据再新增订购量结算源数据
+            if (1 == vm.getSet_type()){
+                QSettlementOrder qSettlementOrder = QSettlementOrder.settlementOrder;
+                long execute = queryFactory.delete(qAccountSettlement)
+                        .where(qSettlementOrder.masterCode.eq(code)).execute();
+                System.err.println("成功删除订购量结算源数据" + execute + "条");
+                List<CpOrderCpAddVM> cpAddVMS = vm.getCpAddVMS();
+                for (CpOrderCpAddVM addVM : cpAddVMS){
+                    SettlementOrder order = new SettlementOrder();
+                    BeanUtils.copyProperties(addVM,order);
+                    order.setMasterCode(code);
+                    order.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                    order.setOrderMoney(vm.getOrderMoney());
+                    settlementOrderRepository.save(order);
+                }
+            }else if (2 == vm.getSet_type()){
+                //2、先删除业务级结算源数据再新增业务级结算源数据
+                QSettlementMoney qSettlementMoney = QSettlementMoney.settlementMoney;
+                long execute = queryFactory.delete(qSettlementMoney)
+                        .where(qSettlementMoney.masterCode.eq(code)).execute();
+                System.err.println("成功删除业务级结算源数据" + execute + "条");
+                SettlementMoney money = new SettlementMoney();
+                money.setMasterCode(code);
+                money.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                money.setType(0);
+                money.setMoney(vm.getBusinessMoney());
+                settlementMoneyRepository.save(money);
+            }else if (3 == vm.getSet_type()){
+                //3、先删除再新增产品级结算结算源数据
+                //单维度
+                if (!vm.getDimensionAddVM().isEmpty()){
+                    QSettlementProductSingle qSettlementProductSingle = QSettlementProductSingle.settlementProductSingle;
+                    long execute = queryFactory.delete(qAccountSettlement)
+                            .where(qSettlementProductSingle.masterCode.eq(code)).execute();
+                    System.err.println("成功删除产品级结算单维度结算源数据" + execute + "条");
+
+                    List<OrderProductDimensionAddVM> dimensionAddVM = vm.getDimensionAddVM();
+                    for (OrderProductDimensionAddVM addVM : dimensionAddVM){
+                        SettlementProductSingle single = new SettlementProductSingle();
+                        BeanUtils.copyProperties(addVM,single);
+                        single.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                        single.setMasterCode(code);
+                        settlementProductSingleRepository.save(single);
+                    }
+                }else if (!vm.getDimensionListAddVMS().isEmpty()){
+                    QSettlementProductMany qSettlementProductMany = QSettlementProductMany.settlementProductMany;
+                    long execute = queryFactory.delete(qSettlementProductMany)
+                            .where(qSettlementProductMany.masterCode.eq(code)).execute();
+                    System.err.println("成功删除产品级结算多维度结算源数据" + execute + "条");
+
+                    List<OrderProductDimensionListAddVM> listAddVMS = vm.getDimensionListAddVMS();
+                    for (OrderProductDimensionListAddVM listAddVM : listAddVMS){
+                        SettlementProductMany many = new SettlementProductMany();
+                        BeanUtils.copyProperties(listAddVM,many);
+                        many.setMasterCode(code);
+                        many.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                        settlementProductManyRepository.save(many);
+                    }
+                }
+            }else if (4 == vm.getSet_type()){
+                //查询是按金额结算还是比列结算
+                QOrderCp qOrderCp = QOrderCp.orderCp;
+                OrderCp orderCp = queryFactory.selectFrom(qOrderCp)
+                        .where(qOrderCp.code.eq(vm.getSet_ruleCode().trim())).fetchFirst();
+
+                //先删除之前的源数据在新增
+                QSettlementMoney qSettlementMoney = QSettlementMoney.settlementMoney;
+                long execute = queryFactory.delete(qSettlementMoney).where(qSettlementMoney.masterCode.eq(code)).execute();
+                System.err.println("成功删除CP定比例结算结算源数据" + execute + "条");
+
+                if (0 == orderCp.getSettleaccounts()){
+                    SettlementMoney money = new SettlementMoney();
+                    money.setMasterCode(code);
+                    money.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                    money.setType(1);
+                    money.setMoney(vm.getCpAllMoney());
+                    settlementMoneyRepository.save(money);
+                }else if (1 == orderCp.getSettleaccounts()){
+                    SettlementMoney money = new SettlementMoney();
+                    money.setMasterCode(code);
+                    money.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                    money.setType(2);
+                    money.setMoney(vm.getCpAllMoney());
+                    settlementMoneyRepository.save(money);
+                }
+            }else if (5 == vm.getSet_type()){
+                //判断是按金额结算还是比列结算
+                QOrderBusinessComparison qOrderBusinessComparison = QOrderBusinessComparison.orderBusinessComparison;
+                OrderBusinessComparison comparison = queryFactory.selectFrom(qOrderBusinessComparison)
+                        .where(qOrderBusinessComparison.code.eq(vm.getSet_ruleCode().trim())).fetchFirst();
+
+                //先删除再新增
+                QSettlementBusiness qSettlementBusiness = QSettlementBusiness.settlementBusiness;
+                long execute = queryFactory.delete(qSettlementBusiness).where(qSettlementBusiness.masterCode.eq(code)).execute();
+                System.err.println("成功删除业务定比例结算结算源数据" + execute + "条");
+                //1:比例结算；2:金额结算
+                if (1 == comparison.getMode()){
+                    List<BusinessBelielAddVM> belielAddVMS = vm.getBelielAddVMS();
+                    for (BusinessBelielAddVM addVM : belielAddVMS){
+                        SettlementBusiness business = new SettlementBusiness();
+                        BeanUtils.copyProperties(addVM,business);
+                        business.setType(1);
+                        business.setMasterCode(code);
+                        business.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                        settlementBusinessRepository.save(business);
+                    }
+                }else if (2 == comparison.getMode()){
+                    List<BusinessBelielAddVM> belielAddVMS = vm.getBelielAddVMS();
+                    for (BusinessBelielAddVM addVM : belielAddVMS){
+                        SettlementBusiness business = new SettlementBusiness();
+                        BeanUtils.copyProperties(addVM,business);
+                        business.setType(2);
+                        business.setMasterCode(code);
+                        business.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                        settlementBusinessRepository.save(business);
+                    }
+                }
+            }
+
+            //最后删除已经结算好的结算数据，重新结算后才能生成结算数据
+            QCpSettlementMoney qCpSettlementMoney = QCpSettlementMoney.cpSettlementMoney;
+            long execute = queryFactory.delete(qCpSettlementMoney).where(qCpSettlementMoney.masterCode.eq(code.trim())).execute();
+            System.err.println("成功删除结算数据" + execute + "条");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultVOUtil.error("1","系统内部错误");
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
     }
 
 }
