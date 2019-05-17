@@ -27,6 +27,8 @@ public class QBusinessComparisonRelation extends EntityPathBase<BusinessComparis
 
     public final StringPath businessName = createString("businessName");
 
+    public final StringPath code = createString("code");
+
     public final DateTimePath<java.sql.Timestamp> create_time = createDateTime("create_time", java.sql.Timestamp.class);
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);

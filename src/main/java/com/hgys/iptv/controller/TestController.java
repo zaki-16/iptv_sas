@@ -1,9 +1,7 @@
 package com.hgys.iptv.controller;
 
 import com.hgys.iptv.model.Cp;
-import com.hgys.iptv.model.QCp;
-import com.hgys.iptv.model.QCpProduct;
-import com.hgys.iptv.model.QProduct;
+import com.hgys.iptv.model.qmodel.*;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
