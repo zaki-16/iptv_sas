@@ -16,6 +16,10 @@ public class AccountSettlementAddVM {
     @ApiModelProperty("名称")
     private String name;
 
+    /** Id */
+    @ApiModelProperty("id")
+    private Integer id;
+
     /** 1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算 */
     @ApiModelProperty("1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算")
     private Integer set_type;

@@ -100,6 +100,11 @@ public class AccountSettlementController {
                             HttpServletResponse response){
         if (type == 1){
             List<CpOrderCpExcelDTO> dtos = (List<CpOrderCpExcelDTO>) accountSettlementService.excelExport(type, code);
+            //如果没有查询出数据，放置一个空对象，放置exexl不能导出
+            if (dtos.isEmpty()){
+                CpOrderCpExcelDTO dto = new CpOrderCpExcelDTO();
+                dtos.add(dto);
+            }
             //浏览器返回Excel
             Workbook sheets = ExcelExportUtil.exportWorkbook(dtos);
             ExcelForWebUtil.workBookExportExcel(response,sheets,"订购量结算");
@@ -108,11 +113,21 @@ public class AccountSettlementController {
             OrderProduct byCode = orderProductRepository.findByCode(code);
             if (byCode.getMode() == 1){
                 List<OrderProductDimensionDTO> result = (List<OrderProductDimensionDTO>) accountSettlementService.excelExport(type,code);
+                //如果没有查询出数据，放置一个空对象，放置exexl不能导出
+                if (result.isEmpty()){
+                    OrderProductDimensionDTO dto = new OrderProductDimensionDTO();
+                    result.add(dto);
+                }
                 //浏览器返回Excel
                 Workbook sheets = ExcelExportUtil.exportWorkbook(result);
                 ExcelForWebUtil.workBookExportExcel(response,sheets,"产品级单维度结算");
             }else {
                 List<OrderProductDimensionListDTO> result = (List<OrderProductDimensionListDTO>) accountSettlementService.excelExport(type,code);
+                //如果没有查询出数据，放置一个空对象，放置exexl不能导出
+                if (result.isEmpty()){
+                    OrderProductDimensionListDTO dto = new OrderProductDimensionListDTO();
+                    result.add(dto);
+                }
                 //浏览器返回Excel
                 Workbook sheets = ExcelExportUtil.exportWorkbook(result);
                 ExcelForWebUtil.workBookExportExcel(response,sheets,"产品级多维度结算");
@@ -152,6 +167,7 @@ public class AccountSettlementController {
                     OrderProductDimensionDTO dto = (OrderProductDimensionDTO)o;
                     dtos.add(dto);
                 }
+
                 //验证数据可靠性，通过返回数据
                 ResultVO<?> resultVO = accountSettlementService.checkCpAndDimension(dtos);
                 if ("0".equals(resultVO.getCode())){
@@ -217,6 +233,61 @@ public class AccountSettlementController {
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
         Page<AccountSettlementAddVM> byConditions = accountSettlementService.findByConditions(name, code,status,pageable);
         return byConditions;
+    }
+
+    /**
+     * 修改
+     * @param vm
+     * @return
+     */
+    @PostMapping("/updateAccountSet")
+    @ApiOperation(value = "分账结算结算修改",notes = "返回处理结果")
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO<?> updateAccountSet(@ApiParam(value = "修改分配结算VM") @RequestBody AccountSettlementAddVM vm){
+        //数据校验（1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算）
+        if (StringUtils.isBlank(vm.getName())){
+            return ResultVOUtil.error("1","分配结算名称不能为空！");
+        }else if (null == vm.getSet_type()){
+            return ResultVOUtil.error("1","分配结算类型不能为空！");
+        }else if (StringUtils.isBlank(vm.getSet_ruleCode())){
+            return ResultVOUtil.error("1","分配结算结算规则编码不能为空！");
+        }else if (StringUtils.isBlank(vm.getStartTime())){
+            return ResultVOUtil.error("1","分配结算结算开始时间不能为空！");
+        }else if (StringUtils.isBlank(vm.getEndTime())){
+            return ResultVOUtil.error("1","分配结算结算截止时间不能为空！");
+        }
+
+        if (1 == vm.getSet_type()){
+            if (vm.getCpAddVMS().isEmpty()){
+                return ResultVOUtil.error("1","分配结算订购量信息集合不能为空！");
+            }else if (null == vm.getOrderMoney()){
+                return ResultVOUtil.error("1","分配结算订购量结算总收入不能为空！");
+            }
+        }else if (2 == vm.getSet_type()){
+            if (StringUtils.isBlank(vm.getBusinessMoney().toString())){
+                return ResultVOUtil.error("1","分配结算业务级结算总收入不能为空！");
+            }
+        }else if (3 == vm.getSet_type()){
+            OrderProduct byCode = orderProductRepository.findByCode(vm.getSet_ruleCode().trim());
+            //查看是单维度还是多维度
+            Integer mode = byCode.getMode();
+            if (mode == 1){
+                if (vm.getDimensionAddVM().isEmpty()){
+                    return ResultVOUtil.error("1","分配结算产品级单维度信息集合不能为空！");
+                }else {
+                    return ResultVOUtil.error("1","分配结算产品级多维度信息集合不能为空！");
+                }
+            }
+        }else if (4 == vm.getSet_type()){
+            if (StringUtils.isBlank(vm.getCpAllMoney().toString())){
+                return ResultVOUtil.error("1","分配结算CP定比例结算总收入不能为空！");
+            }
+        }else if (5 == vm.getSet_type()){
+            if (vm.getBelielAddVMS().isEmpty()){
+                return ResultVOUtil.error("1","分配结算业务定比例结算信息集合不能为空！");
+            }
+        }
+        return accountSettlementService.updateAccountSet(vm);
     }
 
 }

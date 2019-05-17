@@ -1,10 +1,12 @@
 package com.hgys.iptv.model.qmodel;
 
 import com.hgys.iptv.model.Permission;
-import com.hgys.iptv.model.Role;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
-import com.querydsl.core.types.dsl.*;
+import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
 
 import javax.annotation.Generated;
 
@@ -19,17 +21,19 @@ public class QPermission extends EntityPathBase<Permission> {
 
     private static final long serialVersionUID = 148342769L;
 
-    public static final QPermission permission1 = new QPermission("permission1");
+    public static final QPermission permission = new QPermission("permission");
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+    public final DateTimePath<java.sql.Timestamp> createdTime = createDateTime("createdTime", java.sql.Timestamp.class);
+
+    public final StringPath description = createString("description");
+
+    public final NumberPath<Integer> id = createNumber("id", Integer.class);
+
+    public final DateTimePath<java.sql.Timestamp> modifyTime = createDateTime("modifyTime", java.sql.Timestamp.class);
 
     public final StringPath name = createString("name");
 
-    public final StringPath permission = createString("permission");
-
-    public final ListPath<Role, QRole> roles = this.<Role, QRole>createList("roles", Role.class, QRole.class, PathInits.DIRECT2);
-
-    public final StringPath uri = createString("uri");
+    public final NumberPath<Integer> status = createNumber("status", Integer.class);
 
     public QPermission(String variable) {
         super(Permission.class, forVariable(variable));

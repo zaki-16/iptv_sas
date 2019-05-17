@@ -84,7 +84,8 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
      * @param vm--维护数据来源
      * @param id--要维护的产品id
      */
-    private void handleRelation(ProductAddVM vm,Integer id){
+    @Transactional(rollbackFor = Exception.class)
+    protected void handleRelation(ProductAddVM vm,Integer id){
 //------------------------处理关系
         if(vm.getCpids()==null && vm.getBids()==null)//没有关联关系直接
             return;
@@ -135,6 +136,11 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
             prod.setModifyTime(new Timestamp(System.currentTimeMillis()));
             UpdateTool.copyNullProperties(byId,prod);
             Product product_up = productRepository.saveAndFlush(prod);
+            //先删除后插入
+            if(StringUtils.isNotBlank(vm.getBids()))
+                productBusinessRepository.deleteAllByPid(prod.getId());
+            if(StringUtils.isNotBlank(vm.getCpids()))
+                cpProductRepository.deleteAllByPid(prod.getId());
             //处理product关联的中间表的映射关系
             handleRelation(vm,product_up.getId());
         }catch (Exception e){

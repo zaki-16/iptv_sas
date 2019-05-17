@@ -116,7 +116,7 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
         cpBusinessRepository.saveAll(cpBizs);
     }
 
-     /**
+    /**
      * cp 修改
      * @param
      * @return
@@ -146,6 +146,11 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             cp.setModifyTime(new Timestamp(System.currentTimeMillis()));
             UpdateTool.copyNullProperties(byId,cp);
             cpRepository.saveAndFlush(cp);
+            //先删除后插入
+            if(StringUtils.isNotBlank(vm.getPids()))
+                cpProductRepository.deleteAllByCpid(cp.getId());
+            if(StringUtils.isNotBlank(vm.getBids()))
+                cpBusinessRepository.deleteAllByCpid(cp.getId());
             //处理cp关联的中间表的映射关系
             handleRelation(vm,vm.getId());
         }catch (Exception e){
@@ -171,17 +176,17 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             cpRepository.logicDelete(cpid);
             //删除cp_product关系映射
             cpProductRepository.deleteAllByCpid(cpid);
-           //删除cp_business关系映射
+            //删除cp_business关系映射
             cpBusinessRepository.deleteAllByCpid(cpid);
         }
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
-        /**
-         * cp单查询--根据id返回单个实例
-         * @param id
-         * @return
-         */
+    /**
+     * cp单查询--根据id返回单个实例
+     * @param id
+     * @return
+     */
     @Override
     public ResultVO<?> findById(Integer id) {
         Cp cp = cpRepository.findById(id).get();
