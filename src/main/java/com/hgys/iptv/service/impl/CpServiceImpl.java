@@ -197,20 +197,26 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
      */
     @Override
     public ResultVO<?> findById(Integer id) {
-        Cp cp = cpRepository.findById(id).get();
-        CpVM cpVM = new CpVM();
-        BeanUtils.copyProperties(cp,cpVM);
-        //查关联的产品--先按cpid查cp_product中间表查出pid集合-->按pid去 findAllById
-        Set<Integer> pidSet = cpProductRepository.findAllPid(id);
-        List<Product> pList = productRepository.findAllById(pidSet);
-        cpVM.setPList(pList);
-        //查关联的业务表
-        Set<Integer> bidSet = cpBusinessRepository.findAllBid(id);
-        List<Business> bList = businessRepository.findAllById(bidSet);
-        cpVM.setBList(bList);
-        if(cp!=null)
-            return ResultVOUtil.success(cpVM);
-        return ResultVOUtil.error("1","所查询的cp不存在!");
+        try {
+            Cp cp = cpRepository.findById(id).get();
+            if(cp==null)
+                return ResultVOUtil.error("1","所查cp不存在");
+            CpVM cpVM = new CpVM();
+            BeanUtils.copyProperties(cp,cpVM);
+            //查关联的产品--先按cpid查cp_product中间表查出pid集合-->按pid去 findAllById
+            Set<Integer> pidSet = cpProductRepository.findAllPid(id);
+            List<Product> pList = productRepository.findAllById(pidSet);
+            cpVM.setPList(pList);
+            //查关联的业务表
+            Set<Integer> bidSet = cpBusinessRepository.findAllBid(id);
+            List<Business> bList = businessRepository.findAllById(bidSet);
+            cpVM.setBList(bList);
+            if(cp!=null)
+                return ResultVOUtil.success(cpVM);
+            return ResultVOUtil.error("1","所查询的cp不存在!");
+        }catch (Exception e){
+            return ResultVOUtil.error("1","所查cp不存在");
+        }
     }
 
 
