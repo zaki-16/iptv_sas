@@ -175,17 +175,23 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> batchLogicDelete(String ids){
-        List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
-        Set<Integer> pidSets = new HashSet<>();
-        idLists.forEach(cpid->{
-            pidSets.add(Integer.parseInt(cpid));
-        });
-        for (Integer cpid : pidSets){
-            cpRepository.logicDelete(cpid);
-            //删除cp_product关系映射
-            cpProductRepository.deleteAllByCpid(cpid);
-            //删除cp_business关系映射
-            cpBusinessRepository.deleteAllByCpid(cpid);
+        try{
+            List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
+            if(idLists.size()>0){
+                Set<Integer> pidSets = new HashSet<>();
+                idLists.forEach(cpid->{
+                    pidSets.add(Integer.parseInt(cpid));
+                });
+                for (Integer cpid : pidSets){
+                    cpRepository.logicDelete(cpid);
+                    //删除cp_product关系映射
+                    cpProductRepository.deleteAllByCpid(cpid);
+                    //删除cp_business关系映射
+                    cpBusinessRepository.deleteAllByCpid(cpid);
+                }
+            }
+        }catch (Exception e){
+            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
     }
