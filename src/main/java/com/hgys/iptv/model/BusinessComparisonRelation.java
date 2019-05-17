@@ -1,10 +1,10 @@
 /*
  * Welcome to use the TableGo Tools.
- * 
+ *
  * http://vipbooks.iteye.com
  * http://blog.csdn.net/vipbooks
  * http://www.cnblogs.com/vipbooks
- * 
+ *
  * Author:bianj
  * Email:edinsker@163.com
  * Version:5.8.8
@@ -18,7 +18,7 @@ import javax.persistence.*;
 
 /**
  * 结算类型-业务定比例与业务关系表(business_comparison_relation)
- * 
+ *
  * @author yance
  * @version 1.0.0 2019-05-10
  */
@@ -33,6 +33,9 @@ public class BusinessComparisonRelation implements java.io.Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false, length = 10)
     private Integer id;
+
+    @Column(name = "code", unique = true, nullable = false, length = 10)
+    private String code;
 
     /** 业务定比列编码 */
     @Column(name = "masterCode", nullable = true, length = 50)
@@ -166,5 +169,13 @@ public class BusinessComparisonRelation implements java.io.Serializable {
      */
     public void setCreate_time(Timestamp create_time) {
         this.create_time = create_time;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

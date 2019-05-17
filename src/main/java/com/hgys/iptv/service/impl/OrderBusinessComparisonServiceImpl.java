@@ -126,11 +126,12 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
 
             for (OrderBusinessComparisonBusinessAddVM v : businessAddVMS){
                 BusinessComparisonRelation relation = new BusinessComparisonRelation();
-
+                String bCode = CodeUtil.getOnlyCode("B",5);
                 BeanUtils.copyProperties(v,relation);
                 //查询业务
                 Business busines = businessRepository.findByCode(v.getBusinessCode().trim());
                 relation.setMasterCode(code);
+                relation.setCode(bCode);
                 relation.setMasterName(vm.getName());
                 relation.setBusinessName(StringUtils.trimToEmpty(busines.getName()));
                 relation.setCreate_time(new Timestamp(System.currentTimeMillis()));
@@ -141,7 +142,7 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
                     CpOrderBusinessComparison compa = new CpOrderBusinessComparison();
 
                     BeanUtils.copyProperties(business,compa);
-                    compa.setMasterCode(v.getBusinessCode());
+                    compa.setMasterCode(bCode);
                     compa.setCreate_time(new Timestamp(System.currentTimeMillis()));
                     compa.setCp_name(StringUtils.trimToEmpty(cpRepository.findByCode(business.getCp_code().trim()).getName()));
 
@@ -199,7 +200,7 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
             BeanUtils.copyProperties(r,addVM);
 
             //查询业务下Cp
-            List<CpOrderBusinessComparison> byMasterCode = cpOrderBusinessComparisonRepository.findByMasterCode(r.getBusinessCode());
+            List<CpOrderBusinessComparison> byMasterCode = cpOrderBusinessComparisonRepository.findByMasterCode(r.getCode());
             List<OrderBusinessComparisonAddListVM> vms = new ArrayList<>();
             for (CpOrderBusinessComparison f : byMasterCode){
                 OrderBusinessComparisonAddListVM o = new OrderBusinessComparisonAddListVM();
@@ -236,7 +237,7 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
             BeanUtils.copyProperties(r,addVM);
 
             //查询业务下Cp
-            List<CpOrderBusinessComparison> byMasterCode = cpOrderBusinessComparisonRepository.findByMasterCode(r.getBusinessCode());
+            List<CpOrderBusinessComparison> byMasterCode = cpOrderBusinessComparisonRepository.findByMasterCode(r.getCode());
             List<OrderBusinessComparisonAddListVM> vms = new ArrayList<>();
             for (CpOrderBusinessComparison f : byMasterCode){
                 OrderBusinessComparisonAddListVM o = new OrderBusinessComparisonAddListVM();
@@ -326,7 +327,9 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
                 System.err.println(execute);
                 for (OrderBusinessComparisonBusinessAddVM addVM : list){
                     BusinessComparisonRelation relation = new BusinessComparisonRelation();
+                    String bcode = CodeUtil.getOnlyCode("B",5);
                     BeanUtils.copyProperties(addVM,relation);
+                    relation.setCode(bcode);
                     relation.setMasterCode(comparison.getCode());
                     relation.setMasterName(comparison.getName());
                     relation.setBusinessName(StringUtils.trimToEmpty(businessRepository.findByCode(addVM.getBusinessCode().trim()).getName()));
@@ -339,7 +342,7 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
                     for (OrderBusinessComparisonAddListVM v : listVMS){
                         CpOrderBusinessComparison cp = new CpOrderBusinessComparison();
                         BeanUtils.copyProperties(v,cp);
-                        cp.setMasterCode(addVM.getBusinessCode());
+                        cp.setMasterCode(bcode);
                         cp.setCp_name(StringUtils.trimToEmpty(cpRepository.findByCode(v.getCp_code().trim()).getName()));
                         cp.setCreate_time(new Timestamp(System.currentTimeMillis()));
 
