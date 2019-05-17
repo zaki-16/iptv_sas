@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import javax.persistence.criteria.Predicate;
 import java.sql.Timestamp;
 import java.util.*;
@@ -42,8 +41,6 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
     @Autowired
     ProductBusinessRepository productBusinessRepository;
 
-    @Autowired
-    private EntityManager entityManager;
     @Autowired
     BusinessControllerAssemlber assemlber;
     /**
@@ -86,28 +83,36 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
      */
     @Transactional(rollbackFor = Exception.class)
     protected void handleRelation(BusinessAddVM vm, Integer id){
-        //------------------------处理关系
-        List<String> pidLists = Arrays.asList(StringUtils.split(vm.getPids(), ","));
-        //2.插product_business中间表
-        List<ProductBusiness> pbs =new ArrayList<>();
-        pidLists.forEach(pid->{
-            ProductBusiness pb = new ProductBusiness();
-            pb.setBid(id);
-            pb.setPid(Integer.parseInt(pid));
-            pbs.add(pb);
-        });
-        productBusinessRepository.saveAll(pbs);
-        //------------------------------------------
-        //3.插cp-business中间表
-        List<CpBusiness> cpBizs =new ArrayList<>();
-        List<String> cpidLists = Arrays.asList(StringUtils.split(vm.getCpids(), ","));
-        cpidLists.forEach(cpid->{
-            CpBusiness cpBusiness = new CpBusiness();
-            cpBusiness.setBid(id);
-            cpBusiness.setCpid(Integer.parseInt(cpid));
-            cpBizs.add(cpBusiness);
-        });
-        cpBusinessRepository.saveAll(cpBizs);
+        try {
+            //------------------------处理关系
+            List<String> pidLists = Arrays.asList(StringUtils.split(vm.getPids(), ","));
+            //2.插product_business中间表
+            if(pidLists.size()>0){
+                List<ProductBusiness> pbs =new ArrayList<>();
+                pidLists.forEach(pid->{
+                    ProductBusiness pb = new ProductBusiness();
+                    pb.setBid(id);
+                    pb.setPid(Integer.parseInt(pid));
+                    pbs.add(pb);
+                });
+                productBusinessRepository.saveAll(pbs);
+            }
+            //------------------------------------------
+            //3.插cp-business中间表
+            List<CpBusiness> cpBizs =new ArrayList<>();
+            List<String> cpidLists = Arrays.asList(StringUtils.split(vm.getCpids(), ","));
+            if(cpidLists.size()>0){
+                cpidLists.forEach(cpid->{
+                    CpBusiness cpBusiness = new CpBusiness();
+                    cpBusiness.setBid(id);
+                    cpBusiness.setCpid(Integer.parseInt(cpid));
+                    cpBizs.add(cpBusiness);
+                });
+                cpBusinessRepository.saveAll(cpBizs);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
     /**
      * 修改
@@ -178,7 +183,7 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
             idSets.add(Integer.parseInt(cpid));
         });
         for (Integer id : idSets){
-            productRepository.logicDelete(id);
+            businessRepository.logicDelete(id);
             //删除cp_business关系映射
             cpBusinessRepository.deleteAllByBid(id);
             //删除product_business关系映射
@@ -194,21 +199,27 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
      */
     @Override
     public ResultVO<?> findById(Integer id) {
-        Business business = businessRepository.findById(id).orElse(null);
-        BusinessVM vm = new BusinessVM();
-        BeanUtils.copyProperties(business,vm);
-        //查关联的产品--先按cpid查cp_product中间表查出pid集合-->按pid去 findAllById
-        Set<Integer> pidSet = cpProductRepository.findAllPid(id);
-        List<Product> pList = productRepository.findAllById(pidSet);
-        vm.setPList(pList);
-        //查关联的cp
-        Set<Integer> cpidSet = cpBusinessRepository.findAllBid(id);
-        List<Cp> cpList = cpRepository.findAllById(cpidSet);
-        vm.setCpList(cpList);
+        try {
+            Business business = businessRepository.findById(id).orElse(null);
+            if(business==null)
+                return ResultVOUtil.error("1","所查业务不存在");
+            BusinessVM vm = new BusinessVM();
+            BeanUtils.copyProperties(business,vm);
+            //查关联的产品--先按cpid查cp_product中间表查出pid集合-->按pid去 findAllById
+            Set<Integer> pidSet = cpProductRepository.findAllPid(id);
+            List<Product> pList = productRepository.findAllById(pidSet);
+            vm.setPList(pList);
+            //查关联的cp
+            Set<Integer> cpidSet = cpBusinessRepository.findAllCpid(id);
+            List<Cp> cpList = cpRepository.findAllById(cpidSet);
+            vm.setCpList(cpList);
 
-        if(business!=null)
-            return ResultVOUtil.success(vm);
-        return ResultVOUtil.error("1","所查询的业务列表不存在!");
+            if(business!=null)
+                return ResultVOUtil.success(vm);
+            return ResultVOUtil.error("1","所查询的业务列表不存在!");
+        }catch (Exception e){
+            return ResultVOUtil.error("1","所查cp不存在");
+        }
     }
 
     /**

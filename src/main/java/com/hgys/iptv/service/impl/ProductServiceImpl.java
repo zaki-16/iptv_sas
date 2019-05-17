@@ -86,30 +86,38 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
      */
     @Transactional(rollbackFor = Exception.class)
     protected void handleRelation(ProductAddVM vm,Integer id){
-//------------------------处理关系
-        if(vm.getCpids()==null && vm.getBids()==null)//没有关联关系直接
-            return;
-        List<String> cpidLists = Arrays.asList(StringUtils.split(vm.getCpids(), ","));
-        //2.插cp-product中间表
-        List<CpProduct> cpProds =new ArrayList<>();
-        cpidLists.forEach(cpid->{
-            CpProduct cpProduct = new CpProduct();
-            cpProduct.setCpid(Integer.parseInt(cpid));
-            cpProduct.setPid(id);
-            cpProds.add(cpProduct);
-        });
-        cpProductRepository.saveAll(cpProds);
-        //------------------------------------------
-        //3.插product-business中间表
-        List<ProductBusiness> pbList =new ArrayList<>();
-        List<String> bidLists = Arrays.asList(StringUtils.split(vm.getBids(), ","));
-        bidLists.forEach(bid->{
-            ProductBusiness pb = new ProductBusiness();
-            pb.setPid(id);
-            pb.setBid(Integer.parseInt(bid));
-            pbList.add(pb);
-        });
-        productBusinessRepository.saveAll(pbList);
+        try {
+            //------------------------处理关系
+            if(vm.getCpids()==null && vm.getBids()==null)//没有关联关系直接
+                return;
+            List<String> cpidLists = Arrays.asList(StringUtils.split(vm.getCpids(), ","));
+            //2.插cp-product中间表
+            if(cpidLists.size()>0){
+                List<CpProduct> cpProds =new ArrayList<>();
+                cpidLists.forEach(cpid->{
+                    CpProduct cpProduct = new CpProduct();
+                    cpProduct.setCpid(Integer.parseInt(cpid));
+                    cpProduct.setPid(id);
+                    cpProds.add(cpProduct);
+                });
+                cpProductRepository.saveAll(cpProds);
+            }
+            //------------------------------------------
+            //3.插product-business中间表
+            List<ProductBusiness> pbList =new ArrayList<>();
+            List<String> bidLists = Arrays.asList(StringUtils.split(vm.getBids(), ","));
+            if(bidLists.size()>0){
+                bidLists.forEach(bid->{
+                    ProductBusiness pb = new ProductBusiness();
+                    pb.setPid(id);
+                    pb.setBid(Integer.parseInt(bid));
+                    pbList.add(pb);
+                });
+                productBusinessRepository.saveAll(pbList);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
     /**
      * 修改
@@ -195,21 +203,27 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
      */
     @Override
     public ResultVO<?> findById(Integer id) {
-        Product prod = productRepository.findById(id).get();
-        ProductVM productListVM = new ProductVM();
-        BeanUtils.copyProperties(prod,productListVM);
-        //查关联cp
-        Set<Integer> cpidSet = cpProductRepository.findAllCpid(id);
-        List<Cp> cpList = cpRepository.findAllById(cpidSet);
-        productListVM.setCpList(cpList);
-        //查关联业务：先查中间表->bidSet->findAll
-        Set<Integer> bidSet = productBusinessRepository.findAllBid(id);
-        List<Business> bList = businessRepository.findAllById(bidSet);
-        productListVM.setBList(bList);
+        try {
+            Product prod = productRepository.findById(id).get();
+            if(prod==null)
+                return ResultVOUtil.error("1","所查产品不存在");
+            ProductVM productListVM = new ProductVM();
+            BeanUtils.copyProperties(prod,productListVM);
+            //查关联cp
+            Set<Integer> cpidSet = cpProductRepository.findAllCpid(id);
+            List<Cp> cpList = cpRepository.findAllById(cpidSet);
+            productListVM.setCpList(cpList);
+            //查关联业务：先查中间表->bidSet->findAll
+            Set<Integer> bidSet = productBusinessRepository.findAllBid(id);
+            List<Business> bList = businessRepository.findAllById(bidSet);
+            productListVM.setBList(bList);
 
-        if(prod!=null)
-            return ResultVOUtil.success(productListVM);
-        return ResultVOUtil.error("1","所查询的cp不存在!");
+            if(prod!=null)
+                return ResultVOUtil.success(productListVM);
+            return ResultVOUtil.error("1","所查询的产品不存在!");
+        }catch (Exception e){
+            return ResultVOUtil.error("1","所查cp不存在");
+        }
     }
 
 

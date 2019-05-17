@@ -33,7 +33,7 @@ public class User implements Serializable, UserDetails {
     private Integer id;
 
     @Column(name = "username", unique = true, nullable = false, length = 200)
-    private String username;
+    private String username;//登录名
 
     @Column(name = "displayName", length = 200)//用户自定义展示名
     private String displayName;

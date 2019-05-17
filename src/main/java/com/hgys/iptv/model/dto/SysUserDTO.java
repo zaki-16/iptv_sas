@@ -29,7 +29,7 @@ public class SysUserDTO {
     @ApiModelProperty("用户真实姓名")
     private String realName;
 
-    @ApiModelProperty("用户注册密码")
+    @ApiModelProperty("用户注册密码---修改时不展示--展示了也需要提供正确密码才能修改其他信息")
     @NotBlank(message = "密码不能为空")
     private String password;
 
