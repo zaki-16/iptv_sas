@@ -2,7 +2,6 @@ package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.qmodel.*;
-import com.hgys.iptv.model.qmodel.*;
 import com.hgys.iptv.model.bean.BusinessBiLiQuery;
 import com.hgys.iptv.model.bean.SettlementBusinessQuery;
 import com.hgys.iptv.model.vo.ResultVO;
