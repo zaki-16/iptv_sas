@@ -178,7 +178,7 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
             idSets.add(Integer.parseInt(cpid));
         });
         for (Integer id : idSets){
-            productRepository.logicDelete(id);
+            businessRepository.logicDelete(id);
             //删除cp_business关系映射
             cpBusinessRepository.deleteAllByBid(id);
             //删除product_business关系映射
