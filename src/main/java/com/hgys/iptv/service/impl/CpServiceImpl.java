@@ -88,32 +88,40 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
      */
     @Transactional(rollbackFor = Exception.class)
     protected void handleRelation(CpAddVM vm, Integer id){
-//------------------------处理关系
-        List<String> pidLists = Arrays.asList(StringUtils.split(vm.getPids(), ","));
-        //2.插cp-product中间表
-        List<CpProduct> cpProds =new ArrayList<>();
-        //校验cpid-pid组合是否已在 CpProduct 中存在--save方法会调用isNew
-        pidLists.forEach(pid->{
-            CpProduct cpProduct = new CpProduct();
-            cpProduct.setCpid(id);
-            cpProduct.setPid(Integer.parseInt(pid));
+        try {
+            //------------------------处理关系
+            List<String> pidLists = Arrays.asList(StringUtils.split(vm.getPids(), ","));
+            if(pidLists.size()>0){
+                //2.插cp-product中间表
+                List<CpProduct> cpProds =new ArrayList<>();
+                //校验cpid-pid组合是否已在 CpProduct 中存在--save方法会调用isNew
+                pidLists.forEach(pid->{
+                    CpProduct cpProduct = new CpProduct();
+                    cpProduct.setCpid(id);
+                    cpProduct.setPid(Integer.parseInt(pid));
 //            if(cpProductRepository.countByCpidAndPid(id,Integer.parseInt(pid))>0){
 //                System.out.println("有重复组合");
 //            }
-            cpProds.add(cpProduct);
-        });
-        cpProductRepository.saveAll(cpProds);
-        //------------------------------------------
-        //3.插cp-business中间表
-        List<CpBusiness> cpBizs =new ArrayList<>();
-        List<String> bidLists = Arrays.asList(StringUtils.split(vm.getBids(), ","));
-        bidLists.forEach(bid->{
-            CpBusiness cpBusiness = new CpBusiness();
-            cpBusiness.setBid(Integer.parseInt(bid));
-            cpBusiness.setCpid(id);
-            cpBizs.add(cpBusiness);
-        });
-        cpBusinessRepository.saveAll(cpBizs);
+                    cpProds.add(cpProduct);
+                });
+                cpProductRepository.saveAll(cpProds);
+            }
+            //------------------------------------------
+            //3.插cp-business中间表
+            List<CpBusiness> cpBizs =new ArrayList<>();
+            List<String> bidLists = Arrays.asList(StringUtils.split(vm.getBids(), ","));
+            if(bidLists.size()>0){
+                bidLists.forEach(bid->{
+                    CpBusiness cpBusiness = new CpBusiness();
+                    cpBusiness.setBid(Integer.parseInt(bid));
+                    cpBusiness.setCpid(id);
+                    cpBizs.add(cpBusiness);
+                });
+                cpBusinessRepository.saveAll(cpBizs);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**

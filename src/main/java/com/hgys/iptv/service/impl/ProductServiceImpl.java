@@ -86,30 +86,38 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
      */
     @Transactional(rollbackFor = Exception.class)
     protected void handleRelation(ProductAddVM vm,Integer id){
-//------------------------处理关系
-        if(vm.getCpids()==null && vm.getBids()==null)//没有关联关系直接
-            return;
-        List<String> cpidLists = Arrays.asList(StringUtils.split(vm.getCpids(), ","));
-        //2.插cp-product中间表
-        List<CpProduct> cpProds =new ArrayList<>();
-        cpidLists.forEach(cpid->{
-            CpProduct cpProduct = new CpProduct();
-            cpProduct.setCpid(Integer.parseInt(cpid));
-            cpProduct.setPid(id);
-            cpProds.add(cpProduct);
-        });
-        cpProductRepository.saveAll(cpProds);
-        //------------------------------------------
-        //3.插product-business中间表
-        List<ProductBusiness> pbList =new ArrayList<>();
-        List<String> bidLists = Arrays.asList(StringUtils.split(vm.getBids(), ","));
-        bidLists.forEach(bid->{
-            ProductBusiness pb = new ProductBusiness();
-            pb.setPid(id);
-            pb.setBid(Integer.parseInt(bid));
-            pbList.add(pb);
-        });
-        productBusinessRepository.saveAll(pbList);
+        try {
+            //------------------------处理关系
+            if(vm.getCpids()==null && vm.getBids()==null)//没有关联关系直接
+                return;
+            List<String> cpidLists = Arrays.asList(StringUtils.split(vm.getCpids(), ","));
+            //2.插cp-product中间表
+            if(cpidLists.size()>0){
+                List<CpProduct> cpProds =new ArrayList<>();
+                cpidLists.forEach(cpid->{
+                    CpProduct cpProduct = new CpProduct();
+                    cpProduct.setCpid(Integer.parseInt(cpid));
+                    cpProduct.setPid(id);
+                    cpProds.add(cpProduct);
+                });
+                cpProductRepository.saveAll(cpProds);
+            }
+            //------------------------------------------
+            //3.插product-business中间表
+            List<ProductBusiness> pbList =new ArrayList<>();
+            List<String> bidLists = Arrays.asList(StringUtils.split(vm.getBids(), ","));
+            if(bidLists.size()>0){
+                bidLists.forEach(bid->{
+                    ProductBusiness pb = new ProductBusiness();
+                    pb.setPid(id);
+                    pb.setBid(Integer.parseInt(bid));
+                    pbList.add(pb);
+                });
+                productBusinessRepository.saveAll(pbList);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
     /**
      * 修改

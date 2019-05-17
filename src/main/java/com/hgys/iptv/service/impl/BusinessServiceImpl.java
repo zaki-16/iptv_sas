@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import javax.persistence.criteria.Predicate;
 import java.sql.Timestamp;
 import java.util.*;
@@ -42,8 +41,6 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
     @Autowired
     ProductBusinessRepository productBusinessRepository;
 
-    @Autowired
-    private EntityManager entityManager;
     @Autowired
     BusinessControllerAssemlber assemlber;
     /**
@@ -86,28 +83,36 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
      */
     @Transactional(rollbackFor = Exception.class)
     protected void handleRelation(BusinessAddVM vm, Integer id){
-        //------------------------处理关系
-        List<String> pidLists = Arrays.asList(StringUtils.split(vm.getPids(), ","));
-        //2.插product_business中间表
-        List<ProductBusiness> pbs =new ArrayList<>();
-        pidLists.forEach(pid->{
-            ProductBusiness pb = new ProductBusiness();
-            pb.setBid(id);
-            pb.setPid(Integer.parseInt(pid));
-            pbs.add(pb);
-        });
-        productBusinessRepository.saveAll(pbs);
-        //------------------------------------------
-        //3.插cp-business中间表
-        List<CpBusiness> cpBizs =new ArrayList<>();
-        List<String> cpidLists = Arrays.asList(StringUtils.split(vm.getCpids(), ","));
-        cpidLists.forEach(cpid->{
-            CpBusiness cpBusiness = new CpBusiness();
-            cpBusiness.setBid(id);
-            cpBusiness.setCpid(Integer.parseInt(cpid));
-            cpBizs.add(cpBusiness);
-        });
-        cpBusinessRepository.saveAll(cpBizs);
+        try {
+            //------------------------处理关系
+            List<String> pidLists = Arrays.asList(StringUtils.split(vm.getPids(), ","));
+            //2.插product_business中间表
+            if(pidLists.size()>0){
+                List<ProductBusiness> pbs =new ArrayList<>();
+                pidLists.forEach(pid->{
+                    ProductBusiness pb = new ProductBusiness();
+                    pb.setBid(id);
+                    pb.setPid(Integer.parseInt(pid));
+                    pbs.add(pb);
+                });
+                productBusinessRepository.saveAll(pbs);
+            }
+            //------------------------------------------
+            //3.插cp-business中间表
+            List<CpBusiness> cpBizs =new ArrayList<>();
+            List<String> cpidLists = Arrays.asList(StringUtils.split(vm.getCpids(), ","));
+            if(cpidLists.size()>0){
+                cpidLists.forEach(cpid->{
+                    CpBusiness cpBusiness = new CpBusiness();
+                    cpBusiness.setBid(id);
+                    cpBusiness.setCpid(Integer.parseInt(cpid));
+                    cpBizs.add(cpBusiness);
+                });
+                cpBusinessRepository.saveAll(cpBizs);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
     /**
      * 修改
