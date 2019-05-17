@@ -1,9 +1,19 @@
 package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.model.*;
+import com.hgys.iptv.model.QBusinessComparisonRelation;
+import com.hgys.iptv.model.QCpOrderBusinessComparison;
+import com.hgys.iptv.model.QCpSettlementMoney;
+import com.hgys.iptv.model.QOrderBusinessCp;
+import com.hgys.iptv.model.QOrderBusinessWithCp;
+import com.hgys.iptv.model.QOrderProduct;
+import com.hgys.iptv.model.QSettlementBusiness;
+import com.hgys.iptv.model.QSettlementMoney;
+import com.hgys.iptv.model.QSettlementOrder;
+import com.hgys.iptv.model.QSettlementProductMany;
+import com.hgys.iptv.model.QSettlementProductSingle;
 import com.hgys.iptv.model.bean.BusinessBiLiQuery;
 import com.hgys.iptv.model.bean.SettlementBusinessQuery;
-import com.hgys.iptv.model.qmodel.*;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.AccountSettlementRepository;
 import com.hgys.iptv.repository.CpSettlementMoneyRepository;
