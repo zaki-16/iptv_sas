@@ -2,6 +2,7 @@ package com.hgys.iptv.model;
 
 import lombok.Data;
 
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
@@ -11,13 +12,18 @@ import java.sql.Timestamp;
  * @Description: TODO
  */
 @Data
+@Entity
+@Table(name="sys_menu")
 public class SysMenu {
-    private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", unique = true, nullable = false, length = 11)
+    private Integer id;
     private String name;
     private String code;
     private String navigateUrl;//
     private String icon;//图标
-    private SysMenu parentMenu;//父节点
+    private Integer parentId;//父节点
     private Integer level;//层级
     private Integer sequence;//序号
     private Timestamp createTime;

@@ -107,7 +107,8 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
             roleRepository.saveAndFlush(role);
             // 先删除后插入
             //在中间表中按userId删除，用户-角色关系
-            sysRolePermissionRepository.deleteAllByRoleId(role.getId());
+            if(StringUtils.isNotBlank(sysRoleDTO.getPids()))
+                sysRolePermissionRepository.deleteAllByRoleId(role.getId());
             handleRelation(sysRoleDTO,role.getId());
         }catch (Exception e){
             e.printStackTrace();

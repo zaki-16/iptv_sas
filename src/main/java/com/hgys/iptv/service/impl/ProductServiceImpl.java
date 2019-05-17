@@ -137,8 +137,10 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
             UpdateTool.copyNullProperties(byId,prod);
             Product product_up = productRepository.saveAndFlush(prod);
             //先删除后插入
-            productBusinessRepository.deleteAllByPid(prod.getId());
-            cpProductRepository.deleteAllByPid(prod.getId());
+            if(StringUtils.isNotBlank(vm.getBids()))
+                productBusinessRepository.deleteAllByPid(prod.getId());
+            if(StringUtils.isNotBlank(vm.getCpids()))
+                cpProductRepository.deleteAllByPid(prod.getId());
             //处理product关联的中间表的映射关系
             handleRelation(vm,product_up.getId());
         }catch (Exception e){
