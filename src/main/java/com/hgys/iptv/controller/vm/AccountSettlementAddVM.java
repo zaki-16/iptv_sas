@@ -16,6 +16,10 @@ public class AccountSettlementAddVM {
     @ApiModelProperty("名称")
     private String name;
 
+    /** 名称 */
+    @ApiModelProperty("名称")
+    private String code;
+
     /** Id */
     @ApiModelProperty("id")
     private Integer id;
