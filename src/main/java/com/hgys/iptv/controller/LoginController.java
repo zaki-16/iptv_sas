@@ -9,9 +9,10 @@ import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
@@ -19,7 +20,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpSession;
-import java.security.Security;
 
 
 /**
@@ -68,8 +68,17 @@ public class LoginController {
         ServletRequestAttributes attr = (ServletRequestAttributes) requestAttributes;
         HttpSession session= attr.getRequest().getSession(true); // true == allow create
         System.out.println(session.getAttributeNames());
+        test();
         return JSON.toJSON(ResultVOUtil.success("登录成功"));
     }
 
 
+    @PostMapping("/session")
+    public void test(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication.getAuthorities());
+        System.out.println(authentication.getCredentials());
+        System.out.println(authentication.getDetails());
+        System.out.println(authentication.getPrincipal());
+    }
 }
