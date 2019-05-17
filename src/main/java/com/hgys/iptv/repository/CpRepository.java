@@ -1,21 +1,13 @@
 package com.hgys.iptv.repository;
 
-import com.hgys.iptv.model.Business;
 import com.hgys.iptv.model.Cp;
-import com.hgys.iptv.model.OrderBusinessWithCp;
-import com.hgys.iptv.model.SettlementDimension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public interface CpRepository extends JpaRepository<Cp,Integer>, JpaSpecificationExecutor<Cp> {

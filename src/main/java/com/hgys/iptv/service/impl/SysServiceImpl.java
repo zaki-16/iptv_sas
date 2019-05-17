@@ -1,15 +1,13 @@
 package com.hgys.iptv.service.impl;
 
-import com.hgys.iptv.model.Permission;
-import com.hgys.iptv.model.Role;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.SysService;
 import com.hgys.iptv.util.AbstractBaseServiceImpl;
+import com.hgys.iptv.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.List;
-import java.util.Set;
+import javax.annotation.PostConstruct;
 
 /**
  * @ClassName SysServiceImpl
@@ -30,6 +28,9 @@ public abstract class SysServiceImpl extends AbstractBaseServiceImpl implements 
     protected SysRolePermissionRepository sysRolePermissionRepository;//权限-角色中间表
     @Autowired
     protected SysUserRoleRepository sysUserRoleRepository;//用户-角色中间表
+    /**日志记录实例*/
+    @Autowired
+    protected Logger logger;
 
 
 }

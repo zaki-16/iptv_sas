@@ -4,6 +4,8 @@ import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.SysUserRole;
 import com.hgys.iptv.model.User;
 import com.hgys.iptv.model.dto.SysUserDTO;
+import com.hgys.iptv.model.enums.LogResultEnum;
+import com.hgys.iptv.model.enums.LogTypeEnum;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.SysUserService;
@@ -52,7 +54,7 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         //校验用户名是否已存在
         Integer i = userRepository.countByUsername(userDTO.getUsername());
         if(i>0){
-            return ResultVOUtil.error("1","用户名已存在！");
+            return ResultVOUtil.error("1","用户名已被占用！");
         }
         try {
             User user = new User();
@@ -66,8 +68,11 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             User user_add = userRepository.save(user);
 //处理中间表
             handleRelation(userDTO,user_add.getId());
+            //记录日志
+            logger.log("admin","admin","addUser", LogTypeEnum.ADD.getType(), LogResultEnum.SUCCESS.name());
         }catch (Exception e){
             e.printStackTrace();
+            logger.log("admin","admin","addUser","add","异常");
             return ResultVOUtil.error("1","新增用户异常！");
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -83,7 +88,7 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         if(sysUserDTO.getRids()==null)//没有关联关系直接
             return;
         List<String> ids = Arrays.asList(StringUtils.split(sysUserDTO.getRids(), ","));
-        //2.插cp-product中间表
+        //2.插中间表
         List<SysUserRole> relationList =new ArrayList<>();
         ids.forEach(rid->{
             SysUserRole relation = new SysUserRole();
@@ -116,8 +121,9 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             UpdateTool.copyNullProperties(byIdUser,user);
             userRepository.saveAndFlush(user);
             // 先删除后插入
-            //在中间表中按userId删除，用户-角色关系
-            sysUserRoleRepository.deleteAllByUserId(user.getId());
+            //在中间表中按userId删除，用户-角色关系--需要更新角色关系时才删除
+            if(StringUtils.isNotBlank(userDTO.getRids()))
+                sysUserRoleRepository.deleteAllByUserId(user.getId());
             handleRelation(userDTO,user.getId());
         }catch (Exception e){
             e.printStackTrace();

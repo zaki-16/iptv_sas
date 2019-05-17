@@ -135,8 +135,10 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
             UpdateTool.copyNullProperties(byId,business);
             businessRepository.saveAndFlush(business);
             //先删除后插入
-            productBusinessRepository.deleteAllByBid(business.getId());
-            cpBusinessRepository.deleteAllByBid(business.getId());
+            if(StringUtils.isNotBlank(vm.getPids()))
+                productBusinessRepository.deleteAllByBid(business.getId());
+            if(StringUtils.isNotBlank(vm.getCpids()))
+                cpBusinessRepository.deleteAllByBid(business.getId());
             //处理 business关联的中间表的映射关系
             handleRelation(vm,vm.getId());
         }catch (Exception e){
