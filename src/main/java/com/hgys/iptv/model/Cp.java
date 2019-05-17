@@ -1,12 +1,8 @@
 package com.hgys.iptv.model;
 
-import javassist.SerialVersionUID;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * CP表，关联产品表和业务表

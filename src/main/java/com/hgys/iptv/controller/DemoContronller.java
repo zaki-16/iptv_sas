@@ -1,14 +1,23 @@
 package com.hgys.iptv.controller;
 
+import cn.hutool.db.PageResult;
 import com.hgys.iptv.exception.BaseException;
-import com.hgys.iptv.model.SettlementDimension;
+import com.hgys.iptv.model.*;
+import com.hgys.iptv.model.QCp;
+import com.hgys.iptv.model.QUser;
 import com.hgys.iptv.model.bean.ShopDTO;
+import com.hgys.iptv.model.dto.SysUserDTO;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
+import com.hgys.iptv.repository.CpRepository;
 import com.hgys.iptv.service.SettlementDimensionService;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.excel.ExcelForWebUtil;
 import com.hgys.iptv.util.excel.PathConstant;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.xuxueli.poi.excel.ExcelExportUtil;
 import com.xuxueli.poi.excel.ExcelImportUtil;
 import io.swagger.annotations.Api;
@@ -30,7 +39,6 @@ import java.util.*;
 @RequestMapping("/demo")
 @Api(value = "Demo",tags = "demo演示接口")
 public class DemoContronller {
-
     @Autowired
     private SettlementDimensionService settlementDimensionService;
 
@@ -113,5 +121,4 @@ public class DemoContronller {
         System.out.println(list);
         return shopDTOList;
     }
-
 }

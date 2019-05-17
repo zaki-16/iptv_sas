@@ -147,8 +147,10 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             UpdateTool.copyNullProperties(byId,cp);
             cpRepository.saveAndFlush(cp);
             //先删除后插入
-            cpProductRepository.deleteAllByCpid(cp.getId());
-            cpBusinessRepository.deleteAllByCpid(cp.getId());
+            if(StringUtils.isNotBlank(vm.getPids()))
+                cpProductRepository.deleteAllByCpid(cp.getId());
+            if(StringUtils.isNotBlank(vm.getBids()))
+                cpBusinessRepository.deleteAllByCpid(cp.getId());
             //处理cp关联的中间表的映射关系
             handleRelation(vm,vm.getId());
         }catch (Exception e){
