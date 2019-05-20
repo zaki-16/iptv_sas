@@ -32,4 +32,44 @@ public class SysRoleDTO {
 
     @ApiModelProperty("权限集字符串")
     private String pids;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getPids() {
+        return pids;
+    }
+
+    public void setPids(String pids) {
+        this.pids = pids;
+    }
 }

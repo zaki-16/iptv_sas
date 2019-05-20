@@ -32,4 +32,52 @@ public class OrderBusinessComparisonAddListVM{
     /** 金额 */
     @ApiModelProperty("金额")
     private BigDecimal money;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getMasterCode() {
+        return masterCode;
+    }
+
+    public void setMasterCode(String masterCode) {
+        this.masterCode = masterCode;
+    }
+
+    public String getCp_code() {
+        return cp_code;
+    }
+
+    public void setCp_code(String cp_code) {
+        this.cp_code = cp_code;
+    }
+
+    public String getCp_name() {
+        return cp_name;
+    }
+
+    public void setCp_name(String cp_name) {
+        this.cp_name = cp_name;
+    }
+
+    public Integer getProportion() {
+        return proportion;
+    }
+
+    public void setProportion(Integer proportion) {
+        this.proportion = proportion;
+    }
+
+    public BigDecimal getMoney() {
+        return money;
+    }
+
+    public void setMoney(BigDecimal money) {
+        this.money = money;
+    }
 }

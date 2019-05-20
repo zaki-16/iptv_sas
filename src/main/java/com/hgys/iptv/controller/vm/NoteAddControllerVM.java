@@ -15,4 +15,19 @@ public class NoteAddControllerVM {
     @ApiModelProperty("类型")
     private Integer note_type;
 
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Integer getNote_type() {
+        return note_type;
+    }
+
+    public void setNote_type(Integer note_type) {
+        this.note_type = note_type;
+    }
 }

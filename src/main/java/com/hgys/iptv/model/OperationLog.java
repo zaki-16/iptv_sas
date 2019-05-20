@@ -35,4 +35,60 @@ public class OperationLog implements Serializable {
     private String operResult;
     //     * 操作时间
     private Timestamp operTime;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getLoginName() {
+        return loginName;
+    }
+
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    public String getOperObj() {
+        return operObj;
+    }
+
+    public void setOperObj(String operObj) {
+        this.operObj = operObj;
+    }
+
+    public String getOperType() {
+        return operType;
+    }
+
+    public void setOperType(String operType) {
+        this.operType = operType;
+    }
+
+    public String getOperResult() {
+        return operResult;
+    }
+
+    public void setOperResult(String operResult) {
+        this.operResult = operResult;
+    }
+
+    public Timestamp getOperTime() {
+        return operTime;
+    }
+
+    public void setOperTime(Timestamp operTime) {
+        this.operTime = operTime;
+    }
 }

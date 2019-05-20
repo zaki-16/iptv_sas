@@ -63,4 +63,20 @@ public class BusinessAddVM {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
+    public String getPids() {
+        return pids;
+    }
+
+    public void setPids(String pids) {
+        this.pids = pids;
+    }
+
+    public String getCpids() {
+        return cpids;
+    }
+
+    public void setCpids(String cpids) {
+        this.cpids = cpids;
+    }
 }

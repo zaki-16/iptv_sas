@@ -79,4 +79,140 @@ public class AccountSettlementAddVM {
     /**分配结算业务定比例结算信息集合*/
     @ApiModelProperty("分配结算业务定比例结算信息集合")
     private List<BusinessBelielAddVM> belielAddVMS;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getSet_type() {
+        return set_type;
+    }
+
+    public void setSet_type(Integer set_type) {
+        this.set_type = set_type;
+    }
+
+    public String getSet_ruleCode() {
+        return set_ruleCode;
+    }
+
+    public void setSet_ruleCode(String set_ruleCode) {
+        this.set_ruleCode = set_ruleCode;
+    }
+
+    public String getSet_ruleName() {
+        return set_ruleName;
+    }
+
+    public void setSet_ruleName(String set_ruleName) {
+        this.set_ruleName = set_ruleName;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getRemakes() {
+        return remakes;
+    }
+
+    public void setRemakes(String remakes) {
+        this.remakes = remakes;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public BigDecimal getBusinessMoney() {
+        return businessMoney;
+    }
+
+    public void setBusinessMoney(BigDecimal businessMoney) {
+        this.businessMoney = businessMoney;
+    }
+
+    public BigDecimal getOrderMoney() {
+        return orderMoney;
+    }
+
+    public void setOrderMoney(BigDecimal orderMoney) {
+        this.orderMoney = orderMoney;
+    }
+
+    public BigDecimal getCpAllMoney() {
+        return cpAllMoney;
+    }
+
+    public void setCpAllMoney(BigDecimal cpAllMoney) {
+        this.cpAllMoney = cpAllMoney;
+    }
+
+    public List<CpOrderCpAddVM> getCpAddVMS() {
+        return cpAddVMS;
+    }
+
+    public void setCpAddVMS(List<CpOrderCpAddVM> cpAddVMS) {
+        this.cpAddVMS = cpAddVMS;
+    }
+
+    public List<OrderProductDimensionAddVM> getDimensionAddVM() {
+        return dimensionAddVM;
+    }
+
+    public void setDimensionAddVM(List<OrderProductDimensionAddVM> dimensionAddVM) {
+        this.dimensionAddVM = dimensionAddVM;
+    }
+
+    public List<OrderProductDimensionListAddVM> getDimensionListAddVMS() {
+        return dimensionListAddVMS;
+    }
+
+    public void setDimensionListAddVMS(List<OrderProductDimensionListAddVM> dimensionListAddVMS) {
+        this.dimensionListAddVMS = dimensionListAddVMS;
+    }
+
+    public List<BusinessBelielAddVM> getBelielAddVMS() {
+        return belielAddVMS;
+    }
+
+    public void setBelielAddVMS(List<BusinessBelielAddVM> belielAddVMS) {
+        this.belielAddVMS = belielAddVMS;
+    }
 }

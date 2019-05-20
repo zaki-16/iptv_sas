@@ -29,4 +29,92 @@ public class BusinessVM {
 
     private List<Product> pList;
     private List<Cp> cpList;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Integer getBizType() {
+        return bizType;
+    }
+
+    public void setBizType(Integer bizType) {
+        this.bizType = bizType;
+    }
+
+    public Integer getSettleType() {
+        return settleType;
+    }
+
+    public void setSettleType(Integer settleType) {
+        this.settleType = settleType;
+    }
+
+    public Timestamp getInputTime() {
+        return inputTime;
+    }
+
+    public void setInputTime(Timestamp inputTime) {
+        this.inputTime = inputTime;
+    }
+
+    public Timestamp getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Timestamp modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Integer getIsdelete() {
+        return isdelete;
+    }
+
+    public void setIsdelete(Integer isdelete) {
+        this.isdelete = isdelete;
+    }
+
+    public List<Product> getpList() {
+        return pList;
+    }
+
+    public void setpList(List<Product> pList) {
+        this.pList = pList;
+    }
+
+    public List<Cp> getCpList() {
+        return cpList;
+    }
+
+    public void setCpList(List<Cp> cpList) {
+        this.cpList = cpList;
+    }
 }

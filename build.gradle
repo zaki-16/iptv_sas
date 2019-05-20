@@ -67,33 +67,23 @@ dependencies {
     //hutool 工具包
     compile 'cn.hutool:hutool-all:4.5.9'
 
-    compileJava {
-        options.compilerArgs << "-s"
-        options.compilerArgs << "$projectDir/generated/java"
-
-
-        doFirst {
-            // make sure that directory exists
-            file(new File(projectDir, "/generated/java")).mkdirs()
-        }
-    }
-
-
-    clean.doLast {
-        // clean-up directory when necessary
-        file(new File(projectDir, "/generated")).deleteDir()
-    }
-
-
-    sourceSets {
-        generated {
-            java {
-                srcDir "$projectDir/generated/java"
-            }
-        }
-    }
 }
 
 
+ext {
+    generatedSourcesDir = file("build/generated-sources/metamodel")
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir generatedSourcesDir
+        }
+    }
+    test {
+        java { srcDir 'src/main/test' }
+    }
+}
 
 

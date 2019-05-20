@@ -24,4 +24,52 @@ public class ProductAddVM {
 
     @ApiModelProperty(value = "产品关联的业务集合id字符串")//dataType = "List"
     private String bids;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getCpids() {
+        return cpids;
+    }
+
+    public void setCpids(String cpids) {
+        this.cpids = cpids;
+    }
+
+    public String getBids() {
+        return bids;
+    }
+
+    public void setBids(String bids) {
+        this.bids = bids;
+    }
 }

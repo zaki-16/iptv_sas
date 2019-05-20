@@ -5,13 +5,9 @@ import com.hgys.iptv.controller.vm.OrderBusinessComparisonAddListVM;
 import com.hgys.iptv.controller.vm.OrderBusinessComparisonAddVM;
 import com.hgys.iptv.controller.vm.OrderBusinessComparisonBusinessAddVM;
 import com.hgys.iptv.controller.vm.OrderBusinessComparisonQueryVM;
-import com.hgys.iptv.model.Business;
-import com.hgys.iptv.model.BusinessComparisonRelation;
-import com.hgys.iptv.model.CpOrderBusinessComparison;
-import com.hgys.iptv.model.OrderBusinessComparison;
+import com.hgys.iptv.model.*;
+import com.hgys.iptv.model.QCpOrderBusinessComparison;
 import com.hgys.iptv.model.enums.ResultEnum;
-import com.hgys.iptv.model.qmodel.QBusinessComparisonRelation;
-import com.hgys.iptv.model.qmodel.QCpOrderBusinessComparison;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.OrderBusinessComparisonService;
@@ -26,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.hgys.iptv.model.QBusinessComparisonRelation;
 
 import javax.persistence.criteria.Predicate;
 import java.sql.Timestamp;
@@ -323,7 +320,7 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
             if (!vo.getList().isEmpty()) {
                 List<OrderBusinessComparisonBusinessAddVM> list = vo.getList();
                 //先将之前业务删除，对现在数据新增
-                long execute = queryFactory.delete(QBusinessComparisonRelation.businessComparisonRelation).where(QBusinessComparisonRelation.businessComparisonRelation.masterCode.eq(comparison.getCode())).execute();
+                long execute = queryFactory.delete(com.hgys.iptv.model.QBusinessComparisonRelation.businessComparisonRelation).where(QBusinessComparisonRelation.businessComparisonRelation.masterCode.eq(comparison.getCode())).execute();
                 System.err.println(execute);
                 for (OrderBusinessComparisonBusinessAddVM addVM : list){
                     BusinessComparisonRelation relation = new BusinessComparisonRelation();

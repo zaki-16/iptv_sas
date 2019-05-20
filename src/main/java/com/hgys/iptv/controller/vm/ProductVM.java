@@ -29,4 +29,84 @@ public class ProductVM {
 
     private List<Business> bList;
     private List<Cp> cpList;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public Timestamp getInputTime() {
+        return inputTime;
+    }
+
+    public void setInputTime(Timestamp inputTime) {
+        this.inputTime = inputTime;
+    }
+
+    public Timestamp getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Timestamp modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Integer getIsdelete() {
+        return isdelete;
+    }
+
+    public void setIsdelete(Integer isdelete) {
+        this.isdelete = isdelete;
+    }
+
+    public List<Business> getbList() {
+        return bList;
+    }
+
+    public void setbList(List<Business> bList) {
+        this.bList = bList;
+    }
+
+    public List<Cp> getCpList() {
+        return cpList;
+    }
+
+    public void setCpList(List<Cp> cpList) {
+        this.cpList = cpList;
+    }
 }

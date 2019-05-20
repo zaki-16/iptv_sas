@@ -1,7 +1,8 @@
 package com.hgys.iptv.util;
 
 import com.hgys.iptv.model.OperationLog;
-import com.hgys.iptv.model.qmodel.*;
+import com.hgys.iptv.model.QOperationLog;
+import com.hgys.iptv.model.QSysLog;
 import com.hgys.iptv.model.SysLog;
 import com.hgys.iptv.repository.OperationLogRepository;
 import com.hgys.iptv.repository.SysLogRepository;

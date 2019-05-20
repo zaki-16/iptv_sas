@@ -222,7 +222,7 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
             //查关联业务：先查中间表->bidSet->findAll
             Set<Integer> bidSet = productBusinessRepository.findAllBid(id);
             List<Business> bList = businessRepository.findAllById(bidSet);
-            productListVM.setBList(bList);
+            productListVM.setbList(bList);
 
             if(prod!=null)
                 return ResultVOUtil.success(productListVM);

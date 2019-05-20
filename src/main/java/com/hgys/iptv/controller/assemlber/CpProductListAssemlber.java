@@ -47,7 +47,7 @@ public class CpProductListAssemlber {
             BeanUtils.copyProperties(p,cpp_);
             pList.add(cpp_);
         }
-        vm.setPList(pList);
+        vm.setpList(pList);
 
         Set<Integer> bidSet = cpBusinessRepository.findAllBid(vo.getId());
         List<Business> businessList = businessRepository.findAllById(bidSet);
@@ -57,7 +57,7 @@ public class CpProductListAssemlber {
             BeanUtils.copyProperties(b,cpb_);
             bList.add(cpb_);
         });
-        vm.setBList(bList);
+        vm.setbList(bList);
         return vm;
     }
 

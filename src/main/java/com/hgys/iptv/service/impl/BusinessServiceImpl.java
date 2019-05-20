@@ -214,7 +214,7 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
             //查关联的产品--先按cpid查cp_product中间表查出pid集合-->按pid去 findAllById
             Set<Integer> pidSet = cpProductRepository.findAllPid(id);
             List<Product> pList = productRepository.findAllById(pidSet);
-            vm.setPList(pList);
+            vm.setpList(pList);
             //查关联的cp
             Set<Integer> cpidSet = cpBusinessRepository.findAllCpid(id);
             List<Cp> cpList = cpRepository.findAllById(cpidSet);

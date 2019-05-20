@@ -28,4 +28,43 @@ public class SettlementCombinatorialDimensionAddVM implements Serializable{
     @ApiModelProperty(value = "结算维度组合集合",dataType = "List")
     private List<SettlementDimensionVM> list;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getRemakes() {
+        return remakes;
+    }
+
+    public void setRemakes(String remakes) {
+        this.remakes = remakes;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public List<SettlementDimensionVM> getList() {
+        return list;
+    }
+
+    public void setList(List<SettlementDimensionVM> list) {
+        this.list = list;
+    }
 }
