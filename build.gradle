@@ -10,6 +10,7 @@ apply plugin: 'base'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'maven'
+apply plugin: 'io.franzbecker.gradle-lombok'
 
 group = 'com.hgys'
 version = '0.0.1-SNAPSHOT'
@@ -50,7 +51,7 @@ dependencies {
 
     //lombok插件
     compile("org.projectlombok:lombok:1.18.2")
-    
+
     //excel
     compile group: 'org.apache.poi', name: 'poi', version: '3.17'
     compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
@@ -67,25 +68,23 @@ dependencies {
     //hutool 工具包
     compile 'cn.hutool:hutool-all:4.5.9'
 
-    ext {
-        generatedSourcesDir = file("build/generated-sources/metamodel")
-    }
-
-    sourceSets {
-        main {
-            java {
-                srcDir 'src/main/java'
-                srcDir generatedSourcesDir
-            }
-        }
-        test {
-            java { srcDir 'src/main/test' }
-        }
-    }
-
 }
 
+ext {
+    generatedSourcesDir = file("build/generated-sources/metamodel")
+}
 
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir generatedSourcesDir
+        }
+    }
+    test {
+        java { srcDir 'src/main/test' }
+    }
+}
 
 
 

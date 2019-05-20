@@ -4,6 +4,7 @@ import com.hgys.iptv.controller.assemlber.SettlementDimensionControllerAssemlber
 import com.hgys.iptv.controller.vm.SettlementDimensionAddVM;
 import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
 import com.hgys.iptv.model.*;
+import com.hgys.iptv.model.QSettlementDimension;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.SettlementDimensionRepository;

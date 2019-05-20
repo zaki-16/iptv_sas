@@ -6,16 +6,10 @@ import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.QAccountSettlement;
 import com.hgys.iptv.model.QCp;
 import com.hgys.iptv.model.QCpProduct;
-import com.hgys.iptv.model.QCpSettlementMoney;
 import com.hgys.iptv.model.QOrderBusinessComparison;
 import com.hgys.iptv.model.QOrderCp;
 import com.hgys.iptv.model.QOrderProductWithSCD;
 import com.hgys.iptv.model.QProduct;
-import com.hgys.iptv.model.QSettlementBusiness;
-import com.hgys.iptv.model.QSettlementMoney;
-import com.hgys.iptv.model.QSettlementOrder;
-import com.hgys.iptv.model.QSettlementProductMany;
-import com.hgys.iptv.model.QSettlementProductSingle;
 import com.hgys.iptv.model.bean.CpOrderCpExcelDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionDTO;
 import com.hgys.iptv.model.bean.OrderProductDimensionListDTO;
@@ -160,7 +154,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             }else if (3 == vm.getSet_type()){
                 //3、新增产品级结算结算源数据
                 //单维度
-                if (!vm.getDimensionAddVM().isEmpty()){
+                if (null != vm.getDimensionAddVM() && !vm.getDimensionAddVM().isEmpty()){
                     List<OrderProductDimensionAddVM> dimensionAddVM = vm.getDimensionAddVM();
                     for (OrderProductDimensionAddVM addVM : dimensionAddVM){
                         SettlementProductSingle single = new SettlementProductSingle();
@@ -169,7 +163,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                         single.setMasterCode(code);
                         settlementProductSingleRepository.save(single);
                     }
-                }else if (!vm.getDimensionListAddVMS().isEmpty()){
+                }else if (null != vm.getDimensionListAddVMS() && !vm.getDimensionListAddVMS().isEmpty()){
                     List<OrderProductDimensionListAddVM> listAddVMS = vm.getDimensionListAddVMS();
                     for (OrderProductDimensionListAddVM listAddVM : listAddVMS){
                         SettlementProductMany many = new SettlementProductMany();

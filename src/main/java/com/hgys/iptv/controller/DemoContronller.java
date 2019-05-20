@@ -1,6 +1,5 @@
 package com.hgys.iptv.controller;
 
-import cn.hutool.db.PageResult;
 import com.hgys.iptv.exception.BaseException;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.bean.ShopDTO;

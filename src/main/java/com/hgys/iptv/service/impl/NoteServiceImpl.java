@@ -7,7 +7,6 @@ import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.NoteRepository;
 import com.hgys.iptv.service.NoteService;
-import com.hgys.iptv.util.JpqlQuery;
 import com.hgys.iptv.util.ResultVOUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;

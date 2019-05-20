@@ -15,7 +15,6 @@ import com.hgys.iptv.service.SettlementCombinatorialDimensionService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
-import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -255,8 +254,9 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
     @Override
     public ResultVO<?> findcdslist() {
         List<SettlementCombinatorialDimensionMaster> cps =settlementCombinatorialDimensionMasterRepository.findcdslist();
-        if(cps!=null)
+        if(cps!=null){
             return ResultVOUtil.success(cps);
+        }
         return ResultVOUtil.error("1","所查询的不存在!");
     }
 
