@@ -1,31 +1,29 @@
-package com.hgys.iptv.model;
+package com.hgys.iptv.model.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
-
 /**
- * @ClassName SysMenu
+ * @ClassName SysMenuDTO
  * @Auther: wangz
- * @Date: 2019/5/16 21:55
+ * @Date: 2019/5/20 15:39
  * @Description: TODO
  */
 @Data
-@Entity
-@Table(name="sys_menu")
-public class SysMenu {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false, length = 11)
+public class SysMenuDTO {
     private Integer id;
+    @ApiModelProperty("菜单标识名 如 cpMenu")
     private String name;//
+    @ApiModelProperty("菜单展示名")
     private String text;//菜单展示名
     private String navigateUrl;//
     private String icon;//图标
     private Integer parentId;//父节点
-//    private Integer level;//层级
+    //    private Integer level;//层级
 //    private Integer sequence;//序号
 //    private Timestamp createTime;
     private Integer status;
+
+    private String pids;
 }

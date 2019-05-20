@@ -1,5 +1,6 @@
 package com.hgys.iptv.service.impl;
 
+import com.hgys.iptv.model.Authority;
 import com.hgys.iptv.model.Permission;
 import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.SysRolePermission;
@@ -51,7 +52,7 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
         try {
             Role role = new Role();
             // 状态0:启用，1：禁用--默认新增时就启用
-            if(sysRoleDTO.getStatus()!=1)
+            if(sysRoleDTO.getStatus()==null || sysRoleDTO.getStatus()!=1)
                 role.setStatus(0);
             BeanUtils.copyProperties(sysRoleDTO,role);
             role.setCreatedTime(new Timestamp(System.currentTimeMillis()));
@@ -72,18 +73,22 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
      */
     @Transactional(rollbackFor = Exception.class)
     protected void handleRelation(SysRoleDTO sysRoleDTO, Integer id){
-        if(sysRoleDTO.getPids()==null)//没有关联关系直接
-            return;
-        List<String> ids = Arrays.asList(StringUtils.split(sysRoleDTO.getPids(), ","));
-        //2.插cp-product中间表
-        List<SysRolePermission> relationList =new ArrayList<>();
-        ids.forEach(pid->{
-            SysRolePermission relation = new SysRolePermission();
-            relation.setRoleId(id);
-            relation.setPermissionId(Integer.parseInt(pid));
-            relationList.add(relation);
-        });
-        sysRolePermissionRepository.saveAll(relationList);
+        try{
+            if(sysRoleDTO.getPids()==null)//没有关联关系直接
+                return;
+            List<String> ids = Arrays.asList(StringUtils.split(sysRoleDTO.getPids(), ","));
+            //2.插cp-product中间表
+            List<SysRolePermission> relationList =new ArrayList<>();
+            ids.forEach(pid->{
+                SysRolePermission relation = new SysRolePermission();
+                relation.setRoleId(id);
+                relation.setPermissionId(Integer.parseInt(pid));
+                relationList.add(relation);
+            });
+            sysRolePermissionRepository.saveAll(relationList);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -151,5 +156,11 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
     public List<Permission> findAllPermissionByRoleId(Integer roleId) {
         Set<Integer> allPermId = sysRolePermissionRepository.findAllPermId(roleId);
         return permissionRepository.findAllById(allPermId);
+    }
+
+    @Override
+    public List<Authority> findAllAuthorityByRoleId(Integer roleId) {
+        Set<Integer> allAuthId = sysRoleAuthorityRepository.findAllAuthId(roleId);
+        return authorityRepository.findAllById(allAuthId);
     }
 }

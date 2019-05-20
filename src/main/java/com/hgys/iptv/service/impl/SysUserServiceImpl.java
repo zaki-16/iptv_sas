@@ -49,7 +49,6 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
     //添加用户
     @Override
     @Transactional(rollbackFor = Exception.class)
-//    @PreAuthorize("hasPermission('SAVE', 'UPDATE') or hasRole('ROLE_ADMIN')")
     public ResultVO<?> addUser(SysUserDTO userDTO) {
         if(StringUtils.isBlank(userDTO.getUsername())){
             return ResultVOUtil.error("1","用户名不能为空！");
@@ -65,7 +64,7 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         try {
             User user = new User();
             // 状态0:启用，1：禁用--默认新增时就启用
-            if(userDTO.getStatus()!=1)
+            if(userDTO.getStatus()==null || userDTO.getStatus()!=1)
                 user.setStatus(0);
             BeanUtils.copyProperties(userDTO,user);
             //加密
@@ -75,10 +74,10 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 //处理中间表
             handleRelation(userDTO,user_add.getId());
             //记录日志
-            logger.log("admin","admin","addUser", LogTypeEnum.ADD.getType(), LogResultEnum.SUCCESS.name());
+            logger.log("addUser", LogTypeEnum.ADD.getType(),"SysUserServiceImpl.addUser", LogResultEnum.SUCCESS.name());
         }catch (Exception e){
             e.printStackTrace();
-            logger.log("admin","admin","addUser","add","异常");
+            logger.log("新增用户",LogTypeEnum.ADD.getType(),"SysUserServiceImpl.addUser",LogResultEnum.EXCEPTION.name());
             return ResultVOUtil.error("1","新增用户异常！");
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -105,7 +104,7 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             });
             sysUserRoleRepository.saveAll(relationList);
         }catch (Exception e){
-            logger.log("admin","admin","级联关系新增异常","add","异常");
+            e.printStackTrace();
         }
 
     }

@@ -90,6 +90,9 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
     private SettlementBusinessRepository settlementBusinessRepository;
 
     @Autowired
+    private CpSettlementMoneyRepository cpSettlementMoneyRepository;
+
+    @Autowired
     private OrderBusinessRepository orderBusinessRepository;
 
 
@@ -521,6 +524,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
         return map;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultVO<?> updateAccountSet(AccountSettlementAddVM vm) {
         /** 1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算 */
@@ -543,10 +547,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             String code = ac.getCode();
             //1、先删除之前的订购量结算源数据再新增订购量结算源数据
             if (1 == vm.getSet_type()){
-                QSettlementOrder qSettlementOrder = QSettlementOrder.settlementOrder;
-                long execute = queryFactory.delete(qAccountSettlement)
-                        .where(qSettlementOrder.masterCode.eq(code)).execute();
-                System.err.println("成功删除订购量结算源数据" + execute + "条");
+                settlementOrderRepository.deleteByMasterCode(code.trim());
                 List<CpOrderCpAddVM> cpAddVMS = vm.getCpAddVMS();
                 for (CpOrderCpAddVM addVM : cpAddVMS){
                     SettlementOrder order = new SettlementOrder();
@@ -558,10 +559,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                 }
             }else if (2 == vm.getSet_type()){
                 //2、先删除业务级结算源数据再新增业务级结算源数据
-                QSettlementMoney qSettlementMoney = QSettlementMoney.settlementMoney;
-                long execute = queryFactory.delete(qSettlementMoney)
-                        .where(qSettlementMoney.masterCode.eq(code)).execute();
-                System.err.println("成功删除业务级结算源数据" + execute + "条");
+                settlementMoneyRepository.deleteByMasterCode(code);
                 SettlementMoney money = new SettlementMoney();
                 money.setMasterCode(code);
                 money.setCreateTime(new Timestamp(System.currentTimeMillis()));
@@ -572,10 +570,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                 //3、先删除再新增产品级结算结算源数据
                 //单维度
                 if (!vm.getDimensionAddVM().isEmpty()){
-                    QSettlementProductSingle qSettlementProductSingle = QSettlementProductSingle.settlementProductSingle;
-                    long execute = queryFactory.delete(qAccountSettlement)
-                            .where(qSettlementProductSingle.masterCode.eq(code)).execute();
-                    System.err.println("成功删除产品级结算单维度结算源数据" + execute + "条");
+                    settlementProductSingleRepository.deleteByMasterCode(code);
 
                     List<OrderProductDimensionAddVM> dimensionAddVM = vm.getDimensionAddVM();
                     for (OrderProductDimensionAddVM addVM : dimensionAddVM){
@@ -586,10 +581,8 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                         settlementProductSingleRepository.save(single);
                     }
                 }else if (!vm.getDimensionListAddVMS().isEmpty()){
-                    QSettlementProductMany qSettlementProductMany = QSettlementProductMany.settlementProductMany;
-                    long execute = queryFactory.delete(qSettlementProductMany)
-                            .where(qSettlementProductMany.masterCode.eq(code)).execute();
-                    System.err.println("成功删除产品级结算多维度结算源数据" + execute + "条");
+                    //先删除之前数据
+                    settlementProductManyRepository.deleteByMasterCode(code);
 
                     List<OrderProductDimensionListAddVM> listAddVMS = vm.getDimensionListAddVMS();
                     for (OrderProductDimensionListAddVM listAddVM : listAddVMS){
@@ -607,10 +600,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                         .where(qOrderCp.code.eq(vm.getSet_ruleCode().trim())).fetchFirst();
 
                 //先删除之前的源数据在新增
-                QSettlementMoney qSettlementMoney = QSettlementMoney.settlementMoney;
-                long execute = queryFactory.delete(qSettlementMoney).where(qSettlementMoney.masterCode.eq(code)).execute();
-                System.err.println("成功删除CP定比例结算结算源数据" + execute + "条");
-
+                settlementMoneyRepository.deleteByMasterCode(code);
                 if (0 == orderCp.getSettleaccounts()){
                     SettlementMoney money = new SettlementMoney();
                     money.setMasterCode(code);
@@ -633,9 +623,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                         .where(qOrderBusinessComparison.code.eq(vm.getSet_ruleCode().trim())).fetchFirst();
 
                 //先删除再新增
-                QSettlementBusiness qSettlementBusiness = QSettlementBusiness.settlementBusiness;
-                long execute = queryFactory.delete(qSettlementBusiness).where(qSettlementBusiness.masterCode.eq(code)).execute();
-                System.err.println("成功删除业务定比例结算结算源数据" + execute + "条");
+                settlementBusinessRepository.deleteByMasterCode(code);
                 //1:比例结算；2:金额结算
                 if (1 == comparison.getMode()){
                     List<BusinessBelielAddVM> belielAddVMS = vm.getBelielAddVMS();
@@ -661,9 +649,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             }
 
             //最后删除已经结算好的结算数据，重新结算后才能生成结算数据
-            QCpSettlementMoney qCpSettlementMoney = QCpSettlementMoney.cpSettlementMoney;
-            long execute = queryFactory.delete(qCpSettlementMoney).where(qCpSettlementMoney.masterCode.eq(code.trim())).execute();
-            System.err.println("成功删除结算数据" + execute + "条");
+            cpSettlementMoneyRepository.deleteByMasterCode(code);
         }catch (Exception e){
             e.printStackTrace();
             return ResultVOUtil.error("1","系统内部错误");

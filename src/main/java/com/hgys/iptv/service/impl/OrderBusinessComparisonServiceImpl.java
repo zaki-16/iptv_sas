@@ -97,10 +97,11 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
                 }
             }
 
-            //验证业务下所有CP分批比例是否大于100%
-            Integer he = 0;
+
             for (OrderBusinessComparisonBusinessAddVM v : businessAddVMS){
                 List<OrderBusinessComparisonAddListVM> listVMS = v.getList();
+                //验证业务下所有CP分批比例是否大于100%
+                Integer he = 0;
                 for (OrderBusinessComparisonAddListVM order : listVMS){
                     he = he + order.getProportion();
                     if (he > 100){

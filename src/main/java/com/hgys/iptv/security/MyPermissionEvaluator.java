@@ -1,10 +1,12 @@
 package com.hgys.iptv.security;
 
-import java.io.Serializable;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+
+import java.io.Serializable;
+
 /**
  * @ClassName MyPermissionEvaluator
  * @Auther: wangz
@@ -14,11 +16,18 @@ import org.springframework.security.core.GrantedAuthority;
 @Configuration
 public class MyPermissionEvaluator implements PermissionEvaluator {
 
+    /**
+     * @param authentication
+     * @param targetDomainObject
+     * @param permission
+     * @return
+     */
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         boolean accessable = false;
-        if(authentication.getPrincipal().toString().compareToIgnoreCase("anonymousUser") != 0){
-            String privilege = targetDomainObject + "-" + permission;
+        if(authentication.getName().compareToIgnoreCase("anonymousUser") != 0){
+            //e.g 注解配置 targetDomainObject:permission = cpMenu:view
+            String privilege = targetDomainObject + ":" + permission;
             for(GrantedAuthority authority : authentication.getAuthorities()){
                 if(privilege.equalsIgnoreCase(authority.getAuthority())){
                     accessable = true;
@@ -27,13 +36,11 @@ public class MyPermissionEvaluator implements PermissionEvaluator {
             }
             return accessable;
         }
-
         return accessable;
     }
 
     @Override
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
-        // TODO Auto-generated method stub
         return false;
     }
 
