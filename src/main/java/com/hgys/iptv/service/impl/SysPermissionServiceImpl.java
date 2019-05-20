@@ -1,7 +1,6 @@
 package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.model.Permission;
-import com.hgys.iptv.model.bean.MenuTree;
 import com.hgys.iptv.model.dto.SysPermissionDTO;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.SysPermissionService;
@@ -75,7 +74,12 @@ public class SysPermissionServiceImpl extends SysServiceImpl implements SysPermi
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO deletePermissionById(Integer id) {
-        permissionRepository.deleteById(id);
+        try {
+            permissionRepository.deleteById(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultVOUtil.error("1","新增权限异常！");
+        }
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
@@ -91,7 +95,4 @@ public class SysPermissionServiceImpl extends SysServiceImpl implements SysPermi
         return ResultVOUtil.error("1","所查询列表不存在!");
     }
 
-    public List<MenuTree> loadTree(){
-        return null;
-    }
 }
