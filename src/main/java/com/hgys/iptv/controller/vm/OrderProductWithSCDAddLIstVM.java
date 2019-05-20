@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Column;
 import java.sql.Timestamp;
+import java.util.List;
 
 @ApiModel("结算类型-产品级新增VM(单纬度维度,多维度关系)")
 public class OrderProductWithSCDAddLIstVM {
@@ -29,6 +30,12 @@ public class OrderProductWithSCDAddLIstVM {
 
    @ApiModelProperty("创建时间")
     private Timestamp createtime;
+
+
+    @ApiModelProperty("产品下的CP集合")
+    List<ProductCPListVM> list;
+
+
 
    public Integer getId() {
         return id;
