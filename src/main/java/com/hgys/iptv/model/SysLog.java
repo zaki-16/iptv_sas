@@ -25,6 +25,9 @@ public class SysLog implements Serializable {
     private String loginName;
     //     * 真实姓名
     private String realName;
+
+    private String ip;
+
     //     * 类型:登录 or 注销
     private String type;
     //     * 结果

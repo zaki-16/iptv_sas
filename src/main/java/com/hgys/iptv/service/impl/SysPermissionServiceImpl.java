@@ -49,7 +49,7 @@ public class SysPermissionServiceImpl extends SysServiceImpl implements SysPermi
         try {
             Permission permission = new Permission();
             // 状态0:启用，1：禁用--默认新增时就启用
-            if(sysPermissionDTO.getStatus()!=1)
+            if(sysPermissionDTO.getStatus()==null || sysPermissionDTO.getStatus()!=1)
                 permission.setStatus(0);
             BeanUtils.copyProperties(sysPermissionDTO,permission);
             permission.setCreatedTime(new Timestamp(System.currentTimeMillis()));

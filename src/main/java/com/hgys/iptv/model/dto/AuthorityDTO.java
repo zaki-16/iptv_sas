@@ -12,7 +12,7 @@ import lombok.Data;
 public class AuthorityDTO {
     private Integer id;
 
-    private String name;// name = menuName+":"+permName;
+//    private String name;// name = menuName+":"+permName;
 
     //菜单 id
     private Integer menuId;
