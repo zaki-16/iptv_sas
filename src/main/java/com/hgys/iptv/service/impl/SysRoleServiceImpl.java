@@ -52,7 +52,7 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
         try {
             Role role = new Role();
             // 状态0:启用，1：禁用--默认新增时就启用
-            if(sysRoleDTO.getStatus()!=1)
+            if(sysRoleDTO.getStatus()==null || sysRoleDTO.getStatus()!=1)
                 role.setStatus(0);
             BeanUtils.copyProperties(sysRoleDTO,role);
             role.setCreatedTime(new Timestamp(System.currentTimeMillis()));

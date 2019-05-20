@@ -21,16 +21,16 @@ import java.util.List;
 @Service
 public class AuthorityServiceImpl extends SysServiceImpl implements AuthorityService {
 
-    public ResultVO findByName(String name) {
-        return ResultVOUtil.success(authorityRepository.findByName(name));
-    }
+//    public ResultVO findByName(String name) {
+//        return ResultVOUtil.success(authorityRepository.findByName(name));
+//    }
 
     @Transactional(rollbackFor = Exception.class)
     public ResultVO addAuthority(AuthorityDTO authorityDTO) {
         try{
             Authority authority = new Authority();
             BeanUtils.copyProperties(authorityDTO,authority);
-            authority.setName(authorityDTO.getMenuName()+":"+authorityDTO.getPermName());
+//            authority.setName(authorityDTO.getMenuName()+":"+authorityDTO.getPermName());
             // 状态0:启用，1：禁用--默认新增时就启用
             if(authorityDTO.getStatus()!=1)
                 authority.setStatus(0);

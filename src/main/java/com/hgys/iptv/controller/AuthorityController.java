@@ -3,6 +3,7 @@ package com.hgys.iptv.controller;
 import com.hgys.iptv.model.dto.AuthorityDTO;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.impl.AuthorityServiceImpl;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/auth")
+@Api(value = "AuthorityController",tags = "菜单级别授权管理Api接口")
 public class AuthorityController {
 
     @Autowired
@@ -32,11 +34,11 @@ public class AuthorityController {
         return authorityService.addAuthority(authorityDTO);
     }
 
-    @GetMapping("/findByAuthorityName")
-    @ResponseStatus(HttpStatus.OK)
-    public ResultVO findByAuthorityName(String name) {
-        return authorityService.findByName(name);
-    }
+//    @GetMapping("/findByAuthorityName")
+//    @ResponseStatus(HttpStatus.OK)
+//    public ResultVO findByAuthorityName(String name) {
+//        return authorityService.findByName(name);
+//    }
 
     @PostMapping("/updateAuthority")
     @ResponseStatus(HttpStatus.OK)

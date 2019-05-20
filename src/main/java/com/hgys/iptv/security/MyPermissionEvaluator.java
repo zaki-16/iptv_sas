@@ -1,13 +1,10 @@
 package com.hgys.iptv.security;
 
-import com.hgys.iptv.model.bean.UserSessionInfo;
-import com.hgys.iptv.util.ReqAndRespHolder;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.servlet.http.HttpSession;
 import java.io.Serializable;
 
 /**
@@ -19,7 +16,6 @@ import java.io.Serializable;
 @Configuration
 public class MyPermissionEvaluator implements PermissionEvaluator {
 
-
     /**
      * @param authentication
      * @param targetDomainObject
@@ -29,15 +25,10 @@ public class MyPermissionEvaluator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         boolean accessable = false;
-        HttpSession session = ReqAndRespHolder.getSession();
-        UserSessionInfo info = (UserSessionInfo) session.getAttribute("CURRENT_USER");
-        //获取该用户权限
-        String username = "anonymousUser";
-        if(info!=null) username = info.getLoginName();//==user.username
-        if(username.compareToIgnoreCase("anonymousUser") != 0){
+        if(authentication.getName().compareToIgnoreCase("anonymousUser") != 0){
             //e.g 注解配置 targetDomainObject:permission = cpMenu:view
             String privilege = targetDomainObject + ":" + permission;
-            for(GrantedAuthority authority : info.getAuthorities()){
+            for(GrantedAuthority authority : authentication.getAuthorities()){
                 if(privilege.equalsIgnoreCase(authority.getAuthority())){
                     accessable = true;
                     break;
@@ -50,7 +41,6 @@ public class MyPermissionEvaluator implements PermissionEvaluator {
 
     @Override
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
-        // TODO Auto-generated method stub
         return false;
     }
 

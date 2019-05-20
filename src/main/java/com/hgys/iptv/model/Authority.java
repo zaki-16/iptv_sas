@@ -22,7 +22,7 @@ public class Authority {
     @Column(name = "id", unique = true, nullable = false, length = 11)
     private Integer id;
 
-    private String name;// name = menuName+":"+permName;
+//    private String name;// name = menuName+":"+permName;
     //菜单 id
     private Integer menuId;
     //菜单 名称
