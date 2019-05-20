@@ -22,4 +22,36 @@ public class OrderBusinessComparisonBusinessAddVM {
 
     @ApiModelProperty("cp信息集合")
     private List<OrderBusinessComparisonAddListVM> list;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getBusinessCode() {
+        return businessCode;
+    }
+
+    public void setBusinessCode(String businessCode) {
+        this.businessCode = businessCode;
+    }
+
+    public String getBusinessName() {
+        return businessName;
+    }
+
+    public void setBusinessName(String businessName) {
+        this.businessName = businessName;
+    }
+
+    public List<OrderBusinessComparisonAddListVM> getList() {
+        return list;
+    }
+
+    public void setList(List<OrderBusinessComparisonAddListVM> list) {
+        this.list = list;
+    }
 }

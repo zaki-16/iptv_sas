@@ -70,4 +70,132 @@ public class SettleMetaResource implements Serializable {
 
     /**结算消息简要*/
     private String msg;
+
+    public String getSettleName() {
+        return settleName;
+    }
+
+    public void setSettleName(String settleName) {
+        this.settleName = settleName;
+    }
+
+    public String getSettleCode() {
+        return settleCode;
+    }
+
+    public void setSettleCode(String settleCode) {
+        this.settleCode = settleCode;
+    }
+
+    public Integer getSettleType() {
+        return settleType;
+    }
+
+    public void setSettleType(Integer settleType) {
+        this.settleType = settleType;
+    }
+
+    public Integer getSettleModeType() {
+        return settleModeType;
+    }
+
+    public void setSettleModeType(Integer settleModeType) {
+        this.settleModeType = settleModeType;
+    }
+
+    public String getSettleModeName() {
+        return settleModeName;
+    }
+
+    public void setSettleModeName(String settleModeName) {
+        this.settleModeName = settleModeName;
+    }
+
+    public String getSettleModeCode() {
+        return settleModeCode;
+    }
+
+    public void setSettleModeCode(String settleModeCode) {
+        this.settleModeCode = settleModeCode;
+    }
+
+    public String getCpName() {
+        return cpName;
+    }
+
+    public void setCpName(String cpName) {
+        this.cpName = cpName;
+    }
+
+    public String getCpCode() {
+        return cpCode;
+    }
+
+    public void setCpCode(String cpCode) {
+        this.cpCode = cpCode;
+    }
+
+    public String getSettleAccount() {
+        return settleAccount;
+    }
+
+    public void setSettleAccount(String settleAccount) {
+        this.settleAccount = settleAccount;
+    }
+
+    public Timestamp getSettleTime() {
+        return settleTime;
+    }
+
+    public void setSettleTime(Timestamp settleTime) {
+        this.settleTime = settleTime;
+    }
+
+    public String getSettleCycle() {
+        return settleCycle;
+    }
+
+    public void setSettleCycle(String settleCycle) {
+        this.settleCycle = settleCycle;
+    }
+
+    public String getBizName() {
+        return bizName;
+    }
+
+    public void setBizName(String bizName) {
+        this.bizName = bizName;
+    }
+
+    public String getBizCode() {
+        return bizCode;
+    }
+
+    public void setBizCode(String bizCode) {
+        this.bizCode = bizCode;
+    }
+
+    public String getProdName() {
+        return prodName;
+    }
+
+    public void setProdName(String prodName) {
+        this.prodName = prodName;
+    }
+
+    public String getProdCode() {
+        return prodCode;
+    }
+
+    public void setProdCode(String prodCode) {
+        this.prodCode = prodCode;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 }

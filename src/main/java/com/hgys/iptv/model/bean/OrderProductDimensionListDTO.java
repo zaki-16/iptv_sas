@@ -8,7 +8,6 @@ import org.apache.poi.hssf.util.HSSFColor;
 import java.math.BigDecimal;
 
 @ExcelSheet(name = "产品级多维度结算", headColor = HSSFColor.HSSFColorPredefined.LIGHT_GREEN)
-@Data
 public class OrderProductDimensionListDTO {
     /**
      * CP编码
@@ -53,4 +52,68 @@ public class OrderProductDimensionListDTO {
      */
     @ExcelField(name = "结算金额（单位：元）")
     private BigDecimal money;
+
+    public String getCpcode() {
+        return cpcode;
+    }
+
+    public void setCpcode(String cpcode) {
+        this.cpcode = cpcode;
+    }
+
+    public String getCpname() {
+        return cpname;
+    }
+
+    public void setCpname(String cpname) {
+        this.cpname = cpname;
+    }
+
+    public String getPname() {
+        return pname;
+    }
+
+    public void setPname(String pname) {
+        this.pname = pname;
+    }
+
+    public String getPcode() {
+        return pcode;
+    }
+
+    public void setPcode(String pcode) {
+        this.pcode = pcode;
+    }
+
+    public String getDimensionACode() {
+        return dimensionACode;
+    }
+
+    public void setDimensionACode(String dimensionACode) {
+        this.dimensionACode = dimensionACode;
+    }
+
+    public String getDimensionBCode() {
+        return dimensionBCode;
+    }
+
+    public void setDimensionBCode(String dimensionBCode) {
+        this.dimensionBCode = dimensionBCode;
+    }
+
+    public String getDimensionCCode() {
+        return dimensionCCode;
+    }
+
+    public void setDimensionCCode(String dimensionCCode) {
+        this.dimensionCCode = dimensionCCode;
+    }
+
+    public BigDecimal getMoney() {
+        return money;
+    }
+
+    public void setMoney(BigDecimal money) {
+        this.money = money;
+    }
 }

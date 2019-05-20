@@ -42,4 +42,51 @@ public class OrderProductDimensionDTO {
     @ExcelField(name = "结算金额（单位：元）")
     private BigDecimal money;
 
+    public String getCpcode() {
+        return cpcode;
+    }
+
+    public void setCpcode(String cpcode) {
+        this.cpcode = cpcode;
+    }
+
+    public String getCpname() {
+        return cpname;
+    }
+
+    public void setCpname(String cpname) {
+        this.cpname = cpname;
+    }
+
+    public String getPname() {
+        return pname;
+    }
+
+    public void setPname(String pname) {
+        this.pname = pname;
+    }
+
+    public String getPcode() {
+        return pcode;
+    }
+
+    public void setPcode(String pcode) {
+        this.pcode = pcode;
+    }
+
+    public String getDimensionCode() {
+        return dimensionCode;
+    }
+
+    public void setDimensionCode(String dimensionCode) {
+        this.dimensionCode = dimensionCode;
+    }
+
+    public BigDecimal getMoney() {
+        return money;
+    }
+
+    public void setMoney(BigDecimal money) {
+        this.money = money;
+    }
 }

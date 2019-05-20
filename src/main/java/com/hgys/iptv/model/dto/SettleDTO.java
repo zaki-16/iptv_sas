@@ -1,6 +1,5 @@
 package com.hgys.iptv.model.dto;
 
-import lombok.Data;
 
 /**
  * 根据(结算类型+结算方式+待结算总金额)->查已有的结算规则表（展示规则名称+规则编码）：单选
@@ -13,7 +12,6 @@ import lombok.Data;
  * @Date: 2019/5/14 23:14
  * @Description: TODO
  */
-@Data
 public class SettleDTO {
     /**
      * 结算类型:
@@ -37,5 +35,35 @@ public class SettleDTO {
     /**业务总收入*/
     private String grossIncome;
 
+    public Integer getSettleType() {
+        return settleType;
+    }
 
+    public void setSettleType(Integer settleType) {
+        this.settleType = settleType;
+    }
+
+    public Integer getSettleModeType() {
+        return settleModeType;
+    }
+
+    public void setSettleModeType(Integer settleModeType) {
+        this.settleModeType = settleModeType;
+    }
+
+    public String getSettleRuleCode() {
+        return settleRuleCode;
+    }
+
+    public void setSettleRuleCode(String settleRuleCode) {
+        this.settleRuleCode = settleRuleCode;
+    }
+
+    public String getGrossIncome() {
+        return grossIncome;
+    }
+
+    public void setGrossIncome(String grossIncome) {
+        this.grossIncome = grossIncome;
+    }
 }

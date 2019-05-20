@@ -72,7 +72,7 @@ public class Logger {
      * @param operResult
      * @return
      */
-    public OperationLog log(String loginName,String realName,String operObj,String operType,String operResult){
+    public OperationLog log(String loginName, String realName, String operObj, String operType, String operResult){
         OperationLog operationLog = new OperationLog();
         operationLog.setLoginName(loginName);
         operationLog.setRealName(realName);

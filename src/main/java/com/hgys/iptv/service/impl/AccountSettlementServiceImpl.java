@@ -11,7 +11,6 @@ import com.hgys.iptv.model.QOrderBusinessComparison;
 import com.hgys.iptv.model.QOrderCp;
 import com.hgys.iptv.model.QOrderProductWithSCD;
 import com.hgys.iptv.model.QProduct;
-import com.hgys.iptv.model.QSettlement;
 import com.hgys.iptv.model.QSettlementBusiness;
 import com.hgys.iptv.model.QSettlementMoney;
 import com.hgys.iptv.model.QSettlementOrder;

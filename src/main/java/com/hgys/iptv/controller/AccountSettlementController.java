@@ -42,7 +42,7 @@ public class AccountSettlementController {
     @Autowired
     private OrderProductRepository orderProductRepository;
 
-    @RequestMapping(value = "/accountSettlement", method = RequestMethod.POST, headers = "content-type=multipart/form-data")
+    @PostMapping(value = "/accountSettlement")
     @ApiOperation(value = "新增分配结算",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
     public ResultVO<?> addAccountSettlement(@ApiParam(value = "新增分配结算VM") @RequestBody AccountSettlementAddVM vm){

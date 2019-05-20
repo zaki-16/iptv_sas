@@ -9,7 +9,6 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import java.math.BigDecimal;
 
 @ExcelSheet(name = "订购量结算", headColor = HSSFColor.HSSFColorPredefined.LIGHT_GREEN)
-@Data
 public class CpOrderCpExcelDTO {
     @ExcelField(name = "Cp编码")
     private String cpcode;
@@ -19,4 +18,28 @@ public class CpOrderCpExcelDTO {
 
     @ExcelField(name = "订购量")
     private BigDecimal quantity;
+
+    public String getCpcode() {
+        return cpcode;
+    }
+
+    public void setCpcode(String cpcode) {
+        this.cpcode = cpcode;
+    }
+
+    public String getCpname() {
+        return cpname;
+    }
+
+    public void setCpname(String cpname) {
+        this.cpname = cpname;
+    }
+
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 }

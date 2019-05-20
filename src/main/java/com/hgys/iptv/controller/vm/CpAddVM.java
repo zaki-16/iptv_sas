@@ -53,5 +53,83 @@ public class CpAddVM {
     @ApiModelProperty(value = "cp关联的业务集合id字符串")//dataType = "List"
     private String bids;
 
+    public Integer getId() {
+        return id;
+    }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCpAbbr() {
+        return cpAbbr;
+    }
+
+    public void setCpAbbr(String cpAbbr) {
+        this.cpAbbr = cpAbbr;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getContactNm() {
+        return contactNm;
+    }
+
+    public void setContactNm(String contactNm) {
+        this.contactNm = contactNm;
+    }
+
+    public String getContactTel() {
+        return contactTel;
+    }
+
+    public void setContactTel(String contactTel) {
+        this.contactTel = contactTel;
+    }
+
+    public String getContactMail() {
+        return contactMail;
+    }
+
+    public void setContactMail(String contactMail) {
+        this.contactMail = contactMail;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getPids() {
+        return pids;
+    }
+
+    public void setPids(String pids) {
+        this.pids = pids;
+    }
+
+    public String getBids() {
+        return bids;
+    }
+
+    public void setBids(String bids) {
+        this.bids = bids;
+    }
 }

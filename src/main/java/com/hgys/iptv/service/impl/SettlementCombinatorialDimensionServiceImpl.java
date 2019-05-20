@@ -10,6 +10,7 @@ import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.SettlementCombinatorialDimensionFromRepository;
 import com.hgys.iptv.repository.SettlementCombinatorialDimensionMasterRepository;
+import com.hgys.iptv.repository.SettlementDimensionRepository;
 import com.hgys.iptv.service.SettlementCombinatorialDimensionService;
 import com.hgys.iptv.util.CodeUtil;
 import com.hgys.iptv.util.ResultVOUtil;
@@ -41,6 +42,9 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
 
     @Autowired
     private SettlementCombinatorialDimensionControllerAssemlber settlementCombinatorialDimensionControllerAssemlber;
+
+    @Autowired
+    private SettlementDimensionRepository settlementDimensionRepository;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -84,7 +88,9 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
                 SettlementCombinatorialDimensionFrom from = new SettlementCombinatorialDimensionFrom();
                 from.setMaster_code(code);
                 from.setDim_code(s.getDim_code());
-                from.setDim_name(s.getDim_name());
+                //查询单维度名称
+                String name = settlementDimensionRepository.findsdCodes(s.getDim_code().trim());
+                from.setDim_name(StringUtils.trimToEmpty(name));
                 from.setWeight(s.getWeight());
                 from.setCreate_time(new Timestamp(System.currentTimeMillis()));
                 from.setIsdelete(0);

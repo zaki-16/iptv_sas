@@ -12,7 +12,6 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="sys_role_permission")
-@Data
 public class SysRolePermission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,4 +21,28 @@ public class SysRolePermission {
     private Integer roleId;
     @Column(name = "permission_id",nullable = false, length = 11)
     private Integer permissionId;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
+    }
+
+    public Integer getPermissionId() {
+        return permissionId;
+    }
+
+    public void setPermissionId(Integer permissionId) {
+        this.permissionId = permissionId;
+    }
 }
