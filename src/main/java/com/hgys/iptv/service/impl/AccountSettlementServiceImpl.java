@@ -38,6 +38,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -406,6 +408,12 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
         );
         AccountSettlementAddVM vm = new AccountSettlementAddVM();
         BeanUtils.copyProperties(comparison, vm);
+        Timestamp startTime=  comparison.getSetStartTime();
+        Timestamp endTime=  comparison.getSetEndTime();
+        String strn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(startTime);
+        String strns = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(endTime);
+        vm.setStartTime(strn);
+        vm.setEndTime(strns);
         if (1 == vm.getSet_type()) {   //1:订购量结算源数据
             List<SettlementOrder> settlementOrders = settlementOrderRepository.findByMasterCode(comparison.getCode());
             List<CpOrderCpAddVM> list = new ArrayList<>();
@@ -437,6 +445,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                 List<OrderProductDimensionAddVM> list = new ArrayList<>();
                 for (SettlementProductSingle f : settlementProductSingles) {
                     OrderProductDimensionAddVM s = new OrderProductDimensionAddVM();
+                    vm.getSet_ruleCode();
                     BeanUtils.copyProperties(f, s);
                     list.add(s);
                     vm.setDimensionAddVM(list);

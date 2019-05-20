@@ -53,9 +53,11 @@ public class OrderProductControllerAssemlber {
             for (CpProduct fs : cpProducts) {
                 Integer  cpid=fs.getCpid();
                 String cpname =cpRepository.findByMastercpname(cpid);
+                String cpcode =cpRepository.findByMastercpcode(cpid);
                 OrderProductWithSettlementfindVM.OrderProductWithSCDAddLIstVMs.OrderProductCPWithSCDAddLIstVMs ss = new OrderProductWithSettlementfindVM.OrderProductWithSCDAddLIstVMs.OrderProductCPWithSCDAddLIstVMs();
                 BeanUtils.copyProperties(fs, ss);
                 ss.setCpname(cpname);
+                ss.setCpcode(cpcode);
                 list.add(ss);
                 s.setListcp(list);
             }

@@ -59,6 +59,9 @@ public interface CpRepository extends JpaRepository<Cp,Integer>, JpaSpecificatio
     String findByMastercpname(Integer code);
 
 
+    @Query(value = "select o.code from Cp o where o.id = ?1")
+    String findByMastercpcode(Integer code);
+
     List<Cp> findByStatusAndIsdelete(int status, int Isdelete);
 
 
