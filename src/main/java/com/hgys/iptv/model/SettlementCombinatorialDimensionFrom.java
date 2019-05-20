@@ -46,7 +46,7 @@ public class SettlementCombinatorialDimensionFrom implements java.io.Serializabl
     private String dim_name;
 
     /** 权重 */
-    @Column(name = "weight", nullable = true, length = 10)
+    @Column(name = "weight", nullable = true, length = 11)
     private Integer weight;
 
     /** 逻辑删除(0:否;1:是) */
@@ -133,21 +133,10 @@ public class SettlementCombinatorialDimensionFrom implements java.io.Serializabl
         this.dim_name = dim_name;
     }
 
-    /**
-     * 获取权重
-     * 
-     * @return 权重
-     */
     public Integer getWeight() {
-        return this.weight;
+        return weight;
     }
 
-    /**
-     * 设置权重
-     * 
-     * @param weight
-     *          权重
-     */
     public void setWeight(Integer weight) {
         this.weight = weight;
     }

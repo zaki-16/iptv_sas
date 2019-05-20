@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -424,6 +425,8 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                 CpOrderCpAddVM s = new CpOrderCpAddVM();
                 BeanUtils.copyProperties(f, s);
                 String cpname = cpRepository.findByMasterCodes(f.getCpcode());
+                BigDecimal ordermoney = settlementOrderRepository.findByMastermoney(vm.getCode());
+                vm.setOrderMoney(ordermoney);
                 s.setCpname(cpname);
                 list.add(s);
                 vm.setCpAddVMS(list);

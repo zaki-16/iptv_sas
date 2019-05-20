@@ -301,7 +301,7 @@ public class OrderProductWithSettlementfindVM implements Serializable {
         private String dim_name;
 
         @ApiModelProperty("权重")
-        private String weight;
+        private Integer weight;
 
         public Integer getId() {
             return id;
@@ -327,12 +327,12 @@ public class OrderProductWithSettlementfindVM implements Serializable {
             this.dim_name = dim_name;
         }
 
-        public String getWeight() {
-            return weight;
+        public void setWeight(Integer weight) {
+            this.weight = weight;
         }
 
-        public void setWeight(String weight) {
-            this.weight = weight;
+        public Integer getWeight() {
+            return weight;
         }
     }
 

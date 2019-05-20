@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -17,5 +18,14 @@ public interface SettlementOrderRepository extends JpaRepository<SettlementOrder
     @Modifying
     @Query(value = "delete from SettlementOrder where masterCode = ?1")
     void deleteByMasterCode(String masterCode);
+
+
+    /**
+     * 通过结算组合维度编码查询
+     * @param Code
+     * @return
+     */
+    @Query(value = "select o.orderMoney from SettlementOrder o where o.masterCode= ?1")
+    BigDecimal findByMastermoney(String Code);
 
 }
