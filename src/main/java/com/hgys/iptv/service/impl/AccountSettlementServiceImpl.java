@@ -153,7 +153,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             }else if (3 == vm.getSet_type()){
                 //3、新增产品级结算结算源数据
                 //单维度
-                if (!vm.getDimensionAddVM().isEmpty()){
+                if (null != vm.getDimensionAddVM() && !vm.getDimensionAddVM().isEmpty()){
                     List<OrderProductDimensionAddVM> dimensionAddVM = vm.getDimensionAddVM();
                     for (OrderProductDimensionAddVM addVM : dimensionAddVM){
                         SettlementProductSingle single = new SettlementProductSingle();
@@ -162,7 +162,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                         single.setMasterCode(code);
                         settlementProductSingleRepository.save(single);
                     }
-                }else if (!vm.getDimensionListAddVMS().isEmpty()){
+                }else if (null != vm.getDimensionListAddVMS() && !vm.getDimensionListAddVMS().isEmpty()){
                     List<OrderProductDimensionListAddVM> listAddVMS = vm.getDimensionListAddVMS();
                     for (OrderProductDimensionListAddVM listAddVM : listAddVMS){
                         SettlementProductMany many = new SettlementProductMany();
