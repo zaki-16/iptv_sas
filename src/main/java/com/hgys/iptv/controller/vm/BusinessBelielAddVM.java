@@ -29,5 +29,37 @@ public class BusinessBelielAddVM {
      * 业务收入
      */
     @ApiModelProperty("业务收入")
-    private BigDecimal businessMoney;
+    private BigDecimal money;
+
+    public String getBusinessName() {
+        return businessName;
+    }
+
+    public String getBusinessCode() {
+        return businessCode;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setBusinessName(String businessName) {
+        this.businessName = businessName;
+    }
+
+    public void setBusinessCode(String businessCode) {
+        this.businessCode = businessCode;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public void setMoney(BigDecimal money) {
+        this.money = money;
+    }
+
+    public BigDecimal getMoney() {
+        return money;
+    }
 }

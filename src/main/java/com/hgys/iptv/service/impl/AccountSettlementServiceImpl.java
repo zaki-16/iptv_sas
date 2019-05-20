@@ -87,6 +87,23 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
     @Autowired
     private SettlementBusinessRepository settlementBusinessRepository;
 
+    @Autowired
+    private OrderBusinessRepository orderBusinessRepository;
+
+
+    @Autowired
+    private OrderCpRepository orderCpRepository;
+
+    @Autowired
+    private OrderBusinessComparisonRepository orderBusinessComparisonRepository;
+
+
+
+
+
+
+
+
     /**
      * 新增分配结算
      *
@@ -395,6 +412,8 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             for (SettlementOrder f : settlementOrders) {
                 CpOrderCpAddVM s = new CpOrderCpAddVM();
                 BeanUtils.copyProperties(f, s);
+                String cpname = cpRepository.findByMasterCodes(f.getCpcode());
+                s.setCpname(cpname);
                 list.add(s);
                 vm.setCpAddVMS(list);
             }
@@ -404,6 +423,10 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             for (SettlementMoney f : settlementMonies) {
                 BusinessBelielAddVM s = new BusinessBelielAddVM();
                 BeanUtils.copyProperties(f, s);
+                String businessCode=vm.getSet_ruleCode();
+                String businessname = orderBusinessRepository.findByMasterCodes(businessCode);
+                s.setBusinessCode(businessCode);
+                s.setBusinessName(businessname);
                 list.add(s);
                 vm.setBelielAddVMS(list);
             }
@@ -434,6 +457,10 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             for (SettlementMoney f : settlementMonies) {
                 BusinessBelielAddVM s = new BusinessBelielAddVM();
                 BeanUtils.copyProperties(f, s);
+                String businessCode=vm.getSet_ruleCode();
+                String businessname = orderCpRepository.findByMasterCodes(businessCode);
+                s.setBusinessCode(businessCode);
+                s.setBusinessName(businessname);
                 list.add(s);
                 vm.setBelielAddVMS(list);
             }
@@ -443,6 +470,10 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             for (SettlementMoney f : settlementMonies) {
                 BusinessBelielAddVM s = new BusinessBelielAddVM();
                 BeanUtils.copyProperties(f, s);
+                String businessCode=vm.getSet_ruleCode();
+                String businessname = orderBusinessComparisonRepository.findByMasterCodes(businessCode);
+                s.setBusinessCode(businessCode);
+                s.setBusinessName(businessname);
                 list.add(s);
                 vm.setBelielAddVMS(list);
             }

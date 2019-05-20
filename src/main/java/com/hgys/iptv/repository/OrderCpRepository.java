@@ -29,4 +29,15 @@ public interface OrderCpRepository extends JpaRepository<OrderCp,Object>, JpaSpe
     Optional<OrderCp> findByCode(String code);
 
     Optional<OrderCp> findByName(String name);
+
+
+    /**
+     * 通过结算组合维度编码查询
+     * @param Code
+     * @return
+     */
+    @Query(value = "select o.name from OrderCp o where o.code = ?1")
+    String findByMasterCodes(String Code);
+
+
 }

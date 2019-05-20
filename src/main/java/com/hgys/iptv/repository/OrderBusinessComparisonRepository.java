@@ -19,4 +19,12 @@ public interface OrderBusinessComparisonRepository extends JpaRepository<OrderBu
     Optional<OrderBusinessComparison> findByCode(String code);
 
     Optional<OrderBusinessComparison> findByName(String name);
+    /**
+     * 通过结算组合维度编码查询
+     * @param Code
+     * @return
+     */
+    @Query(value = "select o.name from OrderBusinessComparison o where o.code = ?1")
+    String findByMasterCodes(String Code);
+
 }

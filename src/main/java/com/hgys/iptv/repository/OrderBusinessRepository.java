@@ -21,6 +21,13 @@ public interface OrderBusinessRepository extends JpaRepository<OrderBusiness,Obj
     @Modifying
     @Query(value = "update OrderBusiness set isdelete = 1 WHERE id = ?1")
     void batchDeleteob(int id);
+    /**
+     * 通过结算组合维度编码查询
+     * @param Code
+     * @return
+     */
+    @Query(value = "select o.name from OrderBusiness o where o.code = ?1")
+    String findByMasterCodes(String Code);
 
 
     /**
