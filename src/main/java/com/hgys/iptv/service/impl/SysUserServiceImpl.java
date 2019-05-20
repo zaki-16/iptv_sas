@@ -49,7 +49,6 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
     //添加用户
     @Override
     @Transactional(rollbackFor = Exception.class)
-//    @PreAuthorize("hasPermission('SAVE', 'UPDATE') or hasRole('ROLE_ADMIN')")
     public ResultVO<?> addUser(SysUserDTO userDTO) {
         if(StringUtils.isBlank(userDTO.getUsername())){
             return ResultVOUtil.error("1","用户名不能为空！");
@@ -105,7 +104,7 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             });
             sysUserRoleRepository.saveAll(relationList);
         }catch (Exception e){
-            logger.log("admin","admin","级联关系新增异常","add","异常");
+            logger.log("admin","admin","新增异常","add","异常");
         }
 
     }

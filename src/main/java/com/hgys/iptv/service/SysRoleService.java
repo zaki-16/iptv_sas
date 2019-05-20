@@ -1,5 +1,6 @@
 package com.hgys.iptv.service;
 
+import com.hgys.iptv.model.Authority;
 import com.hgys.iptv.model.Permission;
 import com.hgys.iptv.model.dto.SysRoleDTO;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -19,4 +20,6 @@ public interface SysRoleService {
     ResultVO findAllRole();
 
     List<Permission> findAllPermissionByRoleId(Integer roleId);
+
+    List<Authority> findAllAuthorityByRoleId(Integer roleId);
 }

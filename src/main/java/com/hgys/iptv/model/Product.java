@@ -27,7 +27,7 @@ public class Product implements Serializable {
     private Timestamp inputTime;
     private Timestamp modifyTime;
     @Column(name = "status", nullable = false, length = 2)
-    private Integer status;//0.禁用 1.启用
+    private Integer status;
     private Integer isdelete;//0：未删除 1：已删除
 
 //    @ManyToMany

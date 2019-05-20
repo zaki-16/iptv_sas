@@ -1,6 +1,6 @@
 package com.hgys.iptv.security;
 
-import com.hgys.iptv.model.Permission;
+import com.hgys.iptv.model.Authority;
 import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.User;
 import com.hgys.iptv.service.SysRoleService;
@@ -28,6 +28,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private SysUserService sysUserService;
     @Autowired
     private SysRoleService sysRoleService;
+
 //    @Autowired
 //    private UserRepository userRepository;
 //    @Autowired
@@ -62,9 +63,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         List<Role> roles = sysUserService.findAllRoleByUserId(user.getId());
         roles.forEach(role->{
             Role byName = (Role)sysRoleService.findByRoleName(role.getName()).getData();
-            List<Permission> permissions = sysRoleService.findAllPermissionByRoleId(byName.getId());
-            permissions.forEach(perm->{
-                authorities.add(new SimpleGrantedAuthority(perm.getName()));
+            List<Authority> auths = sysRoleService.findAllAuthorityByRoleId(byName.getId());
+            auths.forEach(auth->{
+                authorities.add(new SimpleGrantedAuthority(auth.getName()));
             });
         });
     }
