@@ -67,23 +67,25 @@ dependencies {
     //hutool 工具包
     compile 'cn.hutool:hutool-all:4.5.9'
 
-}
+    ext {
+        generatedSourcesDir = file("build/generated-sources/metamodel")
+    }
 
-
-ext {
-    generatedSourcesDir = file("build/generated-sources/metamodel")
-}
-
-sourceSets {
-    main {
-        java {
-            srcDir 'src/main/java'
-            srcDir generatedSourcesDir
+    sourceSets {
+        main {
+            java {
+                srcDir 'src/main/java'
+                srcDir generatedSourcesDir
+            }
+        }
+        test {
+            java { srcDir 'src/main/test' }
         }
     }
-    test {
-        java { srcDir 'src/main/test' }
-    }
+
 }
+
+
+
 
 
