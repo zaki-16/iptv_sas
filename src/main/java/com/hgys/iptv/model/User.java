@@ -38,7 +38,7 @@ public class User implements Serializable, UserDetails {
     @Column(name = "displayName", length = 200)//用户自定义展示名
     private String displayName;
 
-    @Column(name = "realName", length = 200)//用户真是姓名
+    @Column(name = "realName", length = 200)//用户真实姓名
     private String realName;
 
     @Column(name = "password", nullable = false, length = 200)

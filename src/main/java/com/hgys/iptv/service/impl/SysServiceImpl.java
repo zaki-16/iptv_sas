@@ -7,8 +7,6 @@ import com.hgys.iptv.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.annotation.PostConstruct;
-
 /**
  * @ClassName SysServiceImpl
  * @Auther: wangz
@@ -27,7 +25,12 @@ public abstract class SysServiceImpl extends AbstractBaseServiceImpl implements 
     @Autowired
     protected SysRolePermissionRepository sysRolePermissionRepository;//权限-角色中间表
     @Autowired
+    protected  SysRoleAuthorityRepository sysRoleAuthorityRepository;
+    @Autowired
     protected SysUserRoleRepository sysUserRoleRepository;//用户-角色中间表
+    @Autowired
+    protected AuthorityRepository authorityRepository;
+
     /**日志记录实例*/
     @Autowired
     protected Logger logger;
