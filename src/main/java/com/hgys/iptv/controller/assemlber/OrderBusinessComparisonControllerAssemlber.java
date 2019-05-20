@@ -36,7 +36,7 @@ public class OrderBusinessComparisonControllerAssemlber {
             BeanUtils.copyProperties(r,addVM);
 
             //查询业务下Cp
-            List<CpOrderBusinessComparison> byMasterCode = cpOrderBusinessComparisonRepository.findByMasterCode(r.getBusinessCode());
+            List<CpOrderBusinessComparison> byMasterCode = cpOrderBusinessComparisonRepository.findByMasterCode(r.getCode());
             List<OrderBusinessComparisonAddListVM> vms = new ArrayList<>();
             for (CpOrderBusinessComparison f : byMasterCode){
                 OrderBusinessComparisonAddListVM o = new OrderBusinessComparisonAddListVM();
