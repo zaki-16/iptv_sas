@@ -14,6 +14,13 @@ import java.util.List;
 public interface SettlementMoneyRepository extends JpaRepository<SettlementMoney,Object>, JpaSpecificationExecutor<SettlementMoney> {
 
     List<SettlementMoney> findByMasterCode(String masterCode);
+    /**
+     * 通过结算组合维度编码查询
+     * @param Code
+     * @return
+     */
+    @Query(value = "select o.money from SettlementMoney o where o.masterCode= ?1")
+    BigDecimal findByMastermoney(String Code);
 
     @Modifying
     @Query(value = "delete from SettlementMoney where masterCode = ?1")

@@ -432,18 +432,9 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                 vm.setCpAddVMS(list);
             }
         } else if (2 == vm.getSet_type()) {   //2:业务级结算
-            List<SettlementMoney> settlementMonies = settlementMoneyRepository.findByMasterCode(comparison.getCode()); //通过code查询
-            List<BusinessBelielAddVM> list = new ArrayList<>();
-            for (SettlementMoney f : settlementMonies) {
-                BusinessBelielAddVM s = new BusinessBelielAddVM();
-                BeanUtils.copyProperties(f, s);
-                String businessCode=vm.getSet_ruleCode();
-                String businessname = orderBusinessRepository.findByMasterCodes(businessCode);
-                s.setBusinessCode(businessCode);
-                s.setBusinessName(businessname);
-                list.add(s);
-                vm.setBelielAddVMS(list);
-            }
+            BigDecimal money = settlementMoneyRepository.findByMastermoney(comparison.getCode()); //通过code查询
+                vm.setBusinessMoney(money);
+
         } else if (3 == vm.getSet_type()) {   //3:产品级结算
             int mode = orderProductRepository.findBymode(comparison.getSet_ruleCode()); //通过规则code查询属于单维度还是多维度
             if (mode == 1) {//1:按单维度结算
@@ -467,18 +458,8 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                 }
             }
         } else if (4 == vm.getSet_type()) {//4:CP定比例结算
-            List<SettlementMoney> settlementMonies = settlementMoneyRepository.findByMasterCode(comparison.getCode()); //通过code查询
-            List<BusinessBelielAddVM> list = new ArrayList<>();
-            for (SettlementMoney f : settlementMonies) {
-                BusinessBelielAddVM s = new BusinessBelielAddVM();
-                BeanUtils.copyProperties(f, s);
-                String businessCode=vm.getSet_ruleCode();
-                String businessname = orderCpRepository.findByMasterCodes(businessCode);
-                s.setBusinessCode(businessCode);
-                s.setBusinessName(businessname);
-                list.add(s);
-                vm.setBelielAddVMS(list);
-            }
+            BigDecimal money = settlementMoneyRepository.findByMastermoney(comparison.getCode()); //通过code查询
+                vm.setCpAllMoney(money);
         } else if (5 == vm.getSet_type()) { //5:业务定比例结算
             List<SettlementMoney> settlementMonies = settlementMoneyRepository.findByMasterCode(comparison.getCode()); //通过code查询
             List<BusinessBelielAddVM> list = new ArrayList<>();
