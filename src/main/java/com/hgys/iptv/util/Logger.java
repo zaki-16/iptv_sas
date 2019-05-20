@@ -4,6 +4,7 @@ import com.hgys.iptv.model.OperationLog;
 import com.hgys.iptv.model.QOperationLog;
 import com.hgys.iptv.model.QSysLog;
 import com.hgys.iptv.model.SysLog;
+import com.hgys.iptv.model.bean.UserSessionInfo;
 import com.hgys.iptv.repository.OperationLogRepository;
 import com.hgys.iptv.repository.SysLogRepository;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -25,6 +26,10 @@ import java.sql.Timestamp;
  */
 @Component
 public class Logger {
+    /**
+      @Autowired
+      private Logger logger;
+     */
 
     @Autowired
     private OperationLogRepository operationLogRepository;
@@ -36,51 +41,54 @@ public class Logger {
     private JPAQueryFactory queryFactory;
 
     private Logger(){}
-
-    private static class LoggerHolder{
-        private final static Logger INSTANCE= new Logger();
-    }
-    public static Logger getLogger(){
-        return LoggerHolder.INSTANCE;
-    }
+//
+//    private static class LoggerHolder{
+//        private final static Logger INSTANCE= new Logger();
+//    }
+//    public static Logger getLogger(){
+//        return LoggerHolder.INSTANCE;
+//    }
     //-------------------记录系统登录日志
 
     /**
      * 记录登录日志
-     * @param loginName
-     * @param realName
-     * @param type
-     * @param result
-     * @return
      */
-    public SysLog log(String loginName,String realName,String type,String result){
-        SysLog sysLog = new SysLog();
-        sysLog.setLoginName(loginName);
-        sysLog.setRealName(realName);
-        sysLog.setType(type);
-        sysLog.setResult(result);
-        sysLog.setTime(new Timestamp(System.currentTimeMillis()));
-        return sysLogRepository.save(sysLog);
+    public void log(String loginType,String result){
+        try {
+            UserSessionInfo info=UserSessionInfoHolder.getUserSessionInfo();
+
+            SysLog sysLog = new SysLog();
+            sysLog.setLoginName(info.getLoginName());
+            sysLog.setRealName(info.getRealName());
+            sysLog.setType(loginType);
+            sysLog.setResult(result);
+            sysLog.setIp(info.getIp());
+            sysLog.setTime(new Timestamp(System.currentTimeMillis()));
+            sysLogRepository.save(sysLog);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
      * 记录操作日志
-     * @param loginName
-     * @param realName
-     * @param operObj
-     * @param operType
-     * @param operResult
-     * @return
      */
-    public OperationLog log(String loginName, String realName, String operObj, String operType, String operResult){
-        OperationLog operationLog = new OperationLog();
-        operationLog.setLoginName(loginName);
-        operationLog.setRealName(realName);
-        operationLog.setOperObj(operObj);
-        operationLog.setOperType(operType);
-        operationLog.setOperResult(operResult);
-        operationLog.setOperTime(new Timestamp(System.currentTimeMillis()));
-        return operationLogRepository.save(operationLog);
+    public void log(String operObj, String operType,String methodName, String result){
+        try {
+            UserSessionInfo info=UserSessionInfoHolder.getUserSessionInfo();
+
+            OperationLog operationLog = new OperationLog();
+            operationLog.setLoginName(info.getLoginName());
+            operationLog.setRealName(info.getRealName());
+            operationLog.setOperObj(operObj);
+            operationLog.setOperType(operType);
+            operationLog.setMethodName(methodName);
+            operationLog.setResult(result);
+            operationLog.setOperTime(new Timestamp(System.currentTimeMillis()));
+            operationLogRepository.save(operationLog);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

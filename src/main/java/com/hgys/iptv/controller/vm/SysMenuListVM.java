@@ -16,6 +16,7 @@ public class SysMenuListVM {
 
     private Integer id;
     private String name;
+    private String text;
     private String navigateUrl;//
     private String icon;//图标
     private Integer parentId;//父节点
