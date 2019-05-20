@@ -136,7 +136,7 @@ public class OrderCpServiceImpl implements OrderCpService {
         }
     }
 }*/
-            //处理附表数据
+            //处理附表 数据
             for (SmallCPOrderVM s : vos){
                 OrderCpWithCp from = new OrderCpWithCp();
                 String cpname = cpRepository.findByMasterCodes(s.getCpcode());//根据COID查询CP名称
