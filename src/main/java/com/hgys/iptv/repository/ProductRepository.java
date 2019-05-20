@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Repository
@@ -43,6 +44,17 @@ public interface ProductRepository extends JpaRepository<Product,Integer>, JpaSp
      */
     @Query(value = "select o.name from Product o where o.code = ?1")
     String findByMasterCodes(String Code);
+
+
+
+    /**
+     * 通过code查产品的ID
+     * @param Code
+     * @return
+     */
+    @Query(value = "select o.id from Product o where o.code = ?1")
+    Integer findByMasterCodesid(String Code);
+
 
     /**
      * 只查询未删除的产品

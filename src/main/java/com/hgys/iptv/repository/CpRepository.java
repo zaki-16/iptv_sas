@@ -1,6 +1,7 @@
 package com.hgys.iptv.repository;
 
 import com.hgys.iptv.model.Cp;
+import com.hgys.iptv.model.CpProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -54,7 +55,8 @@ public interface CpRepository extends JpaRepository<Cp,Integer>, JpaSpecificatio
     List<Cp> findcplist();
 
 
-
+    @Query(value = "select o.name from Cp o where o.id = ?1")
+    String findByMastercpname(Integer code);
 
 
     List<Cp> findByStatusAndIsdelete(int status, int Isdelete);

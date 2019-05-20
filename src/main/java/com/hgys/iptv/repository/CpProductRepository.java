@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.math.BigInteger;
+import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -41,5 +43,20 @@ public interface CpProductRepository extends JpaRepository<CpProduct,Integer>, J
 
     @Query(value = "SELECT COUNT(1) FROM cp_product WHERE cpid=?1 AND pid=?1 limit 1",nativeQuery = true)
     Integer isExist(Integer id1,Integer id2);
+
+
+    /**
+     * 通过id查询名字
+     * @param Code
+     * @return
+     */
+    @Query(value = "select cpid from cp_product o where pid = ?1  limit 1 ",nativeQuery = true)
+   Integer findByMastercpid(Integer Code);
+
+
+
+    @Query(value = "select o from CpProduct o where o.pid = ?1")
+    List<CpProduct> findByMastercplists(Integer code);
+
 
 }

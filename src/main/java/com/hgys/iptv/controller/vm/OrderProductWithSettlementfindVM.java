@@ -2,6 +2,7 @@ package com.hgys.iptv.controller.vm;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 
 import javax.persistence.Column;
 import java.io.Serializable;
@@ -117,6 +118,13 @@ public class OrderProductWithSettlementfindVM implements Serializable {
             this.createtime = createtime;
         }
     }
+
+
+
+
+
+
+
     @ApiModelProperty(value = "多维度产品集合",dataType = "List")
     private List<OrderProductWithSettlementfindVM.OrderProductWithSCDAddLIstVMs> list;
     public static class OrderProductWithSCDAddLIstVMs {
@@ -140,7 +148,83 @@ public class OrderProductWithSettlementfindVM implements Serializable {
 
         @ApiModelProperty("创建时间")
         private Timestamp createtime;
+        @ApiModelProperty(value = "产品下的CP集合",dataType = "List")
+        private List<OrderProductWithSettlementfindVM.OrderProductWithSCDAddLIstVMs.OrderProductCPWithSCDAddLIstVMs> listcp;
+        public static class OrderProductCPWithSCDAddLIstVMs {
+            @ApiModelProperty("主键")
+            private Integer id;
 
+            /** 产品ID */
+            @Column(name = "pid", nullable = true, length = 11)
+            private Integer pid;
+
+            /** CPID */
+            @Column(name = "cpid", nullable = true, length = 11)
+            private Integer cpid;
+
+            /** cp名称 */
+            @Column(name = "cpname", nullable = true, length = 100)
+            private String cpname;
+
+            /** CPcode */
+            @Column(name = "cpcode", nullable = true, length = 50)
+            private String cpcode;
+
+            @ApiModelProperty("创建时间")
+            private Timestamp createtime;
+
+            public Integer getId() {
+                return id;
+            }
+
+            public void setId(Integer id) {
+                this.id = id;
+            }
+
+            public void setCpname(String cpname) {
+                this.cpname = cpname;
+            }
+
+            public void setCpcode(String cpcode) {
+                this.cpcode = cpcode;
+            }
+
+            public Integer getPid() {
+                return pid;
+            }
+
+            public Integer getCpid() {
+                return cpid;
+            }
+
+            public void setPid(Integer pid) {
+                this.pid = pid;
+            }
+
+            public void setCpid(Integer cpid) {
+                this.cpid = cpid;
+            }
+
+            public String getCpname() {
+                return cpname;
+            }
+
+            public String getCpcode() {
+                return cpcode;
+            }
+
+            public Timestamp getCreatetime() {
+                return createtime;
+            }
+
+            public void setCreatetime(Timestamp createtime) {
+                this.createtime = createtime;
+            }
+
+
+
+
+        }
         public Integer getId() {
             return id;
         }
@@ -179,6 +263,14 @@ public class OrderProductWithSettlementfindVM implements Serializable {
 
         public String getOpname() {
             return opname;
+        }
+
+        public void setListcp(List<OrderProductWithSettlementfindVM.OrderProductWithSCDAddLIstVMs.OrderProductCPWithSCDAddLIstVMs> listcp) {
+            this.listcp = listcp;
+        }
+
+        public List<OrderProductWithSettlementfindVM.OrderProductWithSCDAddLIstVMs.OrderProductCPWithSCDAddLIstVMs> getListcp() {
+            return listcp;
         }
 
         public void setOpcode(String opcode) {
@@ -345,6 +437,16 @@ public class OrderProductWithSettlementfindVM implements Serializable {
 
 
 
+    public List<OrderProductWithSCDAddLIstVMs> getList() {
+        return list;
+    }
+
+
+
+    public void setList(List<OrderProductWithSCDAddLIstVMs> list) {
+        this.list = list;
+    }
+
     public List<SettlementCombinatorialDimensionFrom> getListscd() {
         return listscd;
     }
@@ -357,13 +459,7 @@ public class OrderProductWithSettlementfindVM implements Serializable {
         this.listsd = listsd;
     }
 
-    public List<OrderProductWithSCDAddLIstVMs> getList() {
-        return list;
-    }
 
-    public void setList(List<OrderProductWithSCDAddLIstVMs> list) {
-        this.list = list;
-    }
 
     public void setListscd(List<SettlementCombinatorialDimensionFrom> listscd) {
         this.listscd = listscd;
