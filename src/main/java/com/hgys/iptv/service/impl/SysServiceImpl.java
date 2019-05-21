@@ -23,13 +23,11 @@ public abstract class SysServiceImpl extends AbstractBaseServiceImpl implements 
     @Autowired
     protected PermissionRepository permissionRepository;
     @Autowired
-    protected SysRolePermissionRepository sysRolePermissionRepository;//权限-角色中间表
-    @Autowired
-    protected  SysRoleAuthorityRepository sysRoleAuthorityRepository;
+    protected  SysRoleAuthorityRepository sysRoleAuthorityRepository;//角色-权限中间表
     @Autowired
     protected SysUserRoleRepository sysUserRoleRepository;//用户-角色中间表
     @Autowired
-    protected AuthorityRepository authorityRepository;
+    protected AuthorityRepository authorityRepository;// 权限表
 
     /**日志记录实例*/
     @Autowired

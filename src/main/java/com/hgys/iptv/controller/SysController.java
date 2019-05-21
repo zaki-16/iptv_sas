@@ -7,6 +7,7 @@ import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.SysPermissionService;
 import com.hgys.iptv.service.SysRoleService;
 import com.hgys.iptv.service.SysUserService;
+import com.hgys.iptv.util.ResultVOUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,6 @@ public class SysController {
     --------------------------------用户------------------------------------------
     缺：
     1.按条件：cp、登录名、真实姓名、状态 分页查询用户
-    2.查看用户时，需要查关联的角色
     3.批量启用、停用功能
     4.密码重置
      */
@@ -55,6 +55,18 @@ public class SysController {
         return sysUserService.findByUserName(username);
     }
 
+    /**
+     * 查看用户及关联的角色
+     * @param id
+     * @return
+     */
+    @GetMapping("/findUserById")
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO findUserById(Integer id) {
+        return sysUserService.findUserById(id);
+    }
+
+
     @ApiOperation(value = "添加用户")
     @PostMapping("/addUser")
     @ResponseStatus(HttpStatus.CREATED)
@@ -65,8 +77,6 @@ public class SysController {
 
     @PostMapping("/updateUser")
     @ResponseStatus(HttpStatus.OK)
-
-
     @ApiOperation(value = "更新用户")
     public ResultVO updateUser(@RequestBody SysUserDTO sysUserDTO) {
         return sysUserService.updateUser(sysUserDTO);
@@ -89,11 +99,7 @@ public class SysController {
 
     /*
     --------------------------------角色------------------------------------------
-    缺：
-    1.按条件：角色名称、类型、状态 分页查询
-    2.新增角色时，列出菜单树==一级单单：cp管理--二级菜单：cpXX管理--三级菜单：权限类型
-    获取菜单树及最小菜单关联的权限范围。e.g 权限名==菜单 id1：id2：add
-    角色跟
+   新增角色时，先加载菜单树+权限范围列表。新增操作是向
      */
     @GetMapping("/findAllRole")
     @ApiOperation(value = "查询角色列表",notes = "@return :角色列表")
@@ -117,6 +123,12 @@ public class SysController {
     @ResponseStatus(HttpStatus.OK)
     public ResultVO findByRoleName(String name) {
         return sysRoleService.findByRoleName(name);
+    }
+
+    @GetMapping("/findRoleById")
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO findRoleById(Integer id) {
+        return ResultVOUtil.success(sysRoleService.findAllAuthorityByRoleId(id));
     }
 
     @PostMapping("/updateRole")
