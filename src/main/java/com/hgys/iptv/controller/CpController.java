@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController()
 @RequestMapping("/cp")
-@Api(value = "CpController",tags = "cp管理Api接口")
+@Api(value = "cpManager",tags = "cp管理Api接口")
 public class CpController {
     @Autowired
     private CpService cpService;
@@ -36,6 +37,7 @@ public class CpController {
     @PostMapping("/saveCp")
     @ApiOperation(value = "新增cp",notes = "@return：cp对象")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize(value = "hasPermission('cpManager', 'add')")
     public ResultVO<?> saveCp(
             @ApiParam(value = "cp新增VM")  @RequestBody CpAddVM vo){
         return  cpService.save(vo);
@@ -44,6 +46,7 @@ public class CpController {
     @PostMapping("/UpdateCp")
     @ApiOperation(value = "更新cp",notes = "@return：cp对象")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('cpManager', 'update')")
     public ResultVO<?> updateCp(
             @ApiParam(value = "cp修改VM") @RequestBody CpAddVM vm){
         return cpService.update(vm);
@@ -53,6 +56,7 @@ public class CpController {
     @DeleteMapping("/batchLogicDeleteCp")
     @ApiOperation(value = "批量逻辑删除cp",notes = "@return：true/false")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('cpManager', 'remove')")
     public ResultVO<?> batchLogicDelete(String ids){
         return cpService.batchLogicDelete(ids);
     }
@@ -61,6 +65,7 @@ public class CpController {
     @GetMapping("/findCpById")
     @ApiOperation(value = "按id查询cp",notes = "@return：cp对象")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('cpManager', 'view')")
     public ResultVO<?> findById(
             @ApiParam(value = "id",required = true) @RequestParam("id")Integer id) {
         return cpService.findById(id);
@@ -69,6 +74,7 @@ public class CpController {
     @GetMapping("/findCpByCode")
     @ApiOperation(value = "按code查询cp",notes = "@return：cp对象")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('cpManager', 'view')")
     public ResultVO<?> findByCode(
             @ApiParam(value = "cp编码code",required = true) @RequestParam("code")String code) {
         return cpService.findByCode(code);
@@ -78,6 +84,7 @@ public class CpController {
     @GetMapping("/findAllCp")
     @ApiOperation(value = "查询cp列表",notes = "@return：cp对象列表")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('cpManager', 'view')")
     public ResultVO<?> findAll() {
         return cpService.findAll();
     }
@@ -86,6 +93,7 @@ public class CpController {
     @GetMapping("/findByConditions")
     @ApiOperation(value = "通过条件，分页查询",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('cpManager', 'view')")
     public Page<CpControllerListVM>findByConditions(
             @ApiParam(value = "cp名称") @RequestParam(value = "name",required = false )String name,
             @ApiParam(value = "cp编码") @RequestParam(value = "code",required = false)String code,

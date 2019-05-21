@@ -1,9 +1,10 @@
 package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.controller.vm.SysMenuListVM;
-import com.hgys.iptv.model.*;
+import com.hgys.iptv.model.Permission;
+import com.hgys.iptv.model.SysMenu;
+import com.hgys.iptv.model.SysMenuPermission;
 import com.hgys.iptv.model.dto.SysMenuDTO;
-import com.hgys.iptv.model.dto.SysRoleDTO;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.PermissionRepository;
@@ -18,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
