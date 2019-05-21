@@ -1,15 +1,15 @@
 package com.hgys.iptv.util;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.*;
 
 /**
@@ -23,7 +23,8 @@ public abstract class AbstractBaseServiceImpl {
 
     @PersistenceContext
     protected EntityManager entityManager;
-
+    @Autowired
+    private RepositoryManager repositoryManager;
     /**
      * 自定义条件查询
      *
@@ -31,48 +32,14 @@ public abstract class AbstractBaseServiceImpl {
      * @param map
      * @return
      */
-    public List <Object> findByCriteria(Class clazz, Map<String,Object> map) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Object> query = cb.createQuery((clazz));
-        Root<Object> root = query.from(clazz);
-        query.select(root);
-        List<Predicate> predicates = new ArrayList<>();
-        if(map!=null && map.size()>0){
-            for(Map.Entry<String,Object>entry:map.entrySet()){
-                predicates.add(cb.equal(root.get(entry.getKey()), entry.getValue()));
-            }
-        }
-        //where
-        query.where(predicates.toArray(new Predicate[]{}));
-        TypedQuery<Object> typedQuery = entityManager.createQuery(query);
-        List <Object> content = typedQuery.getResultList();
-        return content;
+    public <T> List <T> findByCriteria(Class<?> clazz, Map<String,Object> map) {
+        return repositoryManager.findByCriteria(clazz,map);
     }
 
-    public Page<Object> findByCriteriaOfPage(Class clazz, Map<String,Object> map, PageBean pageBean) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Object> query = cb.createQuery((clazz));
-        Root<Object> root = query.from(clazz);
-        query.select(root);
-        List<Predicate> predicates = new ArrayList<>();
-        if(map!=null && map.size()>0){
-            for(Map.Entry<String,Object>entry:map.entrySet()){
-                predicates.add(cb.equal(root.get(entry.getKey()), entry.getValue()));
-            }
-        }
-        //where
-        query.where(predicates.toArray(new Predicate[]{}));
-        TypedQuery<Object> typedQuery = entityManager.createQuery(query);
-        List <Object> content = typedQuery.getResultList();
-
-//        CriteriaQuery <Long> countQuery = cb.createQuery(Long.class);
-//        countQuery.select(cb.count(countQuery.from(clazz)));//查数量
-//        countQuery.where(predicates.toArray(new Predicate[]{}));
-//        Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
-        Page page =new PageImpl<Object>(content, PageRequest.of(pageBean.getCurrentPage()-1,pageBean.getPageSize()),Long.valueOf(content.size()));
-        page.getTotalElements();
-        return page;
-    }
+//    public <T> Page<T> findByCriteriaOfPage(Class<?> clazz, Map<String,Object> map, PageBean pageBean) {
+//        List<T> content = findByCriteria(clazz,map);
+//        return new PageImpl<>(content, PageRequest.of(pageBean.getCurrentPage()-1,pageBean.getPageSize()),Long.valueOf(content.size()));
+//    }
 
     /**
      * 使用jpql进行分页查询
@@ -182,19 +149,19 @@ public abstract class AbstractBaseServiceImpl {
 //        }
 //    }
 
-    /**
-     *
-     * @param firstIndex
-     * @param maxResult
-     * @param query
-     */
-    private void setHQueryPage(int firstIndex,int maxResult,Query query){
-        if(firstIndex != -1 && maxResult != -1) {
-            firstIndex = getNumber(firstIndex);
-            maxResult = getNumber(maxResult);
-            query.setFirstResult((firstIndex - 1) * maxResult).setMaxResults(maxResult);
-        }
-    }
+//    /**
+//     *
+//     * @param firstIndex
+//     * @param maxResult
+//     * @param query
+//     */
+//    private void setHQueryPage(int firstIndex,int maxResult,Query query){
+//        if(firstIndex != -1 && maxResult != -1) {
+//            firstIndex = getNumber(firstIndex);
+//            maxResult = getNumber(maxResult);
+//            query.setFirstResult((firstIndex - 1) * maxResult).setMaxResults(maxResult);
+//        }
+//    }
 
     /**
      *
@@ -209,30 +176,30 @@ public abstract class AbstractBaseServiceImpl {
         }
     }
 
-    /**
-     *
-     * @param queryParams
-     * @param query
-     */
-    private void setQueryParameter(Object[] queryParams,Query query) {
-        if(queryParams != null && queryParams.length > 0) {
-            for(int i = 0; i < queryParams.length; ++i) {
-                query.setParameter(i + 1, queryParams[i]);
-            }
-        }
-    }
+//    /**
+//     *
+//     * @param queryParams
+//     * @param query
+//     */
+//    private void setQueryParameter(Object[] queryParams,Query query) {
+//        if(queryParams != null && queryParams.length > 0) {
+//            for(int i = 0; i < queryParams.length; ++i) {
+//                query.setParameter(i + 1, queryParams[i]);
+//            }
+//        }
+//    }
 
-    /**
-     *
-     * @param num
-     * @return
-     */
-    private int getNumber(int num){
-        if(num < 1) {
-            num = 1;
-        }
-        return num;
-    }
+//    /**
+//     *
+//     * @param num
+//     * @return
+//     */
+//    private int getNumber(int num){
+//        if(num < 1) {
+//            num = 1;
+//        }
+//        return num;
+//    }
 
     /**
      *

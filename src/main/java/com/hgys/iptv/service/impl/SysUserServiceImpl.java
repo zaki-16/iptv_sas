@@ -1,5 +1,6 @@
 package com.hgys.iptv.service.impl;
 
+import com.hgys.iptv.controller.vm.SysUserVM;
 import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.SysUserRole;
 import com.hgys.iptv.model.User;
@@ -15,6 +16,7 @@ import com.hgys.iptv.util.UpdateTool;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +48,16 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         return ResultVOUtil.success(byUsername);
     }
 
+    @Override
+    public ResultVO findUserById(Integer id) {
+        SysUserVM sysUserVM = new SysUserVM();
+        User byId = userRepository.findById(id).get();
+        BeanUtils.copyProperties(byId,sysUserVM);
+        List<Role> allById = this.findAllRoleByUserId(id);
+        sysUserVM.setList(allById);
+        return ResultVOUtil.success(sysUserVM);
+    }
+
     //添加用户
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -74,7 +86,7 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 //处理中间表
             handleRelation(userDTO,user_add.getId());
             //记录日志
-            logger.log("addUser", LogTypeEnum.ADD.getType(),"SysUserServiceImpl.addUser", LogResultEnum.SUCCESS.name());
+            logger.log("新增用户", LogTypeEnum.ADD.getType(),"SysUserServiceImpl.addUser", LogResultEnum.SUCCESS.name());
         }catch (Exception e){
             e.printStackTrace();
             logger.log("新增用户",LogTypeEnum.ADD.getType(),"SysUserServiceImpl.addUser",LogResultEnum.EXCEPTION.name());
@@ -202,6 +214,11 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         if(all.size()>0)
             return ResultVOUtil.success(all);
         return ResultVOUtil.error("1","所查询列表不存在!");
+    }
+
+    @Override
+    public Page<User> findAllUserOfPage() {
+        return null;
     }
 
     /**
