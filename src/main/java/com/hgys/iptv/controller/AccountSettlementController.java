@@ -276,7 +276,9 @@ public class AccountSettlementController {
             if (mode == 1){
                 if (vm.getDimensionAddVM().isEmpty()){
                     return ResultVOUtil.error("1","分配结算产品级单维度信息集合不能为空！");
-                }else {
+                }
+            }else if (mode == 2){
+                if (vm.getDimensionListAddVMS().isEmpty()){
                     return ResultVOUtil.error("1","分配结算产品级多维度信息集合不能为空！");
                 }
             }
