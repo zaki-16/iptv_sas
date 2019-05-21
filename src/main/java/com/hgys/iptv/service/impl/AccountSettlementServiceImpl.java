@@ -455,14 +455,14 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             BigDecimal money = settlementMoneyRepository.findByMastermoney(comparison.getCode()); //通过code查询
                 vm.setCpAllMoney(money);
         } else if (5 == vm.getSet_type()) { //5:业务定比例结算
-            List<SettlementMoney> settlementMonies = settlementMoneyRepository.findByMasterCode(comparison.getCode()); //通过code查询
+            List<SettlementBusiness> settlementMonies = settlementBusinessRepository.findByMasterCode(comparison.getCode()); //通过code查询
             List<BusinessBelielAddVM> list = new ArrayList<>();
-            for (SettlementMoney f : settlementMonies) {
+            for (SettlementBusiness f : settlementMonies) {
                 BusinessBelielAddVM s = new BusinessBelielAddVM();
                 BeanUtils.copyProperties(f, s);
-                String businessCode=vm.getSet_ruleCode();
+               String businessCode=vm.getSet_ruleCode();
                 String businessname = orderBusinessComparisonRepository.findByMasterCodes(businessCode);
-                s.setBusinessCode(businessCode);
+                s.setMoney(f.getBusinessMoney());
                 s.setBusinessName(businessname);
                 list.add(s);
                 vm.setBelielAddVMS(list);
