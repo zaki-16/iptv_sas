@@ -82,6 +82,10 @@ public class OrderProductWithSettlementfindVM implements Serializable {
         @Column(name = "code", nullable = true, length = 50)
         private String code;
 
+        /** 维度 */
+        @Column(name = "weight", nullable = true, length = 11)
+        private Integer weight;
+
         @ApiModelProperty("创建时间")
         private Timestamp createtime;
 
@@ -89,6 +93,13 @@ public class OrderProductWithSettlementfindVM implements Serializable {
             return id;
         }
 
+        public Integer getWeight() {
+            return weight;
+        }
+
+        public void setWeight(Integer weight) {
+            this.weight = weight;
+        }
 
         public Timestamp getCreatetime() {
             return createtime;

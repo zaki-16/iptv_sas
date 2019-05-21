@@ -76,6 +76,7 @@ public class OrderProductControllerAssemlber {
                 for (SettlementDimension fs : sd) {
                     OrderProductWithSettlementfindVM.SettlementDimension ss = new OrderProductWithSettlementfindVM.SettlementDimension();
                     BeanUtils.copyProperties(fs, ss);
+                    ss.setWeight(100);
                     listd.add(ss);
                     vm.setListsd(listd);
                 }
