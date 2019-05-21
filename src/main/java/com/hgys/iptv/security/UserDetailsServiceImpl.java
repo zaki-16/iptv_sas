@@ -3,6 +3,7 @@ package com.hgys.iptv.security;
 import com.hgys.iptv.model.Authority;
 import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.User;
+import com.hgys.iptv.repository.RoleRepository;
 import com.hgys.iptv.service.SysRoleService;
 import com.hgys.iptv.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 //    @Autowired
 //    private UserRepository userRepository;
-//    @Autowired
-//    private RoleRepository roleRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 //    @Autowired
 //    private PermissionRepository permissionRepository;
 
@@ -62,8 +63,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public void getAuthorities(User user, Set<GrantedAuthority> authorities) {
         List<Role> roles = sysUserService.findAllRoleByUserId(user.getId());
         roles.forEach(role->{
-            Role byName = (Role)sysRoleService.findByRoleName(role.getName()).getData();
-            List<Authority> auths = sysRoleService.findAllAuthorityByRoleId(byName.getId());
+            Role role_ = roleRepository.findById(role.getId()).get();
+            List<Authority> auths = sysRoleService.findAllAuthorityByRoleId(role_.getId());
             auths.forEach(auth->{
                 authorities.add(new SimpleGrantedAuthority(auth.getMenuName()+":"+auth.getPermName()));
             });

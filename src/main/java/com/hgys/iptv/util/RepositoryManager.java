@@ -34,19 +34,10 @@ public class RepositoryManager {
     @PersistenceContext
     private EntityManager entityManager;
 
-    /**
-     * 对 JpaRepository、JpaSpecificationExecutor的进一步封装
-     * 基本CURD 依然使用jpa 已有方法。
-     * 拓展条件+分页查询
-     * 多表处理等
-     *
-     * 需要继承 BaseRepository
-     */
-
-
+    private RepositoryManager(){}
 
     /**
-     * 根据条件分页查询
+     * 带条件分页查询
      *
      * @param baseRepository
      * @param criteria
@@ -74,28 +65,10 @@ public class RepositoryManager {
         return this.findByCriteriaPage(baseRepository,criteria,pageable);
     }
 
-    /**
-     * 自定义装配内容
-     *
-     * @param baseRepository
-     * @param criteria
-     * @param pageable
-     * @param func
-     * @param <T>
-     * @return
-     */
     public <T> Page<T> findByCriteriaPage(BaseRepository baseRepository,Map<String,Object> criteria, Pageable pageable, Function func) {
         return this.findByCriteriaPage(baseRepository,criteria, pageable).map(func);
     }
 
-
-    /**
-     * 查询所有+分页查询
-     * @param baseRepository
-     * @param pageable
-     * @param <T>
-     * @return
-     */
     public <T> Page<T> findByPage(BaseRepository baseRepository, Pageable pageable) {
         return baseRepository.findAll(pageable);
     }
@@ -111,20 +84,8 @@ public class RepositoryManager {
     }
 
 
-
     /**
-     * 多表查询--根据主表id 查主表+关联的从表信息
-     * 1.先查主表
-     * 2.按主表id查中间表获取所有从表id或中间表对象
-     * 3.按从表 idSet 返回所有从表目标对象
-     * T==自定义返回视图
-     *
-     * 多表新增、修改、删除
-     **/
-
-
-    /**
-     * 自定义条件查询
+     * 按实体类型条件查询
      *
      * @param clazz
      * @param map
@@ -147,13 +108,6 @@ public class RepositoryManager {
         return entityManager.createQuery(query).getResultList();
     }
 
-    /**
-     * 根据实体类型查找
-     *
-     * @param clazz
-     * @param <T>
-     * @return
-     */
     public <T> List <T> find(Class<?> clazz) {
         return findByCriteria(clazz,null);
     }
@@ -189,30 +143,25 @@ public class RepositoryManager {
     }
 
 
+    //============================返回模型视图===================================================================
 
+    //
+    public <E,F>ModelView decorate(BaseRepository repository, Integer id){
+        ModelView modelView = new ModelView<>();
+        E e = (E)repository.findById(id).orElse(null);
+        modelView.setE(e);
 
+        return modelView;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-//    public <E> RepositoryManager.ModelView decorate(BaseRepository repository, RelationProvider relationProvider, Integer id){
-//        ModelView<M,F> modelView = new ModelView<>();
-//        E e = (E)repository.findById(id).orElse(null);
-//        modelView.setM(e);
-//        return modelView;
-//    }
 
     @Getter@Setter
-    private static class ModelView<E,F>{
+    public static class ModelView<E,F>{
         private E e;
         private List<F> list;
+    }
+
+    public static ModelView getModelView(){
+        return new RepositoryManager.ModelView();
     }
 }
