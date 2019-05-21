@@ -97,7 +97,8 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
     @Autowired
     private OrderBusinessComparisonRepository orderBusinessComparisonRepository;
 
-
+    @Autowired
+    private OrderQuantityRepository orderQuantityRepository;
 
 
 
@@ -415,6 +416,8 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
         if (1 == vm.getSet_type()) {   //1:订购量结算源数据
             List<SettlementOrder> settlementOrders = settlementOrderRepository.findByMasterCode(comparison.getCode());
             List<CpOrderCpAddVM> list = new ArrayList<>();
+            String rulename = orderQuantityRepository.findByMastername(vm.getSet_ruleCode());
+            vm.setSet_ruleName(rulename);
             for (SettlementOrder f : settlementOrders) {
                 CpOrderCpAddVM s = new CpOrderCpAddVM();
                 BeanUtils.copyProperties(f, s);
@@ -427,7 +430,9 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             }
         } else if (2 == vm.getSet_type()) {   //2:业务级结算
             BigDecimal money = settlementMoneyRepository.findByMastermoney(comparison.getCode()); //通过code查询
-                vm.setBusinessMoney(money);
+            String rulename = orderBusinessRepository.findByMasterCodes(vm.getSet_ruleCode());
+            vm.setSet_ruleName(rulename);
+            vm.setBusinessMoney(money);
 
         } else if (3 == vm.getSet_type()) {   //3:产品级结算
             int mode = orderProductRepository.findBymode(comparison.getSet_ruleCode()); //通过规则code查询属于单维度还是多维度
@@ -436,7 +441,8 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                 List<OrderProductDimensionAddVM> list = new ArrayList<>();
                 for (SettlementProductSingle f : settlementProductSingles) {
                     OrderProductDimensionAddVM s = new OrderProductDimensionAddVM();
-                    vm.getSet_ruleCode();
+                    String cpname = cpRepository.findByMasterCodes(f.getCpcode());
+                    s.setCpname(cpname);
                     BeanUtils.copyProperties(f, s);
                     list.add(s);
                     vm.setDimensionAddVM(list);
@@ -457,10 +463,12 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
         } else if (5 == vm.getSet_type()) { //5:业务定比例结算
             List<SettlementBusiness> settlementMonies = settlementBusinessRepository.findByMasterCode(comparison.getCode()); //通过code查询
             List<BusinessBelielAddVM> list = new ArrayList<>();
+            String rulename = orderBusinessComparisonRepository.findByMasterCodes(vm.getSet_ruleCode());
+            vm.setSet_ruleName(rulename);
             for (SettlementBusiness f : settlementMonies) {
                 BusinessBelielAddVM s = new BusinessBelielAddVM();
                 BeanUtils.copyProperties(f, s);
-               String businessCode=vm.getSet_ruleCode();
+                String businessCode=vm.getSet_ruleCode();
                 String businessname = orderBusinessComparisonRepository.findByMasterCodes(businessCode);
                 s.setMoney(f.getBusinessMoney());
                 s.setBusinessName(businessname);

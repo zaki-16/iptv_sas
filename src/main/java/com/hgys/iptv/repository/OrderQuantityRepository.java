@@ -48,6 +48,19 @@ import java.util.Optional;
     @Modifying
     @Query(value = "delete from OrderQuantityWithCp where oqcode = ?1")
     void deleteByMasterCode(String oqcode);
+
+
+
+    /**
+     * 通过结算组合维度编码查询
+     * @param Code
+     * @return
+     */
+    @Query(value = "select o.name from OrderQuantity o where o.code = ?1")
+    String findByMastername(String Code);
+
+
+
 }
 
 

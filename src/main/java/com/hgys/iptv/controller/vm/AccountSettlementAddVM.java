@@ -48,6 +48,14 @@ public class AccountSettlementAddVM {
     @ApiModelProperty("结算开始时间(2019-01-01 12:12:12)")
     private String startTime;
 
+    /** 录入时间 */
+    @ApiModelProperty("录入时间")
+    private  Timestamp inputTime;
+
+    /** 修改时间 */
+    @ApiModelProperty("修改时间")
+    private Timestamp modifyTime;
+
     /** 结算结束时间 */
     @ApiModelProperty("结算结束时间(2019-01-01 12:12:12)")
     private String endTime;
@@ -168,8 +176,24 @@ public class AccountSettlementAddVM {
         this.businessMoney = businessMoney;
     }
 
+    public Timestamp getInputTime() {
+        return inputTime;
+    }
+
+    public Timestamp getModifyTime() {
+        return modifyTime;
+    }
+
     public BigDecimal getOrderMoney() {
         return orderMoney;
+    }
+
+    public void setInputTime(Timestamp inputTime) {
+        this.inputTime = inputTime;
+    }
+
+    public void setModifyTime(Timestamp modifyTime) {
+        this.modifyTime = modifyTime;
     }
 
     public void setOrderMoney(BigDecimal orderMoney) {
