@@ -206,6 +206,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                         SettlementBusiness business = new SettlementBusiness();
                         BeanUtils.copyProperties(addVM,business);
                         business.setType(1);
+                        business.setBusinessMoney(addVM.getMoney());
                         business.setMasterCode(code);
                         business.setCreateTime(new Timestamp(System.currentTimeMillis()));
                         settlementBusinessRepository.save(business);
@@ -218,6 +219,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                         business.setType(2);
                         business.setMasterCode(code);
                         business.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                        business.setBusinessMoney(addVM.getMoney());
                         settlementBusinessRepository.save(business);
                     }
                 }
@@ -611,6 +613,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                         business.setType(1);
                         business.setMasterCode(code);
                         business.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                        business.setBusinessMoney(addVM.getMoney());
                         settlementBusinessRepository.save(business);
                     }
                 }else if (2 == comparison.getMode()){
@@ -620,6 +623,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                         BeanUtils.copyProperties(addVM,business);
                         business.setType(2);
                         business.setMasterCode(code);
+                        business.setBusinessMoney(addVM.getMoney());
                         business.setCreateTime(new Timestamp(System.currentTimeMillis()));
                         settlementBusinessRepository.save(business);
                     }
