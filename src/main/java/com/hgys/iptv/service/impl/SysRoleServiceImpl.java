@@ -61,6 +61,7 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
                 role.setStatus(0);
             BeanUtils.copyProperties(sysRoleDTO,role);
             role.setCreatedTime(new Timestamp(System.currentTimeMillis()));
+            role.setIsdelete(0);//删除状态
             Role role_add = roleRepository.save(role);
 //处理中间表
             handleRelation(sysRoleDTO,role_add.getId());

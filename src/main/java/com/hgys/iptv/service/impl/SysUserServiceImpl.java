@@ -82,6 +82,7 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             //加密
             user.setPassword(passwordEncoder.encode(user.getPassword().trim()));
             user.setCreatedTime(new Timestamp(System.currentTimeMillis()));
+            user.setIsdelete(0);//删除状态
             User user_add = userRepository.save(user);
 //处理中间表
             handleRelation(userDTO,user_add.getId());
