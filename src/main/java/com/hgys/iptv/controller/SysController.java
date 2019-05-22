@@ -1,5 +1,7 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.model.Role;
+import com.hgys.iptv.model.User;
 import com.hgys.iptv.model.dto.SysPermissionDTO;
 import com.hgys.iptv.model.dto.SysRoleDTO;
 import com.hgys.iptv.model.dto.SysUserDTO;
@@ -11,6 +13,7 @@ import com.hgys.iptv.util.ResultVOUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,8 +47,8 @@ public class SysController {
     @GetMapping("/findAllUser")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "查询用户列表")
-    public ResultVO findAllUser() {
-        return sysUserService.findAllUser();
+    public Page<User> findAllUser(String username, String realName, Integer status, Integer pageNum, Integer pageSize) {
+        return sysUserService.findAllUserOfPage(username,realName,status,pageNum,pageSize);
     }
 
     @GetMapping("/findByUserName")
@@ -104,8 +107,8 @@ public class SysController {
     @GetMapping("/findAllRole")
     @ApiOperation(value = "查询角色列表",notes = "@return :角色列表")
     @ResponseStatus(HttpStatus.OK)
-    public ResultVO findAllRole() {
-        return sysRoleService.findAllRole();
+    public Page<Role> findAllRole(String name, Integer status, Integer pageNum, Integer pageSize) {
+        return sysRoleService.findAllRoleOfPage(name,status,pageNum,pageSize);
     }
     /**
      * 角色控制
