@@ -6,8 +6,21 @@ import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-@ApiModel(value = "结算文档列表页CP查询VM")
-public class SettlementDocumentCPListVM {
+@ApiModel(value = "结算文档列表页CP查询Excel文档VM")
+public class SettlementDocumentCPListExcelVM {
+
+    @ApiModelProperty("分账结算ID")
+    private Integer masterId;
+
+    @ApiModelProperty("结算账期开始时间")
+    private Timestamp setStartTime;
+
+    @ApiModelProperty("结算账期结束时间")
+    private Timestamp setEndTime;
+
+    @ApiModelProperty("结算状态")
+    private Integer status;
+
 
     @ApiModelProperty("id")
     private Integer id;
@@ -138,5 +151,37 @@ public class SettlementDocumentCPListVM {
 
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getMasterId() {
+        return masterId;
+    }
+
+    public void setMasterId(Integer masterId) {
+        this.masterId = masterId;
+    }
+
+    public Timestamp getSetStartTime() {
+        return setStartTime;
+    }
+
+    public void setSetStartTime(Timestamp setStartTime) {
+        this.setStartTime = setStartTime;
+    }
+
+    public Timestamp getSetEndTime() {
+        return setEndTime;
+    }
+
+    public void setSetEndTime(Timestamp setEndTime) {
+        this.setEndTime = setEndTime;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }
