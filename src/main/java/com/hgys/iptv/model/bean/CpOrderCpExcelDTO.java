@@ -17,7 +17,7 @@ public class CpOrderCpExcelDTO {
     private String cpname;
 
     @ExcelField(name = "订购量")
-    private BigDecimal quantity;
+    private String quantity;
 
     public String getCpcode() {
         return cpcode;
@@ -35,11 +35,11 @@ public class CpOrderCpExcelDTO {
         this.cpname = cpname;
     }
 
-    public BigDecimal getQuantity() {
+    public String getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(BigDecimal quantity) {
+    public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
 }
