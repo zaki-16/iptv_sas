@@ -12,6 +12,7 @@ import com.hgys.iptv.service.SysUserService;
 import com.hgys.iptv.util.ResultVOUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -47,7 +48,11 @@ public class SysController {
     @GetMapping("/findAllUser")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "查询用户列表")
-    public Page<User> findAllUser(String username, String realName, Integer status, Integer pageNum, Integer pageSize) {
+    public Page<User> findAllUser(String username, String realName,
+                                  Integer status,
+                                  @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")Integer pageNum,
+                                  @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")Integer pageSize
+                                  ) {
         return sysUserService.findAllUserOfPage(username,realName,status,pageNum,pageSize);
     }
 
@@ -70,10 +75,14 @@ public class SysController {
     }
 
 
+    /**
+     * 新增用户
+     * @param sysUserDTO
+     * @return
+     */
     @ApiOperation(value = "添加用户")
     @PostMapping("/addUser")
     @ResponseStatus(HttpStatus.CREATED)
-    //    @PreAuthorize("hasPermission('SAVE', 'UPDATE') or hasRole('ROLE_ADMIN')")
     public ResultVO addUser(@RequestBody(required = false) SysUserDTO sysUserDTO) {
         return sysUserService.addUser(sysUserDTO);
     }
@@ -85,10 +94,10 @@ public class SysController {
         return sysUserService.updateUser(sysUserDTO);
     }
 
-    @DeleteMapping("/deleteUserById")
+    @DeleteMapping("/batchLogicDeleteUser")
     @ResponseStatus(HttpStatus.OK)
-    public ResultVO deleteUserById(Integer id) {
-        return sysUserService.deleteUserById(id);
+    public ResultVO batchLogicDeleteUser(String ids) {
+        return sysUserService.batchLogicDelete(ids);
     }
 
     //
@@ -107,7 +116,9 @@ public class SysController {
     @GetMapping("/findAllRole")
     @ApiOperation(value = "查询角色列表",notes = "@return :角色列表")
     @ResponseStatus(HttpStatus.OK)
-    public Page<Role> findAllRole(String name, Integer status, Integer pageNum, Integer pageSize) {
+    public Page<Role> findAllRole(String name, Integer status,
+                                  @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")Integer pageNum,
+                                  @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")Integer pageSize) {
         return sysRoleService.findAllRoleOfPage(name,status,pageNum,pageSize);
     }
     /**
@@ -131,7 +142,7 @@ public class SysController {
     @GetMapping("/findRoleById")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO findRoleById(Integer id) {
-        return ResultVOUtil.success(sysRoleService.findAllAuthorityByRoleId(id));
+        return sysRoleService.findRoleById(id);
     }
 
     @PostMapping("/updateRole")
@@ -140,10 +151,10 @@ public class SysController {
         return sysRoleService.updateRole(sysRoleDTO);
     }
 
-    @DeleteMapping("/deleteRoleById")
+    @DeleteMapping("/batchLogicDeleteRole")
     @ResponseStatus(HttpStatus.OK)
-    public ResultVO deleteRoleById(Integer id) {
-        return sysRoleService.deleteRoleById(id);
+    public ResultVO batchLogicDeleteRole(String ids) {
+        return sysRoleService.batchLogicDelete(ids);
     }
 
     /*

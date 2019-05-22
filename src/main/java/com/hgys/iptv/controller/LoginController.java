@@ -23,6 +23,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.context.support.SecurityWebApplicationContextUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -85,7 +86,6 @@ public class LoginController {
         //获取 user ，记录真实姓名
         User byUserName = (User)sysUserService.findByUserName(userDetails.getUsername()).getData();
         info.setRealName(byUserName.getRealName());
-
         //用户信息存 session
         request.getSession().setAttribute(userDetails.getUsername(),info);
 

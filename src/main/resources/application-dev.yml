@@ -9,7 +9,7 @@ spring:
     username: developer
     password: 1234@Qwer
     #serverTimezone=GMT
-    url: jdbc:mysql://192.168.31.191:5696/iptv_sas?characterEncoding=utf-8&useSSl=false&serverTimezone=GMT
+    url: jdbc:mysql://192.168.31.191:5696/iptv_sas?characterEncoding=utf-8&useSSl=false&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
 

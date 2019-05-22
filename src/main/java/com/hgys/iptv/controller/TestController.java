@@ -1,31 +1,24 @@
 package com.hgys.iptv.controller;
 
-import com.hgys.iptv.model.*;
-import com.hgys.iptv.model.QCp;
-import com.hgys.iptv.model.QCpProduct;
-import com.hgys.iptv.model.QProduct;
+import com.google.common.collect.Maps;
+import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.AuthorityRepository;
 import com.hgys.iptv.repository.RoleRepository;
 import com.hgys.iptv.repository.SysRoleAuthorityRepository;
 import com.hgys.iptv.util.RepositoryManager;
 import com.hgys.iptv.util.ResultVOUtil;
-import com.querydsl.core.QueryResults;
-import com.querydsl.core.Tuple;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * @ClassName TestController
@@ -50,17 +43,20 @@ public class TestController   {
 
     @PostMapping("/myTest")
     public ResultVO myTest(){
-        Role role = roleRepository.findById(1).get();
-        HashSet<Integer> set = new HashSet<>();
-        List<SysRoleAuthority> sysRoleAuthorities = repositoryManager.findByCriteria(SysRoleAuthority.class, "roleId", 2);
-        sysRoleAuthorities.forEach(c->{
-            set.add(c.getAuthId());
-        });
-        List<Authority> authorityList = authorityRepository.findAllById(set);
-        RepositoryManager.ModelView<Role,Authority> modelView = RepositoryManager.getModelView();
-        modelView.setE(role);
-        modelView.setList(authorityList);
-        return ResultVOUtil.success(modelView);
+//        Role role = roleRepository.findById(1).get();
+//        HashSet<Integer> set = new HashSet<>();
+//        List<SysRoleAuthority> sysRoleAuthorities = repositoryManager.findByCriteria(SysRoleAuthority.class, "roleId", 2);
+//        sysRoleAuthorities.forEach(c->{
+//            set.add(c.getAuthId());
+//        });
+        Pageable pageable = PageRequest.of(0,10);
+
+        Page<Role> byPage = repositoryManager.findByPage(roleRepository, pageable);
+        Page<Role> byPage1 = repositoryManager.findByPage(roleRepository, 1,10);
+        HashMap<String, Object> map = Maps.newHashMap();
+
+        Page<Role> byCriteriaPage1 = repositoryManager.findByCriteriaPage(roleRepository, map, pageable);
+        return ResultVOUtil.success(byCriteriaPage1);
     }
 
 }

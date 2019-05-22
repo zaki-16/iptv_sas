@@ -25,6 +25,8 @@ public class QRole extends EntityPathBase<Role> {
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
+    public final NumberPath<Integer> isdelete = createNumber("isdelete", Integer.class);
+
     public final DateTimePath<java.sql.Timestamp> modifyTime = createDateTime("modifyTime", java.sql.Timestamp.class);
 
     public final StringPath name = createString("name");

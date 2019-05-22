@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -36,6 +37,7 @@ public class ProductController {
     @PostMapping("/saveProduct")
     @ApiOperation(value = "新增产品",notes = "@return：产品对象")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize(value = "hasPermission('prodManager', 'add')")
     public ResultVO<?> saveProduct(
             @ApiParam(value = "产品新增VM")  @RequestBody() ProductAddVM vm){
         return productService.save(vm);
@@ -44,6 +46,7 @@ public class ProductController {
     @PostMapping("/UpdateProduct")
     @ApiOperation(value = "更新产品",notes = "@return：产品对象")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('prodManager', 'update')")
     public ResultVO<?> updateProduct(
             @ApiParam(value = "产品修改VM") @RequestBody() ProductAddVM vm){
         return productService.update(vm);
@@ -63,6 +66,7 @@ public class ProductController {
     @DeleteMapping("/batchLogicDeleteProduct")
     @ApiOperation(value = "批量逻辑删除产品",notes = "@return：true/false")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('prodManager', 'remove')")
     public ResultVO<?> batchLogicDelete(String ids){
         return productService.batchLogicDelete(ids);
     }
@@ -71,6 +75,7 @@ public class ProductController {
     @GetMapping("/findProductById")
     @ApiOperation(value = "按id查询产品",notes = "@return：产品对象")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('prodManager', 'view')")
     public ResultVO<?> findById(
             @ApiParam(value = "id",required = true) @RequestParam("id")Integer id) {
         return productService.findById(id);
@@ -88,6 +93,7 @@ public class ProductController {
     @GetMapping("/findAllProduct")
     @ApiOperation(value = "查询产品列表",notes = "@return：产品对象列表")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('prodManager', 'view')")
     public ResultVO<?> findAll() {
         return productService.findAll();
     }
@@ -96,6 +102,7 @@ public class ProductController {
     @GetMapping("/findByConditions")
     @ApiOperation(value = "通过条件，分页查询",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('prodManager', 'view')")
     public Page<ProductVM> findByConditions(
             @ApiParam(value = "产品名称") @RequestParam(value = "name",required = false )String name,
             @ApiParam(value = "产品编码") @RequestParam(value = "code",required = false)String code,

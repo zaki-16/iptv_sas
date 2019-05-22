@@ -208,6 +208,28 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO batchLogicDelete(String ids) {
+        try{
+            List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
+            if(idLists.size()>0){
+                Set<Integer> pidSets = new HashSet<>();
+                idLists.forEach(id->{
+                    pidSets.add(Integer.parseInt(id));
+                });
+                for (Integer id : pidSets){
+                    User u = userRepository.findById(id).get();
+                    userRepository.logicDelete(u.getUsername()+"-remove",id);
+                    //删除关系映射
+                    sysUserRoleRepository.deleteAllByUserId(id);
+                }
+            }
+        }catch (Exception e){
+            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
+    }
 
 
 //    @Override
@@ -222,9 +244,13 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
     public Page<User> findAllUserOfPage(String username,String realName,Integer status,Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
         HashMap<String, Object> map = Maps.newHashMap();
-        map.put("username",username);
-        map.put("realName",realName);
-        map.put("status",status);
+        if(username!=null)
+            map.put("username",username);
+        if(username!=null)
+            map.put("realName",realName);
+        if(status!=null&&status>0)
+            map.put("status",status);
+        map.put("isdelete",0);
         return repositoryManager.findByCriteriaPage(userRepository,map,pageable);
     }
 
