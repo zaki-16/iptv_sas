@@ -55,6 +55,8 @@ public class User implements Serializable, UserDetails {
     @Column(name = "status",length = 2)
     private Integer status;//0:启用，1：禁用
 
+    private Integer isdelete;//0：未删除 1：已删除
+
 //    @ElementCollection(targetClass = SystemUserRole.class, fetch = FetchType.EAGER)
 //    @Enumerated(EnumType.STRING)
     //用户-角色==多对多，维护关系方
