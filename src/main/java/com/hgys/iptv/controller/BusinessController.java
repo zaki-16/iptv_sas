@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -35,6 +36,7 @@ public class BusinessController {
     @PostMapping("/saveBusiness")
     @ApiOperation(value = "新增业务",notes = "@return：业务对象")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize(value = "hasPermission('bizManager', 'add')")
     public ResultVO<?> saveBusiness(
             @ApiParam(value = "业务新增VM")  @RequestBody() BusinessAddVM vm){
         return businessService.save(vm);
@@ -43,6 +45,7 @@ public class BusinessController {
     @PostMapping("/UpdateBusiness")
     @ApiOperation(value = "更新业务",notes = "@return：业务对象")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('bizManager', 'update')")
     public ResultVO<?> updateBusiness(
             @ApiParam(value = "业务修改VM") @RequestBody() BusinessAddVM vm){
         return businessService.update(vm);
@@ -62,6 +65,7 @@ public class BusinessController {
     @DeleteMapping("/batchLogicDeleteBusiness")
     @ApiOperation(value = "批量逻辑删除业务",notes = "@return：true/false")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('bizManager', 'remove')")
     public ResultVO<?> batchLogicDelete(String ids){
         return businessService.batchLogicDelete(ids);
     }
@@ -70,6 +74,7 @@ public class BusinessController {
     @GetMapping("/findBusinessById")
     @ApiOperation(value = "按id查询业务",notes = "@return：业务对象")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('bizManager', 'view')")
     public ResultVO<?> findById(
             @ApiParam(value = "id",required = true) @RequestParam("id")Integer id) {
         return businessService.findById(id);
@@ -87,6 +92,7 @@ public class BusinessController {
     @GetMapping("/findAllBusiness")
     @ApiOperation(value = "查询业务列表",notes = "@return：业务对象列表")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('bizManager', 'view')")
     public ResultVO<?> findAll() {
         return businessService.findAll();
     }
@@ -94,6 +100,7 @@ public class BusinessController {
     @GetMapping("/findByConditions")
     @ApiOperation(value = "通过条件，分页查询",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('bizManager', 'view')")
     public Page<BusinessVM> findByConditions(
             @ApiParam(value = "业务名称") @RequestParam(value = "name",required = false )String name,
             @ApiParam(value = "业务编码") @RequestParam(value = "code",required = false)String code,

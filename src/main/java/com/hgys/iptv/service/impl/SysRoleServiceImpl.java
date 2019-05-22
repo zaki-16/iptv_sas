@@ -153,9 +153,11 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
     public Page<Role> findAllRoleOfPage(String name, Integer status, Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
         HashMap<String, Object> map = Maps.newHashMap();
-        map.put("name",name);
-        map.put("status",status);
-        return repositoryManager.findByCriteriaPage(userRepository,map,pageable);
+        if(name!=null)
+            map.put("name",name);
+        if(status!=null&&status>0)
+            map.put("status",status);
+        return repositoryManager.findByCriteriaPage(roleRepository,map,pageable);
     }
     /**
      *按角色id查关联的所有权限列表

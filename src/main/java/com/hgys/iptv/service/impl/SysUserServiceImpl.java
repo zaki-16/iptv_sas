@@ -222,9 +222,12 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
     public Page<User> findAllUserOfPage(String username,String realName,Integer status,Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
         HashMap<String, Object> map = Maps.newHashMap();
-        map.put("username",username);
-        map.put("realName",realName);
-        map.put("status",status);
+        if(username!=null)
+            map.put("username",username);
+        if(username!=null)
+            map.put("realName",realName);
+        if(status!=null&&status>0)
+            map.put("status",status);
         return repositoryManager.findByCriteriaPage(userRepository,map,pageable);
     }
 
