@@ -25,9 +25,13 @@ public class QUser extends EntityPathBase<User> {
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
+    public final NumberPath<Integer> isdelete = createNumber("isdelete", Integer.class);
+
     public final DateTimePath<java.sql.Timestamp> modifyTime = createDateTime("modifyTime", java.sql.Timestamp.class);
 
     public final StringPath password = createString("password");
+
+    public final NumberPath<Integer> platType = createNumber("platType", Integer.class);
 
     public final StringPath realName = createString("realName");
 

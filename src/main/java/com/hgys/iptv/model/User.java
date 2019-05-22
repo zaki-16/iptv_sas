@@ -1,20 +1,17 @@
 package com.hgys.iptv.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hgys.iptv.model.enums.SystemUserRole;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Collection;
 
 /**
  * @Author: wangzhen
@@ -41,6 +38,9 @@ public class User implements Serializable, UserDetails {
     @Column(name = "realName", length = 200)//用户真实姓名
     private String realName;
 
+    @Column(name = "platType", length = 2)//用户所属平台类型
+    private Integer platType;
+
     @Column(name = "password", nullable = false, length = 200)
     @JsonIgnore
     private String password;
@@ -54,6 +54,8 @@ public class User implements Serializable, UserDetails {
 
     @Column(name = "status",length = 2)
     private Integer status;//0:启用，1：禁用
+
+    private Integer isdelete;//0：未删除 1：已删除
 
 //    @ElementCollection(targetClass = SystemUserRole.class, fetch = FetchType.EAGER)
 //    @Enumerated(EnumType.STRING)

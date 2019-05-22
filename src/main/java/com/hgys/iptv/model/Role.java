@@ -32,6 +32,8 @@ public class Role {
 
     private Timestamp modifyTime;
 
+    private Integer isdelete;//0：未删除 1：已删除
+
 //    //用户-角色==多对多，被维护
 //    @ManyToMany(mappedBy="roles")
 ////    @JoinTable(name="sys_user_role",joinColumns={@JoinColumn(name="role_id")},inverseJoinColumns={@JoinColumn(name="user_id")})
