@@ -4,14 +4,17 @@ import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
 import com.hgys.iptv.controller.vm.SettlementDocumentCPListExcelVM;
 import com.hgys.iptv.controller.vm.SettlementDocumentCPListVM;
 import com.hgys.iptv.controller.vm.SettlementDocumentQueryListVM;
+import com.hgys.iptv.model.bean.SettlementDocumentCpDTO;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.SettlementDocumentService;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.excel.ExcelForWebUtil;
 import com.hgys.iptv.util.excel.PathConstant;
+import com.xuxueli.poi.excel.ExcelExportUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -70,55 +73,60 @@ public class SettlementDocumentController {
     @GetMapping("/excelCpSettlementInfo")
     @ApiOperation(value = "导出CP账单内的结算信息",notes = "返回Excel文件")
     public void excelCpSettlementInfo(HttpServletResponse response,@ApiParam(value = "结算ID",required = true) @RequestParam(value = "id")Integer id) throws IOException {
+        List<SettlementDocumentCpDTO> dtos = new ArrayList<>();
         SettlementDocumentCPListExcelVM vm = settlementDocumentService.settlementCpExcel(id);
         /** 结算类型：1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算 */
         Map<String, Object> beanParams = new HashMap<>();
         if (null != vm){
-            beanParams.put("cpCode",vm.getCpcode());
-            beanParams.put("cpName",vm.getCpname());
+            SettlementDocumentCpDTO dto = new SettlementDocumentCpDTO();
+            dto.setCpcode(vm.getCpcode());
+            dto.setCpname(vm.getCpname());
             if (1 == vm.getType()){
-                beanParams.put("type","订购量结算");
+                dto.setType("订购量结算");
             }else if (2 == vm.getType()){
-                beanParams.put("type","业务级结算");
+                dto.setType("业务级结算");
             }else if (3 == vm.getType()){
-                beanParams.put("type","产品级结算");
+                dto.setType("产品级结算");
             }else if (4 == vm.getType()){
-                beanParams.put("type","CP定比例结算");
+                dto.setType("CP定比例结算");
             }else if (5 == vm.getType()){
-                beanParams.put("type","业务定比例结算");
+                dto.setType("业务定比例结算");
             }
             //结算账期
             String startTime = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(vm.getSetStartTime());
             String endTime = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(vm.getSetEndTime());
-            beanParams.put("setTime",startTime + "-" + endTime);
-            beanParams.put("setMoney",vm.getSettlementMoney());
-            beanParams.put("createTime",new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒").format(vm.getCreateTime()));
-            beanParams.put("masterCode",vm.getMasterCode());
-            beanParams.put("masterName",vm.getMasterName());
-            beanParams.put("productCode",vm.getProductCode());
-            beanParams.put("productName",vm.getProductName());
-            beanParams.put("businessCode",vm.getBusinessCode());
-            beanParams.put("businessName",vm.getBusinessName());
+            dto.setSetTime(startTime + "-" + endTime);
+            dto.setSettlementMoney(vm.getSettlementMoney().toString());
+            dto.setCreateTime(new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒").format(vm.getCreateTime()));
+            dto.setMasterCode(vm.getMasterCode());
+            dto.setMasterName(vm.getMasterName());
+            dto.setProductCode(vm.getProductCode());
+            dto.setProductName(vm.getProductName());
+            dto.setBusinessCode(vm.getBusinessCode());
+            dto.setBusinessName(vm.getBusinessName());
+
             /** 1:已录入;2:待审核;3:初审通过;4:复审通过;5:终审通过;6:驳回;7:已结算*/
             if (1 == vm.getStatus()){
-                beanParams.put("status","已录入");
+                dto.setStatus("已录入");
             }else if (2 == vm.getStatus()){
-                beanParams.put("status","待审核");
+                dto.setStatus("待审核");
             }else if (3 == vm.getStatus()){
-                beanParams.put("status","初审通过");
+                dto.setStatus("初审通过");
             }else if (4 == vm.getStatus()){
-                beanParams.put("status","复审通过");
+                dto.setStatus("复审通过");
             }else if (5 == vm.getStatus()){
-                beanParams.put("status","终审通过");
+                dto.setStatus("终审通过");
             }else if (6 == vm.getStatus()){
-                beanParams.put("status","驳回");
+                dto.setStatus("驳回");
             }else if (7 == vm.getStatus()){
-                beanParams.put("status","已结算");
+                dto.setStatus("已结算");
             }
 
+            dtos.add(dto);
+            //浏览器返回Excel
+            Workbook sheets = ExcelExportUtil.exportWorkbook(dtos);
+            ExcelForWebUtil.workBookExportExcel(response,sheets,"Cp结算信息表");
         }
-
-        ExcelForWebUtil.exportExcel(response,beanParams,"CpSettlementInfo.xlsx", PathConstant.getExcelExportResource(),"CpSettlement.xlsx");
 
     }
 }
