@@ -87,8 +87,8 @@ public class SettlementDocumentController {
                 dto.setType("业务定比例结算");
             }
             //结算账期
-            String startTime = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(vm.getSetStartTime());
-            String endTime = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(vm.getSetEndTime());
+            String startTime = new SimpleDateFormat("yyyy-MM-dd(HH:mm:ss)").format(vm.getSetStartTime());
+            String endTime = new SimpleDateFormat("yyyy-MM-dd(HH:mm:ss)").format(vm.getSetEndTime());
             dto.setSetTime(startTime + "-" + endTime);
             dto.setSettlementMoney(vm.getSettlementMoney().toString());
             dto.setCreateTime(new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒").format(vm.getCreateTime()));
