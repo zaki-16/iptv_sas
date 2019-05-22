@@ -3,6 +3,7 @@ package com.hgys.iptv.service.impl;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.QBusinessComparisonRelation;
 import com.hgys.iptv.model.QCpOrderBusinessComparison;
+import com.hgys.iptv.model.QCpSettlementMoney;
 import com.hgys.iptv.model.QOrderBusinessCp;
 import com.hgys.iptv.model.QOrderBusinessWithCp;
 import com.hgys.iptv.model.QOrderProduct;
@@ -263,8 +264,8 @@ public class SettlementServiceImpl implements SettlementService {
                     .where(relation.masterCode.eq(accountSettlement.getSet_ruleCode().trim())).fetch();
             //查询业务定比例源数据
             QSettlementBusiness qSettlementBusiness = QSettlementBusiness.settlementBusiness;
-            List<SettlementBusiness> business = jpaQueryFactory.selectFrom(qSettlementBusiness).where(qSettlementBusiness.masterCode.eq(accountSettlement.getSet_ruleCode().trim())).fetch();
-            if (!business.isEmpty()){
+            List<SettlementBusiness> business = jpaQueryFactory.selectFrom(qSettlementBusiness).where(qSettlementBusiness.masterCode.eq(accountSettlement.getCode().trim())).fetch();
+            if (null != business && !business.isEmpty()){
                 if (1 == business.get(0).getType()){
                     Map<String, SettlementBusiness> collect = business.stream().collect(Collectors.toMap(SettlementBusiness::getBusinessCode, SettlementBusiness -> SettlementBusiness));
                     for (BusinessBiLiQuery bi : fetch){
