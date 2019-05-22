@@ -124,4 +124,33 @@ public class SettlementDocumentServiceImpl implements SettlementDocumentService 
                 .where(qCpSettlementMoney.cpcode.eq(cpCode)).fetch();
         return ResultVOUtil.success(masterId);
     }
+
+    @Override
+    public SettlementDocumentCPListExcelVM settlementCpExcel(Integer id) {
+        QAccountSettlement qAccountSettlement = QAccountSettlement.accountSettlement;
+        QCpSettlementMoney qCpSettlementMoney = QCpSettlementMoney.cpSettlementMoney;
+
+        SettlementDocumentCPListExcelVM vm = jpaQueryFactory.select(Projections.bean(
+                SettlementDocumentCPListExcelVM.class,
+                qAccountSettlement.id.as("masterId"),
+                qAccountSettlement.setStartTime,
+                qAccountSettlement.setEndTime,
+                qAccountSettlement.status,
+                qAccountSettlement.set_type.as("type"),
+                qCpSettlementMoney.id,
+                qCpSettlementMoney.masterCode,
+                qCpSettlementMoney.masterName,
+                qCpSettlementMoney.cpcode,
+                qCpSettlementMoney.cpname,
+                qCpSettlementMoney.productCode,
+                qCpSettlementMoney.productName,
+                qCpSettlementMoney.businessCode,
+                qCpSettlementMoney.businessName,
+                qCpSettlementMoney.settlementMoney,
+                qCpSettlementMoney.createTime
+        )).from(qCpSettlementMoney)
+                .innerJoin(qAccountSettlement).on(qCpSettlementMoney.masterCode.eq(qAccountSettlement.code))
+                .where(qCpSettlementMoney.id.eq(id)).fetchOne();
+        return vm;
+    }
 }

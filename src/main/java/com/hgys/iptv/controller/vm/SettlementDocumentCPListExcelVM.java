@@ -21,6 +21,10 @@ public class SettlementDocumentCPListExcelVM {
     @ApiModelProperty("结算状态")
     private Integer status;
 
+    @ApiModelProperty("结算类型")
+    /** 1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算 */
+    private Integer type;
+
 
     @ApiModelProperty("id")
     private Integer id;
@@ -183,5 +187,13 @@ public class SettlementDocumentCPListExcelVM {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }
