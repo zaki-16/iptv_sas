@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,7 +69,7 @@ public class SettlementDocumentController {
 
     @GetMapping("/excelCpSettlementInfo")
     @ApiOperation(value = "导出CP账单内的结算信息",notes = "返回Excel文件")
-    public void excelCpSettlementInfo(HttpServletResponse response,@ApiParam(value = "结算ID",required = true) @RequestParam(value = "id")Integer id) throws FileNotFoundException {
+    public void excelCpSettlementInfo(HttpServletResponse response,@ApiParam(value = "结算ID",required = true) @RequestParam(value = "id")Integer id) throws IOException {
         SettlementDocumentCPListExcelVM vm = settlementDocumentService.settlementCpExcel(id);
         /** 结算类型：1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算 */
         Map<String, Object> beanParams = new HashMap<>();
