@@ -14,7 +14,7 @@ public class PathConstant {
 	 */
 	public static String getExcelExportResource() throws IOException {
 //		return ResourceUtils.getFile("classpath:excel").toString();
-		return 	new ClassPathResource("excel").getFile().toString();
+		return 	new ClassPathResource("excel").getFile().getPath();
 	}
 
 
