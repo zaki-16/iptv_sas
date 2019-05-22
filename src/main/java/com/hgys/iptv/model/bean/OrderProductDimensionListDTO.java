@@ -51,7 +51,7 @@ public class OrderProductDimensionListDTO {
      * 产品结算金额
      */
     @ExcelField(name = "结算金额（单位：元）")
-    private BigDecimal money;
+    private String money;
 
     public String getCpcode() {
         return cpcode;
@@ -109,11 +109,11 @@ public class OrderProductDimensionListDTO {
         this.dimensionCCode = dimensionCCode;
     }
 
-    public BigDecimal getMoney() {
+    public String getMoney() {
         return money;
     }
 
-    public void setMoney(BigDecimal money) {
+    public void setMoney(String money) {
         this.money = money;
     }
 }
