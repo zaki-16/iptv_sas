@@ -250,6 +250,7 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             map.put("realName",realName);
         if(status!=null&&status>0)
             map.put("status",status);
+        map.put("isdelete",0);
         return repositoryManager.findByCriteriaPage(userRepository,map,pageable);
     }
 

@@ -180,6 +180,7 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
             map.put("name",name);
         if(status!=null&&status>0)
             map.put("status",status);
+        map.put("isdelete",0);
         return repositoryManager.findByCriteriaPage(roleRepository,map,pageable);
     }
 

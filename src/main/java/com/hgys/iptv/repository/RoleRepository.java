@@ -12,11 +12,10 @@ public interface RoleRepository extends BaseRepository<Role,Integer> {
     /**根据角色名查找*/
     Role findByName(String name);
 
-    @Query(value = "update Role set isdelete = 1,name=:newName WHERE id = ?1")
+    @Query(value = "update Role set isdelete = 1,name=:newName WHERE id = :pk")
     @Modifying
     @Transactional
-    default void logicDelete(
-            @Param("newName") String newName, int id) {
-    }
+    void logicDelete(
+            @Param("newName") String newName, @Param("pk")int id);
 }
 

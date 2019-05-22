@@ -15,12 +15,13 @@ public interface UserRepository extends BaseRepository<User,Integer>{
     Integer countByUsername(String username);
 
     //UPDATE sys_user SET isdelete = 1, username="ddd" WHERE id = 11
-    @Query(value = "update User set isdelete = 1,username=:newName WHERE id = ?1")
+    @Query(value = "update User set isdelete = 1,username=:newName WHERE id = :pk")
     @Modifying
     @Transactional
-    default void logicDelete(
-            @Param("newName") String newName, int id) {
-    }
+    void logicDelete(@Param("newName") String newName,
+                     @Param("pk")int id) ;
+
+
 
 }
 
