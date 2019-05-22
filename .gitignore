@@ -1,6 +1,14 @@
 HELP.md
 .gradle
+### 忽略build目录下无关信息文件，主要是需要提交queryDsl生成的文件 ###
 ### /build/ ###
+/build/classes/
+/build/libs/
+/build/reports/
+/build/resources/
+/build/tmp/
+/build/test-results/
+/build/generated/
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###
