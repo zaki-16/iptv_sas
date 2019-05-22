@@ -75,10 +75,14 @@ public class SysController {
     }
 
 
+    /**
+     * 新增用户
+     * @param sysUserDTO
+     * @return
+     */
     @ApiOperation(value = "添加用户")
     @PostMapping("/addUser")
     @ResponseStatus(HttpStatus.CREATED)
-    //    @PreAuthorize("hasPermission('SAVE', 'UPDATE') or hasRole('ROLE_ADMIN')")
     public ResultVO addUser(@RequestBody(required = false) SysUserDTO sysUserDTO) {
         return sysUserService.addUser(sysUserDTO);
     }
@@ -90,10 +94,10 @@ public class SysController {
         return sysUserService.updateUser(sysUserDTO);
     }
 
-    @DeleteMapping("/deleteUserById")
+    @DeleteMapping("/batchLogicDeleteUser")
     @ResponseStatus(HttpStatus.OK)
-    public ResultVO deleteUserById(Integer id) {
-        return sysUserService.deleteUserById(id);
+    public ResultVO batchLogicDeleteUser(String ids) {
+        return sysUserService.batchLogicDelete(ids);
     }
 
     //
@@ -138,7 +142,7 @@ public class SysController {
     @GetMapping("/findRoleById")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO findRoleById(Integer id) {
-        return ResultVOUtil.success(sysRoleService.findAllAuthorityByRoleId(id));
+        return sysRoleService.findRoleById(id);
     }
 
     @PostMapping("/updateRole")
@@ -147,10 +151,10 @@ public class SysController {
         return sysRoleService.updateRole(sysRoleDTO);
     }
 
-    @DeleteMapping("/deleteRoleById")
+    @DeleteMapping("/batchLogicDeleteRole")
     @ResponseStatus(HttpStatus.OK)
-    public ResultVO deleteRoleById(Integer id) {
-        return sysRoleService.deleteRoleById(id);
+    public ResultVO batchLogicDeleteRole(String ids) {
+        return sysRoleService.batchLogicDelete(ids);
     }
 
     /*

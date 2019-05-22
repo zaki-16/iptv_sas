@@ -141,6 +141,29 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO batchLogicDelete(String ids) {
+        try{
+            List<String>  idLists = Arrays.asList(StringUtils.split(ids, ","));
+            if(idLists.size()>0){
+                Set<Integer> pidSets = new HashSet<>();
+                idLists.forEach(id->{
+                    pidSets.add(Integer.parseInt(id));
+                });
+                for (Integer id : pidSets){
+                    Role u = roleRepository.findById(id).get();
+                    roleRepository.logicDelete(u.getName()+"-remove",id);
+                    //删除关系映射
+                    sysRoleAuthorityRepository.deleteAllByRoleId(id);
+                }
+            }
+        }catch (Exception e){
+            return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
+    }
+
 
     @Override
     public ResultVO findAllRole() {
@@ -159,6 +182,18 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
             map.put("status",status);
         return repositoryManager.findByCriteriaPage(roleRepository,map,pageable);
     }
+
+    @Override
+    public ResultVO findRoleById(Integer roleId) {
+        SysRoleVM sysRoleVM = new SysRoleVM();
+        Role role = roleRepository.findById(roleId).orElse(null);
+        BeanUtils.copyProperties(role,sysRoleVM);
+        Set<Integer> allAuthId = sysRoleAuthorityRepository.findAllAuthId(roleId);
+        List<Authority> allById = authorityRepository.findAllById(allAuthId);
+        sysRoleVM.setList(allById);
+        return ResultVOUtil.success(sysRoleVM);
+    }
+
     /**
      *按角色id查关联的所有权限列表
      *
