@@ -1,15 +1,11 @@
 package com.hgys.iptv.controller;
 
-import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
 import com.hgys.iptv.controller.vm.SettlementDocumentCPListExcelVM;
-import com.hgys.iptv.controller.vm.SettlementDocumentCPListVM;
 import com.hgys.iptv.controller.vm.SettlementDocumentQueryListVM;
 import com.hgys.iptv.model.bean.SettlementDocumentCpDTO;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.SettlementDocumentService;
-import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.excel.ExcelForWebUtil;
-import com.hgys.iptv.util.excel.PathConstant;
 import com.xuxueli.poi.excel.ExcelExportUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,9 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
