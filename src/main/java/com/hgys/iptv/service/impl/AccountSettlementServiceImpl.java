@@ -266,7 +266,8 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                             qProduct.name.as("pname")
                     )).from(qScd).innerJoin(qProduct).on(qScd.pcode.eq(qProduct.code))
                             .innerJoin(qCpProduct).on(qProduct.id.eq(qCpProduct.pid))
-                            .innerJoin(qCp).on(qCpProduct.cpid.eq(qCp.id)).fetch();
+                            .innerJoin(qCp).on(qCpProduct.cpid.eq(qCp.id))
+                            .where(qScd.opcode.eq(code)).fetch();
 
                     List<OrderProductDimensionDTO> result = new ArrayList<>();
                     for (OrderProductDimensionDTO dto : fetch){
@@ -287,7 +288,8 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                             qProduct.name.as("pname")
                     )).from(qScd).innerJoin(qProduct).on(qScd.pcode.eq(qProduct.code))
                             .innerJoin(qCpProduct).on(qProduct.id.eq(qCpProduct.pid))
-                            .innerJoin(qCp).on(qCpProduct.cpid.eq(qCp.id)).fetch();
+                            .innerJoin(qCp).on(qCpProduct.cpid.eq(qCp.id))
+                            .where(qScd.opcode.eq(code)).fetch();
 
                     List<OrderProductDimensionListDTO> result = new ArrayList<>();
                     //查询多维度下单维度
