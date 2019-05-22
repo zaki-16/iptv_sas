@@ -52,6 +52,11 @@ public class AccountSettlement implements java.io.Serializable {
     @Column(name = "set_ruleCode", nullable = true, length = 50)
     private String set_ruleCode;
 
+
+    /** 结算规则ID */
+    @Column(name = "set_ruleId", nullable = true, length = 11)
+    private Integer set_ruleId;
+
     /** 结算规则名称 */
     @Column(name = "set_ruleName", nullable = true, length = 100)
     private String set_ruleName;
@@ -349,6 +354,14 @@ public class AccountSettlement implements java.io.Serializable {
 
     public Timestamp getSetEndTime() {
         return setEndTime;
+    }
+
+    public Integer getSet_ruleId() {
+        return set_ruleId;
+    }
+
+    public void setSet_ruleId(Integer set_ruleId) {
+        this.set_ruleId = set_ruleId;
     }
 
     public void setSetEndTime(Timestamp setEndTime) {

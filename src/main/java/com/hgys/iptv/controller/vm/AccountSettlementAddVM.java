@@ -32,6 +32,10 @@ public class AccountSettlementAddVM {
     @ApiModelProperty("结算规则编码")
     private String set_ruleCode;
 
+    /** 结算规则ID */
+    @ApiModelProperty("结算规则ID")
+    private Integer set_ruleId;
+
     /** 结算规则名称 */
     @ApiModelProperty("结算规则名称")
     private String set_ruleName;
@@ -230,6 +234,14 @@ public class AccountSettlementAddVM {
 
     public void setDimensionListAddVMS(List<OrderProductDimensionListAddVM> dimensionListAddVMS) {
         this.dimensionListAddVMS = dimensionListAddVMS;
+    }
+
+    public Integer getSet_ruleId(Integer ruleid) {
+        return set_ruleId;
+    }
+
+    public void setSet_ruleId(Integer set_ruleId) {
+        this.set_ruleId = set_ruleId;
     }
 
     public List<BusinessBelielAddVM> getBelielAddVMS() {

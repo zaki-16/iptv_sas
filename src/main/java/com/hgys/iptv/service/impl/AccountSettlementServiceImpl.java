@@ -419,6 +419,8 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             List<SettlementOrder> settlementOrders = settlementOrderRepository.findByMasterCode(comparison.getCode());
             List<CpOrderCpAddVM> list = new ArrayList<>();
             String rulename = orderQuantityRepository.findByMastername(vm.getSet_ruleCode());
+            Integer ruleid = orderQuantityRepository.findByMastid(vm.getSet_ruleCode());
+            vm.getSet_ruleId(ruleid);
             vm.setSet_ruleName(rulename);
             for (SettlementOrder f : settlementOrders) {
                 CpOrderCpAddVM s = new CpOrderCpAddVM();
@@ -433,11 +435,15 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
         } else if (2 == vm.getSet_type()) {   //2:业务级结算
             BigDecimal money = settlementMoneyRepository.findByMastermoney(comparison.getCode()); //通过code查询
             String rulename = orderBusinessRepository.findByMasterCodes(vm.getSet_ruleCode());
+            Integer ruleid = orderBusinessRepository.findByMastid(vm.getSet_ruleCode());
             vm.setSet_ruleName(rulename);
             vm.setBusinessMoney(money);
+            vm.getSet_ruleId(ruleid);
 
         } else if (3 == vm.getSet_type()) {   //3:产品级结算
             int mode = orderProductRepository.findBymode(comparison.getSet_ruleCode()); //通过规则code查询属于单维度还是多维度
+            Integer ruleid = orderProductRepository.findByMastid(vm.getSet_ruleCode());
+            vm.getSet_ruleId(ruleid);
             if (mode == 1) {//1:按单维度结算
                 List<SettlementProductSingle> settlementProductSingles = settlementProductSingleRepository.findByMasterCode(comparison.getCode()); //通过code查询
                 List<OrderProductDimensionAddVM> list = new ArrayList<>();
@@ -466,7 +472,9 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             List<SettlementBusiness> settlementMonies = settlementBusinessRepository.findByMasterCode(comparison.getCode()); //通过code查询
             List<BusinessBelielAddVM> list = new ArrayList<>();
             String rulename = orderBusinessComparisonRepository.findByMasterCodes(vm.getSet_ruleCode());
+            Integer ruleid = orderBusinessComparisonRepository.findByMastid(vm.getSet_ruleCode());
             vm.setSet_ruleName(rulename);
+            vm.getSet_ruleId(ruleid);
             for (SettlementBusiness f : settlementMonies) {
                 BusinessBelielAddVM s = new BusinessBelielAddVM();
                 BeanUtils.copyProperties(f, s);

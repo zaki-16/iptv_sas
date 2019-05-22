@@ -39,6 +39,8 @@ public class QAccountSettlement extends EntityPathBase<AccountSettlement> {
 
     public final StringPath set_ruleCode = createString("set_ruleCode");
 
+    public final NumberPath<Integer> set_ruleId = createNumber("set_ruleId", Integer.class);
+
     public final StringPath set_ruleName = createString("set_ruleName");
 
     public final NumberPath<Integer> set_type = createNumber("set_type", Integer.class);

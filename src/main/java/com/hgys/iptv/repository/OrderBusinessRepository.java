@@ -29,6 +29,13 @@ public interface OrderBusinessRepository extends JpaRepository<OrderBusiness,Obj
     @Query(value = "select o.name from OrderBusiness o where o.code = ?1")
     String findByMasterCodes(String Code);
 
+    /**
+     * 通过结算组合维度编码查询
+     * @param Code
+     * @return
+     */
+    @Query(value = "select o.id from OrderQuantity o where o.code = ?1")
+    Integer findByMastid(String Code);
 
     /**
      * 通过id查询

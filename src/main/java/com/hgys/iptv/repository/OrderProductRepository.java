@@ -30,7 +30,13 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct,Objec
 
     OrderProduct findByCode(String code);
 
-
+    /**
+     * 通过结算组合维度编码查询
+     * @param Code
+     * @return
+     */
+    @Query(value = "select o.id from OrderQuantity o where o.code = ?1")
+    Integer findByMastid(String Code);
     /**
      * 通过code 查询mode
      * @param code
