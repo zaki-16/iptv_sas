@@ -1,5 +1,6 @@
 package com.hgys.iptv.service.impl;
 
+import com.google.common.collect.Maps;
 import com.hgys.iptv.controller.vm.SysRoleVM;
 import com.hgys.iptv.model.Authority;
 import com.hgys.iptv.model.Role;
@@ -12,14 +13,14 @@ import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @ClassName SysRoleServiceImpl
@@ -148,7 +149,14 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
             return ResultVOUtil.success(all);
         return ResultVOUtil.error("1","所查询列表不存在!");
     }
-
+    @Override
+    public Page<Role> findAllRoleOfPage(String name, Integer status, Integer pageNum, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
+        HashMap<String, Object> map = Maps.newHashMap();
+        map.put("name",name);
+        map.put("status",status);
+        return repositoryManager.findByCriteriaPage(userRepository,map,pageable);
+    }
     /**
      *按角色id查关联的所有权限列表
      *

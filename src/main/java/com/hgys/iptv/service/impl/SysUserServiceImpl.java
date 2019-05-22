@@ -1,5 +1,6 @@
 package com.hgys.iptv.service.impl;
 
+import com.google.common.collect.Maps;
 import com.hgys.iptv.controller.vm.SysUserVM;
 import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.SysUserRole;
@@ -17,15 +18,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @ClassName SysUserServiceImpl
@@ -208,17 +208,24 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
-    @Override
-    public ResultVO findAllUser() {
-        List<User> all = userRepository.findAll();
-        if(all.size()>0)
-            return ResultVOUtil.success(all);
-        return ResultVOUtil.error("1","所查询列表不存在!");
-    }
+
+
+//    @Override
+//    public ResultVO findAllUser() {
+//        List<User> all = userRepository.findAll();
+//        if(all.size()>0)
+//            return ResultVOUtil.success(all);
+//        return ResultVOUtil.error("1","所查询列表不存在!");
+//    }
 
     @Override
-    public Page<User> findAllUserOfPage() {
-        return null;
+    public Page<User> findAllUserOfPage(String username,String realName,Integer status,Integer pageNum, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
+        HashMap<String, Object> map = Maps.newHashMap();
+        map.put("username",username);
+        map.put("realName",realName);
+        map.put("status",status);
+        return repositoryManager.findByCriteriaPage(userRepository,map,pageable);
     }
 
     /**

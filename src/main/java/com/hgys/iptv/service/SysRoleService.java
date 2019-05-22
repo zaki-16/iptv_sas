@@ -1,8 +1,10 @@
 package com.hgys.iptv.service;
 
 import com.hgys.iptv.model.Authority;
+import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.dto.SysRoleDTO;
 import com.hgys.iptv.model.vo.ResultVO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -17,6 +19,7 @@ public interface SysRoleService {
     ResultVO updateRole(SysRoleDTO sysRoleDTO);
     ResultVO deleteRoleById(Integer id);
     ResultVO findAllRole();
+    Page<Role> findAllRoleOfPage(String name, Integer status, Integer pageNum, Integer pageSize);
 
     List<Authority> findAllAuthorityByRoleId(Integer roleId);
 }
