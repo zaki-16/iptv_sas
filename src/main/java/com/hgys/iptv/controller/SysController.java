@@ -12,6 +12,7 @@ import com.hgys.iptv.service.SysUserService;
 import com.hgys.iptv.util.ResultVOUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -47,7 +48,11 @@ public class SysController {
     @GetMapping("/findAllUser")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "查询用户列表")
-    public Page<User> findAllUser(String username, String realName, Integer status, Integer pageNum, Integer pageSize) {
+    public Page<User> findAllUser(String username, String realName,
+                                  Integer status,
+                                  @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")Integer pageNum,
+                                  @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")Integer pageSize
+                                  ) {
         return sysUserService.findAllUserOfPage(username,realName,status,pageNum,pageSize);
     }
 
@@ -107,7 +112,9 @@ public class SysController {
     @GetMapping("/findAllRole")
     @ApiOperation(value = "查询角色列表",notes = "@return :角色列表")
     @ResponseStatus(HttpStatus.OK)
-    public Page<Role> findAllRole(String name, Integer status, Integer pageNum, Integer pageSize) {
+    public Page<Role> findAllRole(String name, Integer status,
+                                  @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")Integer pageNum,
+                                  @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")Integer pageSize) {
         return sysRoleService.findAllRoleOfPage(name,status,pageNum,pageSize);
     }
     /**

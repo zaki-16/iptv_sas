@@ -42,10 +42,10 @@ public class RepositoryManager {
      * @param baseRepository
      * @param criteria
      * @param pageable
-     * @param <T>
+     * @param <E>
      * @return
      */
-    public <T> Page<T> findByCriteriaPage(BaseRepository baseRepository,Map<String,Object> criteria, Pageable pageable) {
+    public <E> Page<E> findByCriteriaPage(BaseRepository baseRepository,Map<String,Object> criteria, Pageable pageable) {
         return baseRepository.findAll(((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if(criteria!=null && criteria.size()>0){
@@ -60,26 +60,26 @@ public class RepositoryManager {
         }),pageable);
     }
 
-    public <T> Page<T> findByCriteriaPage(BaseRepository baseRepository, Map<String,Object> criteria, Integer pageNum, Integer pageSize) {
+    public <E> Page<E> findByCriteriaPage(BaseRepository baseRepository, Map<String,Object> criteria, Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
         return this.findByCriteriaPage(baseRepository,criteria,pageable);
     }
 
-    public <T> Page<T> findByCriteriaPage(BaseRepository baseRepository,Map<String,Object> criteria, Pageable pageable, Function func) {
+    public <E> Page<E> findByCriteriaPage(BaseRepository baseRepository,Map<String,Object> criteria, Pageable pageable, Function func) {
         return this.findByCriteriaPage(baseRepository,criteria, pageable).map(func);
     }
 
-    public <T> Page<T> findByPage(BaseRepository baseRepository, Pageable pageable) {
+    public <E> Page<E> findByPage(BaseRepository baseRepository, Pageable pageable) {
         return baseRepository.findAll(pageable);
     }
 
-    public <T> Page<T> findByPage(BaseRepository baseRepository, Integer pageNum, Integer pageSize) {
+    public <E> Page<E> findByPage(BaseRepository baseRepository, Integer pageNum, Integer pageSize) {
 //        Sort sort = new Sort(Sort.Direction.DESC,"");
         Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
         return this.findByPage(baseRepository,pageable);
     }
 
-    public <T> Page<T> findByPage(BaseRepository baseRepository, Pageable pageable, Function func) {
+    public <E> Page<E> findByPage(BaseRepository baseRepository, Pageable pageable, Function func) {
         return this.findByPage(baseRepository, pageable).map(func);
     }
 
@@ -91,7 +91,7 @@ public class RepositoryManager {
      * @param map
      * @return
      */
-    public <T> List <T> findByCriteria(Class<?> clazz, Map<String,Object> map) {
+    public <E> List <E> findByCriteria(Class<?> clazz, Map<String,Object> map) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery query = builder.createQuery((clazz));
         Root root = query.from(clazz);
@@ -108,7 +108,7 @@ public class RepositoryManager {
         return entityManager.createQuery(query).getResultList();
     }
 
-    public <T> List <T> find(Class<?> clazz) {
+    public <E> List <E> find(Class<?> clazz) {
         return findByCriteria(clazz,null);
     }
 
@@ -118,10 +118,10 @@ public class RepositoryManager {
      * @param clazz
      * @param colName
      * @param colValue
-     * @param <T>
+     * @param <E>
      * @return
      */
-    public <T> List <T> findByCriteria(Class<?> clazz,String colName,Object colValue) {
+    public <E> List <E> findByCriteria(Class<?> clazz,String colName,Object colValue) {
         LinkedHashMap<String, Object> map = Maps.newLinkedHashMap();
         map.put(colName,colValue);
         return findByCriteria(clazz,map);
@@ -134,7 +134,7 @@ public class RepositoryManager {
      * @param id
      * @return
      */
-    public T findOneById(Class<?> clazz,Integer id) {
+    public T findOneById(Class<?> clazz, Integer id) {
         List<Object> list = findByCriteria(clazz, "id",id);
         if(list!=null && list.size()>0){
             return (T)list.get(0);
@@ -149,7 +149,7 @@ public class RepositoryManager {
     public <E,F>ModelView decorate(BaseRepository repository, Integer id){
         ModelView modelView = new ModelView<>();
         E e = (E)repository.findById(id).orElse(null);
-        modelView.setE(e);
+        modelView.setElem(e);
 
         return modelView;
     }
@@ -157,7 +157,7 @@ public class RepositoryManager {
 
     @Getter@Setter
     public static class ModelView<E,F>{
-        private E e;
+        private E elem;
         private List<F> list;
     }
 
