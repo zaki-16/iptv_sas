@@ -11,6 +11,7 @@ import com.hgys.iptv.model.enums.LogTypeEnum;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.security.UserDetailsServiceImpl;
+import com.hgys.iptv.service.CpService;
 import com.hgys.iptv.service.SysUserService;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
@@ -38,6 +39,8 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private CpService cpService;
 
     @Override
     public ResultVO findByUserName(String username) {
