@@ -118,23 +118,6 @@ public class SettlementServiceImpl implements SettlementService {
     }
 
     /**
-     * 根据结算分账编码删除结算信息
-     * @param masterCode
-     * @return
-     */
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public boolean delectSettlementS(String masterCode) {
-        try{
-            cpSettlementMoneyRepository.deleteByMasterCode(masterCode);
-        }catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * 结算业务级结算
      * @return
      */
