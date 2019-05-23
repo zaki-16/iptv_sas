@@ -4,6 +4,7 @@ import com.xuxueli.poi.excel.annotation.ExcelField;
 import com.xuxueli.poi.excel.annotation.ExcelSheet;
 import lombok.Data;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
 import java.math.BigDecimal;
 
@@ -12,63 +13,63 @@ public class OrderProductDimensionListDTO {
     /**
      * CP编码
      */
-    @ExcelField(name = "CP编码")
+    @ExcelField(name = "CP编码",align = HorizontalAlignment.CENTER)
     private String cpcode;
 
     /**
      * CP名称
      */
-    @ExcelField(name = "CP名称")
+    @ExcelField(name = "CP名称",align = HorizontalAlignment.CENTER)
     private String cpname;
 
     /** 产品名称 */
-    @ExcelField(name = "产品名称")
+    @ExcelField(name = "产品名称",align = HorizontalAlignment.CENTER)
     private String pname;
 
     /** 产品编码 */
-    @ExcelField(name = "产品编码")
+    @ExcelField(name = "产品编码",align = HorizontalAlignment.CENTER)
     private String pcode;
 
     /**
      * 维度A编码
      */
-    @ExcelField(name = "维度A编码")
+    @ExcelField(name = "维度A编码",align = HorizontalAlignment.CENTER)
     private String dimensionACode;
 
     /**
      * 维度A数量
      */
-    @ExcelField(name = "维度A数量")
+    @ExcelField(name = "维度A数量",align = HorizontalAlignment.CENTER)
     private String numberA;
 
     /**
      * 维度B编码
      */
-    @ExcelField(name = "维度B编码")
+    @ExcelField(name = "维度B编码",align = HorizontalAlignment.CENTER)
     private String dimensionBCode;
 
     /**
      * 维度B数量
      */
-    @ExcelField(name = "维度B数量")
+    @ExcelField(name = "维度B数量",align = HorizontalAlignment.CENTER)
     private String numberB;
 
     /**
      * 维度C编码
      */
-    @ExcelField(name = "维度C编码")
+    @ExcelField(name = "维度C编码",align = HorizontalAlignment.CENTER)
     private String dimensionCCode;
 
     /**
      * 维度C数量
      */
-    @ExcelField(name = "维度C数量")
+    @ExcelField(name = "维度C数量",align = HorizontalAlignment.CENTER)
     private String numberC;
 
     /**
      * 产品结算金额
      */
-    @ExcelField(name = "结算金额（单位：元）")
+    @ExcelField(name = "结算金额（单位：元）",align = HorizontalAlignment.CENTER)
     private String money;
 
     public String getCpcode() {

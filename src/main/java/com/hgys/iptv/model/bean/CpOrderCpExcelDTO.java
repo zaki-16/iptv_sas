@@ -10,13 +10,13 @@ import java.math.BigDecimal;
 
 @ExcelSheet(name = "订购量结算", headColor = HSSFColor.HSSFColorPredefined.LIGHT_GREEN)
 public class CpOrderCpExcelDTO {
-    @ExcelField(name = "Cp编码")
+    @ExcelField(name = "Cp编码",align = HorizontalAlignment.CENTER)
     private String cpcode;
 
     @ExcelField(name = "Cp名称", align = HorizontalAlignment.CENTER)
     private String cpname;
 
-    @ExcelField(name = "订购量")
+    @ExcelField(name = "订购量",align = HorizontalAlignment.CENTER)
     private String quantity;
 
     public String getCpcode() {
