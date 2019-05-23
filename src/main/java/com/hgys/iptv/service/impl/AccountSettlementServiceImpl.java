@@ -136,6 +136,17 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             //1、新增订购量结算源数据
             if (1 == vm.getSet_type()){
                 List<CpOrderCpAddVM> cpAddVMS = vm.getCpAddVMS();
+                //校验cp是否存在
+                for (CpOrderCpAddVM addVM : cpAddVMS){
+                    Cp cp = cpRepository.findByCode(addVM.getCpcode().trim());
+                    if (null == cp){
+                        return ResultVOUtil.error("1","CP编码为:" + addVM.getCpcode() + "CP不存在!");
+                    }
+                    if (null == addVM.getOrderQuantity()){
+                        return ResultVOUtil.error("1","CP编码为:" + addVM.getCpcode() + "订购量不能为空!");
+                    }
+                }
+
                 for (CpOrderCpAddVM addVM : cpAddVMS){
                     SettlementOrder order = new SettlementOrder();
                     BeanUtils.copyProperties(addVM,order);
@@ -145,6 +156,10 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                     settlementOrderRepository.save(order);
                 }
             }else if (2 == vm.getSet_type()){
+                //校验数据
+                if (null == vm.getBusinessMoney()){
+                    return ResultVOUtil.error("1","分配结算业务级结算总收入不能为空!");
+                }
                 //2、新增业务级结算源数据
                 SettlementMoney money = new SettlementMoney();
                 money.setMasterCode(code);
@@ -157,6 +172,26 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                 //单维度
                 if (null != vm.getDimensionAddVM() && !vm.getDimensionAddVM().isEmpty()){
                     List<OrderProductDimensionAddVM> dimensionAddVM = vm.getDimensionAddVM();
+                    //校验数据
+                    for (OrderProductDimensionAddVM addVM : dimensionAddVM){
+                        Cp cp = cpRepository.findByCode(addVM.getCpcode().trim());
+                        if (null == cp){
+                            return ResultVOUtil.error("1","CP编码为:" + addVM.getCpcode() + "CP不存在!");
+                        }
+                        if (null == addVM.getSetMoney()){
+                            return ResultVOUtil.error("1","CP编码为:" + addVM.getCpcode() + "结算金额不能为空!");
+                        }
+                        if (null == addVM.getNumber()){
+                            return ResultVOUtil.error("1","CP编码为:" + addVM.getCpcode() + "数量不能为空!");
+                        }
+                        if (StringUtils.isBlank(addVM.getDimCode())){
+                            return ResultVOUtil.error("1","CP编码为:" + addVM.getCpcode() + "维度编码不能为空!");
+                        }
+                        if (StringUtils.isBlank(addVM.getProductCode())){
+                            return ResultVOUtil.error("1","CP编码为:" + addVM.getCpcode() + "产品编码不能为空!");
+                        }
+                    }
+
                     for (OrderProductDimensionAddVM addVM : dimensionAddVM){
                         SettlementProductSingle single = new SettlementProductSingle();
                         BeanUtils.copyProperties(addVM,single);
@@ -166,6 +201,38 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                     }
                 }else if (null != vm.getDimensionListAddVMS() && !vm.getDimensionListAddVMS().isEmpty()){
                     List<OrderProductDimensionListAddVM> listAddVMS = vm.getDimensionListAddVMS();
+                    //数据校验
+                    for (OrderProductDimensionListAddVM listAddVM : listAddVMS){
+                        Cp cp = cpRepository.findByCode(listAddVM.getCpcode().trim());
+                        if (null == cp){
+                            return ResultVOUtil.error("1","CP编码为:" + listAddVM.getCpcode() + "CP不存在!");
+                        }
+                        if (null == listAddVM.getSetMoney()){
+                            return ResultVOUtil.error("1","CP编码为:" + listAddVM.getCpcode() + "结算金额不能为空!");
+                        }
+                        if (null == listAddVM.getNumberA()){
+                            return ResultVOUtil.error("1","CP编码为:" + listAddVM.getCpcode() + "维度A数量不能为空!");
+                        }
+                        if (null == listAddVM.getNumberB()){
+                            return ResultVOUtil.error("1","CP编码为:" + listAddVM.getCpcode() + "维度B数量不能为空!");
+                        }
+                        if (null == listAddVM.getNumberC()){
+                            return ResultVOUtil.error("1","CP编码为:" + listAddVM.getCpcode() + "维度C数量不能为空!");
+                        }
+                        if (StringUtils.isBlank(listAddVM.getDimACode())){
+                            return ResultVOUtil.error("1","CP编码为:" + listAddVM.getCpcode() + "维度A编码不能为空!");
+                        }
+                        if (StringUtils.isBlank(listAddVM.getDimBCode())){
+                            return ResultVOUtil.error("1","CP编码为:" + listAddVM.getCpcode() + "维度B编码不能为空!");
+                        }
+                        if (StringUtils.isBlank(listAddVM.getDimCCode())){
+                            return ResultVOUtil.error("1","CP编码为:" + listAddVM.getCpcode() + "维度C编码不能为空!");
+                        }
+                        if (StringUtils.isBlank(listAddVM.getProductCode())){
+                            return ResultVOUtil.error("1","CP编码为:" + listAddVM.getCpcode() + "产品编码不能为空!");
+                        }
+                    }
+
                     for (OrderProductDimensionListAddVM listAddVM : listAddVMS){
                         SettlementProductMany many = new SettlementProductMany();
                         BeanUtils.copyProperties(listAddVM,many);
