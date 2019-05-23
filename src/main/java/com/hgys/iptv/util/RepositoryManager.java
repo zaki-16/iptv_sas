@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import com.hgys.iptv.repository.BaseRepository;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,20 +36,27 @@ public class RepositoryManager {
     private RepositoryManager(){}
 
     /**
-     * 带条件分页查询
+     * 带条件分页+模糊查询
      *
      * @param baseRepository
      * @param criteria
      * @param pageable
-     * @param <E>
+     * @param <T>
      * @return
      */
-    public <E> Page<E> findByCriteriaPage(BaseRepository baseRepository,Map<String,Object> criteria, Pageable pageable) {
+    public <T> Page<T> findByCriteriaPage(BaseRepository baseRepository,Map<String,Object> criteria, Pageable pageable) {
         return baseRepository.findAll(((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if(criteria!=null && criteria.size()>0){
                 for(Map.Entry<String,Object>entry:criteria.entrySet()){
-                    predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
+                    if(entry.getValue()!=null){
+                        // 是否需要模糊查询
+                        if(entry.getValue().toString().startsWith("%")||
+                                entry.getValue().toString().endsWith("%"))
+                            predicates.add(builder.like(root.get(entry.getKey()), entry.getValue().toString()));
+                        else
+                            predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
+                    }
                 }
             }
             if (!predicates.isEmpty()){
@@ -60,38 +66,38 @@ public class RepositoryManager {
         }),pageable);
     }
 
-    public <E> Page<E> findByCriteriaPage(BaseRepository baseRepository, Map<String,Object> criteria, Integer pageNum, Integer pageSize) {
+    public <T> Page<T> findByCriteriaPage(BaseRepository baseRepository, Map<String,Object> criteria, Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
         return this.findByCriteriaPage(baseRepository,criteria,pageable);
     }
 
-    public <E> Page<E> findByCriteriaPage(BaseRepository baseRepository,Map<String,Object> criteria, Pageable pageable, Function func) {
+    public <T> Page<T> findByCriteriaPage(BaseRepository baseRepository,Map<String,Object> criteria, Pageable pageable, Function func) {
         return this.findByCriteriaPage(baseRepository,criteria, pageable).map(func);
     }
 
-    public <E> Page<E> findByPage(BaseRepository baseRepository, Pageable pageable) {
+    public <T> Page<T> findByPage(BaseRepository baseRepository, Pageable pageable) {
         return baseRepository.findAll(pageable);
     }
 
-    public <E> Page<E> findByPage(BaseRepository baseRepository, Integer pageNum, Integer pageSize) {
+    public <T> Page<T> findByPage(BaseRepository baseRepository, Integer pageNum, Integer pageSize) {
 //        Sort sort = new Sort(Sort.Direction.DESC,"");
         Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
         return this.findByPage(baseRepository,pageable);
     }
 
-    public <E> Page<E> findByPage(BaseRepository baseRepository, Pageable pageable, Function func) {
+    public <T> Page<T> findByPage(BaseRepository baseRepository, Pageable pageable, Function func) {
         return this.findByPage(baseRepository, pageable).map(func);
     }
 
 
     /**
-     * 按实体类型条件查询
+     * 按实体类型条件+模糊查询
      *
      * @param clazz
      * @param map
      * @return
      */
-    public <E> List <E> findByCriteria(Class<?> clazz, Map<String,Object> map) {
+    public <T> List <T> findByCriteria(Class<T> clazz, Map<String,Object> map) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery query = builder.createQuery((clazz));
         Root root = query.from(clazz);
@@ -101,14 +107,23 @@ public class RepositoryManager {
         List<Predicate> predicates = new ArrayList<>();
         if(map!=null && map.size()>0){
             for(Map.Entry<String,Object>entry:map.entrySet()){
-                predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
+                if(entry.getValue()!=null){
+                    //是否需要模糊查询
+                    if(entry.getValue().toString().startsWith("%")||
+                            entry.getValue().toString().endsWith("%"))
+                        predicates.add(builder.like(root.get(entry.getKey()), entry.getValue().toString()));
+                    else
+                        predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
+                }
             }
         }
         query.where(predicates.toArray(new Predicate[]{}));
         return entityManager.createQuery(query).getResultList();
     }
 
-    public <E> List <E> find(Class<?> clazz) {
+
+
+    public <T> List <T> find(Class<T> clazz) {
         return findByCriteria(clazz,null);
     }
 
@@ -118,10 +133,10 @@ public class RepositoryManager {
      * @param clazz
      * @param colName
      * @param colValue
-     * @param <E>
+     * @param <T>
      * @return
      */
-    public <E> List <E> findByCriteria(Class<?> clazz,String colName,Object colValue) {
+    public <T> List <T> findByCriteria(Class<T> clazz,String colName,Object colValue) {
         LinkedHashMap<String, Object> map = Maps.newLinkedHashMap();
         map.put(colName,colValue);
         return findByCriteria(clazz,map);
@@ -134,8 +149,8 @@ public class RepositoryManager {
      * @param id
      * @return
      */
-    public T findOneById(Class<?> clazz, Integer id) {
-        List<Object> list = findByCriteria(clazz, "id",id);
+    public <T> T findOneById(Class<T> clazz, Integer id) {
+        List<T> list = findByCriteria(clazz, "id",id);
         if(list!=null && list.size()>0){
             return (T)list.get(0);
         }

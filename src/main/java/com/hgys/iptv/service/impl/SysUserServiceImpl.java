@@ -246,8 +246,8 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
         HashMap<String, Object> map = Maps.newHashMap();
         if(username!=null)
-            map.put("username",username);
-        if(username!=null)
+            map.put("username","%"+username+"%");
+        if(realName!=null)
             map.put("realName",realName);
         if(status!=null&&status>0)
             map.put("status",status);
