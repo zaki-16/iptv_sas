@@ -36,16 +36,34 @@ public class OrderProductDimensionListDTO {
     private String dimensionACode;
 
     /**
+     * 维度A数量
+     */
+    @ExcelField(name = "维度A数量")
+    private String numberA;
+
+    /**
      * 维度B编码
      */
     @ExcelField(name = "维度B编码")
     private String dimensionBCode;
 
     /**
+     * 维度B数量
+     */
+    @ExcelField(name = "维度B数量")
+    private String numberB;
+
+    /**
      * 维度C编码
      */
     @ExcelField(name = "维度C编码")
     private String dimensionCCode;
+
+    /**
+     * 维度C数量
+     */
+    @ExcelField(name = "维度C数量")
+    private String numberC;
 
     /**
      * 产品结算金额
@@ -115,5 +133,29 @@ public class OrderProductDimensionListDTO {
 
     public void setMoney(String money) {
         this.money = money;
+    }
+
+    public String getNumberA() {
+        return numberA;
+    }
+
+    public void setNumberA(String numberA) {
+        this.numberA = numberA;
+    }
+
+    public String getNumberB() {
+        return numberB;
+    }
+
+    public void setNumberB(String numberB) {
+        this.numberB = numberB;
+    }
+
+    public String getNumberC() {
+        return numberC;
+    }
+
+    public void setNumberC(String numberC) {
+        this.numberC = numberC;
     }
 }

@@ -8,7 +8,6 @@ import org.apache.poi.hssf.util.HSSFColor;
 import java.math.BigDecimal;
 
 @ExcelSheet(name = "产品级单维度结算", headColor = HSSFColor.HSSFColorPredefined.LIGHT_GREEN)
-@Data
 public class OrderProductDimensionDTO {
     /**
      * CP编码
@@ -35,6 +34,12 @@ public class OrderProductDimensionDTO {
      */
     @ExcelField(name = "维度编码")
     private String dimensionCode;
+
+    /**
+     * 数量
+     */
+    @ExcelField(name = "数量")
+    private String number;
 
     /**
      * 产品结算金额
@@ -88,5 +93,13 @@ public class OrderProductDimensionDTO {
 
     public void setMoney(String money) {
         this.money = money;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
     }
 }

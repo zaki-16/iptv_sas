@@ -16,8 +16,6 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import javax.persistence.*;
 
-import org.hibernate.annotations.GenericGenerator;
-
 /**
  * 分账结算产品级单维度结算源数据表(settlement_product_single)
  *
@@ -67,11 +65,16 @@ public class SettlementProductSingle implements java.io.Serializable {
     /**
      * 维度权重，该字段用户vo映射，不放入数据库
      */
+    @Transient
     private Integer dimWeith;
 
     /** 结算金额 */
     @Column(name = "setMoney", nullable = true, length = 12)
     private BigDecimal setMoney;
+
+    /** 数量 */
+    @Column(name = "number", nullable = true, length = 12)
+    private BigDecimal number;
 
     /** 创建时间 */
     @Column(name = "createTime", nullable = true, length = 26)
@@ -267,11 +270,20 @@ public class SettlementProductSingle implements java.io.Serializable {
         this.createTime = createTime;
     }
 
+
     public Integer getDimWeith() {
         return dimWeith;
     }
 
     public void setDimWeith(Integer dimWeith) {
         this.dimWeith = dimWeith;
+    }
+
+    public BigDecimal getNumber() {
+        return number;
+    }
+
+    public void setNumber(BigDecimal number) {
+        this.number = number;
     }
 }
