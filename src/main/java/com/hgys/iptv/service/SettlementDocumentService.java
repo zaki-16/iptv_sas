@@ -11,9 +11,13 @@ public interface SettlementDocumentService {
 
     Page<SettlementDocumentQueryListVM> findByConditions(String name, String code, Pageable pageable);
 
+    Page<SettlementDocumentCPListExcelVM> documentQueryHistoryCpMySelfList(Integer masterId,String cpCode,String pageNum,String pageSize);
+
+    Page<SettlementDocumentQueryListVM> documentHistoryQueryCpList(Integer masterId,String pageNum,String pageSize);
+
     ResultVO<?> findByIdQueryCpList(Integer id);
 
-    ResultVO<?> settlementDocumentQueryCpMySelfList(String cpCode);
+    ResultVO<?> settlementDocumentQueryCpMySelfList(Integer id);
 
     SettlementDocumentCPListExcelVM settlementCpExcel(Integer id);
 }
