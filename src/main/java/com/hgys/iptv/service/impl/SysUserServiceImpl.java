@@ -197,8 +197,8 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
     public ResultVO modifyPassword(String password_old,String password_new){
         try {
             String username = UserSessionInfoHolder.getCurrentUsername();
-            if(null == username)
-                return  ResultVOUtil.error("1","密码已过期，请重新登录！");
+            if(null == username || (username.compareTo("anonymousUser")==0))
+                return  ResultVOUtil.error("1","密码已过期或未登录！");
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if(!passwordEncoder.matches(password_old,userDetails.getPassword())){

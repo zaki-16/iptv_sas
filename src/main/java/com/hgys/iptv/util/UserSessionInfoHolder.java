@@ -19,8 +19,8 @@ public class UserSessionInfoHolder {
      * @return
      */
     public static UserSessionInfo getUserSessionInfo(){
-        String name =getCurrentUsername();
-        return (UserSessionInfo)ReqAndRespHolder.getRequest().getSession().getAttribute(name);
+        String username =getCurrentUsername();
+        return (UserSessionInfo)ReqAndRespHolder.getRequest().getSession().getAttribute(username);
     }
 
     public static String getCurrentUsername() {

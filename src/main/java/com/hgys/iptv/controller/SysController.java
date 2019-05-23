@@ -104,7 +104,9 @@ public class SysController {
     @PostMapping("/modifyPassword")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "修改密码")
-    public ResultVO modifyPassword(String password_old,String password_new) {
+    public ResultVO modifyPassword(
+            @RequestParam("password_old")String password_old,
+            @RequestParam("password_new")String password_new) {
         return sysUserService.modifyPassword(password_old,password_new);
     }
 
