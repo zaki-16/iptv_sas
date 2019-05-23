@@ -55,7 +55,7 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
         }
         //验证名字是否已经存在
         Optional<SettlementCombinatorialDimensionMaster> byName = settlementCombinatorialDimensionMasterRepository.findByName(vo.getName().trim());
-        if (byName.isPresent()){
+        if (byName.isPresent() && byName.get().getIsdelete().equals(0)){
             return ResultVOUtil.error("1","结算维度组合名称已经存在");
         }
 

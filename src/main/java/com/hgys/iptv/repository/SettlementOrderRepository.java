@@ -25,7 +25,7 @@ public interface SettlementOrderRepository extends JpaRepository<SettlementOrder
      * @param Code
      * @return
      */
-    @Query(value = "select o.orderMoney from SettlementOrder o where o.masterCode= ?1")
+    @Query(value = "select o.orderMoney from settlement_order o where o.masterCode= ?1 limit 1",nativeQuery = true)
     BigDecimal findByMastermoney(String Code);
 
 }
