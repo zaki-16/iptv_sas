@@ -254,7 +254,7 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
     public ResultVO<?> findAll() {
         Map<String,Object> vm = new HashMap<>();
         vm.put("isdelete",0);
-        List<?> prods =findByCriteria(Product.class,vm);
+        List<Product> prods =findByCriteria(Product.class,vm);
         if(prods!=null&&prods.size()>0)
             return ResultVOUtil.success(prods);
         return ResultVOUtil.error("1","所查询的产品列表不存在!");
