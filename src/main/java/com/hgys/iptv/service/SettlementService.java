@@ -6,5 +6,7 @@ public interface SettlementService {
 
     ResultVO<?> settlement(String id);
 
+    ResultVO<?> cancel(String id);
+
     boolean delectSettlementS(String masterCode);
 }

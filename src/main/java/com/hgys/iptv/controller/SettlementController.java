@@ -25,10 +25,20 @@ public class SettlementController {
     @PostMapping("/settlement")
     @ApiOperation(value = "分账结算结算接口",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResultVO<?> settlement(@ApiParam(value = "分账结算") @RequestParam String id){
+    public ResultVO<?> settlement(@ApiParam(value = "分账结算id") @RequestParam String id){
         if (StringUtils.isBlank(id)){
             return ResultVOUtil.error("1","分账结算ID不能为空!");
         }
         return settlementService.settlement(id);
+    }
+
+    @PostMapping("/cancel")
+    @ApiOperation(value = "分账结算撤销接口",notes = "返回处理结果，false或true")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResultVO<?> cancel(@ApiParam(value = "分账结算Id") @RequestParam String id){
+        if (StringUtils.isBlank(id)){
+            return ResultVOUtil.error("1","分账结算ID不能为空!");
+        }
+        return settlementService.cancel(id);
     }
 }

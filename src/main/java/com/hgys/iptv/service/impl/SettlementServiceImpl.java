@@ -66,8 +66,10 @@ public class SettlementServiceImpl implements SettlementService {
         if (!byId.isPresent()){
             return ResultVOUtil.error("1","未查询到该分账结算数据");
         }
-
-
+        //验证是否已经结算(1:已录入;2:待审核;3:初审通过;4:复审通过;5:终审通过;6:驳回)
+        if (byId.get().getStatus() != 1){
+            return ResultVOUtil.error("1","该分账结算信息已经结算,不能重复结算!");
+        }
         AccountSettlement accountSettlement = byId.get();
         //修改结算状态
         accountSettlement.setStatus(2);
@@ -83,6 +85,34 @@ public class SettlementServiceImpl implements SettlementService {
             return dealWithProduct(accountSettlement);
         }else if (5 == accountSettlement.getSet_type()){
             return dealWithBusinessBiLi(accountSettlement);
+        }
+        return ResultVOUtil.success();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public ResultVO<?> cancel(String id) {
+        Optional<AccountSettlement> byId = accountSettlementRepository.findById(Integer.parseInt(id));
+        if (!byId.isPresent()){
+            return ResultVOUtil.error("1","未查询到该分账结算数据");
+        }
+        //验证是否已经结算(1:已录入;2:待审核;3:初审通过;4:复审通过;5:终审通过;6:驳回)
+        if (byId.get().getStatus() == 1){
+            return ResultVOUtil.error("1","该分账结算信息没有结算,无需撤销!");
+        }
+        if (byId.get().getStatus() == 3 || byId.get().getStatus() == 4 || byId.get().getStatus() == 5){
+            return ResultVOUtil.error("1","进入审核阶段的结算账单不能撤销!");
+        }
+        try{
+            AccountSettlement accountSettlement = byId.get();
+            //修改结算状态
+            accountSettlement.setStatus(1);
+            accountSettlementRepository.saveAndFlush(accountSettlement);
+            //删除已经结算的无用信息
+            cpSettlementMoneyRepository.deleteByMasterCode(accountSettlement.getCode());
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultVOUtil.error("1","系统内部异常!");
         }
         return ResultVOUtil.success();
     }
