@@ -5,6 +5,8 @@ import com.hgys.iptv.controller.vm.CpAddVM;
 import com.hgys.iptv.controller.vm.CpControllerListVM;
 import com.hgys.iptv.controller.vm.CpVM;
 import com.hgys.iptv.model.*;
+import com.hgys.iptv.model.enums.LogResultEnum;
+import com.hgys.iptv.model.enums.LogTypeEnum;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
@@ -42,10 +44,12 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
     CpProductRepository cpProductRepository;
     @Autowired
     CpBusinessRepository cpBusinessRepository;
-
     @Autowired
     CpProductListAssemlber assemlber;
-
+    @Autowired
+    private Logger logger;
+    //操作对象
+    private static final String menuName = "cpManager";
 
     /**
      * cp 新增-插cp，product，cp_product表
@@ -76,8 +80,11 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             Cp cp_ = cpRepository.save(cp);
             //处理cp关联的中间表的映射关系
             handleRelation(vm,cp_.getId());
+
+            logger.log_add_success(menuName,"CpServiceImpl.save");
         }catch (Exception e){
             e.printStackTrace();
+            logger.log_add_fail(menuName,"CpServiceImpl.save");
             return ResultVOUtil.error("1","新增失败！");
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -164,8 +171,11 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
                 cpBusinessRepository.deleteAllByCpid(cp.getId());
             //处理cp关联的中间表的映射关系
             handleRelation(vm,vm.getId());
+            logger.log_up_success(menuName,"CpServiceImpl.update");
+
         }catch (Exception e){
             e.printStackTrace();
+            logger.log_up_fail(menuName,"CpServiceImpl.update");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -192,8 +202,10 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
                     //删除cp_business关系映射
                     cpBusinessRepository.deleteAllByCpid(cpid);
                 }
+                logger.log_rm_success(menuName,"CpServiceImpl.batchLogicDelete");
             }
         }catch (Exception e){
+            logger.log_rm_fail(menuName,"CpServiceImpl.batchLogicDelete");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);

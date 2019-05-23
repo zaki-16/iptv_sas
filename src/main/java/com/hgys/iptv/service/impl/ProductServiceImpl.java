@@ -45,7 +45,9 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
     @Autowired
     ProductBusinessListAssemlber assemlber;
     @Autowired
-    private EntityManager entityManager;
+    private Logger logger;
+    //操作对象
+    private static final String menuName = "prodManager";
     /**
      * 新增
      * @param vm
@@ -54,29 +56,34 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> save(ProductAddVM vm){
-//        //校验名称是否已经存在
+        try {
+            //        //校验名称是否已经存在
 //        Product byName = productRepository.findByName(vm.getName());
 //        if (null != byName){
 //            return ResultVOUtil.error("1",byName + "名称已经存在");
 //        }
-        String[] cols = {vm.getName(),vm.getPrice(),vm.getStatus().toString()};
-        if(!Validator.validEmptyPass(cols))//必填字段不为空则插入
-            return ResultVOUtil.error("1","有必填字段未填写！");
-        Product prod = new Product();
-        BeanUtils.copyProperties(vm,prod);
-        prod.setModifyTime(new Timestamp(System.currentTimeMillis()));//最后修改时间
-        prod.setInputTime(new Timestamp(System.currentTimeMillis()));//录入时间
-        prod.setCode(CodeUtil.getOnlyCode("PROD",5));//产品编码
-        prod.setIsdelete(0);//删除状态
-        //插产品表--立即返回该对象
-        Product prod_add = productRepository.save(prod);
+            String[] cols = {vm.getName(),vm.getPrice(),vm.getStatus().toString()};
+            if(!Validator.validEmptyPass(cols))//必填字段不为空则插入
+                return ResultVOUtil.error("1","有必填字段未填写！");
+            Product prod = new Product();
+            BeanUtils.copyProperties(vm,prod);
+            prod.setModifyTime(new Timestamp(System.currentTimeMillis()));//最后修改时间
+            prod.setInputTime(new Timestamp(System.currentTimeMillis()));//录入时间
+            prod.setCode(CodeUtil.getOnlyCode("PROD",5));//产品编码
+            prod.setIsdelete(0);//删除状态
+            //插产品表--立即返回该对象
+            Product prod_add = productRepository.save(prod);
+            //处理product关联的中间表的映射关系
+            handleRelation(vm,prod_add.getId());
 
-        //处理product关联的中间表的映射关系
-        handleRelation(vm,prod_add.getId());
+            logger.log_add_success(menuName,"ProductServiceImpl.save");
 
-        if(prod_add !=null)
-            return ResultVOUtil.success(Boolean.TRUE);
-        return ResultVOUtil.error("1","新增失败！");
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.log_add_fail(menuName,"ProductServiceImpl.save");
+            return ResultVOUtil.error("1","新增失败！");
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
     }
 
     /**
@@ -151,8 +158,11 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
                 cpProductRepository.deleteAllByPid(prod.getId());
             //处理product关联的中间表的映射关系
             handleRelation(vm,product_up.getId());
+
+            logger.log_up_success(menuName,"ProductServiceImpl.update");
         }catch (Exception e){
             e.printStackTrace();
+            logger.log_up_fail(menuName,"ProductServiceImpl.update");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -195,8 +205,11 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
                     //删除product_business关系映射
                     productBusinessRepository.deleteAllByPid(id);
                 }
+
+                logger.log_rm_success(menuName,"ProductServiceImpl.batchLogicDelete");
             }
         }catch (Exception e){
+            logger.log_rm_fail(menuName,"ProductServiceImpl.batchLogicDelete");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
