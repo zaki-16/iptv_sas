@@ -13,6 +13,7 @@ import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.CpService;
 import com.hgys.iptv.util.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -268,6 +269,7 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
         return ResultVOUtil.error("1","所查询的cp列表不存在!");
     }
 
+
     @Override
     public Page<CpControllerListVM> findByConditions(String name, String code, String cpAbbr, Integer status, Pageable pageable) {
         return cpRepository.findAll(((root, query, builder) -> {
@@ -300,6 +302,7 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             return builder.conjunction();
         }),pageable).map(assemlber::getListVM);
     }
+
 
     @Override
     public ResultVO<?> findcplist() {

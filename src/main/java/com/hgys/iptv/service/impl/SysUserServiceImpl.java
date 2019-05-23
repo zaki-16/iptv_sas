@@ -2,6 +2,7 @@ package com.hgys.iptv.service.impl;
 
 import com.google.common.collect.Maps;
 import com.hgys.iptv.controller.vm.SysUserVM;
+import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.SysUserRole;
 import com.hgys.iptv.model.User;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -39,8 +41,8 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
-    @Autowired
-    private CpService cpService;
+
+    private static final String rawPwd = "123456";
 
     @Override
     public ResultVO findByUserName(String username) {
@@ -76,8 +78,16 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         if(i>0){
             return ResultVOUtil.error("1","用户名已被占用！");
         }
+
         try {
             User user = new User();
+            Integer cpId = userDTO.getCpId();
+            if(-1 == cpId){
+                user.setCpAbbr("平台用户");
+            }else if(cpId > 0){
+                Cp cp = repositoryManager.findOneById(Cp.class, cpId);
+                user.setCpAbbr(cp.getCpAbbr());
+            }
             // 状态0:启用，1：禁用--默认新增时就启用
             if(userDTO.getStatus()==null || userDTO.getStatus()!=1)
                 user.setStatus(0);
@@ -198,6 +208,27 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         userRepository.saveAndFlush(byUsername);
         return ResultVOUtil.success(Boolean.TRUE);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO resetPassword(String username) {
+        if(StringUtils.isBlank(username)){
+            return ResultVOUtil.error("1","用户名不能为空！");
+        }
+        try {
+            User byIdUser = userRepository.findByUsername(username);
+            if(byIdUser==null)
+                return ResultVOUtil.error("1","用户已不存在！");
+            byIdUser.setPassword(rawPwd);
+            userRepository.saveAndFlush(byIdUser);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultVOUtil.error("1","重置密码异常！");
+        }
+        return ResultVOUtil.success("重置密码成功！");
+    }
+
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO deleteUserById(Integer id) {

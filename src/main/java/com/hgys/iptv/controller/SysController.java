@@ -108,6 +108,13 @@ public class SysController {
         return sysUserService.modifyPassword(username,password_old,password_new1,password_new2);
     }
 
+    @PostMapping("/resetPassword")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "重置密码")
+    public ResultVO resetPassword(String username) {
+        return sysUserService.resetPassword(username);
+    }
+
 
     /*
     --------------------------------角色------------------------------------------
