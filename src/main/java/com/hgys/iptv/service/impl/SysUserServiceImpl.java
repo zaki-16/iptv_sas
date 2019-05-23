@@ -2,19 +2,18 @@ package com.hgys.iptv.service.impl;
 
 import com.google.common.collect.Maps;
 import com.hgys.iptv.controller.vm.SysUserVM;
+import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.SysUserRole;
 import com.hgys.iptv.model.User;
 import com.hgys.iptv.model.dto.SysUserDTO;
-import com.hgys.iptv.model.enums.LogResultEnum;
-import com.hgys.iptv.model.enums.LogTypeEnum;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.security.UserDetailsServiceImpl;
-import com.hgys.iptv.service.CpService;
 import com.hgys.iptv.service.SysUserService;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
+import com.hgys.iptv.util.UserSessionInfoHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +38,10 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
-    @Autowired
-    private CpService cpService;
+
+    private static final String menuName = "用户管理";
+
+    private static final String rawPwd = "123456";
 
     @Override
     public ResultVO findByUserName(String username) {
@@ -54,7 +55,9 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
     @Override
     public ResultVO findUserById(Integer id) {
         SysUserVM sysUserVM = new SysUserVM();
-        User byId = userRepository.findById(id).get();
+        User byId = userRepository.findById(id).orElse(null);
+        if(null==byId)
+            return ResultVOUtil.error("1","该用户不存在！");
         BeanUtils.copyProperties(byId,sysUserVM);
         List<Role> allById = this.findAllRoleByUserId(id);
         sysUserVM.setList(allById);
@@ -76,8 +79,16 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         if(i>0){
             return ResultVOUtil.error("1","用户名已被占用！");
         }
+
         try {
             User user = new User();
+            Integer cpId = userDTO.getCpId();
+            if(-1 == cpId){
+                user.setCpAbbr("平台用户");
+            }else if(cpId > 0){
+                Cp cp = repositoryManager.findOneById(Cp.class, cpId);
+                user.setCpAbbr(cp.getCpAbbr());
+            }
             // 状态0:启用，1：禁用--默认新增时就启用
             if(userDTO.getStatus()==null || userDTO.getStatus()!=1)
                 user.setStatus(0);
@@ -90,10 +101,10 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 //处理中间表
             handleRelation(userDTO,user_add.getId());
             //记录日志
-            logger.log("新增用户", LogTypeEnum.ADD.getType(),"SysUserServiceImpl.addUser", LogResultEnum.SUCCESS.name());
+            logger.log_add_success(menuName,"SysUserServiceImpl.addUser");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log("新增用户",LogTypeEnum.ADD.getType(),"SysUserServiceImpl.addUser",LogResultEnum.EXCEPTION.name());
+            logger.log_add_fail(menuName,"SysUserServiceImpl.addUser");
             return ResultVOUtil.error("1","新增用户异常！");
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -168,8 +179,12 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             if(StringUtils.isNotBlank(userDTO.getRids()))
                 sysUserRoleRepository.deleteAllByUserId(user.getId());
             handleRelation(userDTO,user.getId());
+
+            logger.log_up_success(menuName,"SysUserServiceImpl.updateUser");
+
         }catch (Exception e){
             e.printStackTrace();
+            logger.log_up_fail(menuName,"SysUserServiceImpl.updateUser");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -177,27 +192,63 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 
     /**
      * 修改密码
-     *
-     * @param username
      * @param password_old
-     * @param password_new1
-     * @param password_new2
+     * @param password_new
      * @return
      */
     @Override
-    public ResultVO modifyPassword(String username,String password_old,String password_new1,String password_new2){
-        if(String.valueOf(password_new1).compareTo(password_new2)!=0){
-            return ResultVOUtil.error("1","两次密码输入不正确！");
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO modifyPassword(String password_old,String password_new){
+        try {
+            String username = UserSessionInfoHolder.getCurrentUsername();
+            if(null == username || (username.compareTo("anonymousUser")==0))
+                return  ResultVOUtil.error("1","密码已过期或未登录！");
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if(!passwordEncoder.matches(password_old,userDetails.getPassword())){
+                return ResultVOUtil.error("1","用户或密码错误！");
+            }
+            User byUsername = userRepository.findByUsername(username);
+            byUsername.setPassword(passwordEncoder.encode(password_new));
+            userRepository.saveAndFlush(byUsername);
+
+            logger.log_up_success(menuName,"SysUserServiceImpl.modifyPassword");
+        }catch (Exception e){
+            logger.log_up_fail(menuName,"SysUserServiceImpl.modifyPassword");
+            return ResultVOUtil.error("1","密码修改异常！");
         }
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        if(!passwordEncoder.matches(password_old,userDetails.getPassword())){
-            return ResultVOUtil.error("1","用户或密码错误！");
-        }
-        User byUsername = userRepository.findByUsername(username);
-        byUsername.setPassword(passwordEncoder.encode(password_new2));
-        userRepository.saveAndFlush(byUsername);
-        return ResultVOUtil.success(Boolean.TRUE);
+        return ResultVOUtil.success("密码修改成功！");
     }
+
+    /**
+     *
+     * @param username
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO resetPassword(String username) {
+        if(StringUtils.isBlank(username)){
+            return ResultVOUtil.error("1","用户名不能为空！");
+        }
+        try {
+            User byIdUser = userRepository.findByUsername(username);
+            if(byIdUser==null)
+                return ResultVOUtil.error("1","用户已不存在！");
+            byIdUser.setPassword(rawPwd);
+            userRepository.saveAndFlush(byIdUser);
+
+            logger.log_up_success(menuName,"SysUserServiceImpl.resetPassword");
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.log_up_fail(menuName,"SysUserServiceImpl.resetPassword");
+            return ResultVOUtil.error("1","重置密码异常！");
+        }
+        return ResultVOUtil.success("重置密码成功！");
+    }
+
+
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO deleteUserById(Integer id) {
@@ -228,8 +279,11 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
                     //删除关系映射
                     sysUserRoleRepository.deleteAllByUserId(id);
                 }
+
+                logger.log_rm_success(menuName,"SysUserServiceImpl.batchLogicDelete");
             }
         }catch (Exception e){
+            logger.log_rm_fail(menuName,"SysUserServiceImpl.batchLogicDelete");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);

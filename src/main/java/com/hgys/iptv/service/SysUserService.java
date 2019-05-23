@@ -22,6 +22,7 @@ public interface SysUserService {
     ResultVO batchLogicDelete(String ids);
     //    ResultVO findAllUser();
     Page<User> findAllUserOfPage(String username,String realName,Integer status,Integer pageNum, Integer pageSize);
-    ResultVO modifyPassword(String username,String password_old,String password_new1,String password_new2);
+    ResultVO modifyPassword(String password_old,String password_new);
+    ResultVO resetPassword(String username);
     List<Role> findAllRoleByUserId(Integer userId);
 }

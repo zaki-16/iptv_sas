@@ -1,9 +1,6 @@
 package com.hgys.iptv.repository;
 
 import com.hgys.iptv.model.Cp;
-import com.hgys.iptv.model.CpProduct;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CpRepository extends JpaRepository<Cp,Integer>, JpaSpecificationExecutor<Cp> {
+public interface CpRepository extends BaseRepository<Cp,Integer> {
 
     /**
      * 通过code查询

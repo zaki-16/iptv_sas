@@ -104,8 +104,17 @@ public class SysController {
     @PostMapping("/modifyPassword")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "修改密码")
-    public ResultVO modifyPassword(String username,String password_old,String password_new1,String password_new2) {
-        return sysUserService.modifyPassword(username,password_old,password_new1,password_new2);
+    public ResultVO modifyPassword(
+            @RequestParam("password_old")String password_old,
+            @RequestParam("password_new")String password_new) {
+        return sysUserService.modifyPassword(password_old,password_new);
+    }
+
+    @PostMapping("/resetPassword")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "重置密码为 123456")
+    public ResultVO resetPassword(String username) {
+        return sysUserService.resetPassword(username);
     }
 
 
