@@ -33,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Predicate;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -323,6 +322,10 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             if (null == cp){
                 return ResultVOUtil.error("1","第" + i + "条数据，CP不存在!");
             }
+
+            if (StringUtils.isBlank(dto.getQuantity())){
+                return ResultVOUtil.error("1","第" + i + "条数据，订购量不能为空!");
+            }
         }
         return ResultVOUtil.success();
     }
@@ -344,6 +347,14 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             Optional<SettlementDimension> byCode = settlementDimensionRepository.findByCode(dto.getDimensionCode().trim());
             if (!byCode.isPresent()){
                 return ResultVOUtil.error("1","第" + i + "条数据，维度不存在!");
+            }
+
+            if (StringUtils.isBlank(dto.getNumber())){
+                return ResultVOUtil.error("1","第" + i + "条数据，数量不能为空!");
+            }
+
+            if (StringUtils.isBlank(dto.getMoney())){
+                return ResultVOUtil.error("1","第" + i + "条数据，结算金额不能为空!");
             }
         }
         return ResultVOUtil.success();
@@ -376,6 +387,22 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             Optional<SettlementDimension> byCode2 = settlementDimensionRepository.findByCode(dto.getDimensionCCode().trim());
             if (!byCode2.isPresent()){
                 return ResultVOUtil.error("1","第" + i + "条数据，维度C不存在!");
+            }
+
+            if (StringUtils.isBlank(dto.getNumberA())){
+                return ResultVOUtil.error("1","第" + i + "条数据，维度A数量不能为空!");
+            }
+
+            if (StringUtils.isBlank(dto.getNumberB())){
+                return ResultVOUtil.error("1","第" + i + "条数据，维度B数量不能为空!");
+            }
+
+            if (StringUtils.isBlank(dto.getNumberC())){
+                return ResultVOUtil.error("1","第" + i + "条数据，维度C数量不能为空!");
+            }
+
+            if (StringUtils.isBlank(dto.getMoney())){
+                return ResultVOUtil.error("1","第" + i + "条数据，结算金额不能为空!");
             }
         }
         return ResultVOUtil.success();

@@ -49,6 +49,16 @@ public class QSettlementProductMany extends EntityPathBase<SettlementProductMany
 
     public final StringPath masterCode = createString("masterCode");
 
+    public final NumberPath<java.math.BigDecimal> numberA = createNumber("numberA", java.math.BigDecimal.class);
+
+    public final NumberPath<java.math.BigDecimal> numberB = createNumber("numberB", java.math.BigDecimal.class);
+
+    public final NumberPath<java.math.BigDecimal> numberC = createNumber("numberC", java.math.BigDecimal.class);
+
+    public final NumberPath<java.math.BigDecimal> numberD = createNumber("numberD", java.math.BigDecimal.class);
+
+    public final NumberPath<java.math.BigDecimal> numberE = createNumber("numberE", java.math.BigDecimal.class);
+
     public final StringPath productCode = createString("productCode");
 
     public final StringPath productName = createString("productName");

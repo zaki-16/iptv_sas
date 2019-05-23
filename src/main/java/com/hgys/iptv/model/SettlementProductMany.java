@@ -68,6 +68,27 @@ public class SettlementProductMany implements java.io.Serializable {
     @Column(name = "setMoney", nullable = true, length = 12)
     private BigDecimal setMoney;
 
+    /** E数量 */
+    @Column(name = "numberE", nullable = true, length = 12)
+    private BigDecimal numberE;
+
+    /** A数量 */
+    @Column(name = "numberA", nullable = true, length = 12)
+    private BigDecimal numberA;
+
+    /** B数量 */
+    @Column(name = "numberB", nullable = true, length = 12)
+    private BigDecimal numberB;
+
+    /** C数量 */
+    @Column(name = "numberC", nullable = true, length = 12)
+
+    private BigDecimal numberC;
+
+    /** D数量 */
+    @Column(name = "numberD", nullable = true, length = 12)
+    private BigDecimal numberD;
+
     /** 创建时间 */
     @Column(name = "createTime", nullable = true, length = 26)
     private Timestamp createTime;
@@ -444,5 +465,45 @@ public class SettlementProductMany implements java.io.Serializable {
      */
     public void setDimEName(String dimEName) {
         this.dimEName = dimEName;
+    }
+
+    public BigDecimal getNumberE() {
+        return numberE;
+    }
+
+    public void setNumberE(BigDecimal numberE) {
+        this.numberE = numberE;
+    }
+
+    public BigDecimal getNumberA() {
+        return numberA;
+    }
+
+    public void setNumberA(BigDecimal numberA) {
+        this.numberA = numberA;
+    }
+
+    public BigDecimal getNumberB() {
+        return numberB;
+    }
+
+    public void setNumberB(BigDecimal numberB) {
+        this.numberB = numberB;
+    }
+
+    public BigDecimal getNumberC() {
+        return numberC;
+    }
+
+    public void setNumberC(BigDecimal numberC) {
+        this.numberC = numberC;
+    }
+
+    public BigDecimal getNumberD() {
+        return numberD;
+    }
+
+    public void setNumberD(BigDecimal numberD) {
+        this.numberD = numberD;
     }
 }

@@ -29,11 +29,11 @@ public class QSettlementProductSingle extends EntityPathBase<SettlementProductSi
 
     public final StringPath dimName = createString("dimName");
 
-    public final NumberPath<Integer> dimWeith = createNumber("dimWeith", Integer.class);
-
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
     public final StringPath masterCode = createString("masterCode");
+
+    public final NumberPath<java.math.BigDecimal> number = createNumber("number", java.math.BigDecimal.class);
 
     public final StringPath productCode = createString("productCode");
 
