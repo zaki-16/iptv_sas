@@ -32,7 +32,7 @@ public abstract class AbstractBaseServiceImpl {
      * @param map
      * @return
      */
-    public <T> List <T> findByCriteria(Class<?> clazz, Map<String,Object> map) {
+    public <T> List <T> findByCriteria(Class<T> clazz, Map<String,Object> map) {
         return repositoryManager.findByCriteria(clazz,map);
     }
 

@@ -2,6 +2,7 @@ package com.hgys.iptv.controller;
 
 import com.google.common.collect.Maps;
 import com.hgys.iptv.model.Role;
+import com.hgys.iptv.model.User;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.AuthorityRepository;
 import com.hgys.iptv.repository.RoleRepository;
@@ -10,6 +11,7 @@ import com.hgys.iptv.util.RepositoryManager;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.swagger.annotations.Api;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,20 +45,10 @@ public class TestController   {
 
     @PostMapping("/myTest")
     public ResultVO myTest(){
-//        Role role = roleRepository.findById(1).get();
-//        HashSet<Integer> set = new HashSet<>();
-//        List<SysRoleAuthority> sysRoleAuthorities = repositoryManager.findByCriteria(SysRoleAuthority.class, "roleId", 2);
-//        sysRoleAuthorities.forEach(c->{
-//            set.add(c.getAuthId());
-//        });
-        Pageable pageable = PageRequest.of(0,10);
-
-        Page<Role> byPage = repositoryManager.findByPage(roleRepository, pageable);
-        Page<Role> byPage1 = repositoryManager.findByPage(roleRepository, 1,10);
-        HashMap<String, Object> map = Maps.newHashMap();
-
-        Page<Role> byCriteriaPage1 = repositoryManager.findByCriteriaPage(roleRepository, map, pageable);
-        return ResultVOUtil.success(byCriteriaPage1);
+        User oneById = repositoryManager.findOneById(User.class, 8);
+        RepositoryManager.ModelView modelView = RepositoryManager.getModelView();
+        modelView.setElem(oneById);
+        return ResultVOUtil.success(modelView);
     }
 
 }

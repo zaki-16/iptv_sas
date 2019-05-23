@@ -59,13 +59,19 @@ public class SettlementServiceImpl implements SettlementService {
      * @param id
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultVO<?> settlement(String id) {
         Optional<AccountSettlement> byId = accountSettlementRepository.findById(Integer.parseInt(id));
         if (!byId.isPresent()){
             return ResultVOUtil.error("1","未查询到该分账结算数据");
         }
+
+
         AccountSettlement accountSettlement = byId.get();
+        //修改结算状态
+        accountSettlement.setStatus(2);
+        accountSettlementRepository.saveAndFlush(accountSettlement);
         //查询当前分账结算类型、规则编码(1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算))
         if (1 == accountSettlement.getSet_type()){
             return dealWithOrderSettlement(accountSettlement);
@@ -89,11 +95,8 @@ public class SettlementServiceImpl implements SettlementService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean delectSettlementS(String masterCode) {
-        QCpSettlementMoney qCpSettlementMoney = QCpSettlementMoney.cpSettlementMoney;
         try{
-            long execute = jpaQueryFactory.delete(qCpSettlementMoney)
-                    .where(qCpSettlementMoney.masterCode.eq(masterCode.trim())).execute();
-            System.err.println("删除成功-------->成功删除" + execute + "条数据!");
+            cpSettlementMoneyRepository.deleteByMasterCode(masterCode);
         }catch (Exception e){
             e.printStackTrace();
             return false;
@@ -334,10 +337,15 @@ public class SettlementServiceImpl implements SettlementService {
                 QSettlementProductSingle qSettlementProductSingle = QSettlementProductSingle.settlementProductSingle;
                 List<SettlementProductSingle> fetch = jpaQueryFactory.selectFrom(qSettlementProductSingle)
                         .where(qSettlementProductSingle.masterCode.eq(accountSettlement.getCode())).fetch();
-                //统计产品总占维度是多少
-                Map<String, Long> collect = fetch.stream().collect(Collectors.groupingBy(SettlementProductSingle::getProductCode, Collectors.counting()));
-                //将数据源转为map,cp编码和产品编码作为主键，方便计算
-                //Map<String, SettlementProductSingle> sing = fetch.stream().collect(Collectors.toMap(SettlementProductSingle -> SettlementProductSingle.getCpcode() + SettlementProductSingle.getProductCode(), SettlementProductSingle -> SettlementProductSingle));
+                //统计产品总数量
+                Map<String, BigDecimal> collect = jpaQueryFactory.select(Projections.bean(
+                        SettlementProductSingle.class,
+                        qSettlementProductSingle.productCode,
+                        qSettlementProductSingle.number.sum().as("number")
+                )).from(qSettlementProductSingle).where(qSettlementProductSingle.masterCode.eq(accountSettlement.getCode()))
+                        .groupBy(qSettlementProductSingle.productCode).fetch()
+                        .stream().collect(Collectors.toMap(SettlementProductSingle::getProductCode, SettlementProductSingle::getNumber));
+
                 for (SettlementProductSingle single : fetch){
                     CpSettlementMoney money = new CpSettlementMoney();
                     money.setMasterName(accountSettlement.getName());
@@ -347,9 +355,8 @@ public class SettlementServiceImpl implements SettlementService {
                     money.setProductCode(StringUtils.trimToEmpty(single.getProductCode()));
                     money.setProductName(StringUtils.trimToEmpty(single.getProductName()));
                     money.setCreateTime(new Timestamp(System.currentTimeMillis()));
-                    //cp在该产品所在权重比值
-                    BigDecimal i = BigDecimal.valueOf(1).divide(BigDecimal.valueOf(collect.get(single.getProductCode()))).setScale(2);
-                    BigDecimal cpmoney = single.getSetMoney().multiply(i).setScale(2);
+                    //cp在该产品所占结算金额
+                    BigDecimal cpmoney = single.getNumber().divide(collect.get(single.getProductCode())).multiply(single.getSetMoney()).setScale(2);
                     money.setSettlementMoney(cpmoney);
                     cpSettlementMoneyRepository.save(money);
                 }
@@ -359,10 +366,22 @@ public class SettlementServiceImpl implements SettlementService {
                 List<SettlementProductMany> fetch = jpaQueryFactory.selectFrom(qSettlementProductMany)
                         .where(qSettlementProductMany.masterCode
                                 .eq(accountSettlement.getCode())).fetch();
-                //统计产品总占维度是多少
-                Map<String, Long> collect = fetch.stream().collect(Collectors.groupingBy(SettlementProductMany::getProductCode, Collectors.counting()));
+                //统计产品各维度总数量
+                Map<String, SettlementProductMany> collect = jpaQueryFactory.select(Projections.bean(
+                        SettlementProductMany.class,
+                        qSettlementProductMany.productCode,
+                        qSettlementProductMany.numberA.sum().as("numberA"),
+                        qSettlementProductMany.numberB.sum().as("numberB"),
+                        qSettlementProductMany.numberC.sum().as("numberC")
+                )).from(qSettlementProductMany).where(qSettlementProductMany.masterCode.eq(accountSettlement.getCode()))
+                        .groupBy(qSettlementProductMany.productCode).fetch()
+                        .stream().collect(Collectors.toMap(SettlementProductMany::getProductCode, SettlementProductMany -> SettlementProductMany));
+
                 //查询多维度权重
-                List<SettlementCombinatorialDimensionFrom> wights = settlementCombinatorialDimensionFromRepository.findByMasterCode(accountSettlement.getSet_ruleCode());
+                Map<String, Integer> wights = settlementCombinatorialDimensionFromRepository
+                        .findByMasterCode(accountSettlement.getSet_ruleCode())
+                        .stream()
+                        .collect(Collectors.toMap(SettlementCombinatorialDimensionFrom::getDim_code, SettlementCombinatorialDimensionFrom::getWeight));
 
                 for (SettlementProductMany many : fetch){
                     CpSettlementMoney money = new CpSettlementMoney();
@@ -373,16 +392,13 @@ public class SettlementServiceImpl implements SettlementService {
                     money.setProductCode(StringUtils.trimToEmpty(many.getProductCode()));
                     money.setProductName(StringUtils.trimToEmpty(many.getProductName()));
                     money.setCreateTime(new Timestamp(System.currentTimeMillis()));
-                    //cp在该产品所在权重比值
-                    BigDecimal a = BigDecimal.valueOf(wights.get(0).getWeight())
-                            .divide(BigDecimal.valueOf(collect.get(many.getProductCode())).multiply(BigDecimal.valueOf(wights.get(0).getWeight()))).setScale(2);
-                    BigDecimal b = BigDecimal.valueOf(wights.get(1).getWeight())
-                            .divide(BigDecimal.valueOf(collect.get(many.getProductCode())).multiply(BigDecimal.valueOf(wights.get(1).getWeight()))).setScale(2);
-                    BigDecimal c = BigDecimal.valueOf(wights.get(2).getWeight())
-                            .divide(BigDecimal.valueOf(collect.get(many.getProductCode())).multiply(BigDecimal.valueOf(wights.get(2).getWeight()))).setScale(2);
+                    //cp在该产品下结算金额
+                    BigDecimal a = many.getNumberA().divide(collect.get(many.getProductCode()).getNumberA()).multiply(BigDecimal.valueOf(wights.get(many.getDimACode()))).setScale(2);
+                    BigDecimal b = many.getNumberB().divide(collect.get(many.getProductCode()).getNumberB()).multiply(BigDecimal.valueOf(wights.get(many.getDimBCode()))).setScale(2);
+                    BigDecimal c = many.getNumberC().divide(collect.get(many.getProductCode()).getNumberC()).multiply(BigDecimal.valueOf(wights.get(many.getDimCCode()))).setScale(2);
 
                     //计算cp在该产品下分账结算金额
-                    BigDecimal allmoney = a.multiply(many.getSetMoney()).add(b.multiply(many.getSetMoney())).add(c.multiply(many.getSetMoney())).setScale(2);
+                    BigDecimal allmoney = a.add(b).add(c).setScale(2);
                     money.setSettlementMoney(allmoney);
                     cpSettlementMoneyRepository.save(money);
                 }

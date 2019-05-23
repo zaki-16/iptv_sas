@@ -25,9 +25,9 @@ public class ReqAndRespHolder {
         return resp;
     }
 
-    public static HttpSession getSession(){
-        return getRequest().getSession();
-    }
+//    public static HttpSession getSession(){
+//        return getRequest().getSession();
+//    }
 
 
     /**

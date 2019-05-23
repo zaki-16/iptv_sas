@@ -1,8 +1,7 @@
 package com.hgys.iptv.util.excel;
 
-import org.springframework.util.ResourceUtils;
+import org.springframework.util.ClassUtils;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class PathConstant {
@@ -11,8 +10,8 @@ public class PathConstant {
 	 * @return
 	 * @throws IOException
 	 */
-	public static String getExcelExportResource() throws FileNotFoundException {
-		return ResourceUtils.getFile("classpath:excel").toString();
+	public static String getExcelExportResource() {
+		return ClassUtils.getDefaultClassLoader().getResource("excel").getPath();
 	}
 
 

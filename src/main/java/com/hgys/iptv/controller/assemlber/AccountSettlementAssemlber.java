@@ -8,6 +8,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +41,12 @@ public class AccountSettlementAssemlber {
     public AccountSettlementAddVM getListVM(AccountSettlement od){
 
         AccountSettlementAddVM vm = new AccountSettlementAddVM();
+        Timestamp startTime=  od.getSetStartTime();
+        Timestamp endTime=  od.getSetEndTime();
+        String strn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(startTime);
+        String strns = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(endTime);
+        vm.setStartTime(strn);
+        vm.setEndTime(strns);
         BeanUtils.copyProperties(od, vm);
         if (1 == vm.getSet_type()) {   //1:订购量结算源数据
             List<SettlementOrder> settlementOrders = settlementOrderRepository.findByMasterCode(od.getCode());

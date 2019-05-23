@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -64,7 +65,7 @@ public class DemoContronller {
 
     @GetMapping("/excel")
     @ApiOperation(value = "excel导出模板方法一",notes = "返回Excel文件")
-    public void excel(HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
+    public void excel(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Map<String, Object> beanParams = new HashMap<>();
         List<Map> l = new ArrayList<>();
         for(int i=1;i<29;i++){

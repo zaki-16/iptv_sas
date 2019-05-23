@@ -11,6 +11,7 @@ import com.hgys.iptv.model.enums.LogTypeEnum;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.security.UserDetailsServiceImpl;
+import com.hgys.iptv.service.CpService;
 import com.hgys.iptv.service.SysUserService;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
@@ -38,6 +39,8 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private CpService cpService;
 
     @Override
     public ResultVO findByUserName(String username) {
@@ -82,6 +85,7 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             //加密
             user.setPassword(passwordEncoder.encode(user.getPassword().trim()));
             user.setCreatedTime(new Timestamp(System.currentTimeMillis()));
+            user.setIsdelete(0);//删除状态
             User user_add = userRepository.save(user);
 //处理中间表
             handleRelation(userDTO,user_add.getId());
@@ -245,8 +249,8 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
         HashMap<String, Object> map = Maps.newHashMap();
         if(username!=null)
-            map.put("username",username);
-        if(username!=null)
+            map.put("username","%"+username+"%");
+        if(realName!=null)
             map.put("realName",realName);
         if(status!=null&&status>0)
             map.put("status",status);

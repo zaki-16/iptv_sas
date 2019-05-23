@@ -65,8 +65,8 @@ public class SettlementDocumentServiceImpl implements SettlementDocumentService 
                predicates.add(condition);
            }
 
-           /** 1:已录入;2:待审核;3:初审通过;4:复审通过;5:终审通过;6:驳回;7:已结算*/
-           Predicate condition = builder.equal(root.get("status"), 7);
+           /** 1:已录入;2:待审核;3:初审通过;4:复审通过;5:终审通过;6:驳回*/
+           Predicate condition = builder.notEqual(root.get("status"), 1);
            predicates.add(condition);
 
            if (!predicates.isEmpty()){
@@ -123,5 +123,34 @@ public class SettlementDocumentServiceImpl implements SettlementDocumentService 
                 .innerJoin(qAccountSettlement).on(qCpSettlementMoney.masterCode.eq(qAccountSettlement.code))
                 .where(qCpSettlementMoney.cpcode.eq(cpCode)).fetch();
         return ResultVOUtil.success(masterId);
+    }
+
+    @Override
+    public SettlementDocumentCPListExcelVM settlementCpExcel(Integer id) {
+        QAccountSettlement qAccountSettlement = QAccountSettlement.accountSettlement;
+        QCpSettlementMoney qCpSettlementMoney = QCpSettlementMoney.cpSettlementMoney;
+
+        SettlementDocumentCPListExcelVM vm = jpaQueryFactory.select(Projections.bean(
+                SettlementDocumentCPListExcelVM.class,
+                qAccountSettlement.id.as("masterId"),
+                qAccountSettlement.setStartTime,
+                qAccountSettlement.setEndTime,
+                qAccountSettlement.status,
+                qAccountSettlement.set_type.as("type"),
+                qCpSettlementMoney.id,
+                qCpSettlementMoney.masterCode,
+                qCpSettlementMoney.masterName,
+                qCpSettlementMoney.cpcode,
+                qCpSettlementMoney.cpname,
+                qCpSettlementMoney.productCode,
+                qCpSettlementMoney.productName,
+                qCpSettlementMoney.businessCode,
+                qCpSettlementMoney.businessName,
+                qCpSettlementMoney.settlementMoney,
+                qCpSettlementMoney.createTime
+        )).from(qCpSettlementMoney)
+                .innerJoin(qAccountSettlement).on(qCpSettlementMoney.masterCode.eq(qAccountSettlement.code))
+                .where(qCpSettlementMoney.id.eq(id)).fetchOne();
+        return vm;
     }
 }
