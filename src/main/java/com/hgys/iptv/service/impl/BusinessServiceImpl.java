@@ -43,6 +43,10 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
 
     @Autowired
     BusinessControllerAssemlber assemlber;
+    @Autowired
+    private Logger logger;
+    //操作对象
+    private static final String menuName = "bizManager";
     /**
      * 新增
      * @param vm
@@ -51,30 +55,34 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> save(BusinessAddVM vm){
-        //校验名称是否已经存在
+        try {
+            //校验名称是否已经存在
 //        Business byName = businessRepository.findByName(business.getName());
 //        if (null != byName){
 //            return ResultVOUtil.error("1",byName + "名称已经存在");
 //        }
-        //必填字段：业务名臣，业务类型，结算类型，状态
-        String[] cols = {vm.getName(),vm.getBizType().toString(),
-                vm.getSettleType().toString(),vm.getStatus().toString()};
-        if(!Validator.validEmptyPass(cols))//必填字段不为空则插入
-            return ResultVOUtil.error("1","有必填字段未填写！");
-        //1.存cp主表并返回
-        Business business = new Business();
-        BeanUtils.copyProperties(vm, business);
-        business.setModifyTime(new Timestamp(System.currentTimeMillis()));//最后修改时间
-        business.setInputTime(new Timestamp(System.currentTimeMillis()));//注册时间
-        business.setCode(CodeUtil.getOnlyCode("BIZ",5));//cp编码
-        business.setIsdelete(0);//删除状态
-        Business biz_add = businessRepository.save(business);
-        //处理 business关联的中间表的映射关系
-        handleRelation(vm,biz_add.getId());
-
-        if(biz_add !=null)
-            return ResultVOUtil.success(Boolean.TRUE);
-        return ResultVOUtil.error("1","新增失败！");
+            //必填字段：业务名臣，业务类型，结算类型，状态
+            String[] cols = {vm.getName(),vm.getBizType().toString(),
+                    vm.getSettleType().toString(),vm.getStatus().toString()};
+            if(!Validator.validEmptyPass(cols))//必填字段不为空则插入
+                return ResultVOUtil.error("1","有必填字段未填写！");
+            //1.存cp主表并返回
+            Business business = new Business();
+            BeanUtils.copyProperties(vm, business);
+            business.setModifyTime(new Timestamp(System.currentTimeMillis()));//最后修改时间
+            business.setInputTime(new Timestamp(System.currentTimeMillis()));//注册时间
+            business.setCode(CodeUtil.getOnlyCode("BIZ",5));//cp编码
+            business.setIsdelete(0);//删除状态
+            Business biz_add = businessRepository.save(business);
+            //处理 business关联的中间表的映射关系
+            handleRelation(vm,biz_add.getId());
+            logger.log_add_success(menuName,"BusinessServiceImpl.save");
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.log_add_fail(menuName,"BusinessServiceImpl.save");
+            return ResultVOUtil.error("1","新增失败！");
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
     }
     /**
      * 处理 business关联的中间表的映射关系
@@ -146,8 +154,12 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
                 cpBusinessRepository.deleteAllByBid(business.getId());
             //处理 business关联的中间表的映射关系
             handleRelation(vm,vm.getId());
+
+            logger.log_up_success(menuName,"BusinessServiceImpl.update");
+
         }catch (Exception e){
             e.printStackTrace();
+            logger.log_up_fail(menuName,"BusinessServiceImpl.update");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -191,8 +203,11 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
                     //删除product_business关系映射
                     productBusinessRepository.deleteAllByBid(id);
                 }
+
+                logger.log_rm_success(menuName,"BusinessServiceImpl.batchLogicDelete");
             }
         }catch (Exception e){
+            logger.log_rm_fail(menuName,"BusinessServiceImpl.batchLogicDelete");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);

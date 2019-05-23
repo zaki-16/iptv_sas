@@ -40,7 +40,6 @@ import java.util.Arrays;
 @Api(value = "LoginController",tags = "登录管理Api接口")
 public class LoginController {
 
-    private static final String CURRENT_USER = "CURRENT_USER";
     @Autowired
     private Logger logger;
     @Autowired
@@ -128,10 +127,25 @@ public class LoginController {
 //
 //    @PreAuthorize(value = "hasPermission('cpMenu', 'view')")
 
+    private static final ThreadLocal<Object> threadLocal = new ThreadLocal<Object>(){
+         /**
+         * ThreadLocal没有被当前线程赋值时或当前线程刚调用remove方法后调用get方法，返回此方法值
+         */
+        @Override
+        protected Object initialValue()
+        {
+            String currentUsername = UserSessionInfoHolder.getCurrentUsername();
+            System.out.println("当前用户是："+currentUsername);
+            System.out.println("调用get方法时，当前线程共享变量没有设置，调用initialValue获取默认值！");
+            return null;
+        }
+    };
+
     @PostMapping("/myTest")
     public ResultVO myTest() {
         System.out.println("test  success................" );
 
+        Object o = LoginController.threadLocal.get();
         Cookie[] cookies = ReqAndRespHolder.getRequest().getCookies();
         Arrays.asList(cookies).forEach(c->{
             if(c!=null){

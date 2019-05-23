@@ -5,6 +5,8 @@ import com.hgys.iptv.model.QOperationLog;
 import com.hgys.iptv.model.QSysLog;
 import com.hgys.iptv.model.SysLog;
 import com.hgys.iptv.model.bean.UserSessionInfo;
+import com.hgys.iptv.model.enums.LogResultEnum;
+import com.hgys.iptv.model.enums.LogTypeEnum;
 import com.hgys.iptv.repository.OperationLogRepository;
 import com.hgys.iptv.repository.SysLogRepository;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -73,14 +75,15 @@ public class Logger {
     /**
      * 记录操作日志
      */
-    public void log(String operObj, String operType,String methodName, String result){
+    public void log(String menuName, String operType,String methodName, String result){
+        //操作对象，操作类型，方法名，结果
         try {
             UserSessionInfo info=UserSessionInfoHolder.getUserSessionInfo();
 
             OperationLog operationLog = new OperationLog();
             operationLog.setLoginName(info.getLoginName());
             operationLog.setRealName(info.getRealName());
-            operationLog.setOperObj(operObj);
+            operationLog.setOperObj(menuName);
             operationLog.setOperType(operType);
             operationLog.setMethodName(methodName);
             operationLog.setResult(result);
@@ -128,4 +131,30 @@ public class Logger {
                 .limit(pageable.getPageSize());
         return new PageImpl<>(jpaQuery.fetch(),pageable,jpaQuery.fetchResults().getTotal());
     }
+
+
+
+    //=======================-=--------针对 增删改查的便捷日志调用-=-=-=----------========
+    public void log_add_success(String menuName,String methodName){
+        log(menuName, LogTypeEnum.ADD.getType(),methodName, LogResultEnum.SUCCESS.getResult());
+    }
+    public void log_add_fail(String menuName,String methodName){
+        log(menuName, LogTypeEnum.ADD.getType(),methodName, LogResultEnum.FAILURE.getResult());
+    }
+
+    public void log_up_success(String menuName,String methodName){
+        log(menuName, LogTypeEnum.MODIFY.getType(),methodName, LogResultEnum.SUCCESS.getResult());
+    }
+    public void log_up_fail(String menuName,String methodName){
+        log(menuName, LogTypeEnum.MODIFY.getType(),methodName, LogResultEnum.FAILURE.getResult());
+    }
+
+    public void log_rm_success(String menuName,String methodName){
+        log(menuName, LogTypeEnum.REMOVE.getType(),methodName, LogResultEnum.SUCCESS.getResult());
+    }
+    public void log_rm_fail(String menuName,String methodName){
+        log(menuName, LogTypeEnum.REMOVE.getType(),methodName, LogResultEnum.FAILURE.getResult());
+    }
+
+
 }
