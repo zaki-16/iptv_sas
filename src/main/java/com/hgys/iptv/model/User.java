@@ -38,8 +38,12 @@ public class User implements Serializable, UserDetails {
     @Column(name = "realName", length = 200)//用户真实姓名
     private String realName;
 
-    @Column(name = "platType", length = 2)//用户所属平台类型
+    @Column(name = "platType", length = 2)//用户所属平台类型、所属cp等
     private Integer platType;
+
+    private Integer cpId;
+
+    private String cpName;
 
     @Column(name = "password", nullable = false, length = 200)
     @JsonIgnore

@@ -36,6 +36,13 @@ public class SysUserDTO {
     @ApiModelProperty("状态0:启用，1：禁用")
     private Integer status;
 
+    @ApiModelProperty("用户所属平台类型")
+    private Integer platType;
+    @ApiModelProperty("用户所属cp的id")
+    private Integer cpId;
+    @ApiModelProperty("用户所属cp名称")
+    private String cpName;
+
     // 角色字符串
     @ApiModelProperty("用户所具有的角色集字符串--不填写为游客")
     private String rids;

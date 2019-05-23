@@ -2,6 +2,9 @@ package com.hgys.iptv.util;
 
 import com.hgys.iptv.model.bean.UserSessionInfo;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.security.Principal;
 
 /**
  * @ClassName UserSessionInfoHolder
@@ -16,7 +19,18 @@ public class UserSessionInfoHolder {
      * @return
      */
     public static UserSessionInfo getUserSessionInfo(){
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        return (UserSessionInfo)ReqAndRespHolder.getSession().getAttribute(name);
+        String name =getCurrentUsername();
+        return (UserSessionInfo)ReqAndRespHolder.getRequest().getSession().getAttribute(name);
+    }
+
+    public static String getCurrentUsername() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        }
+        if (principal instanceof Principal) {
+            return ((Principal) principal).getName();
+        }
+        return String.valueOf(principal);
     }
 }
