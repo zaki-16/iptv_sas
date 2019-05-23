@@ -125,6 +125,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             account.setInputTime(new Timestamp(System.currentTimeMillis()));
             account.setIsdelete(0);
             account.setSet_ruleCode(vm.getSet_ruleCode());
+            account.setSet_type(vm.getSet_type());
             account.setRemakes(StringUtils.trimToEmpty(vm.getRemakes()));
             account.setStatus(1);
             account.setSet_type(vm.getSet_type());
