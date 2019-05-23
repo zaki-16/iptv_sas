@@ -16,6 +16,7 @@ import com.hgys.iptv.service.CpService;
 import com.hgys.iptv.service.SysUserService;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
+import com.hgys.iptv.util.UserSessionInfoHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,26 +188,29 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 
     /**
      * 修改密码
-     *
-     * @param username
      * @param password_old
-     * @param password_new1
-     * @param password_new2
+     * @param password_new
      * @return
      */
     @Override
-    public ResultVO modifyPassword(String username,String password_old,String password_new1,String password_new2){
-        if(String.valueOf(password_new1).compareTo(password_new2)!=0){
-            return ResultVOUtil.error("1","两次密码输入不正确！");
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO modifyPassword(String password_old,String password_new){
+        try {
+            String username = UserSessionInfoHolder.getCurrentUsername();
+            if(null == username)
+                return  ResultVOUtil.error("1","密码已过期，请重新登录！");
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if(!passwordEncoder.matches(password_old,userDetails.getPassword())){
+                return ResultVOUtil.error("1","用户或密码错误！");
+            }
+            User byUsername = userRepository.findByUsername(username);
+            byUsername.setPassword(passwordEncoder.encode(password_new));
+            userRepository.saveAndFlush(byUsername);
+        }catch (Exception e){
+            return ResultVOUtil.error("1","密码修改异常！");
         }
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        if(!passwordEncoder.matches(password_old,userDetails.getPassword())){
-            return ResultVOUtil.error("1","用户或密码错误！");
-        }
-        User byUsername = userRepository.findByUsername(username);
-        byUsername.setPassword(passwordEncoder.encode(password_new2));
-        userRepository.saveAndFlush(byUsername);
-        return ResultVOUtil.success(Boolean.TRUE);
+        return ResultVOUtil.success("密码修改成功！");
     }
 
     @Override
