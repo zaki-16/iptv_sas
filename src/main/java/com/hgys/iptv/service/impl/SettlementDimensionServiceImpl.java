@@ -46,7 +46,7 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
 
         //校验名称是否已经存在
         SettlementDimension byName = settlementDimensionRepository.findByName(vm.getName().trim());
-        if (null != byName){
+        if (null != byName && byName.getIsdelete().equals(0)){
             return ResultVOUtil.error("1",vm.getName() + "名称已经存在");
         }
         SettlementDimension vo = new SettlementDimension();
