@@ -99,7 +99,7 @@ public class SettlementDocumentController {
             dto.setBusinessCode(vm.getBusinessCode());
             dto.setBusinessName(vm.getBusinessName());
 
-            /** 1:已录入;2:待审核;3:初审通过;4:复审通过;5:终审通过;6:驳回;7:已结算*/
+            /** 1:已录入;2:待审核;3:初审通过;4:复审通过;5:终审通过;6:驳回*/
             if (1 == vm.getStatus()){
                 dto.setStatus("已录入");
             }else if (2 == vm.getStatus()){
@@ -112,8 +112,6 @@ public class SettlementDocumentController {
                 dto.setStatus("终审通过");
             }else if (6 == vm.getStatus()){
                 dto.setStatus("驳回");
-            }else if (7 == vm.getStatus()){
-                dto.setStatus("已结算");
             }
 
             dtos.add(dto);

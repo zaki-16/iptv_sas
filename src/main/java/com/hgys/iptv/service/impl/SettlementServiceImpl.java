@@ -59,13 +59,19 @@ public class SettlementServiceImpl implements SettlementService {
      * @param id
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultVO<?> settlement(String id) {
         Optional<AccountSettlement> byId = accountSettlementRepository.findById(Integer.parseInt(id));
         if (!byId.isPresent()){
             return ResultVOUtil.error("1","未查询到该分账结算数据");
         }
+
+
         AccountSettlement accountSettlement = byId.get();
+        //修改结算状态
+        accountSettlement.setStatus(2);
+        accountSettlementRepository.saveAndFlush(accountSettlement);
         //查询当前分账结算类型、规则编码(1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算))
         if (1 == accountSettlement.getSet_type()){
             return dealWithOrderSettlement(accountSettlement);
@@ -89,11 +95,8 @@ public class SettlementServiceImpl implements SettlementService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean delectSettlementS(String masterCode) {
-        QCpSettlementMoney qCpSettlementMoney = QCpSettlementMoney.cpSettlementMoney;
         try{
-            long execute = jpaQueryFactory.delete(qCpSettlementMoney)
-                    .where(qCpSettlementMoney.masterCode.eq(masterCode.trim())).execute();
-            System.err.println("删除成功-------->成功删除" + execute + "条数据!");
+            cpSettlementMoneyRepository.deleteByMasterCode(masterCode);
         }catch (Exception e){
             e.printStackTrace();
             return false;

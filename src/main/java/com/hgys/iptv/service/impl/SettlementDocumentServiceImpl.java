@@ -65,8 +65,8 @@ public class SettlementDocumentServiceImpl implements SettlementDocumentService 
                predicates.add(condition);
            }
 
-           /** 1:已录入;2:待审核;3:初审通过;4:复审通过;5:终审通过;6:驳回;7:已结算*/
-           Predicate condition = builder.equal(root.get("status"), 7);
+           /** 1:已录入;2:待审核;3:初审通过;4:复审通过;5:终审通过;6:驳回*/
+           Predicate condition = builder.notEqual(root.get("status"), 1);
            predicates.add(condition);
 
            if (!predicates.isEmpty()){
