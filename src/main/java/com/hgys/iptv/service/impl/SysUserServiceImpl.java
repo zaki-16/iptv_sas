@@ -74,6 +74,15 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         if(StringUtils.isBlank(userDTO.getPassword())){
             return ResultVOUtil.error("1","密码不能为空！");
         }
+        //校验邮箱
+        if(!userDTO.getEmail().matches("([A-Za-z0-9_\\-\\.])+\\@([A-Za-z0-9_\\-\\.])+\\.([A-Za-z]{2,4})$"))
+            return ResultVOUtil.error("1","请输入正确邮箱！");
+        //校验手机号
+        if(!userDTO.getMobilePhone().matches("1([38]\\d|5[0-35-9]|7[3678])\\d{8}"))
+            return ResultVOUtil.error("1","请输入正确手机号！");
+        //校验电话
+        if(!userDTO.getTelephone().matches("(\\(\\d{3,4}\\)|\\d{3,4}-|\\s)?\\d{7,14}$"))
+            return ResultVOUtil.error("1","请输入正确固话号码！");
         //校验用户名是否已存在
         Integer i = userRepository.countByUsername(userDTO.getUsername());
         if(i>0){
@@ -151,35 +160,34 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         if(StringUtils.isBlank(userDTO.getUsername())){
             return ResultVOUtil.error("1","用户名不能为空！");
         }
-        String password = userDTO.getPassword().trim();
-        if(StringUtils.isBlank(password)){
-            return ResultVOUtil.error("1","密码不能为空！");
-        }
+
         try{
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userDTO.getUsername());
-            if(!passwordEncoder.matches(password,userDetails.getPassword())){
-                return ResultVOUtil.error("1","用户或密码错误！");
-            }
             User user = new User();
-            //复制了raw pwd
             BeanUtils.copyProperties(userDTO,user);
-            //1.重写加密
-            user.setPassword(passwordEncoder.encode(password));
-            //2.密码比对通过后，直接取该密码覆盖
-//            user.setPassword(userDetails.getPassword());
+            //如果传参带了密码--一般是不会的--这么做是防止覆盖
+            String password = userDTO.getPassword();
+            if(StringUtils.isNotBlank(password)){
+                UserDetails userDetails = userDetailsService.loadUserByUsername(userDTO.getUsername());
+                if(!passwordEncoder.matches(password,userDetails.getPassword())){
+                    return ResultVOUtil.error("1","用户或密码错误！");
+                }else{//1.重写加密
+                    user.setPassword(passwordEncoder.encode(password));
+                }
+            }
             user.setModifyTime(new Timestamp(System.currentTimeMillis()));
             //处理 null值
-            User byIdUser = userRepository.findById(userDTO.getId()).get();
+            User byIdUser = userRepository.findById(userDTO.getId()).orElse(null);
             if(byIdUser==null)
                 return ResultVOUtil.error("1","用户已不存在！");
             UpdateTool.copyNullProperties(byIdUser,user);
-            userRepository.saveAndFlush(user);
-            // 先删除后插入
-            //在中间表中按userId删除，用户-角色关系--需要更新角色关系时才删除
-            if(StringUtils.isNotBlank(userDTO.getRids()))
-                sysUserRoleRepository.deleteAllByUserId(user.getId());
-            handleRelation(userDTO,user.getId());
 
+            userRepository.saveAndFlush(user);
+            //在中间表中按userId删除，用户-角色关系--需要更新角色关系时才删除
+            // 关系不为空时才处理
+            if(StringUtils.isNotBlank(userDTO.getRids())){
+                sysUserRoleRepository.deleteAllByUserId(user.getId());
+                handleRelation(userDTO,user.getId());
+            }
             logger.log_up_success(menuName,"SysUserServiceImpl.updateUser");
 
         }catch (Exception e){
@@ -207,6 +215,13 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if(!passwordEncoder.matches(password_old,userDetails.getPassword())){
                 return ResultVOUtil.error("1","用户或密码错误！");
+            }
+
+            /**
+             * 密码强度校验
+             */
+            if (!password_new.matches("(?![0-9A-Z]+$)(?![0-9a-z]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,18}$")) {
+                return ResultVOUtil.error("1","密码必须包含数字、大小写字母，且至少六位！");
             }
             User byUsername = userRepository.findByUsername(username);
             byUsername.setPassword(passwordEncoder.encode(password_new));

@@ -220,7 +220,7 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
     @Override
     public ResultVO<?> findById(Integer id) {
         try {
-            Cp cp = cpRepository.findById(id).get();
+            Cp cp = cpRepository.findById(id).orElse(null);
             if(cp==null)
                 return ResultVOUtil.error("1","所查cp不存在");
             CpVM cpVM = new CpVM();

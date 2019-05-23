@@ -223,7 +223,7 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
     @Override
     public ResultVO<?> findById(Integer id) {
         try {
-            Product prod = productRepository.findById(id).get();
+            Product prod = productRepository.findById(id).orElse(null);
             if(prod==null)
                 return ResultVOUtil.error("1","所查产品不存在");
             ProductVM productListVM = new ProductVM();

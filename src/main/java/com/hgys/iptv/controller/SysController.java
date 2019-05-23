@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -113,6 +114,7 @@ public class SysController {
     @PostMapping("/resetPassword")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "重置密码为 123456")
+    @PreAuthorize(value = "hasPermission('userManager', 'update')")
     public ResultVO resetPassword(String username) {
         return sysUserService.resetPassword(username);
     }
