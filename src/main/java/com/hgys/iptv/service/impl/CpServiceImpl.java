@@ -50,7 +50,7 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
     @Autowired
     private Logger logger;
     //操作对象
-    private static final String menuName = "cpManager";
+    private static final String menuName = "CP管理";
 
     /**
      * cp 新增-插cp，product，cp_product表

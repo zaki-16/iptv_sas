@@ -47,7 +47,7 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
     @Autowired
     private Logger logger;
     //操作对象
-    private static final String menuName = "prodManager";
+    private static final String menuName = "产品管理";
     /**
      * 新增
      * @param vm

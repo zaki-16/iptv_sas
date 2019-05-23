@@ -46,7 +46,7 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
     @Autowired
     private Logger logger;
     //操作对象
-    private static final String menuName = "bizManager";
+    private static final String menuName = "业务管理";
     /**
      * 新增
      * @param vm

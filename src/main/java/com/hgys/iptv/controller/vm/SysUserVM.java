@@ -28,6 +28,10 @@ public class SysUserVM {
 
     private String salt;//加密盐
 
+    private Integer cpId;//-1=平台用户
+
+    private String cpAbbr;
+
     private Timestamp createdTime;
 
     private Timestamp modifyTime;

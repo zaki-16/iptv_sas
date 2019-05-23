@@ -7,12 +7,9 @@ import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.SysUserRole;
 import com.hgys.iptv.model.User;
 import com.hgys.iptv.model.dto.SysUserDTO;
-import com.hgys.iptv.model.enums.LogResultEnum;
-import com.hgys.iptv.model.enums.LogTypeEnum;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.security.UserDetailsServiceImpl;
-import com.hgys.iptv.service.CpService;
 import com.hgys.iptv.service.SysUserService;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
@@ -26,7 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -42,6 +38,8 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+
+    private static final String menuName = "用户管理";
 
     private static final String rawPwd = "123456";
 
@@ -101,10 +99,10 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 //处理中间表
             handleRelation(userDTO,user_add.getId());
             //记录日志
-            logger.log("新增用户", LogTypeEnum.ADD.getType(),"SysUserServiceImpl.addUser", LogResultEnum.SUCCESS.name());
+            logger.log_add_success(menuName,"SysUserServiceImpl.addUser");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log("新增用户",LogTypeEnum.ADD.getType(),"SysUserServiceImpl.addUser",LogResultEnum.EXCEPTION.name());
+            logger.log_add_fail(menuName,"SysUserServiceImpl.addUser");
             return ResultVOUtil.error("1","新增用户异常！");
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -179,8 +177,12 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             if(StringUtils.isNotBlank(userDTO.getRids()))
                 sysUserRoleRepository.deleteAllByUserId(user.getId());
             handleRelation(userDTO,user.getId());
+
+            logger.log_up_success(menuName,"SysUserServiceImpl.updateUser");
+
         }catch (Exception e){
             e.printStackTrace();
+            logger.log_up_fail(menuName,"SysUserServiceImpl.updateUser");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -207,12 +209,20 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             User byUsername = userRepository.findByUsername(username);
             byUsername.setPassword(passwordEncoder.encode(password_new));
             userRepository.saveAndFlush(byUsername);
+
+            logger.log_up_success(menuName,"SysUserServiceImpl.modifyPassword");
         }catch (Exception e){
+            logger.log_up_fail(menuName,"SysUserServiceImpl.modifyPassword");
             return ResultVOUtil.error("1","密码修改异常！");
         }
         return ResultVOUtil.success("密码修改成功！");
     }
 
+    /**
+     *
+     * @param username
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO resetPassword(String username) {
@@ -225,12 +235,16 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
                 return ResultVOUtil.error("1","用户已不存在！");
             byIdUser.setPassword(rawPwd);
             userRepository.saveAndFlush(byIdUser);
+
+            logger.log_up_success(menuName,"SysUserServiceImpl.resetPassword");
         }catch (Exception e){
             e.printStackTrace();
+            logger.log_up_fail(menuName,"SysUserServiceImpl.resetPassword");
             return ResultVOUtil.error("1","重置密码异常！");
         }
         return ResultVOUtil.success("重置密码成功！");
     }
+
 
 
     @Override
@@ -263,8 +277,11 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
                     //删除关系映射
                     sysUserRoleRepository.deleteAllByUserId(id);
                 }
+
+                logger.log_rm_success(menuName,"SysUserServiceImpl.batchLogicDelete");
             }
         }catch (Exception e){
+            logger.log_rm_fail(menuName,"SysUserServiceImpl.batchLogicDelete");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);

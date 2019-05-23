@@ -112,7 +112,7 @@ public class SysController {
 
     @PostMapping("/resetPassword")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "重置密码")
+    @ApiOperation(value = "重置密码为 123456")
     public ResultVO resetPassword(String username) {
         return sysUserService.resetPassword(username);
     }
