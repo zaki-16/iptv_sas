@@ -55,7 +55,9 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
     @Override
     public ResultVO findUserById(Integer id) {
         SysUserVM sysUserVM = new SysUserVM();
-        User byId = userRepository.findById(id).get();
+        User byId = userRepository.findById(id).orElse(null);
+        if(null==byId)
+            return ResultVOUtil.error("1","该用户不存在！");
         BeanUtils.copyProperties(byId,sysUserVM);
         List<Role> allById = this.findAllRoleByUserId(id);
         sysUserVM.setList(allById);
