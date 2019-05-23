@@ -1,9 +1,12 @@
 package com.hgys.iptv.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import com.alibaba.fastjson.JSON;
 import com.hgys.iptv.controller.vm.SysMenuListVM;
 import com.hgys.iptv.model.Permission;
 import com.hgys.iptv.model.SysMenu;
 import com.hgys.iptv.model.SysMenuPermission;
+import com.hgys.iptv.model.bean.PermissionNode;
 import com.hgys.iptv.model.dto.SysMenuDTO;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -44,18 +47,41 @@ public class SysMenuServiceImpl implements SysMenuService {
         ArrayList<SysMenuListVM> sysMenuListVMs = new ArrayList<>();
         // 加载菜单
         List<SysMenu> sysMenus = sysMenuRepository.findAll();
-        // 关联子菜单权限列表
-        //1.遍历;按(子)菜单id 查中间表 SysMenuPermission 的所有权限 id
-        //2.按权限id获取权限对象list
-        sysMenus.forEach(sysMenu->{
+        //所有的权限
+        List<Permission> permissions = permissionRepository.findAll();
+        List<PermissionNode> permissionNodes = new ArrayList<>();
+        for(Permission permission : permissions){
+            PermissionNode permissionNode = new PermissionNode();
+            BeanUtils.copyProperties(permission,permissionNode);
+            permissionNodes.add(permissionNode);
+        }
+        List<PermissionNode> permissionTree = assembleTree(0, permissionNodes);//对每个菜单下的所有权限结点进行组装成树
+        System.out.println(JSON.toJSONString(permissionTree));
+
+        sysMenus.forEach(sysMenu -> {
             SysMenuListVM sysMenuListVM = new SysMenuListVM();
             BeanUtils.copyProperties(sysMenu,sysMenuListVM);
-            Set<Integer> allPermId = sysMenuPermissionRepository.findAllPermId(sysMenu.getId());
-            List<Permission> perms = permissionRepository.findAllById(allPermId);
-            sysMenuListVM.setList(perms);
+            sysMenuListVM.setList(permissionTree);
             sysMenuListVMs.add(sysMenuListVM);
         });
         return ResultVOUtil.success(sysMenuListVMs);
+    }
+
+    /**
+     * 组装权限树-找兄弟法
+     * @param permissionNodes
+     * @return
+     */
+    //递归遍历树
+    private List<PermissionNode> assembleTree(Integer pId, List<PermissionNode> permissionNodes) {
+        List<PermissionNode> tree = CollUtil.newArrayList();
+        for (PermissionNode permissionNode : permissionNodes) {
+            if (pId.equals(permissionNode.getParentId())) {
+                permissionNode.setChildrens(assembleTree(permissionNode.getId(), permissionNodes));
+                tree.add(permissionNode);
+            }
+        }
+        return tree;
     }
 
     @Override
@@ -84,8 +110,6 @@ public class SysMenuServiceImpl implements SysMenuService {
         }
         return ResultVOUtil.success(Boolean.TRUE);
     }
-
-
 
 
 
@@ -154,6 +178,7 @@ public class SysMenuServiceImpl implements SysMenuService {
         }
         return ResultVOUtil.success(Boolean.TRUE);
     }
+
 
 
 

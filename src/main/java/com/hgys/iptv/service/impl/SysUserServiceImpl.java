@@ -199,6 +199,39 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
     }
 
     /**
+     * 用户自己修改个性资料
+     *
+     * @param userDTO
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO personalUpdate(SysUserDTO userDTO) {
+        try {
+            String username = UserSessionInfoHolder.getCurrentUsername();
+            if(null == username || (username.compareTo("anonymousUser")==0))
+                return  ResultVOUtil.error("1","密码已过期或未登录！");
+
+            User user = new User();
+            BeanUtils.copyProperties(userDTO,user);
+            user.setModifyTime(new Timestamp(System.currentTimeMillis()));
+            //处理 null值
+            User byIdUser = userRepository.findById(userDTO.getId()).orElse(null);
+            if(byIdUser==null)
+                return ResultVOUtil.error("1","用户已不存在！");
+            UpdateTool.copyNullProperties(byIdUser,user);
+
+            userRepository.saveAndFlush(user);
+
+            logger.log_up_success(menuName,"SysUserServiceImpl.personalUpdate");
+        }catch (Exception e){
+            logger.log_up_fail(menuName,"SysUserServiceImpl.personalUpdate");
+            return ResultVOUtil.error("1","个性资料修改异常！");
+        }
+        return ResultVOUtil.success("个性资料修改成功！");
+    }
+
+    /**
      * 修改密码
      * @param password_old
      * @param password_new

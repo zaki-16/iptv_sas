@@ -18,6 +18,7 @@ public interface SysUserService {
     ResultVO findUserById(Integer id);
     ResultVO addUser(SysUserDTO userDTO);
     ResultVO updateUser(SysUserDTO userDTO);
+    ResultVO personalUpdate(SysUserDTO userDTO);
     ResultVO deleteUserById(Integer id);
     ResultVO batchLogicDelete(String ids);
     //    ResultVO findAllUser();

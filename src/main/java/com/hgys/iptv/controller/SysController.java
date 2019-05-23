@@ -95,6 +95,13 @@ public class SysController {
         return sysUserService.updateUser(sysUserDTO);
     }
 
+    @PostMapping("/personalUpdate")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "用户自己修改个性资料--不提供用户名、密码和id")
+    public ResultVO personalUpdate(@RequestBody SysUserDTO sysUserDTO) {
+        return sysUserService.personalUpdate(sysUserDTO);
+    }
+
     @DeleteMapping("/batchLogicDeleteUser")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO batchLogicDeleteUser(String ids) {
