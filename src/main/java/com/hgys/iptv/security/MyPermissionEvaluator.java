@@ -36,7 +36,7 @@ public class MyPermissionEvaluator implements PermissionEvaluator {
             }
             return accessable;
         }
-        return accessable;
+        return true;
     }
 
     @Override
