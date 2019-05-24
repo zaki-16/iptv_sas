@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -141,6 +140,11 @@ public class SettlementDocumentController {
             Workbook sheets = ExcelExportUtil.exportWorkbook(dtos);
             ExcelForWebUtil.workBookExportExcel(response,sheets,"Cp结算信息表");
         }
+    }
 
+    @GetMapping("/excelSettlementInfo")
+    @ApiOperation(value = "导出账期期间的结算信息",notes = "返回Excel文件")
+    public void excelSettlementInfo(HttpServletResponse response,@ApiParam(value = "结算账单ID",required = true) @RequestParam(value = "masterId")Integer masterId) {
+        settlementDocumentService.excelSettlementInfo(masterId,response);
     }
 }

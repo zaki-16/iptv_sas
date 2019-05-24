@@ -229,11 +229,11 @@ public class SettlementServiceImpl implements SettlementService {
                     money.setMasterName(accountSettlement.getName());
                     money.setMasterCode(accountSettlement.getCode());
                     money.setCpname(StringUtils.trimToEmpty(cp.getCpname()));
-                    money.setCpcode(StringUtils.trimToEmpty(cp.getCode()));
+                    money.setCpcode(StringUtils.trimToEmpty(cp.getCpcode()));
                     money.setCreateTime(new Timestamp(System.currentTimeMillis()));
                     //权重
-                    Integer  i = Integer.parseInt(cp.getWeight()) / 100;
-                    money.setSettlementMoney(allMoney.multiply(BigDecimal.valueOf(i)).setScale(2));
+                    BigDecimal  i = new BigDecimal(cp.getWeight()).divide(new BigDecimal(100));
+                    money.setSettlementMoney(allMoney.multiply(i).setScale(2));
                     cpSettlementMoneyRepository.save(money);
                 }
             }else if (2 == settlementMoney.getType()){

@@ -67,6 +67,13 @@ dependencies {
     compile group: 'com.xuxueli', name: 'xxl-excel', version: '1.1.1'
     //hutool 工具包
     compile 'cn.hutool:hutool-all:4.5.9'
+    //EasyPoi工具包
+    compile group: 'cn.afterturn', name: 'easypoi-base', version: '4.0.0'
+    compile group: 'cn.afterturn', name: 'easypoi-web', version: '4.0.0'
+    compile group: 'cn.afterturn', name: 'easypoi-annotation', version: '4.0.0'
+
+
+
 
 }
 
