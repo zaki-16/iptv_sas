@@ -107,8 +107,9 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             user.setCreatedTime(new Timestamp(System.currentTimeMillis()));
             user.setIsdelete(0);//删除状态
             User user_add = userRepository.save(user);
-//处理中间表
-            handleRelation(userDTO,user_add.getId());
+//处理中间表--新增时 rids为空则不处理--而更新必须都得处理
+            if(userDTO.getRids()!=null)
+                handleRelation(userDTO,user_add.getId());
             //记录日志
             logger.log_add_success(menuName,"SysUserServiceImpl.addUser");
         }catch (Exception e){
@@ -127,8 +128,6 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
     @Transactional(rollbackFor = Exception.class)
     protected void handleRelation(SysUserDTO sysUserDTO,Integer id){
         try {
-            if(sysUserDTO.getRids()==null)//没有关联关系直接
-                return;
             List<String> ids = Arrays.asList(StringUtils.split(sysUserDTO.getRids(), ","));
             //2.插中间表
             List<SysUserRole> relationList =new ArrayList<>();
@@ -183,11 +182,9 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 
             userRepository.saveAndFlush(user);
             //在中间表中按userId删除，用户-角色关系--需要更新角色关系时才删除
-            // 关系不为空时才处理
-            if(StringUtils.isNotBlank(userDTO.getRids())){
-                sysUserRoleRepository.deleteAllByUserId(user.getId());
-                handleRelation(userDTO,user.getId());
-            }
+            // 若更新前rids 不为空，更新参数rids 为空--也要处理
+            sysUserRoleRepository.deleteAllByUserId(user.getId());
+            handleRelation(userDTO,user.getId());
             logger.log_up_success(menuName,"SysUserServiceImpl.updateUser");
 
         }catch (Exception e){
@@ -346,14 +343,25 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 //        return ResultVOUtil.error("1","所查询列表不存在!");
 //    }
 
+    /**
+     * 按角色、账号、姓名、类型、状态查询）
+     * @param username
+     * @param realName
+     * @param status
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     @Override
-    public Page<User> findAllUserOfPage(String username,String realName,Integer status,Integer pageNum, Integer pageSize) {
+    public Page<User> findAllUserOfPage(String username,String realName,String cpAbbr,Integer status,Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
         HashMap<String, Object> map = Maps.newHashMap();
         if(username!=null)
             map.put("username","%"+username+"%");
         if(realName!=null)
             map.put("realName",realName);
+        if(cpAbbr!=null)
+            map.put("cpAbbr",cpAbbr);
         if(status!=null&&status>0)
             map.put("status",status);
         map.put("isdelete",0);

@@ -129,7 +129,9 @@ public class RepositoryManager {
 
     /**
      * 单字段查询
-     *
+     * where colName = colValue;
+     * 获取单字段值
+     * // select name from table where id=1 limit 1
      * @param clazz
      * @param colName
      * @param colValue

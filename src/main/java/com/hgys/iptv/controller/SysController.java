@@ -40,21 +40,19 @@ public class SysController {
 
     /*
     --------------------------------用户------------------------------------------
-    缺：
-    1.按条件：cp、登录名、真实姓名、状态 分页查询用户
     3.批量启用、停用功能
-    4.密码重置
      */
 
     @GetMapping("/findAllUser")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "查询用户列表")
     public Page<User> findAllUser(String username, String realName,
+                                  @ApiParam(value = "cp简称") String cpAbbr,
                                   Integer status,
                                   @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")Integer pageNum,
                                   @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")Integer pageSize
                                   ) {
-        return sysUserService.findAllUserOfPage(username,realName,status,pageNum,pageSize);
+        return sysUserService.findAllUserOfPage(username,realName,cpAbbr,status,pageNum,pageSize);
     }
 
     @GetMapping("/findByUserName")
@@ -63,6 +61,7 @@ public class SysController {
     public ResultVO findByUserName(String username) {
         return sysUserService.findByUserName(username);
     }
+
 
     /**
      * 查看用户及关联的角色
@@ -112,6 +111,7 @@ public class SysController {
     @PostMapping("/modifyPassword")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "修改密码")
+//    @PreAuthorize(value = "hasPermission('userManager', 'update')")
     public ResultVO modifyPassword(
             @RequestParam("password_old")String password_old,
             @RequestParam("password_new")String password_new) {
@@ -126,6 +126,12 @@ public class SysController {
         return sysUserService.resetPassword(username);
     }
 
+//    @PostMapping("/batchOnUser")
+//    @ResponseStatus(HttpStatus.OK)
+////    @PreAuthorize(value = "hasPermission('userManager', 'batchOn')")
+//    public ResultVO batchOnUser(Integer id){
+//        return sysUserService.batchOnUser(id);
+//    }
 
     /*
     --------------------------------角色------------------------------------------

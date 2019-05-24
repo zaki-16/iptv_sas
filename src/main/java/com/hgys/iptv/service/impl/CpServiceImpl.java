@@ -165,10 +165,8 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             cp.setModifyTime(new Timestamp(System.currentTimeMillis()));
             UpdateTool.copyNullProperties(byId,cp);
             cpRepository.saveAndFlush(cp);
-            //先删除后插入
-            if(StringUtils.isNotBlank(vm.getPids()))
+            //先删除后插入--更新时都删除关系表--若有新关系，则会在handleRelation插入，没有则表示删除了关联关系
                 cpProductRepository.deleteAllByCpid(cp.getId());
-            if(StringUtils.isNotBlank(vm.getBids()))
                 cpBusinessRepository.deleteAllByCpid(cp.getId());
             //处理cp关联的中间表的映射关系
             handleRelation(vm,vm.getId());
