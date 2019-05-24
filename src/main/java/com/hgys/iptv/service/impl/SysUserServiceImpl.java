@@ -86,6 +86,10 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         if(StringUtils.isNotBlank(userDTO.getTelephone()))
             if(!userDTO.getTelephone().matches("(\\(\\d{3,4}\\)|\\d{3,4}-|\\s)?\\d{7,14}$"))
                 return ResultVOUtil.error("1","请输入正确固话号码！");
+
+        if(!checkPwdLevel(userDTO.getPassword()))
+            return ResultVOUtil.error("1","密码必须包含数字、大小写字母，且至少六位！");
+
         //校验用户名是否已存在
         Integer i = userRepository.countByUsername(userDTO.getUsername());
         if(i>0){
@@ -254,9 +258,8 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
              * 密码强度校验
              */
             assert (!password_new.isEmpty());
-            if (!password_new.matches("(?![0-9A-Z]+$)(?![0-9a-z]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,18}$")) {
+            if(!checkPwdLevel(password_new))
                 return ResultVOUtil.error("1","密码必须包含数字、大小写字母，且至少六位！");
-            }
             User byUsername = userRepository.findByUsername(username);
             byUsername.setPassword(passwordEncoder.encode(password_new));
             userRepository.saveAndFlush(byUsername);
@@ -269,6 +272,15 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         return ResultVOUtil.success("密码修改成功！");
     }
 
+    /**
+     * 密码强度校验
+     * 密码必须包含数字、大小写字母，且至少六位
+     * @param password
+     * @return
+     */
+    private boolean checkPwdLevel(String password){
+        return (password.matches("(?![0-9A-Z]+$)(?![0-9a-z]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,18}$"));
+    }
     /**
      *
      * @param username
