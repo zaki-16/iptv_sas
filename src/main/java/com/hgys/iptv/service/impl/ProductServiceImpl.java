@@ -95,8 +95,6 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
     protected void handleRelation(ProductAddVM vm,Integer id){
         try {
             //------------------------处理关系
-            if(vm.getCpids()==null && vm.getBids()==null)//没有关联关系直接
-                return;
             List<String> cpidLists = Arrays.asList(StringUtils.split(vm.getCpids(), ","));
             //2.插cp-product中间表
             if(cpidLists.size()>0){
