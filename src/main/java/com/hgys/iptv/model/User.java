@@ -32,9 +32,6 @@ public class User implements Serializable, UserDetails {
     @Column(name = "username", unique = true, nullable = false, length = 200)
     private String username;//登录名
 
-    @Column(name = "displayName", length = 200)//用户自定义展示名
-    private String displayName;
-
     @Column(name = "realName", length = 200)//用户真实姓名
     private String realName;
 
@@ -46,8 +43,11 @@ public class User implements Serializable, UserDetails {
     @JsonIgnore
     private String password;
 
-    @Column(name = "salt", length = 200)
-    private String salt;//加密盐
+    private String email;
+
+    private String telephone;//电话
+
+    private String mobilePhone;//手机号
 
     private Timestamp createdTime;
 
@@ -95,75 +95,4 @@ public class User implements Serializable, UserDetails {
 //    }
 
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getRealName() {
-        return realName;
-    }
-
-    public void setRealName(String realName) {
-        this.realName = realName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
-    public Timestamp getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(Timestamp createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    public Timestamp getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Timestamp modifyTime) {
-        this.modifyTime = modifyTime;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
 }

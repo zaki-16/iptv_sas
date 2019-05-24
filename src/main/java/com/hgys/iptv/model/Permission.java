@@ -13,6 +13,10 @@ public class Permission {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false, length = 11)
     private Integer id;
+
+    private Integer parentId;//权限父节点
+
+//    private Integer level;//层级
     //权限描述
     @Column(name = "description",length = 50)
     private String description;

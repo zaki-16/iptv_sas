@@ -25,11 +25,13 @@ public class QUser extends EntityPathBase<User> {
 
     public final DateTimePath<java.sql.Timestamp> createdTime = createDateTime("createdTime", java.sql.Timestamp.class);
 
-    public final StringPath displayName = createString("displayName");
+    public final StringPath email = createString("email");
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
     public final NumberPath<Integer> isdelete = createNumber("isdelete", Integer.class);
+
+    public final StringPath mobilePhone = createString("mobilePhone");
 
     public final DateTimePath<java.sql.Timestamp> modifyTime = createDateTime("modifyTime", java.sql.Timestamp.class);
 
@@ -37,9 +39,9 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath realName = createString("realName");
 
-    public final StringPath salt = createString("salt");
-
     public final NumberPath<Integer> status = createNumber("status", Integer.class);
+
+    public final StringPath telephone = createString("telephone");
 
     public final StringPath username = createString("username");
 

@@ -2,17 +2,17 @@ package com.hgys.iptv.service.impl;
 
 import com.google.common.collect.Maps;
 import com.hgys.iptv.controller.vm.SysRoleVM;
-import com.hgys.iptv.model.Authority;
-import com.hgys.iptv.model.Role;
-import com.hgys.iptv.model.SysRoleAuthority;
+import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.dto.SysRoleDTO;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
+import com.hgys.iptv.repository.SysMenuRepository;
 import com.hgys.iptv.service.SysRoleService;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +30,8 @@ import java.util.*;
  */
 @Service
 public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService {
+    @Autowired
+    private SysMenuRepository sysMenuRepository;
     @Override
     public ResultVO findByRoleName(String name) {
         Role byName = roleRepository.findByName(name);
@@ -43,6 +45,13 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
         return ResultVOUtil.success(sysRoleVM);
     }
 
+    /**
+     * 新增角色
+     * 查询表：sys_menu sys_permission
+     * 操作表：sys_role sys_role_authority authority
+     * @param sysRoleDTO
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO addRole(SysRoleDTO sysRoleDTO) {
@@ -64,7 +73,8 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
             role.setIsdelete(0);//删除状态
             Role role_add = roleRepository.save(role);
 //处理中间表
-            handleRelation(sysRoleDTO,role_add.getId());
+            if(sysRoleDTO.getMenuId()!=null && sysRoleDTO.getPids()!=null)
+                handleRelation(sysRoleDTO,role_add.getId());
         }catch (Exception e){
             e.printStackTrace();
             return ResultVOUtil.error("1","新增角色异常！");
@@ -73,22 +83,37 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
     }
 
     /**
-     * 处理中间表
+     * 处理中间表等
+     *      * 查询表：sys_menu sys_permission
+     *      * 操作表：sys_role sys_role_authority authority
      * @param sysRoleDTO
      * @param id
      */
     @Transactional(rollbackFor = Exception.class)
     protected void handleRelation(SysRoleDTO sysRoleDTO, Integer id){
         try{
-            if(sysRoleDTO.getAuthIds()==null)//没有关联关系直接
-                return;
-            List<String> ids = Arrays.asList(StringUtils.split(sysRoleDTO.getAuthIds(), ","));
-            //2.插中间表
+            List<String> ids = Arrays.asList(StringUtils.split(sysRoleDTO.getPids(), ","));
             List<SysRoleAuthority> relationList =new ArrayList<>();
-            ids.forEach(authId->{
+            ids.forEach(pid->{
+                //1.插真正的权限表 authority
+                Authority authority = new Authority();
+                authority.setCreatedTime(new Timestamp(System.currentTimeMillis()));
+                //查 sys_menu
+                authority.setMenuId(sysRoleDTO.getMenuId());
+                SysMenu sysMenu = repositoryManager.findOneById(SysMenu.class, sysRoleDTO.getMenuId());
+                authority.setMenuName(sysMenu.getName());
+                // 查 sys_permission
+                authority.setPermId(Integer.parseInt(pid));
+                Permission permission = repositoryManager.findOneById(Permission.class, Integer.parseInt(pid));
+                authority.setPermName(permission.getName());
+                if(sysRoleDTO.getStatus()!=null && sysRoleDTO.getStatus()!=1)
+                    authority.setStatus(0);
+                // 插入 authority
+                Authority authority_add = authorityRepository.save(authority);
+                //2.插入 authority 表成功后 反取 id--插中间表
                 SysRoleAuthority relation = new SysRoleAuthority();
                 relation.setRoleId(id);
-                relation.setAuthId(Integer.parseInt(authId));
+                relation.setAuthId(authority_add.getId());
                 relationList.add(relation);
             });
             sysRoleAuthorityRepository.saveAll(relationList);
@@ -111,15 +136,13 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
             BeanUtils.copyProperties(sysRoleDTO,role);
             role.setModifyTime(new Timestamp(System.currentTimeMillis()));
             //处理 null值
-            Role byId = roleRepository.findById(sysRoleDTO.getId()).get();
+            Role byId = roleRepository.findById(sysRoleDTO.getId()).orElse(null);
             if(byId==null)
                 return ResultVOUtil.error("1","角色已不存在！");
             UpdateTool.copyNullProperties(byId,role);
             roleRepository.saveAndFlush(role);
             // 先删除后插入
-            //在中间表中按userId删除，用户-角色关系
-            if(StringUtils.isNotBlank(sysRoleDTO.getAuthIds()))
-                sysRoleAuthorityRepository.deleteAllByRoleId(role.getId());
+            sysRoleAuthorityRepository.deleteAllByRoleId(role.getId());
             handleRelation(sysRoleDTO,role.getId());
         }catch (Exception e){
             e.printStackTrace();
@@ -153,8 +176,8 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
                     pidSets.add(Integer.parseInt(id));
                 });
                 for (Integer id : pidSets){
-                    Role u = roleRepository.findById(id).get();
-                    roleRepository.logicDelete(u.getName()+"-remove",id);
+                    Role role = roleRepository.findById(id).get();
+                    roleRepository.logicDelete(role.getName()+"-remove",id);
                     //删除关系映射
                     sysRoleAuthorityRepository.deleteAllByRoleId(id);
                 }

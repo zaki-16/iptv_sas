@@ -3,6 +3,7 @@ package com.hgys.iptv.controller;
 import com.hgys.iptv.model.dto.SysMenuDTO;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.SysMenuService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/menu")
+@Api(value = "SysMenuController",tags = "系统菜单管理Api接口")
 public class SysMenuController {
 
     @Autowired

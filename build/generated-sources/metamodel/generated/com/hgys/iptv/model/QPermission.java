@@ -29,6 +29,8 @@ public class QPermission extends EntityPathBase<Permission> {
 
     public final StringPath name = createString("name");
 
+    public final NumberPath<Integer> parentId = createNumber("parentId", Integer.class);
+
     public final NumberPath<Integer> status = createNumber("status", Integer.class);
 
     public QPermission(String variable) {

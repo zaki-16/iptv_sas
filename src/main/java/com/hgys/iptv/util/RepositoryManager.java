@@ -129,7 +129,9 @@ public class RepositoryManager {
 
     /**
      * 单字段查询
-     *
+     * where colName = colValue;
+     * 获取单字段值
+     * // select name from table where id=1 limit 1
      * @param clazz
      * @param colName
      * @param colValue
@@ -151,6 +153,23 @@ public class RepositoryManager {
      */
     public <T> T findOneById(Class<T> clazz, Integer id) {
         List<T> list = findByCriteria(clazz, "id",id);
+        if(list!=null && list.size()>0){
+            return (T)list.get(0);
+        }
+        return null;
+    }
+
+    /**
+     * 一般按id、索引、unique的字段 查询--返回唯一结果
+     * 否则返回list的第一个元素
+     * @param clazz
+     * @param colName
+     * @param colValue
+     * @param <T>
+     * @return
+     */
+    public <T> T findOne(Class<T> clazz,String colName,Object colValue) {
+        List<T> list = findByCriteria(clazz, colName,colValue);
         if(list!=null && list.size()>0){
             return (T)list.get(0);
         }

@@ -74,6 +74,22 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         if(StringUtils.isBlank(userDTO.getPassword())){
             return ResultVOUtil.error("1","密码不能为空！");
         }
+        //校验邮箱
+        if(StringUtils.isNotBlank(userDTO.getEmail()))
+            if(!userDTO.getEmail().matches("([A-Za-z0-9_\\-\\.])+\\@([A-Za-z0-9_\\-\\.])+\\.([A-Za-z]{2,4})$"))
+                return ResultVOUtil.error("1","请输入正确邮箱！");
+        //校验手机号
+        if(StringUtils.isNotBlank(userDTO.getMobilePhone()))
+            if(!userDTO.getMobilePhone().matches("1([38]\\d|5[0-35-9]|7[3678])\\d{8}"))
+                return ResultVOUtil.error("1","请输入正确手机号！");
+        //校验电话
+        if(StringUtils.isNotBlank(userDTO.getTelephone()))
+            if(!userDTO.getTelephone().matches("(\\(\\d{3,4}\\)|\\d{3,4}-|\\s)?\\d{7,14}$"))
+                return ResultVOUtil.error("1","请输入正确固话号码！");
+
+        if(!checkPwdLevel(userDTO.getPassword()))
+            return ResultVOUtil.error("1","密码必须包含数字、大小写字母，且至少六位！");
+
         //校验用户名是否已存在
         Integer i = userRepository.countByUsername(userDTO.getUsername());
         if(i>0){
@@ -98,8 +114,9 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             user.setCreatedTime(new Timestamp(System.currentTimeMillis()));
             user.setIsdelete(0);//删除状态
             User user_add = userRepository.save(user);
-//处理中间表
-            handleRelation(userDTO,user_add.getId());
+//处理中间表--新增时 rids为空则不处理--而更新必须都得处理
+            if(userDTO.getRids()!=null)
+                handleRelation(userDTO,user_add.getId());
             //记录日志
             logger.log_add_success(menuName,"SysUserServiceImpl.addUser");
         }catch (Exception e){
@@ -118,8 +135,6 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
     @Transactional(rollbackFor = Exception.class)
     protected void handleRelation(SysUserDTO sysUserDTO,Integer id){
         try {
-            if(sysUserDTO.getRids()==null)//没有关联关系直接
-                return;
             List<String> ids = Arrays.asList(StringUtils.split(sysUserDTO.getRids(), ","));
             //2.插中间表
             List<SysUserRole> relationList =new ArrayList<>();
@@ -151,35 +166,32 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         if(StringUtils.isBlank(userDTO.getUsername())){
             return ResultVOUtil.error("1","用户名不能为空！");
         }
-        String password = userDTO.getPassword().trim();
-        if(StringUtils.isBlank(password)){
-            return ResultVOUtil.error("1","密码不能为空！");
-        }
+
         try{
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userDTO.getUsername());
-            if(!passwordEncoder.matches(password,userDetails.getPassword())){
-                return ResultVOUtil.error("1","用户或密码错误！");
-            }
             User user = new User();
-            //复制了raw pwd
             BeanUtils.copyProperties(userDTO,user);
-            //1.重写加密
-            user.setPassword(passwordEncoder.encode(password));
-            //2.密码比对通过后，直接取该密码覆盖
-//            user.setPassword(userDetails.getPassword());
+            //如果传参带了密码--一般是不会的--这么做是防止覆盖
+            String password = userDTO.getPassword();
+            if(StringUtils.isNotBlank(password)){
+                UserDetails userDetails = userDetailsService.loadUserByUsername(userDTO.getUsername());
+                if(!passwordEncoder.matches(password,userDetails.getPassword())){
+                    return ResultVOUtil.error("1","用户或密码错误！");
+                }else{//1.重写加密
+                    user.setPassword(passwordEncoder.encode(password));
+                }
+            }
             user.setModifyTime(new Timestamp(System.currentTimeMillis()));
             //处理 null值
-            User byIdUser = userRepository.findById(userDTO.getId()).get();
+            User byIdUser = userRepository.findById(userDTO.getId()).orElse(null);
             if(byIdUser==null)
                 return ResultVOUtil.error("1","用户已不存在！");
             UpdateTool.copyNullProperties(byIdUser,user);
-            userRepository.saveAndFlush(user);
-            // 先删除后插入
-            //在中间表中按userId删除，用户-角色关系--需要更新角色关系时才删除
-            if(StringUtils.isNotBlank(userDTO.getRids()))
-                sysUserRoleRepository.deleteAllByUserId(user.getId());
-            handleRelation(userDTO,user.getId());
 
+            userRepository.saveAndFlush(user);
+            //在中间表中按userId删除，用户-角色关系--需要更新角色关系时才删除
+            // 若更新前rids 不为空，更新参数rids 为空--也要处理
+            sysUserRoleRepository.deleteAllByUserId(user.getId());
+            handleRelation(userDTO,user.getId());
             logger.log_up_success(menuName,"SysUserServiceImpl.updateUser");
 
         }catch (Exception e){
@@ -188,6 +200,39 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
+    }
+
+    /**
+     * 用户自己修改个性资料
+     *
+     * @param userDTO
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO personalUpdate(SysUserDTO userDTO) {
+        try {
+            String username = UserSessionInfoHolder.getCurrentUsername();
+            if(null == username || (username.compareTo("anonymousUser")==0))
+                return  ResultVOUtil.error("1","密码已过期或未登录！");
+
+            User user = new User();
+            BeanUtils.copyProperties(userDTO,user);
+            user.setModifyTime(new Timestamp(System.currentTimeMillis()));
+            //处理 null值
+            User byIdUser = userRepository.findById(userDTO.getId()).orElse(null);
+            if(byIdUser==null)
+                return ResultVOUtil.error("1","用户已不存在！");
+            UpdateTool.copyNullProperties(byIdUser,user);
+
+            userRepository.saveAndFlush(user);
+
+            logger.log_up_success(menuName,"SysUserServiceImpl.personalUpdate");
+        }catch (Exception e){
+            logger.log_up_fail(menuName,"SysUserServiceImpl.personalUpdate");
+            return ResultVOUtil.error("1","个性资料修改异常！");
+        }
+        return ResultVOUtil.success("个性资料修改成功！");
     }
 
     /**
@@ -208,6 +253,13 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             if(!passwordEncoder.matches(password_old,userDetails.getPassword())){
                 return ResultVOUtil.error("1","用户或密码错误！");
             }
+
+            /**
+             * 密码强度校验
+             */
+            assert (!password_new.isEmpty());
+            if(!checkPwdLevel(password_new))
+                return ResultVOUtil.error("1","密码必须包含数字、大小写字母，且至少六位！");
             User byUsername = userRepository.findByUsername(username);
             byUsername.setPassword(passwordEncoder.encode(password_new));
             userRepository.saveAndFlush(byUsername);
@@ -220,6 +272,15 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         return ResultVOUtil.success("密码修改成功！");
     }
 
+    /**
+     * 密码强度校验
+     * 密码必须包含数字、大小写字母，且至少六位
+     * @param password
+     * @return
+     */
+    private boolean checkPwdLevel(String password){
+        return (password.matches("(?![0-9A-Z]+$)(?![0-9a-z]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,18}$"));
+    }
     /**
      *
      * @param username
@@ -298,14 +359,25 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 //        return ResultVOUtil.error("1","所查询列表不存在!");
 //    }
 
+    /**
+     * 按角色、账号、姓名、类型、状态查询）
+     * @param username
+     * @param realName
+     * @param status
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     @Override
-    public Page<User> findAllUserOfPage(String username,String realName,Integer status,Integer pageNum, Integer pageSize) {
+    public Page<User> findAllUserOfPage(String username,String realName,String cpAbbr,Integer status,Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
         HashMap<String, Object> map = Maps.newHashMap();
         if(username!=null)
             map.put("username","%"+username+"%");
         if(realName!=null)
             map.put("realName",realName);
+        if(cpAbbr!=null)
+            map.put("cpAbbr",cpAbbr);
         if(status!=null&&status>0)
             map.put("status",status);
         map.put("isdelete",0);

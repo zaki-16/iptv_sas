@@ -95,8 +95,6 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
     protected void handleRelation(ProductAddVM vm,Integer id){
         try {
             //------------------------处理关系
-            if(vm.getCpids()==null && vm.getBids()==null)//没有关联关系直接
-                return;
             List<String> cpidLists = Arrays.asList(StringUtils.split(vm.getCpids(), ","));
             //2.插cp-product中间表
             if(cpidLists.size()>0){
@@ -152,9 +150,7 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
             UpdateTool.copyNullProperties(byId,prod);
             Product product_up = productRepository.saveAndFlush(prod);
             //先删除后插入
-            if(StringUtils.isNotBlank(vm.getBids()))
                 productBusinessRepository.deleteAllByPid(prod.getId());
-            if(StringUtils.isNotBlank(vm.getCpids()))
                 cpProductRepository.deleteAllByPid(prod.getId());
             //处理product关联的中间表的映射关系
             handleRelation(vm,product_up.getId());
@@ -223,7 +219,7 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
     @Override
     public ResultVO<?> findById(Integer id) {
         try {
-            Product prod = productRepository.findById(id).get();
+            Product prod = productRepository.findById(id).orElse(null);
             if(prod==null)
                 return ResultVOUtil.error("1","所查产品不存在");
             ProductVM productListVM = new ProductVM();

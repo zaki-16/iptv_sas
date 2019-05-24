@@ -11,6 +11,7 @@ import com.hgys.iptv.repository.OrderQuantityRepository;
 import com.hgys.iptv.repository.OrderQuantityWithCpRepository;
 import com.hgys.iptv.service.OrderQuantityService;
 import com.hgys.iptv.util.CodeUtil;
+import com.hgys.iptv.util.Logger;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
 import org.springframework.beans.BeanUtils;
@@ -42,14 +43,16 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
 
     @Autowired
     private  CpRepository cpRepository;
-
+    @Autowired
+    private Logger logger;
 
     @Override
     public Optional<OrderQuantity> findByCode(String code) {
         return orderquantityRepository.findByCode(code);
     }
 
-
+    //操作对象
+    private static final String menuName = "订购量结算";
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -60,8 +63,10 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
             for (String s : idLists) {
                 orderquantityRepository.batchDelete(Integer.parseInt(s));
             }
+            logger.log_rm_success(menuName,"OrderQuantityServiceImpl.batchDelete");
         }catch (Exception e){
             e.printStackTrace();
+            logger.log_rm_fail(menuName,"OrderQuantityServiceImpl.batchDelete");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
 
@@ -133,9 +138,11 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
                     from.setIsdelete(0);
                     OrderquantityWithCpRepository.saveAndFlush(from);
                 }
+                logger.log_up_success(menuName,"OrderQuantityServiceImpl.update");
             }
     }catch (Exception e){
         e.printStackTrace();
+            logger.log_up_fail(menuName,"OrderQuantityServiceImpl.update");
         return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
     }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -183,8 +190,10 @@ public class OrderQuantityServiceImpl  implements OrderQuantityService {
                 oc.setIsdelete(0);
                 OrderquantityWithCpRepository.save(oc);
             }
+            logger.log_add_success(menuName,"OrderQuantityServiceImpl.save");
         }catch (Exception e){
             e.printStackTrace();
+            logger.log_add_fail(menuName,"OrderQuantityServiceImpl.save");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
