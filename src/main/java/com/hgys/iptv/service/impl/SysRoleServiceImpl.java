@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.hgys.iptv.controller.vm.SysRoleVM;
 import com.hgys.iptv.model.Authority;
 import com.hgys.iptv.model.Role;
+import com.hgys.iptv.model.SysMenu;
 import com.hgys.iptv.model.SysRoleAuthority;
 import com.hgys.iptv.model.dto.SysRoleDTO;
 import com.hgys.iptv.model.enums.ResultEnum;
@@ -47,6 +48,7 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
         }
         return ResultVOUtil.success(sysRoleVM);
     }
+
 
     /**
      * 新增角色

@@ -221,7 +221,7 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             BeanUtils.copyProperties(userDTO,user);
             user.setModifyTime(new Timestamp(System.currentTimeMillis()));
             //处理 null值
-            User byIdUser = userRepository.findById(userDTO.getId()).orElse(null);
+            User byIdUser = userRepository.findByUsername(username);
             if(byIdUser==null)
                 return ResultVOUtil.error("1","用户已不存在！");
             UpdateTool.copyNullProperties(byIdUser,user);
