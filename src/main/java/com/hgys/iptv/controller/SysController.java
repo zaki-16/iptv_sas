@@ -106,6 +106,13 @@ public class SysController {
         return sysUserService.personalUpdate(sysUserDTO);
     }
 
+    @GetMapping("/getPersonalData")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "获取个性资料")
+    public ResultVO getPersonalData() {
+        return sysUserService.getPersonalData();
+    }
+
     @DeleteMapping("/batchLogicDeleteUser")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('userManager', 'remove')")

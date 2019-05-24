@@ -50,6 +50,7 @@ public class SysMenuServiceImpl implements SysMenuService {
     /**
      * 将菜单组装成树
      * 将菜单下关联的权限也组装成树
+     *
      * @return
      */
     @Override
@@ -57,14 +58,36 @@ public class SysMenuServiceImpl implements SysMenuService {
         List<SysMenuVM> sysMenuVMList = new ArrayList<>();
         //1. 查所有菜单
         List<SysMenu> sysMenus = sysMenuRepository.findAll();
-        sysMenus.forEach(sysMenu -> {
-            SysMenuVM sysMenuVM = new SysMenuVM();
-            BeanUtils.copyProperties(sysMenu,sysMenuVM);
-            List<Authority> byMenuId = authorityRepository.findByMenuId(sysMenu.getId());
-            sysMenuVM.setList(byMenuId);
-            sysMenuVMList.add(sysMenuVM);
+        List<MenuNode> menuNodes = new ArrayList<>();
+        sysMenus.forEach(sysMenu->{
+            MenuNode menuNode = new MenuNode();
+            BeanUtils.copyProperties(sysMenu,menuNode);
+            menuNodes.add(menuNode);
         });
-        return ResultVOUtil.success(sysMenuVMList);
+        //组装菜单树
+        List<MenuNode> menuTree = assembleMenuTree(0, menuNodes);
+        List<MenuNode> assemble = assemble(menuTree);
+        // 对每个叶子结点查找 其关联的权限
+//        sysMenus.forEach(sysMenu -> {
+//            SysMenuVM sysMenuVM = new SysMenuVM();
+//            BeanUtils.copyProperties(sysMenu,sysMenuVM);
+//            List<Authority> byMenuId = authorityRepository.findByMenuId(sysMenu.getId());
+//            sysMenuVM.setList(byMenuId);
+//            sysMenuVMList.add(sysMenuVM);
+//        });
+        return ResultVOUtil.success(assemble);
+    }
+
+    public List<MenuNode> assemble(List<MenuNode> menuTree){
+        menuTree.forEach(menu->{
+            if(menu.getChildrens().size()==0){
+                List<Authority> byMenuId = authorityRepository.findByMenuId(menu.getId());
+                menu.setAuthorities(byMenuId);
+            }else{
+                assemble(menu.getChildrens());
+            }
+        });
+        return menuTree;
     }
     public List<MenuNode> loadMenuTreeList() {
 //        ArrayList<SysMenuListVM> sysMenuListVMs = new ArrayList<>();

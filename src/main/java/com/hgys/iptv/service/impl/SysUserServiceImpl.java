@@ -236,6 +236,13 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         return ResultVOUtil.success("个性资料修改成功！");
     }
 
+    @Override
+    public ResultVO getPersonalData() {
+        String username = UserSessionInfoHolder.getCurrentUsername();
+        User byUsername = userRepository.findByUsername(username);
+        return ResultVOUtil.success(byUsername);
+    }
+
     /**
      * 修改密码
      * @param password_old
