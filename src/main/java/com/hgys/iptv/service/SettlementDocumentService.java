@@ -6,6 +6,8 @@ import com.hgys.iptv.model.vo.ResultVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import javax.servlet.http.HttpServletResponse;
+
 
 public interface SettlementDocumentService {
 
@@ -20,4 +22,6 @@ public interface SettlementDocumentService {
     ResultVO<?> settlementDocumentQueryCpMySelfList(Integer id);
 
     SettlementDocumentCPListExcelVM settlementCpExcel(Integer id);
+
+    void excelSettlementInfo(Integer masterId, HttpServletResponse response);
 }

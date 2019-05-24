@@ -1,5 +1,7 @@
 package com.hgys.iptv.service.impl;
 
+import cn.afterturn.easypoi.excel.ExcelExportUtil;
+import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.hgys.iptv.controller.assemlber.SettlementDocumentControllerAssemlber;
 import com.hgys.iptv.controller.vm.SettlementDocumentCPListExcelVM;
 import com.hgys.iptv.controller.vm.SettlementDocumentCPListVM;
@@ -7,16 +9,19 @@ import com.hgys.iptv.controller.vm.SettlementDocumentQueryListVM;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.QAccountSettlement;
 import com.hgys.iptv.model.QCpSettlementMoney;
+import com.hgys.iptv.model.vo.CpSettlementInfoExcelDTO;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.AccountSettlementRepository;
 import com.hgys.iptv.repository.CpSettlementMoneyRepository;
 import com.hgys.iptv.repository.SettlementDocumentRepository;
 import com.hgys.iptv.service.SettlementDocumentService;
 import com.hgys.iptv.util.ResultVOUtil;
+import com.hgys.iptv.util.excel.ExcelForWebUtil;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +31,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
+import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -222,5 +230,47 @@ public class SettlementDocumentServiceImpl implements SettlementDocumentService 
                 .innerJoin(qAccountSettlement).on(qCpSettlementMoney.masterCode.eq(qAccountSettlement.code))
                 .where(qCpSettlementMoney.id.eq(id)).fetchOne();
         return vm;
+    }
+
+    @Override
+    public void excelSettlementInfo(Integer masterId, HttpServletResponse response) {
+        //查询分账结算信息
+        Optional<AccountSettlement> byId = accountSettlementRepository.findById(masterId);
+        if (!byId.isPresent()){
+            throw new IllegalArgumentException("未查询到该结算账单信息");
+        }
+        AccountSettlement accountSettlement = byId.get();
+        /** 1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定 */
+        if (3 == accountSettlement.getSet_type()){
+            //查询产品级结算信息，根据产品分组
+        }else if (1 == accountSettlement.getSet_type() || 4 == accountSettlement.getSet_type()){
+            String startTime = new SimpleDateFormat("yyyy-MM-dd").format(accountSettlement.getSetStartTime());
+            String endTime = new SimpleDateFormat("yyyy-MM-dd").format(accountSettlement.getSetEndTime());
+            String timeHead = "结算账期" + startTime + "至" + endTime;
+            //查询数据
+            List<CpSettlementMoney> byMasterCode = cpSettlementMoneyRepository.findByMasterCode(accountSettlement.getCode());
+            List<CpSettlementInfoExcelDTO> dtos = new ArrayList<>();
+
+            //分成合计金额
+            BigDecimal decimal = new BigDecimal(0);
+            for (CpSettlementMoney m : byMasterCode){
+                CpSettlementInfoExcelDTO dto = new CpSettlementInfoExcelDTO();
+                dto.setCp(m.getCpname());
+                dto.setMoney(m.getSettlementMoney().toString());
+                dtos.add(dto);
+                //计算分成合计金额
+                decimal = decimal.add(m.getSettlementMoney());
+            }
+
+            CpSettlementInfoExcelDTO l = new CpSettlementInfoExcelDTO();
+            l.setCp("分成合计(元)");
+            l.setMoney(decimal.setScale(2).toString());
+            //最后一列插入分成合计金额
+            dtos.add(l);
+
+            Workbook sheets = ExcelExportUtil.exportExcel(new ExportParams(timeHead,"订购量结算&CP定比例结算"), CpSettlementInfoExcelDTO.class, dtos);
+            ExcelForWebUtil.workBookExportExcel(response,sheets,"Cp结算账单结算信息表");
+        }
+
     }
 }

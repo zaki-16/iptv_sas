@@ -1,5 +1,9 @@
 package com.hgys.iptv.controller;
 
+import cn.afterturn.easypoi.entity.vo.MapExcelConstants;
+import cn.afterturn.easypoi.entity.vo.NormalExcelConstants;
+import cn.afterturn.easypoi.excel.entity.ExportParams;
+import cn.afterturn.easypoi.excel.entity.params.ExcelExportEntity;
 import com.hgys.iptv.exception.BaseException;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.bean.ShopDTO;
@@ -23,6 +27,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -116,5 +121,68 @@ public class DemoContronller {
 
         System.out.println(list);
         return shopDTOList;
+    }
+
+    @GetMapping("/testExcelExportEntity")
+    @ApiOperation(value = "测试ExcelExportEntity动态方式导出数据",notes = "返回Excel")
+    public void dynaCol(HttpServletResponse response) {
+        try {
+            List<ExcelExportEntity> colList = new ArrayList<>();
+            ExcelExportEntity colEntity = new ExcelExportEntity("商品名称", "title");
+            colEntity.setNeedMerge(true);
+            colList.add(colEntity);
+
+            colEntity = new ExcelExportEntity("供应商", "supplier");
+            colEntity.setNeedMerge(true);
+            colList.add(colEntity);
+
+            ExcelExportEntity deliColGroup = new ExcelExportEntity("得力", "deli");
+            List<ExcelExportEntity> deliColList = new ArrayList<>();
+            deliColList.add(new ExcelExportEntity("市场价", "orgPrice"));
+            deliColList.add(new ExcelExportEntity("专区价", "salePrice"));
+            deliColGroup.setList(deliColList);
+            colList.add(deliColGroup);
+
+            ExcelExportEntity jdColGroup = new ExcelExportEntity("京东", "jd");
+            List<ExcelExportEntity> jdColList = new ArrayList<>();
+            jdColList.add(new ExcelExportEntity("市场价", "orgPrice"));
+            jdColList.add(new ExcelExportEntity("专区价", "salePrice"));
+            jdColGroup.setList(jdColList);
+            colList.add(jdColGroup);
+
+
+            List<Map<String, Object>> list = new ArrayList<>();
+            for (int i = 0; i < 10; i++) {
+                Map<String, Object> valMap = new HashMap<>();
+                valMap.put("title", "名称." + i);
+                valMap.put("supplier", "供应商." + i);
+
+                List<Map<String, Object>> deliDetailList = new ArrayList<>();
+                for (int j = 0; j < 3; j++) {
+                    Map<String, Object> deliValMap = new HashMap<>();
+                    deliValMap.put("orgPrice", "得力.市场价." + j);
+                    deliValMap.put("salePrice", "得力.专区价." + j);
+                    deliDetailList.add(deliValMap);
+                }
+                valMap.put("deli", deliDetailList);
+
+                List<Map<String, Object>> jdDetailList = new ArrayList<>();
+                for (int j = 0; j < 2; j++) {
+                    Map<String, Object> jdValMap = new HashMap<>();
+                    jdValMap.put("orgPrice", "京东.市场价." + j);
+                    jdValMap.put("salePrice", "京东.专区价." + j);
+                    jdDetailList.add(jdValMap);
+                }
+                valMap.put("jd", jdDetailList);
+
+                list.add(valMap);
+            }
+
+            Workbook workbook = cn.afterturn.easypoi.excel.ExcelExportUtil.exportExcel(new ExportParams("价格分析表", "数据"), colList,
+                    list);
+            ExcelForWebUtil.workBookExportExcel(response,workbook,"test");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
