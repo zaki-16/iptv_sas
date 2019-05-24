@@ -57,15 +57,56 @@ public class SysMenuServiceImpl implements SysMenuService {
         List<SysMenuVM> sysMenuVMList = new ArrayList<>();
         //1. 查所有菜单
         List<SysMenu> sysMenus = sysMenuRepository.findAll();
-        sysMenus.forEach(sysMenu -> {
-            SysMenuVM sysMenuVM = new SysMenuVM();
-            BeanUtils.copyProperties(sysMenu,sysMenuVM);
-            List<Authority> byMenuId = authorityRepository.findByMenuId(sysMenu.getId());
-            sysMenuVM.setList(byMenuId);
-            sysMenuVMList.add(sysMenuVM);
+        //组装菜单树
+//        sysMenus.forEach(sysMenu -> {
+//            SysMenuVM sysMenuVM = new SysMenuVM();
+//            BeanUtils.copyProperties(sysMenu,sysMenuVM);
+//            List<Authority> byMenuId = authorityRepository.findByMenuId(sysMenu.getId());
+//            sysMenuVM.setList(byMenuId);
+//            sysMenuVMList.add(sysMenuVM);
+//        });
+        List<MenuNode> menuNodes = new ArrayList<>();
+        sysMenus.forEach(sysMenu->{
+            MenuNode menuNode = new MenuNode();
+            BeanUtils.copyProperties(sysMenu,menuNode);
+            menuNodes.add(menuNode);
         });
-        return ResultVOUtil.success(sysMenuVMList);
+        //组装菜单树
+        List<MenuNode> menuTree = assembleMenuTree(0, menuNodes);
+
+        List<SysMenuVM> sysMenuVMS = reachPermLeaf(0, menuTree, sysMenuVMList);
+        return ResultVOUtil.success(sysMenuVMS);
     }
+
+
+
+    private List<SysMenuVM>  reachPermLeaf(Integer pid,List<MenuNode> menuTree,List<SysMenuVM> sysMenuVMList){
+        menuTree.forEach(menuNode -> {//为每个叶子结点菜单关联上所有已存在的叶子结点权限
+            if(menuNode.getChildrens().size()==0){//权限叶子结点
+                SysMenuVM sysMenuVM = new SysMenuVM();
+                BeanUtils.copyProperties(menuNode,sysMenuVM);
+                List<Authority> byMenuId = authorityRepository.findByMenuId(menuNode.getId());
+                sysMenuVM.setList(byMenuId);
+                sysMenuVMList.add(sysMenuVM);
+            }else{
+                reachPermLeaf(pid,menuNode.getChildrens(),sysMenuVMList);
+            }
+        });
+        return sysMenuVMList;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     public List<MenuNode> loadMenuTreeList() {
 //        ArrayList<SysMenuListVM> sysMenuListVMs = new ArrayList<>();
         // 加载菜单
@@ -101,6 +142,19 @@ public class SysMenuServiceImpl implements SysMenuService {
 //        });
         return assembleMenuPerm(menuTree, permissionTree);
     }
+
+
+    private List<MenuNode> assembleMenuAuth(List<MenuNode> menuTree, List<Authority> auths) {
+        menuTree.forEach(menu->{
+            if(menu.getChildrens().size()==0){// 定位到叶子
+                menu.setAuthorities(auths);
+            }else{
+                assembleMenuAuth(menu.getChildrens(),auths);
+            }
+        });
+        return menuTree;
+    }
+
 
     private List<MenuNode> assembleMenuPerm(List<MenuNode> menuTree, List<PermissionNode> permissionTree){
         menuTree.forEach(menu->{
