@@ -7,10 +7,7 @@ import com.hgys.iptv.model.enums.LogTypeEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.security.UserDetailsServiceImpl;
 import com.hgys.iptv.service.SysUserService;
-import com.hgys.iptv.util.Logger;
-import com.hgys.iptv.util.ReqAndRespHolder;
-import com.hgys.iptv.util.ResultVOUtil;
-import com.hgys.iptv.util.UserSessionInfoHolder;
+import com.hgys.iptv.util.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -39,7 +36,6 @@ import java.util.Arrays;
 @RequestMapping(value={"/iptv","/"})
 @Api(value = "LoginController",tags = "登录管理Api接口")
 public class LoginController {
-
     @Autowired
     private Logger logger;
     @Autowired
@@ -47,7 +43,7 @@ public class LoginController {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
-    private SysUserService sysUserService;
+    private RepositoryManager repositoryManager;
 
     @GetMapping("/index")
     public String index(){
@@ -68,31 +64,47 @@ public class LoginController {
             @ApiParam(value = "登录密码")
             @RequestParam("password")String password,
             HttpServletResponse response){
+        // 防止权限 过滤器无条件登录
+        if(StringUtils.isBlank(username) && StringUtils.isBlank(password)){
+            return ResultVOUtil.error("1","您还未登录!");
+        }
         if(StringUtils.isBlank(password)){
             return ResultVOUtil.error("1","密码不能为空!");
         }
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        if(!passwordEncoder.matches(password.trim(),userDetails.getPassword())){
-            return ResultVOUtil.error("1","用户或密码错误！");
-        }
-        /**
-         * 登录成功后记录会话
-         */
+        assert (!username.isEmpty());
+        // 获取ip
         HttpServletRequest request = ReqAndRespHolder.getRequest();
         String ipAddr = ReqAndRespHolder.getIpAddr(request);
+        // 对用户校验是否正常使用--记录日志
+        User byUserName = repositoryManager.findOne(User.class, "username", username);
+        if(null == byUserName){
+            logger.log(username,"",ipAddr,LogTypeEnum.LOGIN.getType(), LogResultEnum.USER_NOT_EXIST.getResult());
+            return ResultVOUtil.error("1","账户不存在!");
+        }else {
+            if(1 == byUserName.getIsdelete()){
+                logger.log(username,byUserName.getRealName(),ipAddr,LogTypeEnum.LOGIN.getType(), LogResultEnum.CANCEL.getResult());
+                return ResultVOUtil.error("1","账户已停用!");
+            }
+        }
+        // 以下对正常使用的用户处理
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if(!passwordEncoder.matches(password.trim(),userDetails.getPassword())){
+            logger.log(username,byUserName.getRealName(),ipAddr,LogTypeEnum.LOGIN.getType(), LogResultEnum.PWD_ERROR.getResult());
+            return ResultVOUtil.error("1","用户或密码错误！");
+        }
 
         UserSessionInfo info = new UserSessionInfo();
         info.setIp(ipAddr);
-        info.setLoginName(userDetails.getUsername());
-        //获取 user ，记录真实姓名
-        User byUserName = (User)sysUserService.findByUserName(userDetails.getUsername()).getData();
+        info.setLoginName(username);
         info.setRealName(byUserName.getRealName());
-        //用户信息存 session
-        request.getSession().setAttribute(userDetails.getUsername(),info);
+        // 用户信息存 session
+        request.getSession().setAttribute(username,info);
 
+        // 存security上下文
         SecurityContext context = SecurityContextHolder.getContext();
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
         context.setAuthentication(token);
+
 //        Cookie cookie = new Cookie(CURRENT_USER,username+"#"+userDetails.getPassword());
 //        cookie.setMaxAge(60*30);//30分钟
 //        response.addCookie(cookie);

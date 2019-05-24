@@ -72,6 +72,21 @@ public class Logger {
         }
     }
 
+    public void log(String username,String realName,String ip,String loginType,String result){
+        try {
+            SysLog sysLog = new SysLog();
+            sysLog.setLoginName(username);
+            sysLog.setRealName(realName);
+            sysLog.setType(loginType);
+            sysLog.setResult(result);
+            sysLog.setIp(ip);
+            sysLog.setTime(new Timestamp(System.currentTimeMillis()));
+            sysLogRepository.save(sysLog);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 记录操作日志
      */

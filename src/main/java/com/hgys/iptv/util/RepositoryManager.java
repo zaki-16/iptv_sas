@@ -159,6 +159,23 @@ public class RepositoryManager {
         return null;
     }
 
+    /**
+     * 一般按id、索引、unique的字段 查询--返回唯一结果
+     * 否则返回list的第一个元素
+     * @param clazz
+     * @param colName
+     * @param colValue
+     * @param <T>
+     * @return
+     */
+    public <T> T findOne(Class<T> clazz,String colName,Object colValue) {
+        List<T> list = findByCriteria(clazz, colName,colValue);
+        if(list!=null && list.size()>0){
+            return (T)list.get(0);
+        }
+        return null;
+    }
+
 
     //============================返回模型视图===================================================================
 
