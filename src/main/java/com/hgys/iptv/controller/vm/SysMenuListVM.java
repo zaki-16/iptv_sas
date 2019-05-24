@@ -10,7 +10,7 @@ import java.util.List;
  * @ClassName SysMenuListVM
  * @Auther: wangz
  * @Date: 2019/5/19 14:50
- * @Description: TODO
+ * @Description: TODO 菜单
  */
 @Data
 public class SysMenuListVM {
