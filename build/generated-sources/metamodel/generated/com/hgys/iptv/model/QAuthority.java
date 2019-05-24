@@ -27,11 +27,15 @@ public class QAuthority extends EntityPathBase<Authority> {
 
     public final NumberPath<Integer> menuId = createNumber("menuId", Integer.class);
 
+    public final StringPath menuName = createString("menuName");
+
     public final StringPath name = createString("name");
 
     public final NumberPath<Integer> parentId = createNumber("parentId", Integer.class);
 
     public final NumberPath<Integer> status = createNumber("status", Integer.class);
+
+    public final StringPath text = createString("text");
 
     public QAuthority(String variable) {
         super(Authority.class, forVariable(variable));

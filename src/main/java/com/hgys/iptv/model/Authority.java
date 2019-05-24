@@ -23,6 +23,8 @@ public class Authority {
     private Integer id;
 
     private String name;// name = menuName+":"+permName;
+
+    private String text;
     //菜单 id
     private Integer menuId;
 //    //菜单 名称

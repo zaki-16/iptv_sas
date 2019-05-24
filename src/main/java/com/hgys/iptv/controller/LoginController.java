@@ -44,10 +44,11 @@ public class LoginController {
     @Autowired
     private RepositoryManager repositoryManager;
 
-//    @GetMapping("/index")
-//    public String index(){
-//        return "main";
-//    }
+    @GetMapping("/link")
+    @ResponseStatus(HttpStatus.OK)
+    public String link(){
+        return "ok";
+    }
 
     @GetMapping("/login")
     public ResultVO login4get( @ApiParam(value = "登录名") String username,

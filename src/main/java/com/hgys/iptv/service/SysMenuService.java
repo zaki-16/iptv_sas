@@ -1,5 +1,6 @@
 package com.hgys.iptv.service;
 
+import com.hgys.iptv.model.bean.MenuAuthNode;
 import com.hgys.iptv.model.bean.MenuNode;
 import com.hgys.iptv.model.dto.SysMenuDTO;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -20,4 +21,6 @@ public interface SysMenuService {
 
     ResultVO deleteMenuNodeById(Integer id);
 
+
+    List<MenuAuthNode> getMenuAuthTree();
 }

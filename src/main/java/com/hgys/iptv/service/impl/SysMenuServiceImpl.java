@@ -6,6 +6,7 @@ import com.hgys.iptv.model.Authority;
 import com.hgys.iptv.model.Permission;
 import com.hgys.iptv.model.SysMenu;
 import com.hgys.iptv.model.SysMenuPermission;
+import com.hgys.iptv.model.bean.MenuAuthNode;
 import com.hgys.iptv.model.bean.MenuNode;
 import com.hgys.iptv.model.bean.PermissionNode;
 import com.hgys.iptv.model.dto.SysMenuDTO;
@@ -47,6 +48,29 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Autowired
     private SysMenuPermissionRepository sysMenuPermissionRepository;
 
+    @Override
+    public List<MenuAuthNode> getMenuAuthTree(){
+        List<Authority> all = authorityRepository.findAll();
+        List<MenuAuthNode> menuNodes = new ArrayList<>();
+        all.forEach(authority->{
+            MenuAuthNode menuNode = new MenuAuthNode();
+            BeanUtils.copyProperties(authority,menuNode);
+            menuNodes.add(menuNode);
+        });
+        //组装菜单树
+        return assembleMenuAuthTree(0, menuNodes);
+    }
+
+    private List<MenuAuthNode> assembleMenuAuthTree(Integer pId, List<MenuAuthNode> menuNodes) {
+        List<MenuAuthNode> tree = CollUtil.newArrayList();
+        for (MenuAuthNode menuNode : menuNodes) {
+            if (pId.equals(menuNode.getParentId())) {
+                menuNode.setChildrens(assembleMenuAuthTree(menuNode.getId(), menuNodes));
+                tree.add(menuNode);
+            }
+        }
+        return tree;
+    }
     /**
      * 将菜单组装成树
      * 将菜单下关联的权限也组装成树

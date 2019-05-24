@@ -2,11 +2,10 @@ package com.hgys.iptv.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.google.common.collect.Maps;
+import com.hgys.iptv.controller.vm.PersonalDataVM;
+import com.hgys.iptv.controller.vm.PersonalRole;
 import com.hgys.iptv.controller.vm.SysUserVM;
-import com.hgys.iptv.model.Cp;
-import com.hgys.iptv.model.Role;
-import com.hgys.iptv.model.SysUserRole;
-import com.hgys.iptv.model.User;
+import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.dto.SysUserDTO;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -236,11 +235,32 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         return ResultVOUtil.success("个性资料修改成功！");
     }
 
+
     @Override
     public ResultVO getPersonalData() {
         String username = UserSessionInfoHolder.getCurrentUsername();
+        if(null == username || (username.compareTo("anonymousUser")==0))
+            return  ResultVOUtil.error("1","密码已过期或未登录！");
+
+        PersonalDataVM personalDataVM = new PersonalDataVM();
+        ArrayList<PersonalRole> personalRoles = new ArrayList<>();
         User byUsername = userRepository.findByUsername(username);
-        return ResultVOUtil.success(byUsername);
+        BeanUtils.copyProperties(byUsername,personalDataVM);
+
+        Set<Integer> allRoleId = sysUserRoleRepository.findAllRoleId(byUsername.getId());
+        List<Role> roles = roleRepository.findAllById(allRoleId);
+        if(roles.size()>0){
+            roles.forEach(role->{
+                PersonalRole personalRole = new PersonalRole();
+                personalRole.setRole(role);
+                Set<Integer> allAuthId = sysRoleAuthorityRepository.findAllAuthId(role.getId());
+                List<Authority> auths = authorityRepository.findAllById(allAuthId);
+                personalRole.setAuths(auths);
+                personalRoles.add(personalRole);
+            });
+            personalDataVM.setList(personalRoles);
+        }
+        return ResultVOUtil.success(personalDataVM);
     }
 
     /**
