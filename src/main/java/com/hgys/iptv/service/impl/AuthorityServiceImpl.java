@@ -114,11 +114,9 @@ public class AuthorityServiceImpl extends SysServiceImpl implements AuthoritySer
             authority.setCreatedTime(new Timestamp(System.currentTimeMillis()));
             authority.setMenuId(menuId);
             SysMenu sysMenu = repositoryManager.findOneById(SysMenu.class, menuId);
-            authority.setMenuName(sysMenu.getName());
             //
-            authority.setPermId(permId);
             Permission permission = repositoryManager.findOneById(Permission.class, permId);
-            authority.setPermName(permission.getName());
+            authority.setName(sysMenu.getName()+":"+permission.getName());
             authority.setStatus(0);
             authorityRepository.save(authority);
         }catch (Exception e){

@@ -25,11 +25,7 @@ public class QAuthority extends EntityPathBase<Authority> {
 
     public final NumberPath<Integer> menuId = createNumber("menuId", Integer.class);
 
-    public final StringPath menuName = createString("menuName");
-
-    public final NumberPath<Integer> permId = createNumber("permId", Integer.class);
-
-    public final StringPath permName = createString("permName");
+    public final StringPath name = createString("name");
 
     public final NumberPath<Integer> status = createNumber("status", Integer.class);
 

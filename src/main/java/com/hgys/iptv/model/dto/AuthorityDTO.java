@@ -16,12 +16,14 @@ public class AuthorityDTO {
 
     //菜单 id
     private Integer menuId;
-    //菜单 名称
-    private String menuName;
-    // 权限 id
-    private Integer permId;
-    // 权限 名称
-    private String permName;
+
+    private String name;
+//    //菜单 名称
+//    private String menuName;
+//    // 权限 id
+//    private Integer permId;
+//    // 权限 名称
+//    private String permName;
 
     private Integer status;//0:启用，1：禁用
 

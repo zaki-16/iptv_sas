@@ -66,7 +66,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             Role role_ = roleRepository.findById(role.getId()).get();
             List<Authority> auths = sysRoleService.findAllAuthorityByRoleId(role_.getId());
             auths.forEach(auth->{
-                authorities.add(new SimpleGrantedAuthority(auth.getMenuName()+":"+auth.getPermName()));
+                authorities.add(new SimpleGrantedAuthority(auth.getName()));
             });
         });
     }

@@ -1,6 +1,8 @@
 package com.hgys.iptv.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.hgys.iptv.controller.vm.SysMenuVM;
+import com.hgys.iptv.model.Authority;
 import com.hgys.iptv.model.Permission;
 import com.hgys.iptv.model.SysMenu;
 import com.hgys.iptv.model.SysMenuPermission;
@@ -9,6 +11,7 @@ import com.hgys.iptv.model.bean.PermissionNode;
 import com.hgys.iptv.model.dto.SysMenuDTO;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
+import com.hgys.iptv.repository.AuthorityRepository;
 import com.hgys.iptv.repository.PermissionRepository;
 import com.hgys.iptv.repository.SysMenuPermissionRepository;
 import com.hgys.iptv.repository.SysMenuRepository;
@@ -38,6 +41,9 @@ public class SysMenuServiceImpl implements SysMenuService {
     private SysMenuRepository sysMenuRepository;
     @Autowired
     private PermissionRepository permissionRepository;
+
+    @Autowired
+    private AuthorityRepository authorityRepository;
     @Autowired
     private SysMenuPermissionRepository sysMenuPermissionRepository;
 
@@ -48,11 +54,22 @@ public class SysMenuServiceImpl implements SysMenuService {
      */
     @Override
     public ResultVO loadMenuTree(){
-        return ResultVOUtil.success(loadMenuTreeList());
+        List<SysMenuVM> sysMenuVMList = new ArrayList<>();
+        //1. 查所有菜单
+        List<SysMenu> sysMenus = sysMenuRepository.findAll();
+        sysMenus.forEach(sysMenu -> {
+            SysMenuVM sysMenuVM = new SysMenuVM();
+            BeanUtils.copyProperties(sysMenu,sysMenuVM);
+            List<Authority> byMenuId = authorityRepository.findByMenuId(sysMenu.getId());
+            sysMenuVM.setList(byMenuId);
+            sysMenuVMList.add(sysMenuVM);
+        });
+        return ResultVOUtil.success(sysMenuVMList);
     }
     public List<MenuNode> loadMenuTreeList() {
 //        ArrayList<SysMenuListVM> sysMenuListVMs = new ArrayList<>();
         // 加载菜单
+        //根据 authority 的
         List<SysMenu> sysMenus = sysMenuRepository.findAll();
         List<MenuNode> menuNodes = new ArrayList<>();
         sysMenus.forEach(sysMenu->{

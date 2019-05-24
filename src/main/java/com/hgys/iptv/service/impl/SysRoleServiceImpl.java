@@ -3,7 +3,9 @@ package com.hgys.iptv.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import com.google.common.collect.Maps;
 import com.hgys.iptv.controller.vm.SysRoleVM;
-import com.hgys.iptv.model.*;
+import com.hgys.iptv.model.Authority;
+import com.hgys.iptv.model.Role;
+import com.hgys.iptv.model.SysRoleAuthority;
 import com.hgys.iptv.model.dto.SysRoleDTO;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -74,7 +76,7 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
             role.setIsdelete(0);//删除状态
             Role role_add = roleRepository.save(role);
 //处理中间表
-            if(sysRoleDTO.getMenuId()!=null && sysRoleDTO.getPids()!=null)
+            if(sysRoleDTO.getIds()!=null)
                 handleRelation(sysRoleDTO,role_add.getId());
         }catch (Exception e){
             e.printStackTrace();
@@ -93,31 +95,17 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
     @Transactional(rollbackFor = Exception.class)
     protected void handleRelation(SysRoleDTO sysRoleDTO, Integer id){
         try{
-            List<String> ids = Arrays.asList(StringUtils.split(sysRoleDTO.getPids(), ","));
-            List<SysRoleAuthority> relationList =new ArrayList<>();
-            ids.forEach(pid->{
-                //1.插真正的权限表 authority
-                Authority authority = new Authority();
-                authority.setCreatedTime(new Timestamp(System.currentTimeMillis()));
-                //查 sys_menu
-                authority.setMenuId(sysRoleDTO.getMenuId());
-                SysMenu sysMenu = repositoryManager.findOneById(SysMenu.class, sysRoleDTO.getMenuId());
-                authority.setMenuName(sysMenu.getName());
-                // 查 sys_permission
-                authority.setPermId(Integer.parseInt(pid));
-                Permission permission = repositoryManager.findOneById(Permission.class, Integer.parseInt(pid));
-                authority.setPermName(permission.getName());
-                if(sysRoleDTO.getStatus()!=null && sysRoleDTO.getStatus()!=1)
-                    authority.setStatus(0);
-                // 插入 authority
-                Authority authority_add = authorityRepository.save(authority);
-                //2.插入 authority 表成功后 反取 id--插中间表
-                SysRoleAuthority relation = new SysRoleAuthority();
-                relation.setRoleId(id);
-                relation.setAuthId(authority_add.getId());
-                relationList.add(relation);
-            });
-            sysRoleAuthorityRepository.saveAll(relationList);
+            List<String> ids = Arrays.asList(StringUtils.split(sysRoleDTO.getIds(), ","));
+            if(ids.size()>0){
+                List<SysRoleAuthority> relationList =new ArrayList<>();
+                ids.forEach(authId->{
+                    SysRoleAuthority relation = new SysRoleAuthority();
+                    relation.setRoleId(id);
+                    relation.setAuthId(Integer.parseInt(authId));
+                    relationList.add(relation);
+                });
+                sysRoleAuthorityRepository.saveAll(relationList);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
