@@ -31,6 +31,9 @@ public class Authority {
 //    private Integer permId;
 //    // 权限 名称
 //    private String permName;
+    private Integer parentId;//权限父节点
+
+    private String description;
 
     private Integer status;//0:启用，1：禁用
 
