@@ -34,12 +34,12 @@ public class IptvSasApplication extends SpringBootServletInitializer{
     /**
      * 注入验证码servlet
      */
-    @Bean
-    public ServletRegistrationBean indexServletRegistration() {
-        ServletRegistrationBean registration = new ServletRegistrationBean(new VerifyServlet());
-        registration.addUrlMappings("/getVerifyCode");
-        return registration;
-    }
+//    @Bean
+//    public ServletRegistrationBean indexServletRegistration() {
+//        ServletRegistrationBean registration = new ServletRegistrationBean(new VerifyServlet());
+//        registration.addUrlMappings("/getVerifyCode");
+//        return registration;
+//    }
 
     /**
      * 注入JPAQueryFactory

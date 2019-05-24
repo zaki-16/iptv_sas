@@ -16,10 +16,7 @@ import com.hgys.iptv.repository.SysLogRepository;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
@@ -136,7 +133,10 @@ public class Logger {
             map.put("type","%"+sysLogVM.getType()+"%");
         map.put("result",sysLogVM.getResult());
         map.put("ip",sysLogVM.getIp());
-       return repositoryManager.findByCriteriaPage(sysLogRepository,map,pageNum,pageSize);
+        //排序
+        Sort sort = new Sort(Sort.Direction.DESC,"time");
+        Pageable pageable = PageRequest.of(pageNum, pageSize, sort);
+        return repositoryManager.findByCriteriaPage(sysLogRepository,map,pageable);
     }
     /**
      * 分页加载操作日志
@@ -154,7 +154,9 @@ public class Logger {
             map.put("operObj","%"+operLogVM.getOperObj()+"%");
         map.put("result",operLogVM.getResult());
         map.put("ip",operLogVM.getIp());
-        return repositoryManager.findByCriteriaPage(operationLogRepository,map,pageNum,pageSize);
+        Sort sort = new Sort(Sort.Direction.DESC,"operTime");
+        Pageable pageable = PageRequest.of(pageNum, pageSize, sort);
+        return repositoryManager.findByCriteriaPage(operationLogRepository,map,pageable);
     }
 
 //    protected Page<OperationLog> loadOperationLog(Pageable pageable){
