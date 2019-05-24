@@ -1,5 +1,9 @@
 package com.hgys.iptv.util;
 
+import cn.hutool.core.collection.CollUtil;
+import com.google.common.collect.Maps;
+import com.hgys.iptv.controller.vm.OperLogVM;
+import com.hgys.iptv.controller.vm.SysLogVM;
 import com.hgys.iptv.model.OperationLog;
 import com.hgys.iptv.model.QOperationLog;
 import com.hgys.iptv.model.QSysLog;
@@ -19,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 
 /**
  * @ClassName Logger
@@ -42,6 +47,9 @@ public class Logger {
     @Autowired
     private JPAQueryFactory queryFactory;
 
+    @Autowired
+    private RepositoryManager repositoryManager;
+
     private Logger(){}
 //
 //    private static class LoggerHolder{
@@ -50,7 +58,10 @@ public class Logger {
 //    public static Logger getLogger(){
 //        return LoggerHolder.INSTANCE;
 //    }
-    //-------------------记录系统登录日志
+
+
+
+    //----==============--=======------记录日志==============-==========--===-=============
 
     /**
      * 记录登录日志
@@ -90,7 +101,7 @@ public class Logger {
     /**
      * 记录操作日志
      */
-    public void log(String menuName, String operType,String methodName, String result){
+    public void log(String menuName, String operType,String methodName,String result){
         //操作对象，操作类型，方法名，结果
         try {
             UserSessionInfo info=UserSessionInfoHolder.getUserSessionInfo();
@@ -101,6 +112,7 @@ public class Logger {
             operationLog.setOperObj(menuName);
             operationLog.setOperType(operType);
             operationLog.setMethodName(methodName);
+            operationLog.setIp(info.getIp());
             operationLog.setResult(result);
             operationLog.setOperTime(new Timestamp(System.currentTimeMillis()));
             operationLogRepository.save(operationLog);
@@ -109,43 +121,49 @@ public class Logger {
         }
     }
 
-
+//==============-==-=========-------=====加载日志===================--===-==========================
     /**
      * 分页加载系统日志
-     * @param pageNum
-     * @param pageSize
-     * @return
+     * 按时间段、登录账号、姓名、类型、结果、ip地址进行查询
      */
-    public Page<SysLog> loadSysLog(String pageNum,String pageSize){
-//        Sort sort = new Sort(Sort.Direction.ASC,"id");
-        Pageable pageable = PageRequest.of(Integer.parseInt(pageNum)-1 ,Integer.parseInt(pageSize),null);
-        return loadSysLog(pageable);
-    }
-    protected Page<SysLog> loadSysLog(Pageable pageable){
-        QSysLog sysLog = QSysLog.sysLog;
-        JPAQuery<SysLog> jpaQuery = queryFactory.selectFrom(sysLog)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
-        return new PageImpl<>(jpaQuery.fetch(),pageable,jpaQuery.fetchResults().getTotal());
+    public Page<SysLog> loadSysLog(SysLogVM sysLogVM,Integer pageNum, Integer pageSize){
+        HashMap<String, Object> map = Maps.newHashMap();
+        if(sysLogVM.getLoginName()!=null)
+            map.put("loginName","%"+sysLogVM.getLoginName()+"%");
+        if(sysLogVM.getRealName()!=null)
+            map.put("realName","%"+sysLogVM.getRealName()+"%");
+        if(sysLogVM.getType()!=null)
+            map.put("type","%"+sysLogVM.getType()+"%");
+        map.put("result",sysLogVM.getResult());
+        map.put("ip",sysLogVM.getIp());
+       return repositoryManager.findByCriteriaPage(sysLogRepository,map,pageNum,pageSize);
     }
     /**
      * 分页加载操作日志
      * @param pageNum
      * @param pageSize
-     * @return
+     * @return 时间段、账号、姓名、操作对象、操作结果、ip地址进行查询
      */
-    public Page<OperationLog> loadOperationLog(String pageNum,String pageSize){
-        Pageable pageable = PageRequest.of(Integer.parseInt(pageNum)-1 ,Integer.parseInt(pageSize),null);
-        return loadOperationLog(pageable);
+    public Page<OperationLog> loadOperationLog(OperLogVM operLogVM,Integer pageNum, Integer pageSize){
+        HashMap<String, Object> map = Maps.newHashMap();
+        if(operLogVM.getLoginName()!=null)
+            map.put("loginName","%"+operLogVM.getLoginName()+"%");
+        if(operLogVM.getRealName()!=null)
+            map.put("realName","%"+operLogVM.getRealName()+"%");
+        if(operLogVM.getOperObj()!=null)
+            map.put("operObj","%"+operLogVM.getOperObj()+"%");
+        map.put("result",operLogVM.getResult());
+        map.put("ip",operLogVM.getIp());
+        return repositoryManager.findByCriteriaPage(operationLogRepository,map,pageNum,pageSize);
     }
 
-    protected Page<OperationLog> loadOperationLog(Pageable pageable){
-        QOperationLog operationLog = QOperationLog.operationLog;
-        JPAQuery<OperationLog> jpaQuery = queryFactory.selectFrom(operationLog)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
-        return new PageImpl<>(jpaQuery.fetch(),pageable,jpaQuery.fetchResults().getTotal());
-    }
+//    protected Page<OperationLog> loadOperationLog(Pageable pageable){
+//        QOperationLog operationLog = QOperationLog.operationLog;
+//        JPAQuery<OperationLog> jpaQuery = queryFactory.selectFrom(operationLog)
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize());
+//        return new PageImpl<>(jpaQuery.fetch(),pageable,jpaQuery.fetchResults().getTotal());
+//    }
 
 
 

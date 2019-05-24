@@ -47,7 +47,10 @@ public class SysMenuServiceImpl implements SysMenuService {
      * @return
      */
     @Override
-    public ResultVO loadMenuTree() {
+    public ResultVO loadMenuTree(){
+        return ResultVOUtil.success(loadMenuTreeList());
+    }
+    public List<MenuNode> loadMenuTreeList() {
 //        ArrayList<SysMenuListVM> sysMenuListVMs = new ArrayList<>();
         // 加载菜单
         List<SysMenu> sysMenus = sysMenuRepository.findAll();
@@ -72,14 +75,14 @@ public class SysMenuServiceImpl implements SysMenuService {
         List<PermissionNode> permissionTree = assemblePermTree(0, permissionNodes);//对每个菜单下的所有权限结点进行组装成树
 
         //对每个叶子结点(childrens为空)的菜单--关联一颗权限树--递归
-        List<MenuNode> menuPremTree = assembleMenuPerm(menuTree, permissionTree);
+
 //        sysMenus.forEach(sysMenu -> {
 //            SysMenuListVM sysMenuListVM = new SysMenuListVM();
 //            BeanUtils.copyProperties(sysMenu,sysMenuListVM);
 //            sysMenuListVM.setList(permissionTree);
 //            sysMenuListVMs.add(sysMenuListVM);
 //        });
-        return ResultVOUtil.success(menuPremTree);
+        return assembleMenuPerm(menuTree, permissionTree);
     }
 
     private List<MenuNode> assembleMenuPerm(List<MenuNode> menuTree, List<PermissionNode> permissionTree){

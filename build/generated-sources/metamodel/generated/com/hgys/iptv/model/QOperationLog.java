@@ -21,6 +21,8 @@ public class QOperationLog extends EntityPathBase<OperationLog> {
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
+    public final StringPath ip = createString("ip");
+
     public final StringPath loginName = createString("loginName");
 
     public final StringPath methodName = createString("methodName");
@@ -33,7 +35,7 @@ public class QOperationLog extends EntityPathBase<OperationLog> {
 
     public final StringPath realName = createString("realName");
 
-    public final StringPath Result = createString("Result");
+    public final StringPath result = createString("result");
 
     public QOperationLog(String variable) {
         super(OperationLog.class, forVariable(variable));

@@ -54,4 +54,6 @@ public class SysMenuController {
     public ResultVO deleteMenuNodeById(Integer id){
         return sysMenuService.deleteMenuNodeById(id);
     }
+
+
 }

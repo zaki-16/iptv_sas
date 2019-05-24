@@ -3,7 +3,9 @@ package com.hgys.iptv.controller;
 import com.hgys.iptv.model.dto.AuthorityDTO;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.impl.AuthorityServiceImpl;
+import com.hgys.iptv.util.ResultVOUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -51,5 +53,15 @@ public class AuthorityController {
     public ResultVO deleteAuthorityById(Integer id) {
         return authorityService.deleteById(id);
     }
+
+
+    @GetMapping("/bootAuthority")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "一键生成菜单权限",notes = "")
+    public ResultVO bootAuthority() {
+         authorityService.bootAuthority();
+         return ResultVOUtil.success("一键生成菜单权限完美结束！");
+    }
+
 
 }

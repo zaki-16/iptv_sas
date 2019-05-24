@@ -1,5 +1,6 @@
 package com.hgys.iptv.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.google.common.collect.Maps;
 import com.hgys.iptv.controller.vm.SysUserVM;
 import com.hgys.iptv.model.Cp;
@@ -350,6 +351,48 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO batchOnUser(String ids) {
+        try {
+            ArrayList<String> list = CollUtil.newArrayList(StringUtils.split(ids, ","));
+            if(list.size()>0){
+                list.forEach(id->{
+                    User user = userRepository.findById(Integer.parseInt(id)).orElse(null);
+                    if(user!=null){
+                        user.setStatus(0);
+                        user.setModifyTime(new Timestamp(System.currentTimeMillis()));
+                        userRepository.save(user);
+                    }
+                });
+            }
+        }catch (Exception e){
+            return  ResultVOUtil.error("1","批量启用异常！");
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO batchOffUser(String ids) {
+        try {
+            ArrayList<String> list = CollUtil.newArrayList(StringUtils.split(ids, ","));
+            if(list.size()>0){
+                list.forEach(id->{
+                    User user = userRepository.findById(Integer.parseInt(id)).orElse(null);
+                    if(user!=null){
+                        user.setStatus(1);
+                        user.setModifyTime(new Timestamp(System.currentTimeMillis()));
+                        userRepository.save(user);
+                    }
+                });
+            }
+        }catch (Exception e){
+            return  ResultVOUtil.error("1","批量停用异常！");
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
+    }
+
 
 //    @Override
 //    public ResultVO findAllUser() {
@@ -397,4 +440,6 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         //2.按角色id查询所有角色对象
         return roleRepository.findAllById(allRoleId);
     }
+
+
 }

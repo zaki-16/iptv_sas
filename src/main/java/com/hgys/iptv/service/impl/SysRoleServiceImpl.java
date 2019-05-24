@@ -1,5 +1,6 @@
 package com.hgys.iptv.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.google.common.collect.Maps;
 import com.hgys.iptv.controller.vm.SysRoleVM;
 import com.hgys.iptv.model.*;
@@ -184,6 +185,48 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
             }
         }catch (Exception e){
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO batchOnRole(String ids) {
+        try {
+            ArrayList<String> list = CollUtil.newArrayList(StringUtils.split(ids, ","));
+            if(list.size()>0){
+                list.forEach(id->{
+                    Role role = roleRepository.findById(Integer.parseInt(id)).orElse(null);
+                    if(role!=null){
+                        role.setStatus(0);
+                        role.setModifyTime(new Timestamp(System.currentTimeMillis()));
+                        roleRepository.save(role);
+                    }
+                });
+            }
+        }catch (Exception e){
+            return  ResultVOUtil.error("1","批量启用异常！");
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO batchOffRole(String ids) {
+        try {
+            ArrayList<String> list = CollUtil.newArrayList(StringUtils.split(ids, ","));
+            if(list.size()>0){
+                list.forEach(id->{
+                    Role role = roleRepository.findById(Integer.parseInt(id)).orElse(null);
+                    if(role!=null){
+                        role.setStatus(1);
+                        role.setModifyTime(new Timestamp(System.currentTimeMillis()));
+                        roleRepository.save(role);
+                    }
+                });
+            }
+        }catch (Exception e){
+            return  ResultVOUtil.error("1","批量停用异常！");
         }
         return ResultVOUtil.success(Boolean.TRUE);
     }
