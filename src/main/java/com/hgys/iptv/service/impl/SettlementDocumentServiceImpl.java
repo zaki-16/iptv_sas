@@ -6,11 +6,9 @@ import com.hgys.iptv.controller.assemlber.SettlementDocumentControllerAssemlber;
 import com.hgys.iptv.controller.vm.SettlementDocumentCPListExcelVM;
 import com.hgys.iptv.controller.vm.SettlementDocumentCPListVM;
 import com.hgys.iptv.controller.vm.SettlementDocumentQueryListVM;
-import com.hgys.iptv.exception.BaseException;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.QAccountSettlement;
 import com.hgys.iptv.model.QCpSettlementMoney;
-import com.hgys.iptv.model.bean.ShopDTO;
 import com.hgys.iptv.model.vo.CpSettlementInfoExcelDTO;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.AccountSettlementRepository;
@@ -34,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -251,13 +250,25 @@ public class SettlementDocumentServiceImpl implements SettlementDocumentService 
             //查询数据
             List<CpSettlementMoney> byMasterCode = cpSettlementMoneyRepository.findByMasterCode(accountSettlement.getCode());
             List<CpSettlementInfoExcelDTO> dtos = new ArrayList<>();
+
+            //分成合计金额
+            BigDecimal decimal = new BigDecimal(0);
             for (CpSettlementMoney m : byMasterCode){
                 CpSettlementInfoExcelDTO dto = new CpSettlementInfoExcelDTO();
                 dto.setCp(m.getCpname());
                 dto.setMoney(m.getSettlementMoney().toString());
                 dtos.add(dto);
+                //计算分成合计金额
+                decimal = decimal.add(m.getSettlementMoney());
             }
-            Workbook sheets = ExcelExportUtil.exportExcel(new ExportParams(timeHead, "订购量结算&CP定比例结算"), CpSettlementInfoExcelDTO.class, dtos);
+
+            CpSettlementInfoExcelDTO l = new CpSettlementInfoExcelDTO();
+            l.setCp("分成合计(元)");
+            l.setMoney(decimal.setScale(2).toString());
+            //最后一列插入分成合计金额
+            dtos.add(l);
+
+            Workbook sheets = ExcelExportUtil.exportExcel(new ExportParams(timeHead,"订购量结算&CP定比例结算"), CpSettlementInfoExcelDTO.class, dtos);
             ExcelForWebUtil.workBookExportExcel(response,sheets,"Cp结算账单结算信息表");
         }
 
