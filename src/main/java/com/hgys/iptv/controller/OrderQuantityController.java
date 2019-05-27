@@ -1,6 +1,7 @@
 package com.hgys.iptv.controller;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hgys.iptv.aop.SystemControllerLog;
 import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.OrderQuantity;
@@ -38,6 +39,8 @@ public class OrderQuantityController {
     @Autowired
     private CpService cpService;
 
+    private static final String target="订购量结算";
+
     /**
      * 根据Code查询结算类型-订购量
      * @param code
@@ -64,6 +67,7 @@ public class OrderQuantityController {
     @ApiOperation(value = "新增",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('OrderQuantity', 'add')")
+    @SystemControllerLog(target = target,methodName = "OrderQuantityController.save",type = "新增")
     public ResultVO<?> addOrderQuantity(@ApiParam(value = "结算类型订单量VM") @RequestBody() OrderQuantityAddVM vo){
 
         return orderquantityService.addOrderQuantity(vo);
@@ -74,6 +78,7 @@ public class OrderQuantityController {
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('OrderQuantity', 'remove')")
+    @SystemControllerLog(target = target,methodName = "OrderQuantityController.Delete",type = "删除")
     public ResultVO<?> batchDelete(@ApiParam(value = "名称",required = true) @RequestParam("ids")String ids){
 
         if (StringUtils.isBlank(ids)){
@@ -107,6 +112,7 @@ public class OrderQuantityController {
     @ApiOperation(value = "修改",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize(value = "hasPermission('OrderQuantity', 'update')")
+    @SystemControllerLog(target = target,methodName = "OrderQuantityController.update",type = "更新")
     public ResultVO<?> updateOrderQuantity(@ApiParam(value = "名称") @RequestBody() OrderQuantityAddVM vo){
         return orderquantityService.updateOrderQuantity(vo);
     }

@@ -54,14 +54,6 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
     @Autowired
     private JPAQueryFactory queryFactory;
 
-    @Autowired
-    private Logger logger;
-
-
-    //操作对象
-    private static final String menuName = "业务级结算";
-
-
 
     @Override
     public OrderBusiness findById(Integer id) {
@@ -83,10 +75,8 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
             for (String s : idLists){
                 orderbusinessRepository.batchDeleteob(Integer.parseInt(s));
             }
-            logger.log_rm_success(menuName,"OrderBusinessServiceImpl.batchDeleteob");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_rm_fail(menuName,"OrderBusinessServiceImpl.batchDeleteob");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
 
@@ -146,11 +136,9 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
                     cp.setObcode(from.getObcode());
                     smallOrderCpRepository.save(cp);
                 }
-                logger.log_add_success(menuName,"OrderBusinessServiceImpl.save");
             }
             }catch(Exception e){
                 e.printStackTrace();
-            logger.log_add_fail(menuName,"OrderBusinessServiceImpl.save");
                 return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
             }
             return ResultVOUtil.success(Boolean.TRUE);
@@ -280,27 +268,14 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
 
                         smallOrderCpRepository.saveAndFlush(cp);
                     }
-                    logger.log_up_success(menuName,"orderBusinessServiceImpl.update");
                 }
             }
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_up_fail(menuName,"orderBusinessServiceImpl.update");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
     @Override
@@ -390,11 +365,6 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
 */
 
 
-
-
-
-
-
     /**
      * 通过id查询
      * @param id
@@ -431,16 +401,6 @@ public class OrderBusinessServiceImpl implements OrderBusinessService {
 
         return vm;
     }
-
-
-
-
-
-
-
-
-
-
 
 
 }

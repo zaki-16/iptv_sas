@@ -49,11 +49,7 @@ public class OrderCpServiceImpl implements OrderCpService {
     @Autowired
     private CpRepository cpRepository;
 
-    @Autowired
-    private Logger logger;
 
-    //操作对象
-    private static final String menuName = "CP定比例结算";
 
     @Override
     public OrderCPWithCPListVM findById(String id) {
@@ -95,10 +91,8 @@ public class OrderCpServiceImpl implements OrderCpService {
             for (String s : idLists){
                 ordercpRepository.batchDeleteoc(Integer.parseInt(s));
             }
-            logger.log_rm_success(menuName,"OrderCpServiceImpl.batchDeleteoc");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_rm_fail(menuName,"OrderCpServiceImpl.batchDeleteoc");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
 
@@ -159,10 +153,8 @@ public class OrderCpServiceImpl implements OrderCpService {
                 from.setIsdelete(0);
                 orderCpWithCpRepository.save(from);
             }
-            logger.log_add_success(menuName,"OrderCpServiceImpl.save");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_add_fail(menuName,"OrderCpServiceImpl.save");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -259,11 +251,9 @@ public class OrderCpServiceImpl implements OrderCpService {
                     from.setIsdelete(0);
                     orderCpWithCpRepository.saveAndFlush(from);
                 }
-                logger.log_up_success(menuName,"OrderCpServiceImpl.updateOrderCp");
             }
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_up_fail(menuName,"OrderCpServiceImpl.updateOrderCp");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);

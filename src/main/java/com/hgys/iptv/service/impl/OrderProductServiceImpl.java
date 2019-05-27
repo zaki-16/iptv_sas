@@ -46,10 +46,7 @@ public class OrderProductServiceImpl implements OrderProductService {
 
     @Autowired
     private SettlementCombinatorialDimensionMasterRepository settlementCombinatorialDimensionMasterRepository;
-    @Autowired
-    private Logger logger;
-    //操作对象
-    private static final String menuName = "产品级结算";
+
 
 
     @Override
@@ -80,10 +77,8 @@ public class OrderProductServiceImpl implements OrderProductService {
             for (String s : idLists){
                 orderproductRepository.batchDeleteop(Integer.parseInt(s));
             }
-            logger.log_rm_success(menuName,"OrderProductServiceImpl.batchDeleteop");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_rm_fail(menuName,"OrderProductServiceImpl.batchDeleteop");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
 
@@ -152,10 +147,8 @@ public class OrderProductServiceImpl implements OrderProductService {
                 cp.setCreatetime(new Timestamp(System.currentTimeMillis()));
                 orderProductWithSCDRepository.save(cp);
             }
-            logger.log_add_success(menuName,"OrderProductServiceImpl.save");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_add_fail(menuName,"OrderProductServiceImpl.save");
             ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
 
@@ -255,11 +248,9 @@ public class OrderProductServiceImpl implements OrderProductService {
 
                     orderProductWithSCDRepository.saveAndFlush(cp);
                 }
-                logger.log_up_success(menuName,"OrderProductServiceImpl.update");
             }
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_up_fail(menuName,"OrderProductServiceImpl.update");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);

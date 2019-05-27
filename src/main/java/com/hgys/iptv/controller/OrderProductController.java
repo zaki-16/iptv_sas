@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.aop.SystemControllerLog;
 import com.hgys.iptv.controller.vm.OrderBusinessComparisonAddVM;
 import com.hgys.iptv.controller.vm.OrderBusinessComparisonQueryVM;
 import com.hgys.iptv.controller.vm.OrderProductWithSettlementAddVM;
@@ -50,6 +51,7 @@ public class OrderProductController {
     @Autowired
     private SettlementCombinatorialDimensionMasterRepository settlementCombinatorialDimensionMasterRepository;
 
+    private static final String target="产品级结算";
 
 
 
@@ -73,6 +75,7 @@ public class OrderProductController {
     @DeleteMapping("/batchDeleteop")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
     @PreAuthorize(value = "hasPermission('OrderProduct', 'remove')")
+    @SystemControllerLog(target = target,methodName = "OrderProductController.Delete",type = "删除")
     public ResultVO<?> batchDeleteop(@ApiParam(value = "名称",required = true) @RequestParam("ids")String ids){
 
         if (StringUtils.isBlank(ids)){
@@ -91,6 +94,7 @@ public class OrderProductController {
     @ApiOperation(value = "新增",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('OrderProduct', 'add')")
+    @SystemControllerLog(target = target,methodName = "OrderProductController.save",type = "新增")
     public ResultVO<?> addOrderProduct(@ApiParam(value = "结算类型订单量VM") @RequestBody() OrderProductWithSettlementAddVM vo){
 
         return orderproductService.addOrderBusinessComparison(vo);
@@ -128,6 +132,7 @@ public class OrderProductController {
     @ApiOperation(value = "修改查询结算类型-业务定比例",notes = "返回处理结果")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('OrderProduct', 'update')")
+    @SystemControllerLog(target = target,methodName = "OrderProductController.update",type = "修改")
     public ResultVO<?> updateOrderproduct(@ApiParam(value = "结算类型-业务定比例VM") @RequestBody()OrderProductWithSettlementAddVM vm){
         return orderproductService.updateOrderproduct(vm);
     }

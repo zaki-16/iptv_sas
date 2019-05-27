@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.aop.SystemControllerLog;
 import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.OrderCp;
 import com.hgys.iptv.model.OrderCpWithCp;
@@ -35,7 +36,7 @@ public class OrderCpController {
     @Autowired
     private CpService cpService;
 
-
+    private static final String target="CP定比例结算";
   /*  @GetMapping("/selectById")
     @ApiOperation(value = "通过id查询",notes = "返回json数据类型")
     public ResultVO<?> findById(@ApiParam(value = "用户ID",required = true) @RequestParam("id")String id){
@@ -75,6 +76,7 @@ public class OrderCpController {
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
      @PreAuthorize(value = "hasPermission('OrderCp', 'remove')")
+     @SystemControllerLog(target = target,methodName = "OrderCpController.Delete",type = "删除")
     public ResultVO<?> batchDeleteoc(@ApiParam(value = "名称",required = true) @RequestParam("ids")String ids){
 
         if (StringUtils.isBlank(ids)){
@@ -90,6 +92,7 @@ public class OrderCpController {
     @ApiOperation(value = "新增结算类型-订购量",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize(value = "hasPermission('OrderCp', 'add')")
+    @SystemControllerLog(target = target,methodName = "OrderCpController.save",type = "新增")
     public ResultVO<?> addOrderCp(@ApiParam(value = "新增结算类型-订购量VM") @RequestBody() OrderCPAddVM vo){
 
         return ordercpService.addOrderCp(vo);
@@ -136,6 +139,7 @@ public class OrderCpController {
     @ApiOperation(value = "修改结算类型-CP定比例",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize(value = "hasPermission('OrderCp', 'update')")
+    @SystemControllerLog(target = target,methodName = "OrderCpController.update",type = "修改")
     public ResultVO<?> updateOrderCp(@ApiParam(value = "结算类型-CP定比例VM") @RequestBody() OrderCPAddVM vo){
         return ordercpService.updateOrderCp(vo);
     }

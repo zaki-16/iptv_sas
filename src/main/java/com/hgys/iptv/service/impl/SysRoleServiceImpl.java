@@ -2,6 +2,8 @@ package com.hgys.iptv.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.google.common.collect.Maps;
+import com.hgys.iptv.common.Criteria;
+import com.hgys.iptv.common.Restrictions;
 import com.hgys.iptv.controller.vm.SysRoleVM;
 import com.hgys.iptv.model.Authority;
 import com.hgys.iptv.model.Role;
@@ -222,12 +224,20 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
     }
 
 
+    /**
+     * 新增用户时查询所有未删除、未停用的角色
+     * @return
+     */
     @Override
     public ResultVO findAllRole() {
-        List<Role> all = roleRepository.findAll();
+        Criteria<Role> criteria = new Criteria<>();
+        criteria
+                .add(Restrictions.eq("status",0))
+                .add(Restrictions.eq("isdelete",0));
+        List<Role> all = roleRepository.findAll(criteria);
         if(all.size()>0)
             return ResultVOUtil.success(all);
-        return ResultVOUtil.error("1","所查询列表不存在!");
+        return ResultVOUtil.error("1","未发现启用的角色!");
     }
     @Override
     public Page<Role> findAllRoleOfPage(String name, Integer status, Integer pageNum, Integer pageSize) {
