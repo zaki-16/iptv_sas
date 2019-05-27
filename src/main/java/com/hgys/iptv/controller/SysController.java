@@ -172,7 +172,15 @@ public class SysController {
     @ApiOperation(value = "查询角色列表",notes = "@return :角色列表")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('roleManager', 'view')")
-    public Page<Role> findAllRole(String name, Integer status,
+    public ResultVO findAllRole() {
+            return sysRoleService.findAllRole();
+    }
+
+    @GetMapping("/findAllRoleOfPage")
+    @ApiOperation(value = "查询角色列表",notes = "@return :角色列表")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('roleManager', 'view')")
+    public Page<Role> findAllRoleOfPage(String name, Integer status,
                                   @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")Integer pageNum,
                                   @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")Integer pageSize) {
         return sysRoleService.findAllRoleOfPage(name,status,pageNum,pageSize);
