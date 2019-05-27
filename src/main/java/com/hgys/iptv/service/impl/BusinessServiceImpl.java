@@ -8,7 +8,10 @@ import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.BusinessService;
-import com.hgys.iptv.util.*;
+import com.hgys.iptv.util.AbstractBaseServiceImpl;
+import com.hgys.iptv.util.CodeUtil;
+import com.hgys.iptv.util.ResultVOUtil;
+import com.hgys.iptv.util.UpdateTool;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +46,8 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
 
     @Autowired
     BusinessControllerAssemlber assemlber;
-    @Autowired
-    private Logger logger;
+//    @Autowired
+//    private Logger logger;
     //操作对象
     private static final String menuName = "业务管理";
     /**
@@ -78,10 +81,10 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
             Business biz_add = businessRepository.save(business);
             //处理 business关联的中间表的映射关系
             handleRelation(vm,biz_add.getId());
-            logger.log_add_success(menuName,"BusinessServiceImpl.save");
+//            logger.log_add_success(menuName,"BusinessServiceImpl.save");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_add_fail(menuName,"BusinessServiceImpl.save");
+//            logger.log_add_fail(menuName,"BusinessServiceImpl.save");
             return ResultVOUtil.error("1","新增失败！");
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -155,11 +158,11 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
             //处理 business关联的中间表的映射关系
             handleRelation(vm,vm.getId());
 
-            logger.log_up_success(menuName,"BusinessServiceImpl.update");
+//            logger.log_up_success(menuName,"BusinessServiceImpl.update");
 
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_up_fail(menuName,"BusinessServiceImpl.update");
+//            logger.log_up_fail(menuName,"BusinessServiceImpl.update");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -204,10 +207,10 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
                     productBusinessRepository.deleteAllByBid(id);
                 }
 
-                logger.log_rm_success(menuName,"BusinessServiceImpl.batchLogicDelete");
+//                logger.log_rm_success(menuName,"BusinessServiceImpl.batchLogicDelete");
             }
         }catch (Exception e){
-            logger.log_rm_fail(menuName,"BusinessServiceImpl.batchLogicDelete");
+//            logger.log_rm_fail(menuName,"BusinessServiceImpl.batchLogicDelete");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
