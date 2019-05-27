@@ -53,17 +53,15 @@ public class ExcelForWebUtil {
 	 *
 	 * 注意 web 链接，返回为null;
 	 *
-	 * @param dir
 	 * @throws ParsePropertyException
 	 * @throws InvalidFormatException
 	 * @throws IOException
 	 *
 	 */
-	public static void exportExcelTest(HttpServletResponse response,
-                                   Map<String, Object> beanParams, String templementFile, String dir,
-                                   String fileName) {
+	public static void exportExcelLiunx(HttpServletResponse response,
+                                   Map<String, Object> beanParams, String templementFile, String fileName) {
 		try {
-			ClassPathResource classPathResource = new ClassPathResource("excel/test.xlsx");
+			ClassPathResource classPathResource = new ClassPathResource("excel/" + templementFile);
 			InputStream inputStream =classPathResource.getInputStream();
 
 			XLSTransformer transformer = new XLSTransformer();

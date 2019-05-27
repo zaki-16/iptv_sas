@@ -69,7 +69,7 @@ public class DemoContronller {
     }
 
     @GetMapping("/excel")
-    @ApiOperation(value = "excel导出模板方法一",notes = "返回Excel文件")
+    @ApiOperation(value = "excel导出模板(定制模板)",notes = "返回Excel文件")
     public void excel(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Map<String, Object> beanParams = new HashMap<>();
         List<Map> l = new ArrayList<>();
@@ -80,8 +80,7 @@ public class DemoContronller {
             l.add(a);
         }
         beanParams.put("pList",l);
-//        ExcelForWebUtil.exportExcel(response,beanParams,"test.xlsx", PathConstant.getExcelExportResource(),"导出测试文件.xlsx");
-        ExcelForWebUtil.exportExcelTest(response,beanParams,null,null,"test");
+        ExcelForWebUtil.exportExcelLiunx(response,beanParams,"test.xlsx","test");
     }
 
     @GetMapping("/test")
