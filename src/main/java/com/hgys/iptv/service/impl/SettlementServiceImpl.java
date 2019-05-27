@@ -192,7 +192,7 @@ public class SettlementServiceImpl implements SettlementService {
                 money.setMasterName(accountSettlement.getName());
                 money.setCpcode(StringUtils.trimToEmpty(order.getCpcode()));
                 money.setCpname(StringUtils.trimToEmpty(order.getCpname()));
-                money.setSettlementMoney(order.getOrderQuantity().divide(allMoney).multiply(order.getOrderMoney()).setScale(2));
+                money.setSettlementMoney(order.getOrderQuantity().divide(allMoney,2, BigDecimal.ROUND_HALF_UP).multiply(order.getOrderMoney()).setScale(2));
                 cpSettlementMoneyRepository.save(money);
             }
         }catch (Exception e){
@@ -369,7 +369,7 @@ public class SettlementServiceImpl implements SettlementService {
                     money.setProductName(StringUtils.trimToEmpty(single.getProductName()));
                     money.setCreateTime(new Timestamp(System.currentTimeMillis()));
                     //cp在该产品所占结算金额
-                    BigDecimal cpmoney = single.getNumber().divide(collect.get(single.getProductCode())).multiply(single.getSetMoney()).setScale(2);
+                    BigDecimal cpmoney = single.getNumber().divide(collect.get(single.getProductCode()),2, BigDecimal.ROUND_HALF_UP).multiply(single.getSetMoney()).setScale(2);
                     money.setSettlementMoney(cpmoney);
                     cpSettlementMoneyRepository.save(money);
                 }
@@ -406,9 +406,9 @@ public class SettlementServiceImpl implements SettlementService {
                     money.setProductName(StringUtils.trimToEmpty(many.getProductName()));
                     money.setCreateTime(new Timestamp(System.currentTimeMillis()));
                     //cp在该产品下结算金额
-                    BigDecimal a = many.getNumberA().divide(collect.get(many.getProductCode()).getNumberA()).multiply(BigDecimal.valueOf(wights.get(many.getDimACode()))).setScale(2);
-                    BigDecimal b = many.getNumberB().divide(collect.get(many.getProductCode()).getNumberB()).multiply(BigDecimal.valueOf(wights.get(many.getDimBCode()))).setScale(2);
-                    BigDecimal c = many.getNumberC().divide(collect.get(many.getProductCode()).getNumberC()).multiply(BigDecimal.valueOf(wights.get(many.getDimCCode()))).setScale(2);
+                    BigDecimal a = many.getNumberA().divide(collect.get(many.getProductCode()).getNumberA(),2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(wights.get(many.getDimACode()))).setScale(2);
+                    BigDecimal b = many.getNumberB().divide(collect.get(many.getProductCode()).getNumberB(),2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(wights.get(many.getDimBCode()))).setScale(2);
+                    BigDecimal c = many.getNumberC().divide(collect.get(many.getProductCode()).getNumberC(),2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(wights.get(many.getDimCCode()))).setScale(2);
 
                     //计算cp在该产品下分账结算金额
                     BigDecimal allmoney = a.add(b).add(c).setScale(2);

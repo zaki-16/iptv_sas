@@ -39,11 +39,6 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
 
     @Autowired
     private JPAQueryFactory jpaQueryFactory;
-    @Autowired
-    private Logger logger;
-
-    //操作对象
-    private static final String menuName = "结算单维度";
 
     @Override
     public ResultVO<?> insterSettlementDimension(SettlementDimensionAddVM vm) {
@@ -61,7 +56,6 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
         vo.setRemarks(vm.getRemarks());
         vo.setStatus(Integer.parseInt(vm.getStatus()));
         settlementDimensionRepository.save(vo);
-        logger.log_add_success(menuName,"settlementDimensionServiceImpl.save");
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
@@ -83,10 +77,8 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
             for (String s : idLists){
                 settlementDimensionRepository.batchLogicDelete(Integer.parseInt(s));
             }
-            logger.log_rm_success(menuName,"settlementDimensionServiceImpl.batchLogicDelete");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_rm_fail(menuName,"settlementDimensionServiceImpl.batchLogicDelete");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
 
@@ -111,10 +103,8 @@ public class SettlementDimensionServiceImpl implements SettlementDimensionServic
             vo.setModifyTime(new Timestamp(System.currentTimeMillis()));
             UpdateTool.copyNullProperties(byId,vo);
             settlementDimensionRepository.saveAndFlush(vo);
-            logger.log_up_success(menuName,"settlementDimensionServiceImpl.updateSettlementDimension");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_up_fail(menuName,"settlementDimensionServiceImpl.updateSettlementDimension");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);

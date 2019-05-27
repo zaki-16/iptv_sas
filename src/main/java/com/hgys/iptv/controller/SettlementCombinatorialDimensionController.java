@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.aop.SystemControllerLog;
 import com.hgys.iptv.controller.vm.SettlementCombinatorialDimensionAddVM;
 import com.hgys.iptv.controller.vm.SettlementCombinatorialDimensionControllerListVM;
 import com.hgys.iptv.model.SettlementDimension;
@@ -38,6 +39,7 @@ public class SettlementCombinatorialDimensionController {
     @PostMapping("/addSettlementCombinatorialDimension")
     @ApiOperation(value = "新增结算组合维度",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
+    @SystemControllerLog(target = "结算组合维度",methodName = "SettlementDimensionController.addSettlementCombinatorialDimension",type = "新增")
     public ResultVO<?> addSettlementCombinatorialDimension(@ApiParam(value = "结算单组合维度VM") @RequestBody() SettlementCombinatorialDimensionAddVM vo){
 
         return settlementCombinatorialDimensionService.addSettlementCombinatorialDimension(vo);
@@ -54,6 +56,7 @@ public class SettlementCombinatorialDimensionController {
     @DeleteMapping("/batchLogicDelete")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
+    @SystemControllerLog(target = "结算组合维度",methodName = "SettlementDimensionController.batchLogicDelete",type = "删除")
     public ResultVO<?> batchLogicDelete(@ApiParam(value = "结算单维度ids",required = true) @RequestParam("ids")String ids){
         if (StringUtils.isBlank(ids)){
             return ResultVOUtil.error("1","结算单维度ids不能为空");
@@ -102,6 +105,7 @@ public class SettlementCombinatorialDimensionController {
     @PostMapping("/updateCombinatorialDimension")
     @ApiOperation(value = "修改结算组合维度",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
+    @SystemControllerLog(target = "结算组合维度",methodName = "SettlementDimensionController.updateCombinatorialDimension",type = "修改")
     public ResultVO<?> updateCombinatorialDimension(@ApiParam(value = "结算单组合维度VM") @RequestBody() SettlementCombinatorialDimensionAddVM vo){
         return settlementCombinatorialDimensionService.updateCombinatorialDimension(vo);
     }
