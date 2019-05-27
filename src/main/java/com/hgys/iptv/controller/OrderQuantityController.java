@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -62,6 +63,7 @@ public class OrderQuantityController {
     @PostMapping("/addOrderQuantity")
     @ApiOperation(value = "新增",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderQuantity', 'add')")
     public ResultVO<?> addOrderQuantity(@ApiParam(value = "结算类型订单量VM") @RequestBody() OrderQuantityAddVM vo){
 
         return orderquantityService.addOrderQuantity(vo);
@@ -71,6 +73,7 @@ public class OrderQuantityController {
     @DeleteMapping("/batchDelete")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderQuantity', 'remove')")
     public ResultVO<?> batchDelete(@ApiParam(value = "名称",required = true) @RequestParam("ids")String ids){
 
         if (StringUtils.isBlank(ids)){
@@ -84,6 +87,7 @@ public class OrderQuantityController {
     @GetMapping("/findByConditions")
     @ApiOperation(value = "通过条件，分页查询",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderQuantity', 'view')")
     public Page<OrderQuantityAddVM> findByConditions(@ApiParam(value = "名称") @RequestParam(value = "name",required = false )String name,
                                                                 @ApiParam(value = "编码") @RequestParam(value = "code",required = false)String code,
                                                                 @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
@@ -102,6 +106,7 @@ public class OrderQuantityController {
     @PostMapping("/updateOrderQuantity")
     @ApiOperation(value = "修改",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize(value = "hasPermission('OrderQuantity', 'update')")
     public ResultVO<?> updateOrderQuantity(@ApiParam(value = "名称") @RequestBody() OrderQuantityAddVM vo){
         return orderquantityService.updateOrderQuantity(vo);
     }
@@ -111,6 +116,7 @@ public class OrderQuantityController {
     @GetMapping("/findByIds")
     @ApiOperation(value = "通过结算组合Id编码查询",notes = "返回json数据")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderQuantity', 'view')")
     public ResultVO<?> findByIds(@ApiParam(value = "结算组合Id编码",required = true) @RequestParam("id")String id){
         if (StringUtils.isBlank(id)){
             new IllegalArgumentException(" 不能为空");

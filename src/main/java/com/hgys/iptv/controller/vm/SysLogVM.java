@@ -27,4 +27,7 @@ public class SysLogVM {
     private String result;
     //     * 时间
     private Timestamp time;
+
+    private Timestamp startTime;
+    private Timestamp endTime;
 }

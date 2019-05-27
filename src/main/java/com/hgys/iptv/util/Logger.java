@@ -1,26 +1,24 @@
 package com.hgys.iptv.util;
 
-import cn.hutool.core.collection.CollUtil;
-import com.google.common.collect.Maps;
+import com.hgys.iptv.common.Criteria;
+import com.hgys.iptv.common.Restrictions;
 import com.hgys.iptv.controller.vm.OperLogVM;
 import com.hgys.iptv.controller.vm.SysLogVM;
 import com.hgys.iptv.model.OperationLog;
-import com.hgys.iptv.model.QOperationLog;
-import com.hgys.iptv.model.QSysLog;
 import com.hgys.iptv.model.SysLog;
 import com.hgys.iptv.model.bean.UserSessionInfo;
 import com.hgys.iptv.model.enums.LogResultEnum;
 import com.hgys.iptv.model.enums.LogTypeEnum;
 import com.hgys.iptv.repository.OperationLogRepository;
 import com.hgys.iptv.repository.SysLogRepository;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
 
 /**
  * @ClassName Logger
@@ -41,11 +39,11 @@ public class Logger {
     @Autowired
     private SysLogRepository sysLogRepository;
 
-    @Autowired
-    private JPAQueryFactory queryFactory;
-
-    @Autowired
-    private RepositoryManager repositoryManager;
+//    @Autowired
+//    private JPAQueryFactory queryFactory;
+//
+//    @Autowired
+//    private RepositoryManager repositoryManager;
 
     private Logger(){}
 //
@@ -124,19 +122,30 @@ public class Logger {
      * 按时间段、登录账号、姓名、类型、结果、ip地址进行查询
      */
     public Page<SysLog> loadSysLog(SysLogVM sysLogVM,Integer pageNum, Integer pageSize){
-        HashMap<String, Object> map = Maps.newHashMap();
-        if(sysLogVM.getLoginName()!=null)
-            map.put("loginName","%"+sysLogVM.getLoginName()+"%");
-        if(sysLogVM.getRealName()!=null)
-            map.put("realName","%"+sysLogVM.getRealName()+"%");
-        if(sysLogVM.getType()!=null)
-            map.put("type","%"+sysLogVM.getType()+"%");
-        map.put("result",sysLogVM.getResult());
-        map.put("ip",sysLogVM.getIp());
+        Criteria<SysLog> criteria = new Criteria<>();
+        criteria
+                .add(Restrictions.like("loginName",sysLogVM.getLoginName()))
+                .add(Restrictions.like("realName",sysLogVM.getRealName()))
+                .add(Restrictions.like("type",sysLogVM.getType()))
+                .add(Restrictions.eq("result",sysLogVM.getResult()))
+                .add(Restrictions.eq("ip",sysLogVM.getIp()))
+                .add(Restrictions.gte("time",sysLogVM.getStartTime()))
+                .add(Restrictions.lte("time",sysLogVM.getEndTime()));
+
+
+//        HashMap<String, Object> map = Maps.newHashMap();
+//        if(sysLogVM.getLoginName()!=null)
+//            map.put("loginName","%"+sysLogVM.getLoginName()+"%");
+//        if(sysLogVM.getRealName()!=null)
+//            map.put("realName","%"+sysLogVM.getRealName()+"%");
+//        if(sysLogVM.getType()!=null)
+//            map.put("type","%"+sysLogVM.getType()+"%");
+//        map.put("result",sysLogVM.getResult());
+//        map.put("ip",sysLogVM.getIp());
         //排序
-        Sort sort = new Sort(Sort.Direction.DESC,"time");
-        Pageable pageable = PageRequest.of(pageNum, pageSize, sort);
-        return repositoryManager.findByCriteriaPage(sysLogRepository,map,pageable);
+        Pageable pageable = PageRequest.of(pageNum-1, pageSize, Sort.Direction.DESC,"time");
+        return sysLogRepository.findAll(criteria,pageable);
+//        return repositoryManager.findByCriteriaPage(sysLogRepository,map,pageable);
     }
     /**
      * 分页加载操作日志
@@ -145,18 +154,28 @@ public class Logger {
      * @return 时间段、账号、姓名、操作对象、操作结果、ip地址进行查询
      */
     public Page<OperationLog> loadOperationLog(OperLogVM operLogVM,Integer pageNum, Integer pageSize){
-        HashMap<String, Object> map = Maps.newHashMap();
-        if(operLogVM.getLoginName()!=null)
-            map.put("loginName","%"+operLogVM.getLoginName()+"%");
-        if(operLogVM.getRealName()!=null)
-            map.put("realName","%"+operLogVM.getRealName()+"%");
-        if(operLogVM.getOperObj()!=null)
-            map.put("operObj","%"+operLogVM.getOperObj()+"%");
-        map.put("result",operLogVM.getResult());
-        map.put("ip",operLogVM.getIp());
-        Sort sort = new Sort(Sort.Direction.DESC,"operTime");
-        Pageable pageable = PageRequest.of(pageNum, pageSize, sort);
-        return repositoryManager.findByCriteriaPage(operationLogRepository,map,pageable);
+        Criteria<OperationLog> criteria = new Criteria();
+        criteria
+            .add(Restrictions.like("loginName",operLogVM.getLoginName()))
+            .add(Restrictions.like("realName",operLogVM.getRealName()))
+            .add(Restrictions.like("operObj",operLogVM.getOperObj()))
+            .add(Restrictions.eq("result",operLogVM.getResult()))
+            .add(Restrictions.eq("ip",operLogVM.getIp()))
+            .add(Restrictions.gte("operTime",operLogVM.getStartTime()))
+            .add(Restrictions.lte("operTime",operLogVM.getEndTime()))
+        ;
+//        HashMap<String, Object> map = Maps.newHashMap();
+//        if(operLogVM.getLoginName()!=null)
+//            map.put("loginName","%"+operLogVM.getLoginName()+"%");
+//        if(operLogVM.getRealName()!=null)
+//            map.put("realName","%"+operLogVM.getRealName()+"%");
+//        if(operLogVM.getOperObj()!=null)
+//            map.put("operObj","%"+operLogVM.getOperObj()+"%");
+//        map.put("result",operLogVM.getResult());
+//        map.put("ip",operLogVM.getIp());
+        Pageable pageable = PageRequest.of(pageNum-1, pageSize, Sort.Direction.DESC,"operTime");
+        return operationLogRepository.findAll(criteria,pageable);
+//        return repositoryManager.findByCriteriaPage(operationLogRepository,map,pageable);
     }
 
 //    protected Page<OperationLog> loadOperationLog(Pageable pageable){
