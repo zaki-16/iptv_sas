@@ -135,6 +135,11 @@ public class SettlementServiceImpl implements SettlementService {
             )).from(qOrderBusinessWithCp)
                     .innerJoin(cp).on(qOrderBusinessWithCp.bucode.eq(cp.bucode))
                     .where(qOrderBusinessWithCp.obcode.eq(accountSettlement.getSet_ruleCode().trim())).fetch();
+
+            if (null == fetch || 0 == fetch.size()){
+                return ResultVOUtil.error("1","未获取到业务级关联的Cp信息!");
+            }
+
             //查询业务级结算总金额
             QSettlementMoney qSettlementMoney = QSettlementMoney.settlementMoney;
             SettlementMoney settlementMoney = jpaQueryFactory.selectFrom(qSettlementMoney).where(qSettlementMoney.masterCode.eq(accountSettlement.getCode().trim())).fetchFirst();
@@ -183,6 +188,11 @@ public class SettlementServiceImpl implements SettlementService {
             QSettlementOrder qSettlementOrder = QSettlementOrder.settlementOrder;
             List<SettlementOrder> fetch = jpaQueryFactory.selectFrom(qSettlementOrder).where(qSettlementOrder.masterCode.eq(accountSettlement.getCode().trim()))
                     .fetch();
+
+            if (null == fetch || 0 == fetch.size()){
+                return  ResultVOUtil.error("1","未获取到订购量源数据!");
+            }
+
             BigDecimal allMoney = BigDecimal.ZERO;
             for (SettlementOrder order : fetch){
                 allMoney = SettleUtil.add(allMoney,order.getOrderMoney());
@@ -225,6 +235,10 @@ public class SettlementServiceImpl implements SettlementService {
 
             //查询所关联的cp信息
             List<OrderCpWithCp> byMasterCode = orderCpWithCpRepository.findByMasterCode(accountSettlement.getSet_ruleCode().trim());
+            if (null == byMasterCode || 0 == byMasterCode.size()){
+                return ResultVOUtil.error("1","未获取到Cp定比例关联的Cp信息!");
+            }
+
             //计算cp分账总金额
             BigDecimal a = BigDecimal.ZERO;
             for (OrderCpWithCp cp : byMasterCode){
@@ -260,7 +274,7 @@ public class SettlementServiceImpl implements SettlementService {
                         QCp qCp = QCp.cp;
                         Cp cp1 = jpaQueryFactory.selectFrom(qCp).where(qCp.code.eq(cp.getCpcode())).fetchOne();
                         money.setCpname(StringUtils.trimToEmpty(cp1.getName()));
-                        money.setCpcode(StringUtils.trimToEmpty(cp.getCode()));
+                        money.setCpcode(StringUtils.trimToEmpty(cp.getCpcode()));
                         money.setCreateTime(new Timestamp(System.currentTimeMillis()));
                         money.setSettlementMoney(BigDecimal.valueOf(cp.getMoney()).setScale(2));
                         cpSettlementMoneyRepository.save(money);
@@ -294,8 +308,12 @@ public class SettlementServiceImpl implements SettlementService {
                     comparison.cp_name.as("cpname"),
                     comparison.money.as("money"),
                     comparison.proportion.as("proportion")
-            )).from(relation).innerJoin(comparison).on(relation.businessCode.eq(comparison.masterCode))
+            )).from(relation).innerJoin(comparison).on(relation.code.eq(comparison.masterCode))
                     .where(relation.masterCode.eq(accountSettlement.getSet_ruleCode().trim())).fetch();
+
+            if (null == fetch || fetch.size() == 0){
+                return ResultVOUtil.error("1","未获取到业务下关联的Cp信息!");
+            }
             //查询业务定比例源数据
             QSettlementBusiness qSettlementBusiness = QSettlementBusiness.settlementBusiness;
             List<SettlementBusiness> business = jpaQueryFactory.selectFrom(qSettlementBusiness).where(qSettlementBusiness.masterCode.eq(accountSettlement.getCode().trim())).fetch();
@@ -315,7 +333,7 @@ public class SettlementServiceImpl implements SettlementService {
                         money.setBusinessName(StringUtils.trimToEmpty(bi.getBusinessName()));
                         money.setCreateTime(new Timestamp(System.currentTimeMillis()));
                         //计算cp计算金额，业务收入*cp在该业务下的比例
-                        BigDecimal decimal =  BigDecimal.valueOf(bi.getProportion()/100).multiply(collect.get(bi.getBusinessCode()).getBusinessMoney()).setScale(2);
+                        BigDecimal decimal =  (new BigDecimal(bi.getProportion()).divide(new BigDecimal(100)).setScale(2)).multiply(collect.get(bi.getBusinessCode()).getBusinessMoney()).setScale(2);
                         money.setSettlementMoney(decimal);
                         cpSettlementMoneyRepository.save(money);
                     }
@@ -377,6 +395,10 @@ public class SettlementServiceImpl implements SettlementService {
                 QSettlementProductSingle qSettlementProductSingle = QSettlementProductSingle.settlementProductSingle;
                 List<SettlementProductSingle> fetch = jpaQueryFactory.selectFrom(qSettlementProductSingle)
                         .where(qSettlementProductSingle.masterCode.eq(accountSettlement.getCode())).fetch();
+
+                if (null == fetch || fetch.size() == 0){
+                    return ResultVOUtil.error("1","未获取到单维度数据源!");
+                }
                 //统计产品总数量
                 Map<String, BigDecimal> collect = jpaQueryFactory.select(Projections.bean(
                         SettlementProductSingle.class,
@@ -409,6 +431,10 @@ public class SettlementServiceImpl implements SettlementService {
                 List<SettlementProductMany> fetch = jpaQueryFactory.selectFrom(qSettlementProductMany)
                         .where(qSettlementProductMany.masterCode
                                 .eq(accountSettlement.getCode())).fetch();
+
+                if (null == fetch || fetch.size() == 0){
+                    return ResultVOUtil.error("1","未获取到多维度结算数据源!");
+                }
                 //统计产品各维度总数量
                 Map<String, SettlementProductMany> collect = jpaQueryFactory.select(Projections.bean(
                         SettlementProductMany.class,
