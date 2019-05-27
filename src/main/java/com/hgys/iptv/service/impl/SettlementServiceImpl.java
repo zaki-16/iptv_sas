@@ -2,6 +2,7 @@ package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.QBusinessComparisonRelation;
+import com.hgys.iptv.model.QCp;
 import com.hgys.iptv.model.QCpOrderBusinessComparison;
 import com.hgys.iptv.model.QOrderBusinessCp;
 import com.hgys.iptv.model.QOrderBusinessWithCp;
@@ -70,9 +71,6 @@ public class SettlementServiceImpl implements SettlementService {
             return ResultVOUtil.error("1","该分账结算信息已经结算,不能重复结算!");
         }
         AccountSettlement accountSettlement = byId.get();
-        //修改结算状态
-        accountSettlement.setStatus(2);
-        accountSettlementRepository.saveAndFlush(accountSettlement);
         //查询当前分账结算类型、规则编码(1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定比例结算))
         if (1 == accountSettlement.getSet_type()){
             return dealWithOrderSettlement(accountSettlement);
@@ -153,7 +151,10 @@ public class SettlementServiceImpl implements SettlementService {
                 money.setMasterCode(accountSettlement.getCode());
                 money.setMasterName(accountSettlement.getName());
                 money.setCpcode(StringUtils.trimToEmpty(query.getCpCode()));
-                money.setCpname(StringUtils.trimToEmpty(query.getCpName()));
+                //查询cp名称
+                QCp qCp = QCp.cp;
+                Cp cp1 = jpaQueryFactory.selectFrom(qCp).where(qCp.code.eq(query.getCpCode())).fetchOne();
+                money.setCpname(StringUtils.trimToEmpty(cp1.getName()));
                 money.setSettlementMoney(query.getMoney());
                 money.setBusinessCode(StringUtils.trimToEmpty(query.getBusinessCode()));
                 money.setBusinessName(query.getBusinessName());
@@ -164,6 +165,9 @@ public class SettlementServiceImpl implements SettlementService {
             e.printStackTrace();
             return ResultVOUtil.error("1","系统内部错误!");
         }
+        //修改结算状态
+        accountSettlement.setStatus(2);
+        accountSettlementRepository.saveAndFlush(accountSettlement);
         return ResultVOUtil.success();
     }
 
@@ -190,7 +194,10 @@ public class SettlementServiceImpl implements SettlementService {
                 money.setMasterCode(accountSettlement.getCode());
                 money.setMasterName(accountSettlement.getName());
                 money.setCpcode(StringUtils.trimToEmpty(order.getCpcode()));
-                money.setCpname(StringUtils.trimToEmpty(order.getCpname()));
+                //查询cp名称
+                QCp qCp = QCp.cp;
+                Cp cp = jpaQueryFactory.selectFrom(qCp).where(qCp.code.eq(order.getCpcode())).fetchOne();
+                money.setCpname(StringUtils.trimToEmpty(cp.getName()));
                 money.setSettlementMoney(order.getOrderQuantity().divide(allMoney,2, BigDecimal.ROUND_HALF_UP).multiply(order.getOrderMoney()).setScale(2));
                 cpSettlementMoneyRepository.save(money);
             }
@@ -198,6 +205,9 @@ public class SettlementServiceImpl implements SettlementService {
             e.printStackTrace();
             return ResultVOUtil.error("1","系统内部错误!");
         }
+        //修改结算状态
+        accountSettlement.setStatus(2);
+        accountSettlementRepository.saveAndFlush(accountSettlement);
         return ResultVOUtil.success();
     }
 
@@ -227,7 +237,10 @@ public class SettlementServiceImpl implements SettlementService {
                     CpSettlementMoney money = new CpSettlementMoney();
                     money.setMasterName(accountSettlement.getName());
                     money.setMasterCode(accountSettlement.getCode());
-                    money.setCpname(StringUtils.trimToEmpty(cp.getCpname()));
+                    //查询cp名称
+                    QCp qCp = QCp.cp;
+                    Cp cp1 = jpaQueryFactory.selectFrom(qCp).where(qCp.code.eq(cp.getCpcode())).fetchOne();
+                    money.setCpname(StringUtils.trimToEmpty(cp1.getName()));
                     money.setCpcode(StringUtils.trimToEmpty(cp.getCpcode()));
                     money.setCreateTime(new Timestamp(System.currentTimeMillis()));
                     //权重
@@ -243,7 +256,10 @@ public class SettlementServiceImpl implements SettlementService {
                         CpSettlementMoney money = new CpSettlementMoney();
                         money.setMasterName(accountSettlement.getName());
                         money.setMasterCode(accountSettlement.getCode());
-                        money.setCpname(StringUtils.trimToEmpty(cp.getCpname()));
+                        //查询cp名称
+                        QCp qCp = QCp.cp;
+                        Cp cp1 = jpaQueryFactory.selectFrom(qCp).where(qCp.code.eq(cp.getCpcode())).fetchOne();
+                        money.setCpname(StringUtils.trimToEmpty(cp1.getName()));
                         money.setCpcode(StringUtils.trimToEmpty(cp.getCode()));
                         money.setCreateTime(new Timestamp(System.currentTimeMillis()));
                         money.setSettlementMoney(BigDecimal.valueOf(cp.getMoney()).setScale(2));
@@ -255,6 +271,9 @@ public class SettlementServiceImpl implements SettlementService {
             e.printStackTrace();
             return ResultVOUtil.error("1","系统内部错误!");
         }
+        //修改结算状态
+        accountSettlement.setStatus(2);
+        accountSettlementRepository.saveAndFlush(accountSettlement);
         return ResultVOUtil.success();
     }
 
@@ -287,7 +306,10 @@ public class SettlementServiceImpl implements SettlementService {
                         CpSettlementMoney money = new CpSettlementMoney();
                         money.setMasterName(accountSettlement.getName());
                         money.setMasterCode(accountSettlement.getCode());
-                        money.setCpname(StringUtils.trimToEmpty(bi.getCpname()));
+                        //查询cp名称
+                        QCp qCp = QCp.cp;
+                        Cp cp = jpaQueryFactory.selectFrom(qCp).where(qCp.code.eq(bi.getCpcode())).fetchOne();
+                        money.setCpname(StringUtils.trimToEmpty(cp.getName()));
                         money.setCpcode(StringUtils.trimToEmpty(bi.getCpcode()));
                         money.setBusinessCode(StringUtils.trimToEmpty(bi.getBusinessCode()));
                         money.setBusinessName(StringUtils.trimToEmpty(bi.getBusinessName()));
@@ -317,7 +339,10 @@ public class SettlementServiceImpl implements SettlementService {
                         CpSettlementMoney money = new CpSettlementMoney();
                         money.setMasterName(accountSettlement.getName());
                         money.setMasterCode(accountSettlement.getCode());
-                        money.setCpname(StringUtils.trimToEmpty(bi.getCpname()));
+                        //查询cp名称
+                        QCp qCp = QCp.cp;
+                        Cp cp = jpaQueryFactory.selectFrom(qCp).where(qCp.code.eq(bi.getCpcode())).fetchOne();
+                        money.setCpname(StringUtils.trimToEmpty(cp.getName()));
                         money.setCpcode(StringUtils.trimToEmpty(bi.getCpcode()));
                         money.setBusinessCode(StringUtils.trimToEmpty(bi.getBusinessCode()));
                         money.setBusinessName(StringUtils.trimToEmpty(bi.getBusinessName()));
@@ -331,13 +356,16 @@ public class SettlementServiceImpl implements SettlementService {
             e.printStackTrace();
             return ResultVOUtil.error("1","系统内部错误!");
         }
-        //查询业务定比例源数据
+        //修改结算状态
+        accountSettlement.setStatus(2);
+        accountSettlementRepository.saveAndFlush(accountSettlement);
         return ResultVOUtil.success();
     }
 
     /**
      * 处理产品级结算
      */
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO<?> dealWithProduct(AccountSettlement accountSettlement){
         try{
             //判断是单维度还是多维度结算
@@ -362,7 +390,10 @@ public class SettlementServiceImpl implements SettlementService {
                     CpSettlementMoney money = new CpSettlementMoney();
                     money.setMasterName(accountSettlement.getName());
                     money.setMasterCode(accountSettlement.getCode());
-                    money.setCpname(StringUtils.trimToEmpty(single.getCpname()));
+                    //查询cp名称
+                    QCp qCp = QCp.cp;
+                    Cp cp = jpaQueryFactory.selectFrom(qCp).where(qCp.code.eq(single.getCpcode())).fetchOne();
+                    money.setCpname(StringUtils.trimToEmpty(cp.getName()));
                     money.setCpcode(StringUtils.trimToEmpty(single.getCpcode()));
                     money.setProductCode(StringUtils.trimToEmpty(single.getProductCode()));
                     money.setProductName(StringUtils.trimToEmpty(single.getProductName()));
@@ -391,7 +422,7 @@ public class SettlementServiceImpl implements SettlementService {
 
                 //查询多维度权重
                 Map<String, Integer> wights = settlementCombinatorialDimensionFromRepository
-                        .findByMasterCode(accountSettlement.getSet_ruleCode())
+                        .findByMasterCode(orderProduct.getScdcode())
                         .stream()
                         .collect(Collectors.toMap(SettlementCombinatorialDimensionFrom::getDim_code, SettlementCombinatorialDimensionFrom::getWeight));
 
@@ -399,12 +430,16 @@ public class SettlementServiceImpl implements SettlementService {
                     CpSettlementMoney money = new CpSettlementMoney();
                     money.setMasterName(accountSettlement.getName());
                     money.setMasterCode(accountSettlement.getCode());
-                    money.setCpname(StringUtils.trimToEmpty(many.getCpname()));
+                    //查询cp名称
+                    QCp qCp = QCp.cp;
+                    Cp cp = jpaQueryFactory.selectFrom(qCp).where(qCp.code.eq(many.getCpcode())).fetchOne();
+                    money.setCpname(StringUtils.trimToEmpty(cp.getName()));
                     money.setCpcode(StringUtils.trimToEmpty(many.getCpcode()));
                     money.setProductCode(StringUtils.trimToEmpty(many.getProductCode()));
                     money.setProductName(StringUtils.trimToEmpty(many.getProductName()));
                     money.setCreateTime(new Timestamp(System.currentTimeMillis()));
                     //cp在该产品下结算金额
+                    System.out.println(wights.get(many.getDimACode()));
                     BigDecimal a = many.getNumberA().divide(collect.get(many.getProductCode()).getNumberA(),2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(wights.get(many.getDimACode()))).setScale(2);
                     BigDecimal b = many.getNumberB().divide(collect.get(many.getProductCode()).getNumberB(),2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(wights.get(many.getDimBCode()))).setScale(2);
                     BigDecimal c = many.getNumberC().divide(collect.get(many.getProductCode()).getNumberC(),2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(wights.get(many.getDimCCode()))).setScale(2);
@@ -419,6 +454,9 @@ public class SettlementServiceImpl implements SettlementService {
             e.printStackTrace();
             return ResultVOUtil.error("1","系统内部错误!");
         }
+        //修改结算状态
+        accountSettlement.setStatus(2);
+        accountSettlementRepository.saveAndFlush(accountSettlement);
         return ResultVOUtil.success();
     }
 }
