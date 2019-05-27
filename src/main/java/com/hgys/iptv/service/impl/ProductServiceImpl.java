@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import javax.persistence.criteria.Predicate;
 import java.sql.Timestamp;
 import java.util.*;
@@ -44,8 +43,8 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
 
     @Autowired
     ProductBusinessListAssemlber assemlber;
-    @Autowired
-    private Logger logger;
+//    @Autowired
+//    private Logger logger;
     //操作对象
     private static final String menuName = "产品管理";
     /**
@@ -76,11 +75,11 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
             //处理product关联的中间表的映射关系
             handleRelation(vm,prod_add.getId());
 
-            logger.log_add_success(menuName,"ProductServiceImpl.save");
+//            logger.log_add_success(menuName,"ProductServiceImpl.save");
 
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_add_fail(menuName,"ProductServiceImpl.save");
+//            logger.log_add_fail(menuName,"ProductServiceImpl.save");
             return ResultVOUtil.error("1","新增失败！");
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -155,10 +154,10 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
             //处理product关联的中间表的映射关系
             handleRelation(vm,product_up.getId());
 
-            logger.log_up_success(menuName,"ProductServiceImpl.update");
+//            logger.log_up_success(menuName,"ProductServiceImpl.update");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_up_fail(menuName,"ProductServiceImpl.update");
+//            logger.log_up_fail(menuName,"ProductServiceImpl.update");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -202,10 +201,10 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
                     productBusinessRepository.deleteAllByPid(id);
                 }
 
-                logger.log_rm_success(menuName,"ProductServiceImpl.batchLogicDelete");
+//                logger.log_rm_success(menuName,"ProductServiceImpl.batchLogicDelete");
             }
         }catch (Exception e){
-            logger.log_rm_fail(menuName,"ProductServiceImpl.batchLogicDelete");
+//            logger.log_rm_fail(menuName,"ProductServiceImpl.batchLogicDelete");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);

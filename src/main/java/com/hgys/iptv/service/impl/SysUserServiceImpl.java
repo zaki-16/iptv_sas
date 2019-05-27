@@ -118,10 +118,10 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             if(userDTO.getRids()!=null)
                 handleRelation(userDTO,user_add.getId());
             //记录日志
-            logger.log_add_success(menuName,"SysUserServiceImpl.addUser");
+//            logger.log_add_success(menuName,"SysUserServiceImpl.addUser");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_add_fail(menuName,"SysUserServiceImpl.addUser");
+//            logger.log_add_fail(menuName,"SysUserServiceImpl.addUser");
             return ResultVOUtil.error("1","新增用户异常！");
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -192,11 +192,11 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             // 若更新前rids 不为空，更新参数rids 为空--也要处理
             sysUserRoleRepository.deleteAllByUserId(user.getId());
             handleRelation(userDTO,user.getId());
-            logger.log_up_success(menuName,"SysUserServiceImpl.updateUser");
+//            logger.log_up_success(menuName,"SysUserServiceImpl.updateUser");
 
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_up_fail(menuName,"SysUserServiceImpl.updateUser");
+//            logger.log_up_fail(menuName,"SysUserServiceImpl.updateUser");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -216,6 +216,19 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             if(null == username || (username.compareTo("anonymousUser")==0))
                 return  ResultVOUtil.error("1","密码已过期或未登录！");
 
+            //校验邮箱
+            if(StringUtils.isNotBlank(userDTO.getEmail()))
+                if(!userDTO.getEmail().matches("([A-Za-z0-9_\\-\\.])+\\@([A-Za-z0-9_\\-\\.])+\\.([A-Za-z]{2,4})$"))
+                    return ResultVOUtil.error("1","请输入正确邮箱！");
+            //校验座机电话
+            if(StringUtils.isNotBlank(userDTO.getTelephone()))
+                if(!userDTO.getTelephone().matches("(\\(\\d{3,4}\\)|\\d{3,4}-|\\s)?\\d{7,14}$"))
+                    return ResultVOUtil.error("1","请输入正确固话号码！");
+            //校验手机号
+            if(StringUtils.isNotBlank(userDTO.getMobilePhone()))
+                if(!userDTO.getMobilePhone().matches("1([38]\\d|5[0-35-9]|7[3678])\\d{8}"))
+                    return ResultVOUtil.error("1","请输入正确手机号！");
+
             User user = new User();
             BeanUtils.copyProperties(userDTO,user);
             user.setModifyTime(new Timestamp(System.currentTimeMillis()));
@@ -227,9 +240,9 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 
             userRepository.saveAndFlush(user);
 
-            logger.log_up_success(menuName,"SysUserServiceImpl.personalUpdate");
+//            logger.log_up_success(menuName,"SysUserServiceImpl.personalUpdate");
         }catch (Exception e){
-            logger.log_up_fail(menuName,"SysUserServiceImpl.personalUpdate");
+//            logger.log_up_fail(menuName,"SysUserServiceImpl.personalUpdate");
             return ResultVOUtil.error("1","个性资料修改异常！");
         }
         return ResultVOUtil.success("个性资料修改成功！");
@@ -292,9 +305,9 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             byUsername.setPassword(passwordEncoder.encode(password_new));
             userRepository.saveAndFlush(byUsername);
 
-            logger.log_up_success(menuName,"SysUserServiceImpl.modifyPassword");
+//            logger.log_up_success(menuName,"SysUserServiceImpl.modifyPassword");
         }catch (Exception e){
-            logger.log_up_fail(menuName,"SysUserServiceImpl.modifyPassword");
+//            logger.log_up_fail(menuName,"SysUserServiceImpl.modifyPassword");
             return ResultVOUtil.error("1","密码修改异常！");
         }
         return ResultVOUtil.success("密码修改成功！");
@@ -327,10 +340,10 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             byIdUser.setPassword(rawPwd);
             userRepository.saveAndFlush(byIdUser);
 
-            logger.log_up_success(menuName,"SysUserServiceImpl.resetPassword");
+//            logger.log_up_success(menuName,"SysUserServiceImpl.resetPassword");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_up_fail(menuName,"SysUserServiceImpl.resetPassword");
+//            logger.log_up_fail(menuName,"SysUserServiceImpl.resetPassword");
             return ResultVOUtil.error("1","重置密码异常！");
         }
         return ResultVOUtil.success("重置密码成功！");
@@ -369,10 +382,10 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
                     sysUserRoleRepository.deleteAllByUserId(id);
                 }
 
-                logger.log_rm_success(menuName,"SysUserServiceImpl.batchLogicDelete");
+//                logger.log_rm_success(menuName,"SysUserServiceImpl.batchLogicDelete");
             }
         }catch (Exception e){
-            logger.log_rm_fail(menuName,"SysUserServiceImpl.batchLogicDelete");
+//            logger.log_rm_fail(menuName,"SysUserServiceImpl.batchLogicDelete");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);

@@ -46,14 +46,6 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
     @Autowired
     private SettlementDimensionRepository settlementDimensionRepository;
 
-    @Autowired
-    private Logger logger;
-
-    //操作对象
-    private static final String menuName = "结算组合维度";
-
-
-
     @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultVO<?> addSettlementCombinatorialDimension(SettlementCombinatorialDimensionAddVM vo) {
@@ -105,10 +97,8 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
 
                 settlementCombinatorialDimensionFromRepository.save(from);
             }
-            logger.log_add_success(menuName,"settlementCombinatorialDimensionImpl.save");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_add_fail(menuName,"settlementCombinatorialDimensionImpl.save");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -128,10 +118,8 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
 
                 settlementCombinatorialDimensionFromRepository.batchLogicDeleteByCode(byId.getCode().trim());
             }
-            logger.log_rm_success(menuName,"settlementCombinatorialDimensionImpl.batchLogicDelete");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_rm_fail(menuName,"settlementCombinatorialDimensionImpl.batchLogicDelete");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
 
@@ -252,10 +240,8 @@ public class SettlementCombinatorialDimensionServiceImpl implements SettlementCo
                     settlementCombinatorialDimensionFromRepository.saveAndFlush(from);
                 }
             }
-            logger.log_up_success(menuName,"settlementCombinatorialDimensionImpl.updateCombinatorialDimension");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_up_fail(menuName,"settlementCombinatorialDimensionImpl.updateCombinatorialDimension");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success();

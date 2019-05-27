@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.aop.SystemControllerLog;
 import com.hgys.iptv.controller.vm.SettlementDimensionAddVM;
 import com.hgys.iptv.controller.vm.SettlementDimensionControllerListVM;
 import com.hgys.iptv.controller.vm.SettlementDimensionControllerUpdateVM;
@@ -63,6 +64,7 @@ public class SettlementDimensionController {
     @PostMapping("/addSettlementDimension")
     @ApiOperation(value = "新增结算维度",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
+    @SystemControllerLog(target = "结算单维度",methodName = "SettlementDimensionController.addSettlementDimension",type = "新增")
     public ResultVO<?> addSettlementDimension(@ApiParam(value = "结算单维度名称") @RequestBody SettlementDimensionAddVM vo){
 
         if (StringUtils.isBlank(vo.getName())){
@@ -79,6 +81,7 @@ public class SettlementDimensionController {
     @DeleteMapping("/batchLogicDelete")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
+    @SystemControllerLog(target = "结算单维度",methodName = "SettlementDimensionController.batchLogicDelete",type = "删除")
     public ResultVO batchLogicDelete(@ApiParam(value = "结算单维度ids",required = true) @RequestParam("ids")String ids){
 
         if (StringUtils.isBlank(ids)){
@@ -108,12 +111,11 @@ public class SettlementDimensionController {
     @PostMapping("/updateSettlementDimension")
     @ApiOperation(value = "结算单维度修改",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
+    @SystemControllerLog(target = "结算单维度",methodName = "SettlementDimensionController.updateSettlementDimension",type = "修改")
     public ResultVO<?> updateSettlementDimension(@ApiParam(value = "结算单维度修改VM") @RequestBody() SettlementDimensionControllerUpdateVM vo){
         SettlementDimension settlementDimension = new SettlementDimension();
         BeanUtils.copyProperties(vo,settlementDimension);
         ResultVO<?> resultVO = settlementDimensionService.updateSettlementDimension(settlementDimension);
         return resultVO;
     }
-
-
 }

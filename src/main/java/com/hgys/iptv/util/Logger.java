@@ -1,5 +1,6 @@
 package com.hgys.iptv.util;
 
+import com.hgys.iptv.aop.SystemControllerLog;
 import com.hgys.iptv.common.Criteria;
 import com.hgys.iptv.common.Restrictions;
 import com.hgys.iptv.controller.vm.OperLogVM;
@@ -11,6 +12,7 @@ import com.hgys.iptv.model.enums.LogResultEnum;
 import com.hgys.iptv.model.enums.LogTypeEnum;
 import com.hgys.iptv.repository.OperationLogRepository;
 import com.hgys.iptv.repository.SysLogRepository;
+import org.aspectj.lang.JoinPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Method;
 import java.sql.Timestamp;
 
 /**

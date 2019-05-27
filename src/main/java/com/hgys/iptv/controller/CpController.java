@@ -1,7 +1,9 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.aop.SystemControllerLog;
 import com.hgys.iptv.controller.vm.CpAddVM;
 import com.hgys.iptv.controller.vm.CpControllerListVM;
+import com.hgys.iptv.model.enums.LogTypeEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.CpService;
 import io.swagger.annotations.Api;
@@ -29,20 +31,25 @@ public class CpController {
     @Autowired
     private CpService cpService;
 
+    //操作对象
+    private static final String target = "CP管理";
+
 
     @PostMapping("/saveCp")
     @ApiOperation(value = "新增cp",notes = "@return：cp对象")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize(value = "hasPermission('cpManager', 'add')")
+    @SystemControllerLog(target = target,methodName = "CpController.saveCp",type = "新增")
     public ResultVO<?> saveCp(
             @ApiParam(value = "cp新增VM")  @RequestBody CpAddVM vo){
         return  cpService.save(vo);
     }
 
     @PostMapping("/UpdateCp")
-    @ApiOperation(value = "更新cp",notes = "@return：cp对象")
+    @ApiOperation(value = "修改cp",notes = "@return：cp对象")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('cpManager', 'update')")
+    @SystemControllerLog(target = target,methodName = "CpController.updateCp",type = "修改")
     public ResultVO<?> updateCp(
             @ApiParam(value = "cp修改VM") @RequestBody CpAddVM vm){
         return cpService.update(vm);
@@ -53,6 +60,7 @@ public class CpController {
     @ApiOperation(value = "批量逻辑删除cp",notes = "@return：true/false")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('cpManager', 'remove')")
+    @SystemControllerLog(target = target,methodName = "CpController.batchLogicDelete",type = "修改")
     public ResultVO<?> batchLogicDelete(String ids){
         return cpService.batchLogicDelete(ids);
     }

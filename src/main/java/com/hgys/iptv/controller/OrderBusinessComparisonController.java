@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.aop.SystemControllerLog;
 import com.hgys.iptv.controller.vm.OrderBusinessComparisonAddVM;
 import com.hgys.iptv.controller.vm.OrderBusinessComparisonQueryVM;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -28,6 +29,7 @@ public class OrderBusinessComparisonController {
     @PostMapping("/addOrderBusinessComparison")
     @ApiOperation(value = "新增结算类型-业务定比例",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
+    @SystemControllerLog(target = "结算类型-业务定比例",methodName = "SettlementDimensionController.addOrderBusinessComparison",type = "新增")
     public ResultVO<?> addOrderBusinessComparison(@ApiParam(value = "结算类型-业务定比例新增VM") @RequestBody()OrderBusinessComparisonAddVM vm){
         return orderBusinessComparisonService.addOrderBusinessComparison(vm);
     }
@@ -35,6 +37,7 @@ public class OrderBusinessComparisonController {
     @DeleteMapping("/batchLogicDelete")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
+    @SystemControllerLog(target = "结算类型-业务定比例",methodName = "SettlementDimensionController.batchLogicDelete",type = "删除")
     public ResultVO<?> batchLogicDelete(@ApiParam(value = "结算类型-业务定比例ids",required = true) @RequestParam("ids")String ids){
         if (StringUtils.isBlank(ids)){
             return ResultVOUtil.error("1","结算类型-业务定比例ids不能为空");
@@ -84,6 +87,7 @@ public class OrderBusinessComparisonController {
     @PostMapping("/updateOrderBusinessComparison")
     @ApiOperation(value = "修改查询结算类型-业务定比例",notes = "返回处理结果")
     @ResponseStatus(HttpStatus.OK)
+    @SystemControllerLog(target = "结算类型-业务定比例",methodName = "SettlementDimensionController.updateOrderBusinessComparison",type = "修改")
     public ResultVO<?> updateOrderBusinessComparison(@ApiParam(value = "结算类型-业务定比例VM") @RequestBody()OrderBusinessComparisonAddVM vm){
         return orderBusinessComparisonService.updateOrderBusinessComparison(vm);
     }

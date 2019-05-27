@@ -32,8 +32,8 @@ public abstract class SysServiceImpl extends AbstractBaseServiceImpl implements 
     @Autowired
     protected RepositoryManager repositoryManager;
     /**日志记录实例*/
-    @Autowired
-    protected Logger logger;
+//    @Autowired
+//    protected Logger logger;
 
 
 }

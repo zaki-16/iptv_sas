@@ -5,22 +5,16 @@ import com.hgys.iptv.controller.vm.CpAddVM;
 import com.hgys.iptv.controller.vm.CpControllerListVM;
 import com.hgys.iptv.controller.vm.CpVM;
 import com.hgys.iptv.model.*;
-import com.hgys.iptv.model.enums.LogResultEnum;
-import com.hgys.iptv.model.enums.LogTypeEnum;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.CpService;
 import com.hgys.iptv.util.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +41,8 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
     CpBusinessRepository cpBusinessRepository;
     @Autowired
     CpProductListAssemlber assemlber;
-    @Autowired
-    private Logger logger;
+//    @Autowired
+//    private Logger logger;
     //操作对象
     private static final String menuName = "CP管理";
 
@@ -82,10 +76,10 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             //处理cp关联的中间表的映射关系
             handleRelation(vm,cp_.getId());
 
-            logger.log_add_success(menuName,"CpServiceImpl.save");
+//            logger.log_add_success(menuName,"CpServiceImpl.save");
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_add_fail(menuName,"CpServiceImpl.save");
+//            logger.log_add_fail(menuName,"CpServiceImpl.save");
             return ResultVOUtil.error("1","新增失败！");
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -170,11 +164,11 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
                 cpBusinessRepository.deleteAllByCpid(cp.getId());
             //处理cp关联的中间表的映射关系
             handleRelation(vm,vm.getId());
-            logger.log_up_success(menuName,"CpServiceImpl.update");
+//            logger.log_up_success(menuName,"CpServiceImpl.update");
 
         }catch (Exception e){
             e.printStackTrace();
-            logger.log_up_fail(menuName,"CpServiceImpl.update");
+//            logger.log_up_fail(menuName,"CpServiceImpl.update");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
@@ -201,10 +195,10 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
                     //删除cp_business关系映射
                     cpBusinessRepository.deleteAllByCpid(cpid);
                 }
-                logger.log_rm_success(menuName,"CpServiceImpl.batchLogicDelete");
+//                logger.log_rm_success(menuName,"CpServiceImpl.batchLogicDelete");
             }
         }catch (Exception e){
-            logger.log_rm_fail(menuName,"CpServiceImpl.batchLogicDelete");
+//            logger.log_rm_fail(menuName,"CpServiceImpl.batchLogicDelete");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
