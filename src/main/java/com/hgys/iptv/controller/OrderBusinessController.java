@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -53,6 +54,7 @@ public class OrderBusinessController {
     @DeleteMapping("/batchDeleteob")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderBusiness', 'remove')")
     public ResultVO<?> batchDeleteob(@ApiParam(value = "结算类型-业务定比例ids",required = true) @RequestParam("ids")String ids){
         if (StringUtils.isBlank(ids)){
             return ResultVOUtil.error("1","结算类型-业务定比例ids不能为空");
@@ -66,6 +68,7 @@ public class OrderBusinessController {
     @PostMapping("/addOrderBusiness")
     @ApiOperation(value = "新增结算类型-业务级",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize(value = "hasPermission('OrderBusiness', 'add')")
     public ResultVO<?> addOrderBusiness(@ApiParam(value = "结算类型-业务级VM") @RequestBody() OrderBusinessWithCPAddVM vo){
 
         return orderbusinessService.addOrderBusiness(vo);
@@ -74,6 +77,7 @@ public class OrderBusinessController {
     @GetMapping("/getBusinessList")
     @ApiOperation(value = "查询业务列表",notes = "返回JSON格式数据")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderBusiness', 'view')")
     public ResultVO<?> getBusinessList(){
         return orderbusinessService.getBusinessList();
     }
@@ -82,6 +86,7 @@ public class OrderBusinessController {
     @PostMapping("/updateOrderBusiness")
     @ApiOperation(value = "修改结算类型-业务级",notes = "返回处理结果")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderBusiness', 'update')")
     public ResultVO<?> updateOrderBusiness(@ApiParam(value = "结算类型-业务级VM") @RequestBody() OrderBusinessWithCPAddVM vm){
         return orderbusinessService.updateOrderBusiness(vm);
     }
@@ -89,6 +94,7 @@ public class OrderBusinessController {
     @GetMapping("/findByConditions")
     @ApiOperation(value = "通过条件，分页查询修改结算类型-业务级",notes = "JSON类型格式数据")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderBusiness', 'view')")
     public Page<OrderBusinessWithCPAddVM> findByConditions(@ApiParam(value = "业务级结算名称") @RequestParam(value = "name",required = false )String name,
                                                                  @ApiParam(value = "业务级结算编码") @RequestParam(value = "code",required = false)String code,
                                                                  @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
@@ -104,6 +110,7 @@ public class OrderBusinessController {
     @GetMapping("/getOrderBusiness")
     @ApiOperation(value = "通过编码查询单条记录",notes = "JSON格式数据")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize(value = "hasPermission('OrderBusiness', 'view')")
     public ResultVO<?> getOrderBusiness(@ApiParam(value = "结算类型-业务级Code",required = true) @RequestParam("code")String code){
         if (StringUtils.isBlank(code)){
             return ResultVOUtil.error("1","结算类型-业务级code不能为空");
@@ -114,6 +121,7 @@ public class OrderBusinessController {
 
     @GetMapping("/queryCPList")
     @ApiOperation(value = "查询CP列表")
+    @PreAuthorize(value = "hasPermission('OrderBusiness', 'view')")
     public ResultVO<?> queryCPList(){
         ResultVO<?> all = cpService.findcplist();
         return all;
@@ -123,6 +131,7 @@ public class OrderBusinessController {
     @GetMapping("/findByIds")
     @ApiOperation(value = "通过结算组合Id编码查询",notes = "返回json数据")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderBusiness', 'view')")
     public ResultVO<?> findByIds(@ApiParam(value = "结算组合Id编码",required = true) @RequestParam("id")String id){
         if (StringUtils.isBlank(id)){
             new IllegalArgumentException(" 不能为空");

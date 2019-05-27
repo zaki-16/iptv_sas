@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,6 +57,7 @@ public class OrderProductController {
     @GetMapping("/findByIds")
     @ApiOperation(value = "通过结算组合Id编码查询",notes = "返回json数据")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderProduct', 'view')")
     public ResultVO<?> findByIds(@ApiParam(value = "结算组合Id编码",required = true) @RequestParam("id")String id){
         if (StringUtils.isBlank(id)){
             new IllegalArgumentException(" 不能为空");
@@ -70,6 +72,7 @@ public class OrderProductController {
 
     @DeleteMapping("/batchDeleteop")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
+    @PreAuthorize(value = "hasPermission('OrderProduct', 'remove')")
     public ResultVO<?> batchDeleteop(@ApiParam(value = "名称",required = true) @RequestParam("ids")String ids){
 
         if (StringUtils.isBlank(ids)){
@@ -87,6 +90,7 @@ public class OrderProductController {
     @PostMapping("/addOrderProduct")
     @ApiOperation(value = "新增",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderProduct', 'add')")
     public ResultVO<?> addOrderProduct(@ApiParam(value = "结算类型订单量VM") @RequestBody() OrderProductWithSettlementAddVM vo){
 
         return orderproductService.addOrderBusinessComparison(vo);
@@ -103,6 +107,7 @@ public class OrderProductController {
     @GetMapping("/findByConditions")
     @ApiOperation(value = "通过条件，分页查询结算类型-产品级",notes = "JSON类型格式数据")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderProduct', 'view')")
     public Page<OrderProductWithSettlementfindVM> findByConditions(@ApiParam(value = "结算类型-产品级名称") @RequestParam(value = "name",required = false )String name,
                                                                    @ApiParam(value = "结算类型-产品级编码") @RequestParam(value = "code",required = false)String code,
                                                                    @ApiParam(value = "产品编码") @RequestParam(value = "productcode",required = false)String productcode,
@@ -122,6 +127,7 @@ public class OrderProductController {
     @PostMapping("/updateOrderproduct")
     @ApiOperation(value = "修改查询结算类型-业务定比例",notes = "返回处理结果")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderProduct', 'update')")
     public ResultVO<?> updateOrderproduct(@ApiParam(value = "结算类型-业务定比例VM") @RequestBody()OrderProductWithSettlementAddVM vm){
         return orderproductService.updateOrderproduct(vm);
     }

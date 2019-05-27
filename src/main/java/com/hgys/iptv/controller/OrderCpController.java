@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -52,6 +53,7 @@ public class OrderCpController {
     @GetMapping("/selectById")
     @ApiOperation(value = "通过结算组合Id编码查询",notes = "返回json数据")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderCp', 'view')")
     public ResultVO<?> findById(@ApiParam(value = "结算组合Id编码",required = true) @RequestParam("id")String id){
         if (StringUtils.isBlank(id)){
             new IllegalArgumentException(" 不能为空");
@@ -72,6 +74,7 @@ public class OrderCpController {
      @DeleteMapping("/batchDeleteoc")
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
+     @PreAuthorize(value = "hasPermission('OrderCp', 'remove')")
     public ResultVO<?> batchDeleteoc(@ApiParam(value = "名称",required = true) @RequestParam("ids")String ids){
 
         if (StringUtils.isBlank(ids)){
@@ -86,6 +89,7 @@ public class OrderCpController {
     @PostMapping("/addOrderCp")
     @ApiOperation(value = "新增结算类型-订购量",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize(value = "hasPermission('OrderCp', 'add')")
     public ResultVO<?> addOrderCp(@ApiParam(value = "新增结算类型-订购量VM") @RequestBody() OrderCPAddVM vo){
 
         return ordercpService.addOrderCp(vo);
@@ -96,6 +100,7 @@ public class OrderCpController {
     @GetMapping("/getOrderCp")
     @ApiOperation(value = "通过编码查询",notes = "返回json数据")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderCp', 'view')")
     public OrderCPWithCPListVM getOrderCp(@ApiParam(value = "编码",required = true) @RequestParam("code")String code){
         if (StringUtils.isBlank(code)){
             new IllegalArgumentException("Code不能为空");
@@ -107,6 +112,7 @@ public class OrderCpController {
     @GetMapping("/findByConditions")
     @ApiOperation(value = "通过条件，分页查询",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('OrderCp', 'view')")
     public Page<OrderCPWithCPListVM> findByConditions(@ApiParam(value = "结算单维度名称") @RequestParam(value = "name",required = false )String name,
                                                                                    @ApiParam(value = "编码") @RequestParam(value = "code",required = false)String code,
                                                                                    @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
@@ -129,6 +135,7 @@ public class OrderCpController {
     @PostMapping("/updateOrderCp")
     @ApiOperation(value = "修改结算类型-CP定比例",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize(value = "hasPermission('OrderCp', 'update')")
     public ResultVO<?> updateOrderCp(@ApiParam(value = "结算类型-CP定比例VM") @RequestBody() OrderCPAddVM vo){
         return ordercpService.updateOrderCp(vo);
     }
@@ -137,6 +144,7 @@ public class OrderCpController {
 
     @GetMapping("/queryCPList")
     @ApiOperation(value = "查询CP列表")
+    @PreAuthorize(value = "hasPermission('OrderCp', 'view')")
     public ResultVO<?> queryCPList(){
         ResultVO<?> all = cpService.findcplist();
         return all;
