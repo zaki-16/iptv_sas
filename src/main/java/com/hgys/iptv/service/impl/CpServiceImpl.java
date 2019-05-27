@@ -223,7 +223,7 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             Set<Integer> pidSet = cpProductRepository.findAllPid(id);
             List<Product> pList = productRepository.findAllById(pidSet);
             ArrayList<Product> PList = new ArrayList<>();
-            //1.对pList 筛选已停用、删除的产品
+            //筛除已停用、删除的产品
             pList.forEach(p->{
                 if(p.getIsdelete()==0&&p.getStatus()==0)
                     PList.add(p);
@@ -232,9 +232,8 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             //查关联的业务表
             Set<Integer> bidSet = cpBusinessRepository.findAllBid(id);
             List<Business> bList = businessRepository.findAllById(bidSet);
-            // 筛选
             ArrayList<Business> BList = new ArrayList<>();
-            //筛选已停用、删除的产品
+            //筛除已停用、删除的业务
             bList.forEach(b->{
                 if(b.getIsdelete()==0&&b.getStatus()==0)
                     BList.add(b);
@@ -261,21 +260,36 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
     }
 
     /**
-     * cp列表查询--不查关联关系--对其他业务提供该接口
+     * cp列表查询--不查关联关系--查未删除。且 status=1,2,3的cp供 产品、业务新增时选择
      * @return
      */
     @Override
     public ResultVO<?> findAll() {
         Map<String,Object> vm = new HashMap<>();
-        vm.put("isdelete",0);//已删除
-//        vm.put("status",4);//已注销
-        List<?> cps =findByCriteria(Cp.class,vm);
-        if(cps!=null&&cps.size()>0)
-            return ResultVOUtil.success(cps);
-        return ResultVOUtil.error("1","所查询的cp列表不存在!");
+        vm.put("isdelete",0);//未删除
+        List<Cp> cps =findByCriteria(Cp.class,vm);
+        ArrayList<Cp> cpArrayList = new ArrayList<>();
+        if(cps!=null&&cps.size()>0){
+            cps.forEach(cp->{
+                if(cp.getStatus()==1 || cp.getStatus()==2 || cp.getStatus()==3)
+                    cpArrayList.add(cp);
+            });
+            return ResultVOUtil.success(cpArrayList);
+        }else
+            return ResultVOUtil.error("1","所查询的cp列表不存在!");
     }
 
 
+    /**
+     * 查询所有未删除的cp--包括status=1,2,3,4(已注销的)
+     *
+     * @param name
+     * @param code
+     * @param cpAbbr
+     * @param status
+     * @param pageable
+     * @return
+     */
     @Override
     public Page<CpControllerListVM> findByConditions(String name, String code, String cpAbbr, Integer status, Pageable pageable) {
         return cpRepository.findAll(((root, query, builder) -> {

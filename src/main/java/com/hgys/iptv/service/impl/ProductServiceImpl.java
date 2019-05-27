@@ -264,13 +264,14 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
     }
 
     /**
-     * 列表查询
+     * 列表查询所有未停用未删除的产品
      * @return
      */
     @Override
     public ResultVO<?> findAll() {
         Map<String,Object> vm = new HashMap<>();
         vm.put("isdelete",0);
+        vm.put("status",0);
         List<Product> prods =findByCriteria(Product.class,vm);
         if(prods!=null&&prods.size()>0)
             return ResultVOUtil.success(prods);
