@@ -168,13 +168,16 @@ public class OrderCpServiceImpl implements OrderCpService {
             List<Predicate> predicates = new ArrayList<>();
 
             if (org.apache.commons.lang3.StringUtils.isNotBlank(name)) {
+
                 Predicate condition = builder.equal(root.get("name"), "%"+name+"%");
                 predicates.add(condition);
             }
             if (org.apache.commons.lang3.StringUtils.isNotBlank(code)) {
                 Predicate condition = builder.equal(root.get("code"), "%"+code+"%");
+
                 predicates.add(condition);
             }
+
 
             if (org.apache.commons.lang3.StringUtils.isNotBlank(status)) {
                 Predicate condition = builder.equal(root.get("status"), status);
