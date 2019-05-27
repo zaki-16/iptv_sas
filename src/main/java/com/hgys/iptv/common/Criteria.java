@@ -46,11 +46,9 @@ public class Criteria<T> implements Specification<T> {
      * @param
      */
     public Criteria<T> add(Criterion criterion){
-
         if(criterion!=null){
             criterions.add(criterion);
         }
-
         return this;
     }
 }

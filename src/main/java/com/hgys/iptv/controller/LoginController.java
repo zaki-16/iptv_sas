@@ -46,8 +46,8 @@ public class LoginController {
 
     @GetMapping("/link")
     @ResponseStatus(HttpStatus.OK)
-    public String link(){
-        return "ok";
+    public ResultVO link(){
+        return ResultVOUtil.success("连接正常！");
     }
 
     @GetMapping("/login")

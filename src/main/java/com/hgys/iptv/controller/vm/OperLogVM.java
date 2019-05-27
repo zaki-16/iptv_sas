@@ -28,4 +28,6 @@ public class OperLogVM {
 
     //     * 操作时间
     private Timestamp operTime;
+    private Timestamp startTime;
+    private Timestamp endTime;
 }
