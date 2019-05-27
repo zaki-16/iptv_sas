@@ -80,8 +80,8 @@ public class DemoContronller {
             l.add(a);
         }
         beanParams.put("pList",l);
-        ExcelForWebUtil.exportExcel(response,beanParams,"test.xlsx", PathConstant.getExcelExportResource(),"导出测试文件.xlsx");
-
+//        ExcelForWebUtil.exportExcel(response,beanParams,"test.xlsx", PathConstant.getExcelExportResource(),"导出测试文件.xlsx");
+        ExcelForWebUtil.exportExcelTest(response,beanParams,null,null,"test");
     }
 
     @GetMapping("/test")
