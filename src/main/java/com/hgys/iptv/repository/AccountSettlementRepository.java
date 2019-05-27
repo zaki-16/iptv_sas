@@ -18,4 +18,15 @@ public interface AccountSettlementRepository extends JpaRepository<AccountSettle
     @Modifying
     @Query(value = "update AccountSettlement set isdelete = 1 WHERE id = ?1")
     void batchLogicDelete(int id);
+
+
+    /**
+     * 通过结算组合维度编码查询
+     * @param Code
+     * @return
+     */
+    @Query(value = "select o.set_ruleName from AccountSettlement o where o.set_ruleCode= ?1")
+    String findByMastername(String Code);
+
+
 }

@@ -12,6 +12,7 @@ import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.OrderBusinessComparisonService;
 import com.hgys.iptv.util.CodeUtil;
+import com.hgys.iptv.util.Logger;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UpdateTool;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -54,6 +55,11 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
 
     @Autowired
     private JPAQueryFactory queryFactory;
+    @Autowired
+    private Logger logger;
+
+    //操作对象
+    private static final String menuName = "业务定比列";
 
     /**
      * 新增
@@ -147,8 +153,10 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
                     cpOrderBusinessComparisonRepository.save(compa);
                 }
             }
+            logger.log_add_success(menuName,"orderBusinessComparisonServiceImpl.save");
         }catch (Exception e){
             e.printStackTrace();
+            logger.log_add_fail(menuName,"orderBusinessComparisonServiceImpl.save");
             ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
 
@@ -168,8 +176,10 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
             for (String s : idLists){
                 orderBusinessComparisonRepository.batchLogicDelete(Integer.parseInt(s));
             }
+            logger.log_rm_success(menuName,"orderBusinessComparisonServiceImpl.batchLogicDelete");
         }catch (Exception e){
             e.printStackTrace();
+            logger.log_rm_fail(menuName,"orderBusinessComparisonServiceImpl.batchLogicDelete");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
 
@@ -347,9 +357,12 @@ public class OrderBusinessComparisonServiceImpl implements OrderBusinessComparis
                         cpOrderBusinessComparisonRepository.saveAndFlush(cp);
                     }
                 }
+                logger.log_up_success(menuName,"orderBusinessComparisonServiceImpl.update");
             }
+
         }catch (Exception e){
             e.printStackTrace();
+            logger.log_up_fail(menuName,"orderBusinessComparisonServiceImpl.update");
             return ResultVOUtil.error(ResultEnum.SYSTEM_INTERNAL_ERROR);
         }
         return ResultVOUtil.success(Boolean.TRUE);
