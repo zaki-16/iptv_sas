@@ -9,7 +9,8 @@ public enum LogResultEnum {
     USER_NOT_EXIST("账号不存在"),
     PWD_ERROR("用户或密码错误"),
     TIMEOUT("登录超时"),
-    CANCEL("账号已停用"),
+    USER_OFF("账号已停用"),
+    CANCEL("账号已注销"),
     ;
 
     private String result;

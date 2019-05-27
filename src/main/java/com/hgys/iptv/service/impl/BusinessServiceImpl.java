@@ -232,11 +232,24 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
             //查关联的产品--先按cpid查cp_product中间表查出pid集合-->按pid去 findAllById
             Set<Integer> pidSet = productBusinessRepository.findAllPid(id);
             List<Product> pList = productRepository.findAllById(pidSet);
-            vm.setpList(pList);
+            ArrayList<Product> PList = new ArrayList<>();
+            //1.对pList 筛选已停用、删除的产品
+            pList.forEach(p->{
+                if(p.getIsdelete()==0&&p.getStatus()==0)
+                    PList.add(p);
+            });
+            vm.setpList(PList);
+
             //查关联的cp
             Set<Integer> cpidSet = cpBusinessRepository.findAllCpid(id);
             List<Cp> cpList = cpRepository.findAllById(cpidSet);
-            vm.setCpList(cpList);
+            ArrayList<Cp> CPList = new ArrayList<>();
+            //筛除已停用、删除的产品
+            cpList.forEach(b->{
+                if(b.getIsdelete()==0&&b.getStatus()==0)
+                    CPList.add(b);
+            });
+            vm.setCpList(CPList);
            return ResultVOUtil.success(vm);
         }catch (Exception e){
             return ResultVOUtil.error("1","所查业务不存在");
