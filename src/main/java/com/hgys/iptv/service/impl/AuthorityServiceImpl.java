@@ -119,7 +119,7 @@ public class AuthorityServiceImpl extends SysServiceImpl implements AuthoritySer
             if(permission.getId()<=4){
                 authority.setName(sysMenu.getName()+":"+permission.getName());
                 authority.setMenuId(sysMenu.getId());
-                authority.setMenuName(sysMenu.getName());
+                authority.setMenuName(sysMenu.getName());// 如 cp管理
                 authority.setText(permission.getDescription());//展示名
                 authority.setStatus(0);
                 authorityRepository.save(authority);

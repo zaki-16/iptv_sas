@@ -39,13 +39,13 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
     @Override
     public ResultVO findByRoleName(String name) {
         Role byName = roleRepository.findByName(name);
+        if(byName==null){
+            return ResultVOUtil.error("1","该角色不存在！");
+        }
         List<Authority> allAuthorityByRoleId = findAllAuthorityByRoleId(byName.getId());
         SysRoleVM sysRoleVM = new SysRoleVM();
         BeanUtils.copyProperties(byName,sysRoleVM);
         sysRoleVM.setList(allAuthorityByRoleId);
-        if(byName==null){
-            return ResultVOUtil.error("1","该角色不存在！");
-        }
         return ResultVOUtil.success(sysRoleVM);
     }
 

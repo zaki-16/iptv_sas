@@ -29,7 +29,7 @@ public class Authority {
     private Integer menuId;
 //    //菜单 名称
     private String menuName;
-//    // 权限 id
+//   // 权限 id
 //    private Integer permId;
 //    // 权限 名称
 //    private String permName;
