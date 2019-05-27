@@ -1,14 +1,18 @@
 package com.hgys.iptv.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.hgys.iptv.controller.vm.SysMenuVM;
+import com.hgys.iptv.model.Authority;
 import com.hgys.iptv.model.Permission;
 import com.hgys.iptv.model.SysMenu;
 import com.hgys.iptv.model.SysMenuPermission;
+import com.hgys.iptv.model.bean.MenuAuthNode;
 import com.hgys.iptv.model.bean.MenuNode;
 import com.hgys.iptv.model.bean.PermissionNode;
 import com.hgys.iptv.model.dto.SysMenuDTO;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
+import com.hgys.iptv.repository.AuthorityRepository;
 import com.hgys.iptv.repository.PermissionRepository;
 import com.hgys.iptv.repository.SysMenuPermissionRepository;
 import com.hgys.iptv.repository.SysMenuRepository;
@@ -38,18 +42,81 @@ public class SysMenuServiceImpl implements SysMenuService {
     private SysMenuRepository sysMenuRepository;
     @Autowired
     private PermissionRepository permissionRepository;
+
+    @Autowired
+    private AuthorityRepository authorityRepository;
     @Autowired
     private SysMenuPermissionRepository sysMenuPermissionRepository;
 
+    @Override
+    public List<MenuAuthNode> getMenuAuthTree(){
+        List<Authority> all = authorityRepository.findAll();
+        List<MenuAuthNode> menuNodes = new ArrayList<>();
+        all.forEach(authority->{
+            MenuAuthNode menuNode = new MenuAuthNode();
+            BeanUtils.copyProperties(authority,menuNode);
+            menuNodes.add(menuNode);
+        });
+        //组装菜单树
+        return assembleMenuAuthTree(0, menuNodes);
+    }
+
+    private List<MenuAuthNode> assembleMenuAuthTree(Integer pId, List<MenuAuthNode> menuNodes) {
+        List<MenuAuthNode> tree = CollUtil.newArrayList();
+        for (MenuAuthNode menuNode : menuNodes) {
+            if (pId.equals(menuNode.getParentId())) {
+                menuNode.setChildrens(assembleMenuAuthTree(menuNode.getId(), menuNodes));
+                tree.add(menuNode);
+            }
+        }
+        return tree;
+    }
     /**
      * 将菜单组装成树
      * 将菜单下关联的权限也组装成树
+     *
      * @return
      */
     @Override
-    public ResultVO loadMenuTree() {
+    public ResultVO loadMenuTree(){
+        List<SysMenuVM> sysMenuVMList = new ArrayList<>();
+        //1. 查所有菜单
+        List<SysMenu> sysMenus = sysMenuRepository.findAll();
+        List<MenuNode> menuNodes = new ArrayList<>();
+        sysMenus.forEach(sysMenu->{
+            MenuNode menuNode = new MenuNode();
+            BeanUtils.copyProperties(sysMenu,menuNode);
+            menuNodes.add(menuNode);
+        });
+        //组装菜单树
+        List<MenuNode> menuTree = assembleMenuTree(0, menuNodes);
+        List<MenuNode> assemble = assemble(menuTree);
+        // 对每个叶子结点查找 其关联的权限
+//        sysMenus.forEach(sysMenu -> {
+//            SysMenuVM sysMenuVM = new SysMenuVM();
+//            BeanUtils.copyProperties(sysMenu,sysMenuVM);
+//            List<Authority> byMenuId = authorityRepository.findByMenuId(sysMenu.getId());
+//            sysMenuVM.setList(byMenuId);
+//            sysMenuVMList.add(sysMenuVM);
+//        });
+        return ResultVOUtil.success(assemble);
+    }
+
+    public List<MenuNode> assemble(List<MenuNode> menuTree){
+        menuTree.forEach(menu->{
+            if(menu.getChildrens().size()==0){
+                List<Authority> byMenuId = authorityRepository.findByMenuId(menu.getId());
+                menu.setAuthorities(byMenuId);
+            }else{
+                assemble(menu.getChildrens());
+            }
+        });
+        return menuTree;
+    }
+    public List<MenuNode> loadMenuTreeList() {
 //        ArrayList<SysMenuListVM> sysMenuListVMs = new ArrayList<>();
         // 加载菜单
+        //根据 authority 的
         List<SysMenu> sysMenus = sysMenuRepository.findAll();
         List<MenuNode> menuNodes = new ArrayList<>();
         sysMenus.forEach(sysMenu->{
@@ -72,14 +139,14 @@ public class SysMenuServiceImpl implements SysMenuService {
         List<PermissionNode> permissionTree = assemblePermTree(0, permissionNodes);//对每个菜单下的所有权限结点进行组装成树
 
         //对每个叶子结点(childrens为空)的菜单--关联一颗权限树--递归
-        List<MenuNode> menuPremTree = assembleMenuPerm(menuTree, permissionTree);
+
 //        sysMenus.forEach(sysMenu -> {
 //            SysMenuListVM sysMenuListVM = new SysMenuListVM();
 //            BeanUtils.copyProperties(sysMenu,sysMenuListVM);
 //            sysMenuListVM.setList(permissionTree);
 //            sysMenuListVMs.add(sysMenuListVM);
 //        });
-        return ResultVOUtil.success(menuPremTree);
+        return assembleMenuPerm(menuTree, permissionTree);
     }
 
     private List<MenuNode> assembleMenuPerm(List<MenuNode> menuTree, List<PermissionNode> permissionTree){

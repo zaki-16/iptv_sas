@@ -15,6 +15,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,8 +35,23 @@ public class RepositoryManager {
     @PersistenceContext
     private EntityManager entityManager;
 
+    private final String LIKE_FLAG = "%";
+
     private RepositoryManager(){}
 
+    /**
+     * select name from table where
+     *
+     */
+    public void select(Class<?> clazz){
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery query = builder.createQuery((clazz));
+        Root root = query.from(clazz);
+        query.select(root);
+    }
+
+
+    /**====================================================================================================*/
     /**
      * 带条件分页+模糊查询
      *
@@ -54,6 +71,8 @@ public class RepositoryManager {
                         if(entry.getValue().toString().startsWith("%")||
                                 entry.getValue().toString().endsWith("%"))
                             predicates.add(builder.like(root.get(entry.getKey()), entry.getValue().toString()));
+//                        else if()//判断是否是日期或时间格式
+
                         else
                             predicates.add(builder.equal(root.get(entry.getKey()), entry.getValue()));
                     }
@@ -197,5 +216,22 @@ public class RepositoryManager {
 
     public static ModelView getModelView(){
         return new RepositoryManager.ModelView();
+    }
+
+
+    public static boolean isDate(String str) {
+        boolean convertSuccess=true;
+// 指定日期格式为四位年/两位月份/两位日期，注意yyyy/MM/dd区分大小写；
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        try {
+// 设置lenient为false. 否则SimpleDateFormat会比较宽松地验证日期，比如2007/02/29会被接受，并转换成2007/03/01
+            format.setLenient(false);
+            format.parse(str);
+        } catch (ParseException e) {
+            // e.printStackTrace();
+// 如果throw java.text.ParseException或者NullPointerException，就说明格式不对
+            convertSuccess=false;
+        }
+        return convertSuccess;
     }
 }

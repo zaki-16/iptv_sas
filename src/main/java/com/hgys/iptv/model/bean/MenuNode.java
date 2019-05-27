@@ -1,5 +1,6 @@
 package com.hgys.iptv.model.bean;
 
+import com.hgys.iptv.model.Authority;
 import lombok.Data;
 
 import java.util.List;
@@ -23,4 +24,6 @@ public class MenuNode {
     //根结点到叶子的路径名或id为权限单元
     // 叶子结点会有一颗权限树
     private List<PermissionNode> permissionTree;
+
+    private List<Authority> authorities;
 }

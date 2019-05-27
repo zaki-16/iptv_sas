@@ -32,9 +32,11 @@ public class OperationLog implements Serializable {
     //     * 操作类型
     private String operType;
     //     * 操作结果
-    private String Result;
+    private String result;
     //     * 方法名 类.method
     private String methodName;
+
+    private String ip;
     //     * 操作时间
     private Timestamp operTime;
 

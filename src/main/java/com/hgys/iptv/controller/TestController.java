@@ -6,6 +6,7 @@ import com.hgys.iptv.repository.AuthorityRepository;
 import com.hgys.iptv.repository.RoleRepository;
 import com.hgys.iptv.repository.SysRoleAuthorityRepository;
 import com.hgys.iptv.util.RepositoryManager;
+import com.hgys.iptv.util.ReqAndRespHolder;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UserSessionInfoHolder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
 /**
@@ -50,13 +52,18 @@ public class TestController   {
         return ResultVOUtil.success(currentUsername);
     }
 
-    @PostMapping("/testUsername")
-    public ResultVO myTest1(){
+    @RequestMapping("/tester")
+    public ResultVO myTest1(HttpServletRequest request){
         String currentUsername = UserSessionInfoHolder.getCurrentUsername();
         Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
 //        User oneById = repositoryManager.findOneById(User.class, 8);
 //        RepositoryManager.ModelView modelView = RepositoryManager.getModelView();
 //        modelView.setElem(oneById);
-        return ResultVOUtil.success(currentUsername);
+        String ipAddr = ReqAndRespHolder.getIpAddr(ReqAndRespHolder.getRequest());
+        System.out.println("getIpAddr===="+ipAddr);
+        String ipAddr2 = ReqAndRespHolder.getIpAddr(request);
+        System.out.println("request===="+ipAddr2);
+
+        return ResultVOUtil.success(ipAddr);
     }
 }

@@ -19,6 +19,8 @@ public interface SysRoleService {
     ResultVO updateRole(SysRoleDTO sysRoleDTO);
     ResultVO deleteRoleById(Integer id);
     ResultVO batchLogicDelete(String ids);
+    ResultVO batchOnRole(String ids);
+    ResultVO batchOffRole(String ids);
     ResultVO findAllRole();
     Page<Role> findAllRoleOfPage(String name, Integer status, Integer pageNum, Integer pageSize);
     ResultVO findRoleById(Integer id);

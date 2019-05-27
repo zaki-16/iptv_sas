@@ -1,11 +1,19 @@
 package com.hgys.iptv.service.impl;
 
 import com.hgys.iptv.model.Authority;
+import com.hgys.iptv.model.Permission;
+import com.hgys.iptv.model.SysMenu;
+import com.hgys.iptv.model.bean.MenuNode;
+import com.hgys.iptv.model.bean.PermissionNode;
 import com.hgys.iptv.model.dto.AuthorityDTO;
 import com.hgys.iptv.model.vo.ResultVO;
+import com.hgys.iptv.repository.PermissionRepository;
+import com.hgys.iptv.repository.SysMenuRepository;
 import com.hgys.iptv.service.AuthorityService;
+import com.hgys.iptv.service.SysMenuService;
 import com.hgys.iptv.util.ResultVOUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,5 +73,64 @@ public class AuthorityServiceImpl extends SysServiceImpl implements AuthoritySer
         if(all.size()>0)
             return ResultVOUtil.success(all);
         return ResultVOUtil.error("1","所查询列表不存在!");
+    }
+
+    /**
+     * 为已有菜单和已有权限
+     * 一键生成权限列表
+     */
+    @Autowired
+    private SysMenuService sysMenuService;
+
+    public void bootAuthority(List<MenuNode> menuNodes){
+        try {
+            menuNodes.forEach(menuNode -> {
+                if(menuNode.getChildrens().size()==0){//菜单叶子结点
+                    List<PermissionNode> permissionTree = menuNode.getPermissionTree();
+                    reachPermLeaf(menuNode.getId(),permissionTree);
+                }else{
+                    bootAuthority(menuNode.getChildrens());
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void reachPermLeaf(Integer pid,List<PermissionNode> permissionTree){
+        permissionTree.forEach(permissionNode -> {//为每个叶子结点菜单关联上所有已存在的叶子结点权限
+            if(permissionNode.getChildrens().size()==0){//权限叶子结点
+                createAuthNode(pid,permissionNode.getId());
+            }else{
+                reachPermLeaf(pid,permissionNode.getChildrens());
+            }
+        });
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void createAuthNode(Integer menuId,Integer permId){
+        try {
+            Authority authority = new Authority();
+            authority.setCreatedTime(new Timestamp(System.currentTimeMillis()));
+            authority.setMenuId(menuId);
+            SysMenu sysMenu = repositoryManager.findOneById(SysMenu.class, menuId);
+            //
+            Permission permission = repositoryManager.findOneById(Permission.class, permId);
+            authority.setName(sysMenu.getName()+":"+permission.getName());
+            authority.setStatus(0);
+            authorityRepository.save(authority);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void bootAuthority(){
+        try {
+            List<MenuNode> menuNodes = sysMenuService.loadMenuTreeList();
+            bootAuthority(menuNodes);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

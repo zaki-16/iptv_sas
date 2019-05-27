@@ -19,8 +19,11 @@ public interface SysUserService {
     ResultVO addUser(SysUserDTO userDTO);
     ResultVO updateUser(SysUserDTO userDTO);
     ResultVO personalUpdate(SysUserDTO userDTO);
+    ResultVO getPersonalData();
     ResultVO deleteUserById(Integer id);
     ResultVO batchLogicDelete(String ids);
+    ResultVO batchOnUser(String ids);
+    ResultVO batchOffUser(String ids);
     //    ResultVO findAllUser();
     Page<User> findAllUserOfPage(String username,String realName,String cpAbbr,Integer status,Integer pageNum, Integer pageSize);
     ResultVO modifyPassword(String password_old,String password_new);

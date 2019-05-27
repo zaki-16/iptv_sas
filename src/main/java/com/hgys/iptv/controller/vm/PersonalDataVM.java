@@ -8,15 +8,15 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * @ClassName SysUserVM
+ * @ClassName PersonalDataVM
  * @Auther: wangz
- * @Date: 2019/5/20 18:58
+ * @Date: 2019/5/25 01:04
  * @Description: TODO
  */
 @Data
-public class SysUserVM {
+public class PersonalDataVM {
 
-    private Integer id;
+//    private Integer id;
 
     private String username;//登录名
 
@@ -25,8 +25,8 @@ public class SysUserVM {
     private Integer cpId;//-1=平台用户
 
     private String cpAbbr;
-    @JsonIgnore
-    private String password;
+//    @JsonIgnore
+//    private String password;
 
     private String email;
 
@@ -42,6 +42,6 @@ public class SysUserVM {
 
     private Integer isdelete;//0：未删除 1：已删除
 
-    private List<Role> list;
+    private List<PersonalRole> list;
 
 }

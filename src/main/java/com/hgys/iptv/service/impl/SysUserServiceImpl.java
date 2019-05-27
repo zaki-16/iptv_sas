@@ -1,11 +1,11 @@
 package com.hgys.iptv.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.google.common.collect.Maps;
+import com.hgys.iptv.controller.vm.PersonalDataVM;
+import com.hgys.iptv.controller.vm.PersonalRole;
 import com.hgys.iptv.controller.vm.SysUserVM;
-import com.hgys.iptv.model.Cp;
-import com.hgys.iptv.model.Role;
-import com.hgys.iptv.model.SysUserRole;
-import com.hgys.iptv.model.User;
+import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.dto.SysUserDTO;
 import com.hgys.iptv.model.enums.ResultEnum;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -220,7 +220,7 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             BeanUtils.copyProperties(userDTO,user);
             user.setModifyTime(new Timestamp(System.currentTimeMillis()));
             //处理 null值
-            User byIdUser = userRepository.findById(userDTO.getId()).orElse(null);
+            User byIdUser = userRepository.findByUsername(username);
             if(byIdUser==null)
                 return ResultVOUtil.error("1","用户已不存在！");
             UpdateTool.copyNullProperties(byIdUser,user);
@@ -233,6 +233,34 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             return ResultVOUtil.error("1","个性资料修改异常！");
         }
         return ResultVOUtil.success("个性资料修改成功！");
+    }
+
+
+    @Override
+    public ResultVO getPersonalData() {
+        String username = UserSessionInfoHolder.getCurrentUsername();
+        if(null == username || (username.compareTo("anonymousUser")==0))
+            return  ResultVOUtil.error("1","密码已过期或未登录！");
+
+        PersonalDataVM personalDataVM = new PersonalDataVM();
+        ArrayList<PersonalRole> personalRoles = new ArrayList<>();
+        User byUsername = userRepository.findByUsername(username);
+        BeanUtils.copyProperties(byUsername,personalDataVM);
+
+        Set<Integer> allRoleId = sysUserRoleRepository.findAllRoleId(byUsername.getId());
+        List<Role> roles = roleRepository.findAllById(allRoleId);
+        if(roles.size()>0){
+            roles.forEach(role->{
+                PersonalRole personalRole = new PersonalRole();
+                personalRole.setRole(role);
+                Set<Integer> allAuthId = sysRoleAuthorityRepository.findAllAuthId(role.getId());
+                List<Authority> auths = authorityRepository.findAllById(allAuthId);
+                personalRole.setAuths(auths);
+                personalRoles.add(personalRole);
+            });
+            personalDataVM.setList(personalRoles);
+        }
+        return ResultVOUtil.success(personalDataVM);
     }
 
     /**
@@ -350,6 +378,48 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         return ResultVOUtil.success(Boolean.TRUE);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO batchOnUser(String ids) {
+        try {
+            ArrayList<String> list = CollUtil.newArrayList(StringUtils.split(ids, ","));
+            if(list.size()>0){
+                list.forEach(id->{
+                    User user = userRepository.findById(Integer.parseInt(id)).orElse(null);
+                    if(user!=null){
+                        user.setStatus(0);
+                        user.setModifyTime(new Timestamp(System.currentTimeMillis()));
+                        userRepository.save(user);
+                    }
+                });
+            }
+        }catch (Exception e){
+            return  ResultVOUtil.error("1","批量启用异常！");
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO batchOffUser(String ids) {
+        try {
+            ArrayList<String> list = CollUtil.newArrayList(StringUtils.split(ids, ","));
+            if(list.size()>0){
+                list.forEach(id->{
+                    User user = userRepository.findById(Integer.parseInt(id)).orElse(null);
+                    if(user!=null){
+                        user.setStatus(1);
+                        user.setModifyTime(new Timestamp(System.currentTimeMillis()));
+                        userRepository.save(user);
+                    }
+                });
+            }
+        }catch (Exception e){
+            return  ResultVOUtil.error("1","批量停用异常！");
+        }
+        return ResultVOUtil.success(Boolean.TRUE);
+    }
+
 
 //    @Override
 //    public ResultVO findAllUser() {
@@ -397,4 +467,6 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
         //2.按角色id查询所有角色对象
         return roleRepository.findAllById(allRoleId);
     }
+
+
 }

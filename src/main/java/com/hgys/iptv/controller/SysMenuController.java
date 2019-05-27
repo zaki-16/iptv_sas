@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.model.bean.MenuAuthNode;
 import com.hgys.iptv.model.dto.SysMenuDTO;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.SysMenuService;
@@ -7,6 +8,8 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @ClassName SysMenuController
@@ -29,6 +32,12 @@ public class SysMenuController {
     @ResponseStatus(HttpStatus.OK)
     public ResultVO loadMenuTree(){
         return sysMenuService.loadMenuTree();
+    }
+
+    @GetMapping("/getMenuAuthTree")
+    @ResponseStatus(HttpStatus.OK)
+    public List<MenuAuthNode> getMenuAuthTree(){
+        return sysMenuService.getMenuAuthTree();
     }
 
     @GetMapping("/loadPermByMenuId")
@@ -54,4 +63,6 @@ public class SysMenuController {
     public ResultVO deleteMenuNodeById(Integer id){
         return sysMenuService.deleteMenuNodeById(id);
     }
+
+
 }
