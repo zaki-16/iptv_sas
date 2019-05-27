@@ -167,12 +167,15 @@ public class OrderCpServiceImpl implements OrderCpService {
         Page<OrderCPWithCPListVM> map = ordercpRepository.findAll(((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+
             if (org.apache.commons.lang3.StringUtils.isNotBlank(name)) {
-                Predicate condition = builder.like(root.get("name"), "%"+name+"%");
+
+                Predicate condition = builder.equal(root.get("name"), "%"+name+"%");
                 predicates.add(condition);
             }
             if (org.apache.commons.lang3.StringUtils.isNotBlank(code)) {
-                Predicate condition = builder.like(root.get("code"), "%"+code+"%");
+                Predicate condition = builder.equal(root.get("code"), "%"+code+"%");
+
                 predicates.add(condition);
             }
 
