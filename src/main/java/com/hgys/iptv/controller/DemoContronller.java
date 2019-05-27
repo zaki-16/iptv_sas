@@ -105,21 +105,22 @@ public class DemoContronller {
         /**
          * Excel导出：Object 转换为 Excel
          */
-        //自己硬盘的地址
-        String filePath = "/Users/yance/Downloads/demo-sheet.xls";
+//        //自己硬盘的地址
+//        String filePath = "/Users/yance/Downloads/demo-sheet.xls";
+//        PathConstant.getExcelExportResource();
 
-        ExcelExportUtil.exportToFile(filePath, shopDTOList);
+//        ExcelExportUtil.exportToFile(filePath, shopDTOList);
 
         //浏览器返回Excel
         Workbook sheets = ExcelExportUtil.exportWorkbook(shopDTOList);
         ExcelForWebUtil.workBookExportExcel(response,sheets,"Excel导出测试文件");
 
-        /**
-         * Excel导入：Excel 转换为 Object
-         */
-        List<Object> list = ExcelImportUtil.importExcel(filePath, ShopDTO.class);
+//        /**
+//         * Excel导入：Excel 转换为 Object
+//         */
+//        List<Object> list = ExcelImportUtil.importExcel(filePath, ShopDTO.class);
 
-        System.out.println(list);
+//        System.out.println(list);
         return shopDTOList;
     }
 
