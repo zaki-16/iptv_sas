@@ -169,6 +169,13 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
 
         try{
             User user = new User();
+            Integer cpId = userDTO.getCpId();
+            if(-1 == cpId){
+                user.setCpAbbr("平台用户");
+            }else if(cpId > 0){
+                Cp cp = repositoryManager.findOneById(Cp.class, cpId);
+                user.setCpAbbr(cp.getCpAbbr());
+            }
             BeanUtils.copyProperties(userDTO,user);
             //如果传参带了密码--一般是不会的--这么做是防止覆盖
             String password = userDTO.getPassword();

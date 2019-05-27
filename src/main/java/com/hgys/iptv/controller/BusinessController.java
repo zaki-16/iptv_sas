@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.aop.SystemControllerLog;
 import com.hgys.iptv.controller.vm.BusinessAddVM;
 import com.hgys.iptv.controller.vm.BusinessControllerListVM;
 import com.hgys.iptv.controller.vm.BusinessVM;
@@ -32,11 +33,15 @@ import org.springframework.web.bind.annotation.*;
 public class BusinessController {
     @Autowired
     private BusinessService businessService;
+    //操作对象
+    private static final String target = "业务管理";
+
 
     @PostMapping("/saveBusiness")
     @ApiOperation(value = "新增业务",notes = "@return：业务对象")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize(value = "hasPermission('bizManager', 'add')")
+    @SystemControllerLog(target = target,methodName = "BusinessController.saveBusiness",type = "新增")
     public ResultVO<?> saveBusiness(
             @ApiParam(value = "业务新增VM")  @RequestBody() BusinessAddVM vm){
         return businessService.save(vm);
@@ -46,6 +51,7 @@ public class BusinessController {
     @ApiOperation(value = "更新业务",notes = "@return：业务对象")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('bizManager', 'update')")
+    @SystemControllerLog(target = target,methodName = "BusinessController.saveBusiness",type = "修改")
     public ResultVO<?> updateBusiness(
             @ApiParam(value = "业务修改VM") @RequestBody() BusinessAddVM vm){
         return businessService.update(vm);
@@ -66,6 +72,7 @@ public class BusinessController {
     @ApiOperation(value = "批量逻辑删除业务",notes = "@return：true/false")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('bizManager', 'remove')")
+    @SystemControllerLog(target = target,methodName = "BusinessController.batchLogicDelete",type = "删除")
     public ResultVO<?> batchLogicDelete(String ids){
         return businessService.batchLogicDelete(ids);
     }

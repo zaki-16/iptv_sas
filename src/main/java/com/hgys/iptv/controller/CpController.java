@@ -3,7 +3,6 @@ package com.hgys.iptv.controller;
 import com.hgys.iptv.aop.SystemControllerLog;
 import com.hgys.iptv.controller.vm.CpAddVM;
 import com.hgys.iptv.controller.vm.CpControllerListVM;
-import com.hgys.iptv.model.enums.LogTypeEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.CpService;
 import io.swagger.annotations.Api;

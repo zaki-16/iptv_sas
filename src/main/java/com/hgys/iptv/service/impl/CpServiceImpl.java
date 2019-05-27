@@ -1,5 +1,7 @@
 package com.hgys.iptv.service.impl;
 
+import com.hgys.iptv.common.Criteria;
+import com.hgys.iptv.common.Restrictions;
 import com.hgys.iptv.controller.assemlber.CpProductListAssemlber;
 import com.hgys.iptv.controller.vm.CpAddVM;
 import com.hgys.iptv.controller.vm.CpControllerListVM;
@@ -220,14 +222,25 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             //查关联的产品--先按cpid查cp_product中间表查出pid集合-->按pid去 findAllById
             Set<Integer> pidSet = cpProductRepository.findAllPid(id);
             List<Product> pList = productRepository.findAllById(pidSet);
-            cpVM.setpList(pList);
+            ArrayList<Product> PList = new ArrayList<>();
+            //1.对pList 筛选已停用、删除的产品
+            pList.forEach(p->{
+                if(p.getIsdelete()==0&&p.getStatus()==0)
+                    PList.add(p);
+            });
+            cpVM.setpList(PList);
             //查关联的业务表
             Set<Integer> bidSet = cpBusinessRepository.findAllBid(id);
             List<Business> bList = businessRepository.findAllById(bidSet);
-            cpVM.setbList(bList);
-            if(cp!=null)
-                return ResultVOUtil.success(cpVM);
-            return ResultVOUtil.error("1","所查询的cp不存在!");
+            // 筛选
+            ArrayList<Business> BList = new ArrayList<>();
+            //筛选已停用、删除的产品
+            bList.forEach(b->{
+                if(b.getIsdelete()==0&&b.getStatus()==0)
+                    BList.add(b);
+            });
+            cpVM.setbList(BList);
+            return ResultVOUtil.success(cpVM);
         }catch (Exception e){
             return ResultVOUtil.error("1","所查cp不存在");
         }
