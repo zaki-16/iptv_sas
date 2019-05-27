@@ -225,9 +225,7 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
             Set<Integer> bidSet = cpBusinessRepository.findAllBid(id);
             List<Business> bList = businessRepository.findAllById(bidSet);
             cpVM.setbList(bList);
-            if(cp!=null)
-                return ResultVOUtil.success(cpVM);
-            return ResultVOUtil.error("1","所查询的cp不存在!");
+            return ResultVOUtil.success(cpVM);
         }catch (Exception e){
             return ResultVOUtil.error("1","所查cp不存在");
         }

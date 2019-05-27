@@ -231,12 +231,9 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
             Set<Integer> bidSet = productBusinessRepository.findAllBid(id);
             List<Business> bList = businessRepository.findAllById(bidSet);
             productListVM.setbList(bList);
-
-            if(prod!=null)
-                return ResultVOUtil.success(productListVM);
-            return ResultVOUtil.error("1","所查询的产品不存在!");
+            return ResultVOUtil.success(productListVM);
         }catch (Exception e){
-            return ResultVOUtil.error("1","所查cp不存在");
+            return ResultVOUtil.error("1","所查产品不存在");
         }
     }
 

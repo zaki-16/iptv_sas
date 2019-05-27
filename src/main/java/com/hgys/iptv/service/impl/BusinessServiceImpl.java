@@ -230,19 +230,16 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
             BusinessVM vm = new BusinessVM();
             BeanUtils.copyProperties(business,vm);
             //查关联的产品--先按cpid查cp_product中间表查出pid集合-->按pid去 findAllById
-            Set<Integer> pidSet = cpProductRepository.findAllPid(id);
+            Set<Integer> pidSet = productBusinessRepository.findAllPid(id);
             List<Product> pList = productRepository.findAllById(pidSet);
             vm.setpList(pList);
             //查关联的cp
             Set<Integer> cpidSet = cpBusinessRepository.findAllCpid(id);
             List<Cp> cpList = cpRepository.findAllById(cpidSet);
             vm.setCpList(cpList);
-
-            if(business!=null)
-                return ResultVOUtil.success(vm);
-            return ResultVOUtil.error("1","所查询的业务列表不存在!");
+           return ResultVOUtil.success(vm);
         }catch (Exception e){
-            return ResultVOUtil.error("1","所查cp不存在");
+            return ResultVOUtil.error("1","所查业务不存在");
         }
     }
 
