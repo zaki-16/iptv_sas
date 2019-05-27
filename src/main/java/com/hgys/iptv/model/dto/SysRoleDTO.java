@@ -26,10 +26,10 @@ public class SysRoleDTO {
     @ApiModelProperty("状态0:启用，1：禁用")
     private Integer status;
 
-    @ApiModelProperty("菜单id")
-    private Integer menuId;
+    @ApiModelProperty("权限id集合")
+    private String ids;
 
-    @ApiModelProperty("权限集字符串")
-    private String pids;
+//    @ApiModelProperty("权限集字符串")
+//    private String pids;
 
 }

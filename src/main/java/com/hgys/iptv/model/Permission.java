@@ -31,6 +31,7 @@ public class Permission {
 
     private Timestamp modifyTime;
 
+
 //    //资源路径--
 //    @Column(name = "uri", length = 100)
 //    private String uri;

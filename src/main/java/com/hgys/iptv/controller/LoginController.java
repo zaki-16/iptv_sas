@@ -6,8 +6,10 @@ import com.hgys.iptv.model.enums.LogResultEnum;
 import com.hgys.iptv.model.enums.LogTypeEnum;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.security.UserDetailsServiceImpl;
-import com.hgys.iptv.service.SysUserService;
-import com.hgys.iptv.util.*;
+import com.hgys.iptv.util.Logger;
+import com.hgys.iptv.util.RepositoryManager;
+import com.hgys.iptv.util.ReqAndRespHolder;
+import com.hgys.iptv.util.ResultVOUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,11 +23,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.Arrays;
 
 
 /**
@@ -45,25 +44,25 @@ public class LoginController {
     @Autowired
     private RepositoryManager repositoryManager;
 
-    @GetMapping("/index")
-    public String index(){
-        return "main";
+    @GetMapping("/link")
+    @ResponseStatus(HttpStatus.OK)
+    public ResultVO link(){
+        return ResultVOUtil.success("连接正常！");
     }
 
-//    @GetMapping("/login")
-//    public ResultVO login4get( @ApiParam(value = "登录名") String username,
-//                             @ApiParam(value = "登录密码") String password){
-//        return login(username,password);
-//    }
-    @PostMapping(value="/login")//loginIdentity
+    @GetMapping("/login")
+    public ResultVO login4get( @ApiParam(value = "登录名") String username,
+                             @ApiParam(value = "登录密码") String password){
+        return login(username,password);
+    }
+    @PostMapping(value="/login")
     @ApiOperation(value = "登录请求(管理员用户密码:admin/admin)")
     @ResponseStatus(HttpStatus.OK)
     public ResultVO login(
             @ApiParam(value = "登录名")
             @RequestParam("username")String username,
             @ApiParam(value = "登录密码")
-            @RequestParam("password")String password,
-            HttpServletResponse response){
+            @RequestParam("password")String password){
         // 防止权限 过滤器无条件登录
         if(StringUtils.isBlank(username) && StringUtils.isBlank(password)){
             return ResultVOUtil.error("1","您还未登录!");
@@ -81,7 +80,7 @@ public class LoginController {
             logger.log(username,"",ipAddr,LogTypeEnum.LOGIN.getType(), LogResultEnum.USER_NOT_EXIST.getResult());
             return ResultVOUtil.error("1","账户不存在!");
         }else {
-            if(1 == byUserName.getIsdelete()){
+            if(null!=byUserName.getIsdelete()&& 1 == byUserName.getIsdelete()){
                 logger.log(username,byUserName.getRealName(),ipAddr,LogTypeEnum.LOGIN.getType(), LogResultEnum.CANCEL.getResult());
                 return ResultVOUtil.error("1","账户已停用!");
             }
@@ -128,47 +127,38 @@ public class LoginController {
 
 
 
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    @PostMapping("/test1")
-//    public ResultVO addUser() {
-//        String username = ReqAndRespHolder.getRequest().getParameter("username");
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        System.out.println("test hasRole success................" );
-//        return ResultVOUtil.success("test hasRole success");
-//    }
-//
+
 //    @PreAuthorize(value = "hasPermission('cpMenu', 'view')")
 
-    private static final ThreadLocal<Object> threadLocal = new ThreadLocal<Object>(){
-         /**
-         * ThreadLocal没有被当前线程赋值时或当前线程刚调用remove方法后调用get方法，返回此方法值
-         */
-        @Override
-        protected Object initialValue()
-        {
-            String currentUsername = UserSessionInfoHolder.getCurrentUsername();
-            System.out.println("当前用户是："+currentUsername);
-            System.out.println("调用get方法时，当前线程共享变量没有设置，调用initialValue获取默认值！");
-            return null;
-        }
-    };
+//    private static final ThreadLocal<Object> threadLocal = new ThreadLocal<Object>(){
+//         /**
+//         * ThreadLocal没有被当前线程赋值时或当前线程刚调用remove方法后调用get方法，返回此方法值
+//         */
+//        @Override
+//        protected Object initialValue()
+//        {
+//            String currentUsername = UserSessionInfoHolder.getCurrentUsername();
+//            System.out.println("当前用户是："+currentUsername);
+//            return null;
+//        }
+//    };
 
-    @PostMapping("/myTest")
-    public ResultVO myTest() {
-        System.out.println("test  success................" );
-
-        Object o = LoginController.threadLocal.get();
-        Cookie[] cookies = ReqAndRespHolder.getRequest().getCookies();
-        Arrays.asList(cookies).forEach(c->{
-            if(c!=null){
-                System.out.println(c.getName());
-                System.out.println(c.getValue());
-            }
-        });
-        String currentUsername = UserSessionInfoHolder.getCurrentUsername();
-        System.out.println("当前用户是："+currentUsername);
-        return ResultVOUtil.success("test  success");
-    }
+//    @PostMapping("/myTest")
+//    public ResultVO myTest() {
+//        System.out.println("test  success................" );
+//
+//        Object o = LoginController.threadLocal.get();
+//        Cookie[] cookies = ReqAndRespHolder.getRequest().getCookies();
+//        Arrays.asList(cookies).forEach(c->{
+//            if(c!=null){
+//                System.out.println(c.getName());
+//                System.out.println(c.getValue());
+//            }
+//        });
+//        String currentUsername = UserSessionInfoHolder.getCurrentUsername();
+//        System.out.println("当前用户是："+currentUsername);
+//        return ResultVOUtil.success("test  success");
+//    }
 
 
 }

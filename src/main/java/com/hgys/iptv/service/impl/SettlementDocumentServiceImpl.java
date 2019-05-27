@@ -2,6 +2,7 @@ package com.hgys.iptv.service.impl;
 
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
+import cn.afterturn.easypoi.excel.entity.params.ExcelExportEntity;
 import com.hgys.iptv.controller.assemlber.SettlementDocumentControllerAssemlber;
 import com.hgys.iptv.controller.vm.SettlementDocumentCPListExcelVM;
 import com.hgys.iptv.controller.vm.SettlementDocumentCPListVM;
@@ -34,9 +35,8 @@ import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SettlementDocumentServiceImpl implements SettlementDocumentService {
@@ -232,6 +232,7 @@ public class SettlementDocumentServiceImpl implements SettlementDocumentService 
         return vm;
     }
 
+
     @Override
     public void excelSettlementInfo(Integer masterId, HttpServletResponse response) {
         //查询分账结算信息
@@ -242,7 +243,73 @@ public class SettlementDocumentServiceImpl implements SettlementDocumentService 
         AccountSettlement accountSettlement = byId.get();
         /** 1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定 */
         if (3 == accountSettlement.getSet_type()){
-            //查询产品级结算信息，根据产品分组
+            try{
+                List<ExcelExportEntity> colList = new ArrayList<>();
+                ExcelExportEntity colEntity = new ExcelExportEntity("账期", "time");
+                colEntity.setNeedMerge(true);
+                colList.add(colEntity);
+
+                colEntity = new ExcelExportEntity("CP", "cp");
+                colEntity.setNeedMerge(true);
+                colList.add(colEntity);
+
+                ExcelExportEntity deliColGroup = new ExcelExportEntity("增值业务包", "zz");
+                List<ExcelExportEntity> deliColList = new ArrayList<>();
+                //查询该分账结算下所有的产品，然后动态设置表头
+                QCpSettlementMoney qCpSettlementMoney = QCpSettlementMoney.cpSettlementMoney;
+                List<CpSettlementMoney> fetch = jpaQueryFactory.select(qCpSettlementMoney).from(qCpSettlementMoney)
+                        .where(qCpSettlementMoney.masterCode.eq(accountSettlement.getCode()))
+                        .groupBy(qCpSettlementMoney.productCode).fetch();
+                for (CpSettlementMoney c : fetch){
+                    deliColList.add(new ExcelExportEntity(c.getProductName(), c.getProductCode()));
+                    deliColGroup.setList(deliColList);
+                }
+                colList.add(deliColGroup);
+
+                List<Map<String, Object>> list = new ArrayList<>();
+                List<CpSettlementMoney> vms = jpaQueryFactory.selectFrom(qCpSettlementMoney)
+                        .where(qCpSettlementMoney.masterCode.eq(accountSettlement.getCode()))
+                        .groupBy(qCpSettlementMoney.cpcode).fetch();
+                //CP编码加产品编码作为键
+                Map<String, CpSettlementMoney> collect = vms.stream().collect(Collectors.toMap(s -> s.getCpcode() + s.getProductCode(), settlementDocumentCPListExcelVM -> settlementDocumentCPListExcelVM));
+
+                for(CpSettlementMoney excelVM : vms){
+                    Map<String, Object> valMap = new HashMap<>();
+                    //结算账期
+                    String startTime = new SimpleDateFormat("yyyy-MM-dd").format(accountSettlement.getSetStartTime());
+                    String endTime = new SimpleDateFormat("yyyy-MM-dd").format(accountSettlement.getSetEndTime());
+                    valMap.put("time",startTime + "-" + endTime);
+                    valMap.put("cp", excelVM.getCpname());
+
+                    //通过masterCode和cp编码查询出当前Cp在该账单所有的产品
+                    List<CpSettlementMoney> moneys = jpaQueryFactory.selectFrom(qCpSettlementMoney)
+                            .where(qCpSettlementMoney.masterCode.eq(accountSettlement.getCode()))
+                            .where(qCpSettlementMoney.cpcode.eq(excelVM.getCpcode())).fetch();
+
+                    List<Map<String, Object>> deliDetailList = new ArrayList<>();
+                    Map<String, Object> deliValMap = new HashMap<>();
+                    for(CpSettlementMoney cp : moneys){
+                        deliValMap.put(cp.getProductCode(),cp.getSettlementMoney());
+                    }
+                    deliDetailList.add(deliValMap);
+                    valMap.put("zz", deliDetailList);
+
+                    list.add(valMap);
+                }
+                //结算合计金额
+                BigDecimal decimal = cpSettlementMoneyRepository.jsAllmoney(accountSettlement.getCode());
+                if (null == decimal){
+                    decimal = new BigDecimal(0);
+                }
+                ExportParams exportParams = new ExportParams("甘肃广电IPTV业务结算报表", "产品级结算");
+                exportParams.setSecondTitle("合计金额:" + decimal.setScale(2).toString());
+                Workbook workbook = cn.afterturn.easypoi.excel.ExcelExportUtil.exportExcel(exportParams, colList,
+                        list);
+                ExcelForWebUtil.workBookExportExcel(response,workbook,"产品级账单结算报表");
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }else if (1 == accountSettlement.getSet_type() || 4 == accountSettlement.getSet_type()){
             String startTime = new SimpleDateFormat("yyyy-MM-dd").format(accountSettlement.getSetStartTime());
             String endTime = new SimpleDateFormat("yyyy-MM-dd").format(accountSettlement.getSetEndTime());
@@ -270,6 +337,74 @@ public class SettlementDocumentServiceImpl implements SettlementDocumentService 
 
             Workbook sheets = ExcelExportUtil.exportExcel(new ExportParams(timeHead,"订购量结算&CP定比例结算"), CpSettlementInfoExcelDTO.class, dtos);
             ExcelForWebUtil.workBookExportExcel(response,sheets,"Cp结算账单结算信息表");
+        }else if (2 == accountSettlement.getSet_type() || 5 == accountSettlement.getSet_type()){
+            try{
+                List<ExcelExportEntity> colList = new ArrayList<>();
+                ExcelExportEntity colEntity = new ExcelExportEntity("账期", "time");
+                colEntity.setNeedMerge(true);
+                colList.add(colEntity);
+
+                colEntity = new ExcelExportEntity("CP", "cp");
+                colEntity.setNeedMerge(true);
+                colList.add(colEntity);
+
+                ExcelExportEntity deliColGroup = new ExcelExportEntity("业务", "yw");
+                List<ExcelExportEntity> deliColList = new ArrayList<>();
+                //查询该分账结算下所有的业务，然后动态设置表头
+                QCpSettlementMoney qCpSettlementMoney = QCpSettlementMoney.cpSettlementMoney;
+                List<CpSettlementMoney> fetch = jpaQueryFactory.select(qCpSettlementMoney).from(qCpSettlementMoney)
+                        .where(qCpSettlementMoney.masterCode.eq(accountSettlement.getCode()))
+                        .groupBy(qCpSettlementMoney.businessCode).fetch();
+                for (CpSettlementMoney c : fetch){
+                    deliColList.add(new ExcelExportEntity(c.getBusinessName(), c.getBusinessCode()));
+                    deliColGroup.setList(deliColList);
+                }
+                colList.add(deliColGroup);
+
+                List<Map<String, Object>> list = new ArrayList<>();
+                List<CpSettlementMoney> vms = jpaQueryFactory.selectFrom(qCpSettlementMoney)
+                        .where(qCpSettlementMoney.masterCode.eq(accountSettlement.getCode()))
+                        .groupBy(qCpSettlementMoney.cpcode).fetch();
+                //CP编码加产品编码作为键
+                Map<String, CpSettlementMoney> collect = vms.stream().collect(Collectors.toMap(s -> s.getCpcode() + s.getProductCode(), settlementDocumentCPListExcelVM -> settlementDocumentCPListExcelVM));
+
+                for(CpSettlementMoney excelVM : vms){
+                    Map<String, Object> valMap = new HashMap<>();
+                    //结算账期
+                    String startTime = new SimpleDateFormat("yyyy-MM-dd").format(accountSettlement.getSetStartTime());
+                    String endTime = new SimpleDateFormat("yyyy-MM-dd").format(accountSettlement.getSetEndTime());
+                    valMap.put("time",startTime + "-" + endTime);
+                    valMap.put("cp", excelVM.getCpname());
+
+                    //通过masterCode和cp编码查询出当前Cp在该账单所有的业务
+                    List<CpSettlementMoney> moneys = jpaQueryFactory.selectFrom(qCpSettlementMoney)
+                            .where(qCpSettlementMoney.masterCode.eq(accountSettlement.getCode()))
+                            .where(qCpSettlementMoney.cpcode.eq(excelVM.getCpcode())).fetch();
+
+                    List<Map<String, Object>> deliDetailList = new ArrayList<>();
+                    Map<String, Object> deliValMap = new HashMap<>();
+                    for(CpSettlementMoney cp : moneys){
+                        deliValMap.put(cp.getBusinessCode(),cp.getSettlementMoney());
+                    }
+                    deliDetailList.add(deliValMap);
+                    valMap.put("yw", deliDetailList);
+
+                    list.add(valMap);
+                }
+                //结算合计金额
+                BigDecimal decimal = cpSettlementMoneyRepository.jsAllmoney(accountSettlement.getCode());
+                if (null == decimal){
+                    decimal = new BigDecimal(0);
+                }
+                ExportParams exportParams = new ExportParams("甘肃广电IPTV业务结算报表（移动侧）", "业务级结算&业务定比列结算");
+                exportParams.setSecondTitle("合计金额:" + decimal.setScale(2).toString());
+                Workbook workbook = cn.afterturn.easypoi.excel.ExcelExportUtil.exportExcel(exportParams, colList,
+                        list);
+                ExcelForWebUtil.workBookExportExcel(response,workbook,"业务级级账单结算报表");
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
     }

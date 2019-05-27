@@ -1,23 +1,26 @@
-package com.hgys.iptv.model.dto;
+package com.hgys.iptv.model.bean;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
- * @ClassName AuthorityDTO
+ * @ClassName AuthorityNode
  * @Auther: wangz
- * @Date: 2019/5/20 09:24
+ * @Date: 2019/5/24 22:13
  * @Description: TODO
  */
 @Data
-public class AuthorityDTO {
+public class AuthorityNode {
     private Integer id;
 
-//    private String name;// name = menuName+":"+permName;
-
+    private String name;// name = menuName+":"+permName;
     //菜单 id
     private Integer menuId;
 
-    private String name;
+    private Integer parentId;//权限父节点
+
+    private String description;
 //    //菜单 名称
 //    private String menuName;
 //    // 权限 id
@@ -26,5 +29,7 @@ public class AuthorityDTO {
 //    private String permName;
 
     private Integer status;//0:启用，1：禁用
+
+    private List<AuthorityNode> childrens;
 
 }

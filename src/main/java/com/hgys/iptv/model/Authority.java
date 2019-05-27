@@ -22,15 +22,20 @@ public class Authority {
     @Column(name = "id", unique = true, nullable = false, length = 11)
     private Integer id;
 
-//    private String name;// name = menuName+":"+permName;
+    private String name;// name = menuName+":"+permName;
+
+    private String text;
     //菜单 id
     private Integer menuId;
-    //菜单 名称
+//    //菜单 名称
     private String menuName;
-    // 权限 id
-    private Integer permId;
-    // 权限 名称
-    private String permName;
+//    // 权限 id
+//    private Integer permId;
+//    // 权限 名称
+//    private String permName;
+//    private Integer parentId;//权限父节点
+
+//    private String description;
 
     private Integer status;//0:启用，1：禁用
 

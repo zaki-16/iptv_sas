@@ -62,10 +62,12 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
 //            return ResultVOUtil.error("1",byName + "名称已经存在");
 //        }
             //必填字段：业务名臣，业务类型，结算类型，状态
-            String[] cols = {vm.getName(),vm.getBizType().toString(),
-                    vm.getSettleType().toString(),vm.getStatus().toString()};
-            if(!Validator.validEmptyPass(cols))//必填字段不为空则插入
-                return ResultVOUtil.error("1","有必填字段未填写！");
+            if(StringUtils.isBlank(vm.getName()))
+                return ResultVOUtil.error("1","业务名称不能为空！");
+            if(vm.getBizType()==null)
+                return ResultVOUtil.error("1","业务类型不能为空！");
+            if(vm.getStatus()==null)
+                return ResultVOUtil.error("1","状态不能为空！");
             //1.存cp主表并返回
             Business business = new Business();
             BeanUtils.copyProperties(vm, business);

@@ -4,14 +4,25 @@ server:
     uri-encoding: utf-8
   connection-timeout: 10
 
+#本地数据库
 spring:
   datasource:
     username: root
-    password: root
+    password: 953828yp
     #serverTimezone=GMT
     url: jdbc:mysql://localhost:3306/iptv_sas?characterEncoding=utf-8&useSSl=false&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
+
+#外网数据库
+#spring:
+#  datasource:
+#    username: developer
+#    password: 1234@Qwer
+#    #serverTimezone=GMT
+#    url: jdbc:mysql://132.232.138.176:5696/iptv_sas?characterEncoding=utf-8&useSSl=false&serverTimezone=Asia/Shanghai
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    type: com.alibaba.druid.pool.DruidDataSource
 
   jpa:
     show-sql: true

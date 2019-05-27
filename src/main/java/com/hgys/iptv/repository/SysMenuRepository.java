@@ -9,4 +9,5 @@ public interface SysMenuRepository extends BaseRepository<SysMenu,Integer>{
 
     @Query(value = "SELECT MAX(m.level) FROM sys_menu m",nativeQuery = true)
     Integer getLevel();
+
 }

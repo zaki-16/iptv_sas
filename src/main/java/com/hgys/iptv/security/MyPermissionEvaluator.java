@@ -25,18 +25,19 @@ public class MyPermissionEvaluator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         boolean accessable = false;
-        if(authentication.getName().compareToIgnoreCase("anonymousUser") != 0){
-            //e.g 注解配置 targetDomainObject:permission = cpMenu:view
-            String privilege = targetDomainObject + ":" + permission;
-            for(GrantedAuthority authority : authentication.getAuthorities()){
-                if(privilege.equalsIgnoreCase(authority.getAuthority())){
-                    accessable = true;
-                    break;
-                }
-            }
-            return accessable;
-        }
-        return accessable;
+        return true;
+//        if(authentication.getName().compareToIgnoreCase("anonymousUser") != 0){
+//            //e.g 注解配置 targetDomainObject:permission = cpMenu:view
+//            String privilege = targetDomainObject + ":" + permission;
+//            for(GrantedAuthority authority : authentication.getAuthorities()){
+//                if(privilege.equalsIgnoreCase(authority.getAuthority())){
+//                    accessable = true;
+//                    break;
+//                }
+//            }
+//            return accessable;
+//        }
+//        return accessable;
     }
 
     @Override
