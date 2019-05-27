@@ -216,6 +216,19 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
             if(null == username || (username.compareTo("anonymousUser")==0))
                 return  ResultVOUtil.error("1","密码已过期或未登录！");
 
+            //校验邮箱
+            if(StringUtils.isNotBlank(userDTO.getEmail()))
+                if(!userDTO.getEmail().matches("([A-Za-z0-9_\\-\\.])+\\@([A-Za-z0-9_\\-\\.])+\\.([A-Za-z]{2,4})$"))
+                    return ResultVOUtil.error("1","请输入正确邮箱！");
+            //校验座机电话
+            if(StringUtils.isNotBlank(userDTO.getTelephone()))
+                if(!userDTO.getTelephone().matches("(\\(\\d{3,4}\\)|\\d{3,4}-|\\s)?\\d{7,14}$"))
+                    return ResultVOUtil.error("1","请输入正确固话号码！");
+            //校验手机号
+            if(StringUtils.isNotBlank(userDTO.getMobilePhone()))
+                if(!userDTO.getMobilePhone().matches("1([38]\\d|5[0-35-9]|7[3678])\\d{8}"))
+                    return ResultVOUtil.error("1","请输入正确手机号！");
+
             User user = new User();
             BeanUtils.copyProperties(userDTO,user);
             user.setModifyTime(new Timestamp(System.currentTimeMillis()));

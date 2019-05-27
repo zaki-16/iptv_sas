@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.aop.SystemControllerLog;
 import com.hgys.iptv.common.Criteria;
 import com.hgys.iptv.common.Restrictions;
 import com.hgys.iptv.model.Authority;
@@ -51,7 +52,8 @@ public class TestController   {
     }
 
     @GetMapping("/tester")
-    public ResultVO myTest1(HttpServletRequest request){
+    @SystemControllerLog(target = "测试",methodName = "TestController.tester",type = "test")
+    public ResultVO tester(HttpServletRequest request){
 //        Page<Authority> pageByHql = repositoryManager.findPageByHql(Authority.class, null, null, 0, 10, null);
 ////        List<Map<String, Object>> pageBySql = repositoryManager.findPageBySql("SELECT * FROM authority", 1, 10, null);
 //        Map<String, Object> criteria = repositoryManager.initCriteria();
