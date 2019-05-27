@@ -21,8 +21,6 @@ public class QAuthority extends EntityPathBase<Authority> {
 
     public final DateTimePath<java.sql.Timestamp> createdTime = createDateTime("createdTime", java.sql.Timestamp.class);
 
-    public final StringPath description = createString("description");
-
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
     public final NumberPath<Integer> menuId = createNumber("menuId", Integer.class);
@@ -30,8 +28,6 @@ public class QAuthority extends EntityPathBase<Authority> {
     public final StringPath menuName = createString("menuName");
 
     public final StringPath name = createString("name");
-
-    public final NumberPath<Integer> parentId = createNumber("parentId", Integer.class);
 
     public final NumberPath<Integer> status = createNumber("status", Integer.class);
 
