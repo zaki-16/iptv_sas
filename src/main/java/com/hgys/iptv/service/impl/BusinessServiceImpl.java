@@ -230,19 +230,29 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
             BusinessVM vm = new BusinessVM();
             BeanUtils.copyProperties(business,vm);
             //查关联的产品--先按cpid查cp_product中间表查出pid集合-->按pid去 findAllById
-            Set<Integer> pidSet = cpProductRepository.findAllPid(id);
+            Set<Integer> pidSet = productBusinessRepository.findAllPid(id);
             List<Product> pList = productRepository.findAllById(pidSet);
-            vm.setpList(pList);
+            ArrayList<Product> PList = new ArrayList<>();
+            //筛除已停用、删除的产品
+            pList.forEach(p->{
+                if(p.getIsdelete()==0&&p.getStatus()==0)
+                    PList.add(p);
+            });
+            vm.setpList(PList);
+
             //查关联的cp
             Set<Integer> cpidSet = cpBusinessRepository.findAllCpid(id);
             List<Cp> cpList = cpRepository.findAllById(cpidSet);
-            vm.setCpList(cpList);
-
-            if(business!=null)
-                return ResultVOUtil.success(vm);
-            return ResultVOUtil.error("1","所查询的业务列表不存在!");
+            ArrayList<Cp> CPList = new ArrayList<>();
+            //筛除已停用、删除的
+            cpList.forEach(b->{
+                if(b.getIsdelete()==0&&(b.getStatus()==1||b.getStatus()==2))
+                    CPList.add(b);
+            });
+            vm.setCpList(CPList);
+           return ResultVOUtil.success(vm);
         }catch (Exception e){
-            return ResultVOUtil.error("1","所查cp不存在");
+            return ResultVOUtil.error("1","所查业务不存在");
         }
     }
 
@@ -260,13 +270,14 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
     }
 
     /**
-     * 列表查询
+     * 列表查询所有未删除、未停用的业务
      * @return
      */
     @Override
     public ResultVO<?> findAll() {
         Map<String,Object> vm = new HashMap<>();
         vm.put("isdelete",0);
+        vm.put("status",0);
         List<?> buss =findByCriteria(Business.class,vm);
         if(buss!=null&&buss.size()>0)
             return ResultVOUtil.success(buss);

@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.aop.SystemControllerLog;
 import com.hgys.iptv.controller.vm.ProductAddVM;
 import com.hgys.iptv.controller.vm.ProductControllerListVM;
 import com.hgys.iptv.controller.vm.ProductListVM;
@@ -33,11 +34,14 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
     @Autowired
     private ProductService productService;
+    //操作对象
+    private static final String target = "产品管理";
 
     @PostMapping("/saveProduct")
     @ApiOperation(value = "新增产品",notes = "@return：产品对象")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize(value = "hasPermission('prodManager', 'add')")
+    @SystemControllerLog(target = target,methodName = "ProductController.saveProduct",type = "新增")
     public ResultVO<?> saveProduct(
             @ApiParam(value = "产品新增VM")  @RequestBody() ProductAddVM vm){
         return productService.save(vm);
@@ -47,6 +51,7 @@ public class ProductController {
     @ApiOperation(value = "更新产品",notes = "@return：产品对象")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('prodManager', 'update')")
+    @SystemControllerLog(target = target,methodName = "ProductController.saveProduct",type = "修改")
     public ResultVO<?> updateProduct(
             @ApiParam(value = "产品修改VM") @RequestBody() ProductAddVM vm){
         return productService.update(vm);
@@ -67,6 +72,7 @@ public class ProductController {
     @ApiOperation(value = "批量逻辑删除产品",notes = "@return：true/false")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('prodManager', 'remove')")
+    @SystemControllerLog(target = target,methodName = "ProductController.batchLogicDelete",type = "删除")
     public ResultVO<?> batchLogicDelete(String ids){
         return productService.batchLogicDelete(ids);
     }

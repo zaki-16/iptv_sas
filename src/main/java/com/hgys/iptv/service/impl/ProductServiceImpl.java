@@ -226,17 +226,26 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
             //查关联cp
             Set<Integer> cpidSet = cpProductRepository.findAllCpid(id);
             List<Cp> cpList = cpRepository.findAllById(cpidSet);
-            productListVM.setCpList(cpList);
+            ArrayList<Cp> CPList = new ArrayList<>();
+            cpList.forEach(cp->{
+                if(cp.getIsdelete()==0&&(cp.getStatus()==1||cp.getStatus()==2))
+                    CPList.add(cp);
+            });
+            productListVM.setCpList(CPList);
             //查关联业务：先查中间表->bidSet->findAll
             Set<Integer> bidSet = productBusinessRepository.findAllBid(id);
             List<Business> bList = businessRepository.findAllById(bidSet);
-            productListVM.setbList(bList);
 
-            if(prod!=null)
-                return ResultVOUtil.success(productListVM);
-            return ResultVOUtil.error("1","所查询的产品不存在!");
+            ArrayList<Business> BList = new ArrayList<>();
+            //筛除已停用、删除的产品
+            bList.forEach(p->{
+                if(p.getIsdelete()==0&&p.getStatus()==0)
+                    BList.add(p);
+            });
+            productListVM.setbList(BList);
+            return ResultVOUtil.success(productListVM);
         }catch (Exception e){
-            return ResultVOUtil.error("1","所查cp不存在");
+            return ResultVOUtil.error("1","所查产品不存在");
         }
     }
 
@@ -255,13 +264,14 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
     }
 
     /**
-     * 列表查询
+     * 列表查询所有未停用未删除的产品
      * @return
      */
     @Override
     public ResultVO<?> findAll() {
         Map<String,Object> vm = new HashMap<>();
         vm.put("isdelete",0);
+        vm.put("status",0);
         List<Product> prods =findByCriteria(Product.class,vm);
         if(prods!=null&&prods.size()>0)
             return ResultVOUtil.success(prods);

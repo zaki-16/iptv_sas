@@ -82,6 +82,10 @@ public class LoginController {
         }else {
             if(null!=byUserName.getIsdelete()&& 1 == byUserName.getIsdelete()){
                 logger.log(username,byUserName.getRealName(),ipAddr,LogTypeEnum.LOGIN.getType(), LogResultEnum.CANCEL.getResult());
+                return ResultVOUtil.error("1","账户已注销!");
+            }
+            if(null!=byUserName.getStatus()&& 1 == byUserName.getStatus()){
+                logger.log(username,byUserName.getRealName(),ipAddr,LogTypeEnum.LOGIN.getType(), LogResultEnum.USER_OFF.getResult());
                 return ResultVOUtil.error("1","账户已停用!");
             }
         }

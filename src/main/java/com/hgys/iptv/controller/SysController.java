@@ -1,5 +1,6 @@
 package com.hgys.iptv.controller;
 
+import com.hgys.iptv.aop.SystemControllerLog;
 import com.hgys.iptv.model.Role;
 import com.hgys.iptv.model.User;
 import com.hgys.iptv.model.dto.SysPermissionDTO;
@@ -38,6 +39,9 @@ public class SysController {
     @Autowired
     private SysPermissionService sysPermissionService;
 
+    private static final String target_user = "用户管理";
+    private static final String target_role = "角色管理";
+
     /*
     --------------------------------用户------------------------------------------
     3.批量启用、停用功能
@@ -46,7 +50,7 @@ public class SysController {
     @GetMapping("/findAllUser")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "查询用户列表")
-//    @PreAuthorize(value = "hasPermission('userManager', 'view')")
+    @PreAuthorize(value = "hasPermission('userManager', 'view')")
     public Page<User> findAllUser(String username, String realName,
                                   @ApiParam(value = "cp简称") String cpAbbr,
                                   Integer status,
@@ -59,7 +63,7 @@ public class SysController {
     @GetMapping("/findByUserName")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "根据用户名查询")
-//    @PreAuthorize(value = "hasPermission('userManager', 'view')")
+    @PreAuthorize(value = "hasPermission('userManager', 'view')")
     public ResultVO findByUserName(String username) {
         return sysUserService.findByUserName(username);
     }
@@ -72,7 +76,7 @@ public class SysController {
      */
     @GetMapping("/findUserById")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize(value = "hasPermission('userManager', 'view')")
+    @PreAuthorize(value = "hasPermission('userManager', 'view')")
     public ResultVO findUserById(Integer id) {
         return sysUserService.findUserById(id);
     }
@@ -86,7 +90,8 @@ public class SysController {
     @ApiOperation(value = "添加用户")
     @PostMapping("/addUser")
     @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize(value = "hasPermission('userManager', 'add')")
+    @PreAuthorize(value = "hasPermission('userManager', 'add')")
+    @SystemControllerLog(target = target_user,methodName = "SysController.addUser",type = "新增")
     public ResultVO addUser(@RequestBody(required = false) SysUserDTO sysUserDTO) {
         return sysUserService.addUser(sysUserDTO);
     }
@@ -94,7 +99,8 @@ public class SysController {
     @PostMapping("/updateUser")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "更新用户")
-//    @PreAuthorize(value = "hasPermission('userManager', 'update')")
+    @PreAuthorize(value = "hasPermission('userManager', 'update')")
+    @SystemControllerLog(target = target_user,methodName = "SysController.updateUser",type = "修改")
     public ResultVO updateUser(@RequestBody SysUserDTO sysUserDTO) {
         return sysUserService.updateUser(sysUserDTO);
     }
@@ -102,6 +108,7 @@ public class SysController {
     @PostMapping("/personalUpdate")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "用户自己修改个性资料--不提供用户名、密码和id")
+    @SystemControllerLog(target = target_user,methodName = "SysController.personalUpdate",type = "修改")
     public ResultVO personalUpdate(@RequestBody SysUserDTO sysUserDTO) {
         return sysUserService.personalUpdate(sysUserDTO);
     }
@@ -115,7 +122,8 @@ public class SysController {
 
     @DeleteMapping("/batchLogicDeleteUser")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize(value = "hasPermission('userManager', 'remove')")
+    @PreAuthorize(value = "hasPermission('userManager', 'remove')")
+    @SystemControllerLog(target = target_user,methodName = "SysController.batchLogicDeleteUser",type = "删除")
     public ResultVO batchLogicDeleteUser(String ids) {
         return sysUserService.batchLogicDelete(ids);
     }
@@ -123,7 +131,7 @@ public class SysController {
     //
     @PostMapping("/modifyPassword")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "修改密码")
+    @ApiOperation(value = "用户自己修改密码")
 //    @PreAuthorize(value = "hasPermission('userManager', 'update')")
     public ResultVO modifyPassword(
             @RequestParam("password_old")String password_old,
@@ -133,35 +141,45 @@ public class SysController {
 
     @PostMapping("/resetPassword")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "重置密码为 123456")
-//    @PreAuthorize(value = "hasPermission('userManager', 'update')")
+    @ApiOperation(value = "管理员修改密码，重置密码为 123456")
+    @PreAuthorize(value = "hasPermission('userManager', 'update')")
+    @SystemControllerLog(target = target_user,methodName = "SysController.resetPassword",type = "重置密码")
     public ResultVO resetPassword(String username) {
         return sysUserService.resetPassword(username);
     }
 
     @PostMapping("/batchOnUser")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize(value = "hasPermission('userManager', 'batchOn')")
+    @PreAuthorize(value = "hasPermission('userManager', 'batchOn')")
+    @SystemControllerLog(target = target_user,methodName = "SysController.batchOnUser",type = "批量启用")
     public ResultVO batchOnUser(String ids){
         return sysUserService.batchOnUser(ids);
     }
 
     @PostMapping("/batchOffUser")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize(value = "hasPermission('userManager', 'batchOff')")
+    @PreAuthorize(value = "hasPermission('userManager', 'batchOff')")
+    @SystemControllerLog(target = target_user,methodName = "SysController.batchOffUser",type = "批量停用")
     public ResultVO batchOffUser(String ids){
         return sysUserService.batchOffUser(ids);
     }
 
     /*
     --------------------------------角色------------------------------------------
-   新增角色时，先加载菜单树+权限范围列表。新增操作是向
      */
+//    @GetMapping("/findAllRole")
+//    @ApiOperation(value = "查询角色列表",notes = "@return :角色列表")
+//    @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize(value = "hasPermission('roleManager', 'view')")
+//    public ResultVO findAllRole() {
+//            return sysRoleService.findAllRole();
+//    }
+
     @GetMapping("/findAllRole")
     @ApiOperation(value = "查询角色列表",notes = "@return :角色列表")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize(value = "hasPermission('userManager', 'update')")
-    public Page<Role> findAllRole(String name, Integer status,
+    @PreAuthorize(value = "hasPermission('roleManager', 'view')")
+    public Page<Role> findAllRoleOfPage(String name, Integer status,
                                   @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")Integer pageNum,
                                   @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")Integer pageSize) {
         return sysRoleService.findAllRoleOfPage(name,status,pageNum,pageSize);
@@ -174,6 +192,8 @@ public class SysController {
     @PostMapping("/addRole")
     @ApiOperation(value = "添加角色")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('roleManager', 'add')")
+    @SystemControllerLog(target = target_role,methodName = "SysController.addRole",type = "新增")
     public ResultVO addRole(@RequestBody SysRoleDTO sysRoleDTO) {
         return sysRoleService.addRole(sysRoleDTO);
     }
@@ -192,12 +212,16 @@ public class SysController {
 
     @PostMapping("/updateRole")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('roleManager', 'update')")
+    @SystemControllerLog(target = target_role,methodName = "SysController.updateRole",type = "修改")
     public ResultVO updateRole(@RequestBody SysRoleDTO sysRoleDTO) {
         return sysRoleService.updateRole(sysRoleDTO);
     }
 
     @DeleteMapping("/batchLogicDeleteRole")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(value = "hasPermission('roleManager', 'remove')")
+    @SystemControllerLog(target = target_role,methodName = "SysController.batchLogicDeleteRole",type = "删除")
     public ResultVO batchLogicDeleteRole(String ids) {
         return sysRoleService.batchLogicDelete(ids);
     }
@@ -205,19 +229,21 @@ public class SysController {
 
     @PostMapping("/batchOnRole")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize(value = "hasPermission('roleManager', 'batchOn')")
+    @PreAuthorize(value = "hasPermission('roleManager', 'batchOn')")
+    @SystemControllerLog(target = target_role,methodName = "SysController.batchOnRole",type = "批量启用")
     public ResultVO batchOnRole(String ids){
         return sysRoleService.batchOnRole(ids);
     }
 
     @PostMapping("/batchOffRole")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize(value = "hasPermission('roleManager', 'batchOn')")
+    @PreAuthorize(value = "hasPermission('roleManager', 'batchOff')")
+    @SystemControllerLog(target = target_role,methodName = "SysController.batchOffRole",type = "批量停用")
     public ResultVO batchOffRole(String ids){
         return sysRoleService.batchOffRole(ids);
     }
     /*
-    --------------------------------权限------------------------------------------
+    --------------------------------虚权限------------------------------------------
      */
     @GetMapping("/findAllPermission")
     @ResponseStatus(HttpStatus.OK)
