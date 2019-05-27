@@ -179,6 +179,7 @@ public class OrderCpServiceImpl implements OrderCpService {
                 predicates.add(condition);
             }
 
+
             if (org.apache.commons.lang3.StringUtils.isNotBlank(status)) {
                 Predicate condition = builder.equal(root.get("status"), status);
                 predicates.add(condition);
