@@ -166,17 +166,16 @@ public class SysController {
 
     /*
     --------------------------------角色------------------------------------------
-   新增角色时，先加载菜单树+权限范围列表。新增操作是向
      */
-    @GetMapping("/findAllRole")
-    @ApiOperation(value = "查询角色列表",notes = "@return :角色列表")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize(value = "hasPermission('roleManager', 'view')")
-    public ResultVO findAllRole() {
-            return sysRoleService.findAllRole();
-    }
+//    @GetMapping("/findAllRole")
+//    @ApiOperation(value = "查询角色列表",notes = "@return :角色列表")
+//    @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize(value = "hasPermission('roleManager', 'view')")
+//    public ResultVO findAllRole() {
+//            return sysRoleService.findAllRole();
+//    }
 
-    @GetMapping("/findAllRoleOfPage")
+    @GetMapping("/findAllRole")
     @ApiOperation(value = "查询角色列表",notes = "@return :角色列表")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('roleManager', 'view')")
