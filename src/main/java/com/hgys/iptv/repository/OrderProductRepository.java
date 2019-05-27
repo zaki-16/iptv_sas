@@ -45,6 +45,7 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct,Objec
     @Query(value = "select o.mode from OrderProduct o where o.code = ?1")
     int findBymode(String code);
 
-
+    @Query(value = "select o.name from OrderProduct o where o.code = ?1")
+    String findByMasterCodes(String Code);
 
 }

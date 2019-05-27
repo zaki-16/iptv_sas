@@ -126,6 +126,24 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             account.setIsdelete(0);
             account.setSet_ruleCode(vm.getSet_ruleCode());
             account.setSet_type(vm.getSet_type());
+            account.setSet_ruleName(vm.getSet_ruleName());
+            if(vm.getSet_type()==1){
+                String rulename = orderQuantityRepository.findByMastername(vm.getSet_ruleCode());
+                account.setSet_ruleName(rulename);
+            }else if(vm.getSet_type()==2){
+                String rulename = orderBusinessRepository.findByMasterCodes(vm.getSet_ruleCode());
+                account.setSet_ruleName(rulename);
+            }else if(vm.getSet_type()==3){
+                String rulename = orderProductRepository.findByMasterCodes(vm.getSet_ruleCode());
+                account.setSet_ruleName(rulename);
+            }else if(vm.getSet_type()==4){
+                String rulename = orderCpRepository.findByMasterCodes(vm.getSet_ruleCode());
+                account.setSet_ruleName(rulename);
+            }else if(vm.getSet_type()==3){
+                String rulename = orderBusinessComparisonRepository.findByMasterCodes(vm.getSet_ruleCode());
+                account.setSet_ruleName(rulename);
+            }
+
             account.setRemakes(StringUtils.trimToEmpty(vm.getRemakes()));
             account.setStatus(1);
             account.setSet_type(vm.getSet_type());
@@ -155,6 +173,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
                     order.setOrderMoney(vm.getOrderMoney());
                     settlementOrderRepository.save(order);
                 }
+
             }else if (2 == vm.getSet_type()){
                 //校验数据
                 if (null == vm.getBusinessMoney()){
