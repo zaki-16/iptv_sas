@@ -267,7 +267,8 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
     @Override
     public ResultVO<?> findAll() {
         Map<String,Object> vm = new HashMap<>();
-        vm.put("isdelete",0);
+        vm.put("isdelete",0);//已删除
+//        vm.put("status",4);//已注销
         List<?> cps =findByCriteria(Cp.class,vm);
         if(cps!=null&&cps.size()>0)
             return ResultVOUtil.success(cps);

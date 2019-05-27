@@ -227,9 +227,9 @@ public class ProductServiceImpl extends AbstractBaseServiceImpl implements Produ
             Set<Integer> cpidSet = cpProductRepository.findAllCpid(id);
             List<Cp> cpList = cpRepository.findAllById(cpidSet);
             ArrayList<Cp> CPList = new ArrayList<>();
-            cpList.forEach(p->{
-                if(p.getIsdelete()==0&&p.getStatus()==0)
-                    CPList.add(p);
+            cpList.forEach(cp->{
+                if(cp.getIsdelete()==0&&(cp.getStatus()==1||cp.getStatus()==2))
+                    CPList.add(cp);
             });
             productListVM.setCpList(CPList);
             //查关联业务：先查中间表->bidSet->findAll
