@@ -3,7 +3,6 @@ package com.hgys.iptv.service.impl;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.QBusinessComparisonRelation;
 import com.hgys.iptv.model.QCpOrderBusinessComparison;
-import com.hgys.iptv.model.QCpSettlementMoney;
 import com.hgys.iptv.model.QOrderBusinessCp;
 import com.hgys.iptv.model.QOrderBusinessWithCp;
 import com.hgys.iptv.model.QOrderProduct;
