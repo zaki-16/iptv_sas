@@ -233,7 +233,7 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
             Set<Integer> pidSet = productBusinessRepository.findAllPid(id);
             List<Product> pList = productRepository.findAllById(pidSet);
             ArrayList<Product> PList = new ArrayList<>();
-            //1.对pList 筛选已停用、删除的产品
+            //筛除已停用、删除的产品
             pList.forEach(p->{
                 if(p.getIsdelete()==0&&p.getStatus()==0)
                     PList.add(p);
@@ -244,9 +244,9 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
             Set<Integer> cpidSet = cpBusinessRepository.findAllCpid(id);
             List<Cp> cpList = cpRepository.findAllById(cpidSet);
             ArrayList<Cp> CPList = new ArrayList<>();
-            //筛除已停用、删除的产品
+            //筛除已停用、删除的
             cpList.forEach(b->{
-                if(b.getIsdelete()==0&&b.getStatus()==0)
+                if(b.getIsdelete()==0&&(b.getStatus()==1||b.getStatus()==2))
                     CPList.add(b);
             });
             vm.setCpList(CPList);
@@ -270,13 +270,14 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
     }
 
     /**
-     * 列表查询
+     * 列表查询所有未删除、未停用的业务
      * @return
      */
     @Override
     public ResultVO<?> findAll() {
         Map<String,Object> vm = new HashMap<>();
         vm.put("isdelete",0);
+        vm.put("status",0);
         List<?> buss =findByCriteria(Business.class,vm);
         if(buss!=null&&buss.size()>0)
             return ResultVOUtil.success(buss);

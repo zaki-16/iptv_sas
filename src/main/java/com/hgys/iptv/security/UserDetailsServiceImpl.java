@@ -63,10 +63,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public void getAuthorities(User user, Set<GrantedAuthority> authorities) {
         List<Role> roles = sysUserService.findAllRoleByUserId(user.getId());
         roles.forEach(role->{
-            Role role_ = roleRepository.findById(role.getId()).get();
+            Role role_ = roleRepository.findById(role.getId()).orElse(null);
+            if(role_==null || role_.getStatus()==1)//角色不存在或该角色已停用
+                return;
             List<Authority> auths = sysRoleService.findAllAuthorityByRoleId(role_.getId());
             auths.forEach(auth->{
-                authorities.add(new SimpleGrantedAuthority(auth.getName()));
+                if(auth.getStatus()==0)//权限被启用的才被加入授权上下文
+                    authorities.add(new SimpleGrantedAuthority(auth.getName()));
             });
         });
     }
