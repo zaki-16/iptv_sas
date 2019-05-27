@@ -80,7 +80,7 @@ public class LoginController {
             logger.log(username,"",ipAddr,LogTypeEnum.LOGIN.getType(), LogResultEnum.USER_NOT_EXIST.getResult());
             return ResultVOUtil.error("1","账户不存在!");
         }else {
-            if(1 == byUserName.getIsdelete()){
+            if(null!=byUserName.getIsdelete()&& 1 == byUserName.getIsdelete()){
                 logger.log(username,byUserName.getRealName(),ipAddr,LogTypeEnum.LOGIN.getType(), LogResultEnum.CANCEL.getResult());
                 return ResultVOUtil.error("1","账户已停用!");
             }

@@ -1,26 +1,26 @@
 package com.hgys.iptv.controller;
 
-import com.hgys.iptv.model.User;
+import com.hgys.iptv.common.Criteria;
+import com.hgys.iptv.common.Restrictions;
+import com.hgys.iptv.model.Authority;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.AuthorityRepository;
 import com.hgys.iptv.repository.RoleRepository;
-import com.hgys.iptv.repository.SysRoleAuthorityRepository;
 import com.hgys.iptv.util.RepositoryManager;
-import com.hgys.iptv.util.ReqAndRespHolder;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UserSessionInfoHolder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * @ClassName TestController
@@ -30,14 +30,12 @@ import java.util.Collection;
  */
 @RestController
 @RequestMapping("/test")
-@Api(value="TestController",tags = "自用调试Api接口")
+@Api(value="TestController",tags = "a自用调试Api接口")
 public class TestController   {
     @Autowired
     private JPAQueryFactory queryFactory;
     @Autowired
     private AuthorityRepository authorityRepository;
-    @Autowired
-    private SysRoleAuthorityRepository sysRoleAuthorityRepository;
     @Autowired
     private RepositoryManager repositoryManager;
     @Autowired
@@ -52,18 +50,18 @@ public class TestController   {
         return ResultVOUtil.success(currentUsername);
     }
 
-    @RequestMapping("/tester")
+    @GetMapping("/tester")
     public ResultVO myTest1(HttpServletRequest request){
-        String currentUsername = UserSessionInfoHolder.getCurrentUsername();
-        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-//        User oneById = repositoryManager.findOneById(User.class, 8);
-//        RepositoryManager.ModelView modelView = RepositoryManager.getModelView();
-//        modelView.setElem(oneById);
-        String ipAddr = ReqAndRespHolder.getIpAddr(ReqAndRespHolder.getRequest());
-        System.out.println("getIpAddr===="+ipAddr);
-        String ipAddr2 = ReqAndRespHolder.getIpAddr(request);
-        System.out.println("request===="+ipAddr2);
+//        Page<Authority> pageByHql = repositoryManager.findPageByHql(Authority.class, null, null, 0, 10, null);
+////        List<Map<String, Object>> pageBySql = repositoryManager.findPageBySql("SELECT * FROM authority", 1, 10, null);
+//        Map<String, Object> criteria = repositoryManager.initCriteria();
+//        criteria.put("menuId",1);
+//        Page<Object> objects = repositoryManager.selectOfView(authorityRepository, pageable);
 
-        return ResultVOUtil.success(ipAddr);
+        Criteria<Authority> criteria = new Criteria<>();
+//        criteria.add(Restrictions.eq("id",1)).add(Restrictions.like("name","a"));
+        criteria.add(Restrictions.gt("id",1));
+        List<Authority> all = authorityRepository.findAll(criteria);
+        return ResultVOUtil.success(all);
     }
 }

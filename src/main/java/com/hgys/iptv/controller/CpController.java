@@ -2,15 +2,11 @@ package com.hgys.iptv.controller;
 
 import com.hgys.iptv.controller.vm.CpAddVM;
 import com.hgys.iptv.controller.vm.CpControllerListVM;
-import com.hgys.iptv.controller.vm.CpVM;
-import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.CpService;
-import com.hgys.iptv.util.ResultVOUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
