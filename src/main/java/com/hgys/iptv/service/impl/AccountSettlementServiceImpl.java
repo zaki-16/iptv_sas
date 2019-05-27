@@ -139,7 +139,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
             }else if(vm.getSet_type()==4){
                 String rulename = orderCpRepository.findByMasterCodes(vm.getSet_ruleCode());
                 account.setSet_ruleName(rulename);
-            }else if(vm.getSet_type()==3){
+            }else if(vm.getSet_type()==5){
                 String rulename = orderBusinessComparisonRepository.findByMasterCodes(vm.getSet_ruleCode());
                 account.setSet_ruleName(rulename);
             }
