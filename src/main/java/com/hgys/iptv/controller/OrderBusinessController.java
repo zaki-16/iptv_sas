@@ -1,6 +1,7 @@
 package com.hgys.iptv.controller;
 
 
+import com.hgys.iptv.aop.SystemControllerLog;
 import com.hgys.iptv.controller.vm.OrderBusinessComparisonQueryVM;
 import com.hgys.iptv.controller.vm.OrderBusinessWithCPAddVM;
 import com.hgys.iptv.model.OrderBusiness;
@@ -33,7 +34,7 @@ public class OrderBusinessController {
     @Autowired
     private CpService cpService;
 
-
+    private static final String target="业务级结算";
 /*
     @PostMapping("/selectById")
     @ApiOperation(value = "通过id查询",notes = "返回json数据类型")
@@ -55,6 +56,7 @@ public class OrderBusinessController {
     @ApiOperation(value = "通过Id批量逻辑删除",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('OrderBusiness', 'remove')")
+    @SystemControllerLog(target = target,methodName = "OrderBusinessController.Delete",type = "删除")
     public ResultVO<?> batchDeleteob(@ApiParam(value = "结算类型-业务定比例ids",required = true) @RequestParam("ids")String ids){
         if (StringUtils.isBlank(ids)){
             return ResultVOUtil.error("1","结算类型-业务定比例ids不能为空");
@@ -69,6 +71,7 @@ public class OrderBusinessController {
     @ApiOperation(value = "新增结算类型-业务级",notes = "返回处理结果，false或true")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize(value = "hasPermission('OrderBusiness', 'add')")
+    @SystemControllerLog(target = target,methodName = "OrderBusinessController.save",type = "新增")
     public ResultVO<?> addOrderBusiness(@ApiParam(value = "结算类型-业务级VM") @RequestBody() OrderBusinessWithCPAddVM vo){
 
         return orderbusinessService.addOrderBusiness(vo);
@@ -87,6 +90,7 @@ public class OrderBusinessController {
     @ApiOperation(value = "修改结算类型-业务级",notes = "返回处理结果")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('OrderBusiness', 'update')")
+    @SystemControllerLog(target = target,methodName = "OrderBusinessController.update",type = "修改")
     public ResultVO<?> updateOrderBusiness(@ApiParam(value = "结算类型-业务级VM") @RequestBody() OrderBusinessWithCPAddVM vm){
         return orderbusinessService.updateOrderBusiness(vm);
     }
