@@ -116,9 +116,14 @@ public class AuthorityServiceImpl extends SysServiceImpl implements AuthoritySer
             SysMenu sysMenu = repositoryManager.findOneById(SysMenu.class, menuId);
             //
             Permission permission = repositoryManager.findOneById(Permission.class, permId);
-            authority.setName(sysMenu.getName()+":"+permission.getName());
-            authority.setStatus(0);
-            authorityRepository.save(authority);
+            if(permission.getId()<=4){
+                authority.setName(sysMenu.getName()+":"+permission.getName());
+                authority.setMenuId(sysMenu.getId());
+                authority.setMenuName(sysMenu.getName());
+                authority.setText(permission.getDescription());//展示名
+                authority.setStatus(0);
+                authorityRepository.save(authority);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
