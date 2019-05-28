@@ -228,6 +228,7 @@ public class AccountSettlementController {
     public Page<AccountSettlementAddVM> findByConditions(@ApiParam(value = "名称") @RequestParam(value = "name",required = false )String name,
                                                          @ApiParam(value = "编码") @RequestParam(value = "code",required = false)String code,
                                                          @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
+                                                         @ApiParam(value = "结算类型") @RequestParam(value = "set_type",required = false)String set_type,
                                                          @ApiParam(value = "结算开始时间(2019-01-01 12:12:12)") @RequestParam(value = "startTime",required = false)String startTime,
                                                          @ApiParam(value = "结算结束时间(2019-01-01 12:12:12)") @RequestParam(value = "endTime",required = false)String endTime,
                                                          @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
@@ -235,7 +236,7 @@ public class AccountSettlementController {
 
         Sort sort = new Sort(Sort.Direction.DESC,"inputTime");
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
-        Page<AccountSettlementAddVM> byConditions = accountSettlementService.findByConditions(name, code,status,pageable,startTime,endTime);
+        Page<AccountSettlementAddVM> byConditions = accountSettlementService.findByConditions(name, code,status,pageable,startTime,set_type,endTime);
         return byConditions;
     }
 
