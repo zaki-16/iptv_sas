@@ -80,6 +80,7 @@ public class DemoContronller {
             l.add(a);
         }
         beanParams.put("pList",l);
+        beanParams.put("zq","2019-01-01");
         ExcelForWebUtil.exportExcelLiunx(response,beanParams,"test.xlsx","test");
     }
 
