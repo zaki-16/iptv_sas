@@ -60,4 +60,12 @@ public class CpSettlementMoneyVM {
 //    private Timestamp createTime;
 //    private Timestamp setStartTime;
 //    private Timestamp setEndTime;
+
+    /**
+     * 业务结算展示名称
+     * 业务名称、关联CP、关联产品、结算金额（各账期结算金额之和）
+     *
+     * 产品名称、关联CP、关联业务、结算金额（各账期结算金额之和）
+     */
+
 }

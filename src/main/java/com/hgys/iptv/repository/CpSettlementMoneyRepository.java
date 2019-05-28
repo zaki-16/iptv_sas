@@ -30,10 +30,21 @@ public interface CpSettlementMoneyRepository extends JpaRepository<CpSettlementM
 
     @Query(value = "select SUM(settlementMoney) from CpSettlementMoney where masterCode = ?1 and businessCode = ?2")
     BigDecimal jsAllmoneyByMasterCodeAndBusinessCode(String masterCode,String businessCode);
-    BigDecimal jsAllmoney(String masterCdoe);
 
+
+    /**
+     *
+     * @param cpcode
+     * @return
+     */
     @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE cpcode=?1")
-    BigDecimal sumSettlementMoney(String cpcode);
+    BigDecimal sumSettleMoneyByCpCode(String cpcode);
+
+    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE businessCode=?1")
+    BigDecimal sumSettleMoneyByBizCode(String bizcode);
+
+    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE productCode=?1")
+    BigDecimal sumSettleMoneyByProdCode(String bizcode);
 
     /**
      * 获取最近12个月的金额

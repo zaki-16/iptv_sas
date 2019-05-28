@@ -52,14 +52,65 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
         // 对相同的cpcode只生成一个 CpSettlementMoneyVM
 //        HashMap<String, BigDecimal> cpMap = new HashMap<>();
         cps.forEach(cp->{
-            //mi
-            BigDecimal cpMoney = cpSettlementMoneyRepository.sumSettlementMoney(cp.getCpcode());
+            BigDecimal cpMoney = cpSettlementMoneyRepository.sumSettleMoneyByCpCode(cp.getCpcode());
             BigDecimal divide = cpMoney.divide(allSettlementMoney, 2, RoundingMode.HALF_UP);
             CpSettlementMoneyVM cpSettlementMoneyVM = new CpSettlementMoneyVM();
             BeanUtils.copyProperties(cp,cpSettlementMoneyVM);
             cpSettlementMoneyVM.setGrossIncome(cpMoney);
             cpSettlementMoneyVM.setRatio(divide.toString());
             cpSettlementMoneyVMS.add(cpSettlementMoneyVM);
+        });
+        return ResultVOUtil.success(cpSettlementMoneyVMS);
+    }
+
+    @Override
+    public ResultVO getBizSettleData(CpSettlementMoneyDTO cpSettlementMoneyDTO) {
+        List<CpSettlementMoneyVM> cpSettlementMoneyVMS = new ArrayList<>();
+        Criteria<CpSettlementMoney> criteria = new Criteria<>();
+        criteria.add(Restrictions.like("businessName",cpSettlementMoneyDTO.getBusinessName()))
+                .add(Restrictions.lte("createTime",cpSettlementMoneyDTO.getSetEndTime()))
+                .add(Restrictions.gte("createTime",cpSettlementMoneyDTO.getSetStartTime()));
+        List<CpSettlementMoney> cps = cpSettlementMoneyRepository.findAll(criteria);
+
+        //1.获取每个账期(月)的总金额
+        BigDecimal allSettlementMoney = cpSettlementMoneyRepository.sumAllSettlementMoney();
+        //2.获取每个账期(月)的cp总金额
+        cps.forEach(cp->{
+            if(cp.getBusinessCode()!=null){
+                BigDecimal cpMoney = cpSettlementMoneyRepository.sumSettleMoneyByBizCode(cp.getBusinessCode());
+                BigDecimal divide = cpMoney.divide(allSettlementMoney, 2, RoundingMode.HALF_UP);
+                CpSettlementMoneyVM cpSettlementMoneyVM = new CpSettlementMoneyVM();
+                BeanUtils.copyProperties(cp,cpSettlementMoneyVM);
+                cpSettlementMoneyVM.setGrossIncome(cpMoney);
+                cpSettlementMoneyVM.setRatio(divide.toString());
+                cpSettlementMoneyVMS.add(cpSettlementMoneyVM);
+            }
+        });
+        return ResultVOUtil.success(cpSettlementMoneyVMS);
+    }
+
+    @Override
+    public ResultVO getProdSettleData(CpSettlementMoneyDTO cpSettlementMoneyDTO) {
+        List<CpSettlementMoneyVM> cpSettlementMoneyVMS = new ArrayList<>();
+        Criteria<CpSettlementMoney> criteria = new Criteria<>();
+        criteria.add(Restrictions.like("productName",cpSettlementMoneyDTO.getProductName()))
+                .add(Restrictions.lte("createTime",cpSettlementMoneyDTO.getSetEndTime()))
+                .add(Restrictions.gte("createTime",cpSettlementMoneyDTO.getSetStartTime()));
+        List<CpSettlementMoney> cps = cpSettlementMoneyRepository.findAll(criteria);
+
+        //1.获取每个账期(月)的总金额
+        BigDecimal allSettlementMoney = cpSettlementMoneyRepository.sumAllSettlementMoney();
+        //2.获取每个账期(月)的cp总金额
+        cps.forEach(cp->{
+            if(cp.getProductCode()!=null){
+                BigDecimal cpMoney = cpSettlementMoneyRepository.sumSettleMoneyByProdCode(cp.getProductCode());
+                BigDecimal divide = cpMoney.divide(allSettlementMoney, 2, RoundingMode.HALF_UP);
+                CpSettlementMoneyVM cpSettlementMoneyVM = new CpSettlementMoneyVM();
+                BeanUtils.copyProperties(cp,cpSettlementMoneyVM);
+                cpSettlementMoneyVM.setGrossIncome(cpMoney);
+                cpSettlementMoneyVM.setRatio(divide.toString());
+                cpSettlementMoneyVMS.add(cpSettlementMoneyVM);
+            }
         });
         return ResultVOUtil.success(cpSettlementMoneyVMS);
     }

@@ -31,13 +31,12 @@ public class CpSettlementMoneyDTO {
 //    private String productCode;
 //
 //    /** 产品名称 */
-//    private String productName;
+
 //
 //    /** 业务编码 */
 //    private String businessCode;
 //
-//    /** 业务名称 */
-//    private String businessName;
+
 //
 //    /** 结算金额 */
 //    private BigDecimal settlementMoney;
@@ -46,4 +45,15 @@ public class CpSettlementMoneyDTO {
 //    private Timestamp createTime;
     private Timestamp setStartTime;
     private Timestamp setEndTime;
+
+    /**
+     * 业务结算统计查询字段
+     * 账期（日期区间）、业务名称（下拉选择，多选）
+     */
+
+    private String bids;
+    //    /** 业务名称 */
+    private String businessName;
+    private String productName;
+    private String pids;
 }
