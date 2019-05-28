@@ -17,7 +17,7 @@ public interface CpSettlementMoneyRepository extends JpaRepository<CpSettlementM
     @Query(value = "delete from CpSettlementMoney  where masterCode = ?1")
     void deleteByMasterCode(String masterCode);
 
-    List<CpSettlementMoney> findByMasterCode(String masterCdoe);
+    List<CpSettlementMoney> findByMasterCode(String masterCode);
 
     @Query(value = "select SUM(settlementMoney) from CpSettlementMoney where masterCode = ?1")
     BigDecimal jsAllmoney(String masterCode);
