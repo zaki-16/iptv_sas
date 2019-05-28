@@ -606,7 +606,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
     }
 
     @Override
-    public Page<AccountSettlementAddVM> findByConditions(String name, String code, String status, Pageable pageable,String startTime,String endTime,String set_type) {
+    public Page<AccountSettlementAddVM> findByConditions(String name, String code, String status, Pageable pageable,String startTime,String set_type,String endTime) {
         Page<AccountSettlementAddVM> map = accountSettlementRepository.findAll(((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
