@@ -15,10 +15,7 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -42,28 +39,11 @@ public class TestController   {
     @Autowired
     private RoleRepository roleRepository;
 
-    @PostMapping("/myTest")
-    public ResultVO myTest(){
-        String currentUsername = UserSessionInfoHolder.getCurrentUsername();
-//        User oneById = repositoryManager.findOneById(User.class, 8);
-//        RepositoryManager.ModelView modelView = RepositoryManager.getModelView();
-//        modelView.setElem(oneById);
-        return ResultVOUtil.success(currentUsername);
-    }
 
-    @GetMapping("/tester")
-    @SystemControllerLog(target = "测试target",type = "测试type")
-    public ResultVO tester(HttpServletRequest request){
-//        Page<Authority> pageByHql = repositoryManager.findPageByHql(Authority.class, null, null, 0, 10, null);
-////        List<Map<String, Object>> pageBySql = repositoryManager.findPageBySql("SELECT * FROM authority", 1, 10, null);
-//        Map<String, Object> criteria = repositoryManager.initCriteria();
-//        criteria.put("menuId",1);
-//        Page<Object> objects = repositoryManager.selectOfView(authorityRepository, pageable);
 
-        Criteria<Authority> criteria = new Criteria<>();
-//        criteria.add(Restrictions.eq("id",1)).add(Restrictions.like("name","a"));
-        criteria.add(Restrictions.like("name","cpM"));
-        List<Authority> all = authorityRepository.findAll(criteria);
-        return ResultVOUtil.success(all);
+    @GetMapping("/tester/{name}")
+//    @SystemControllerLog(target = "测试target",type = "测试type")
+    public ResultVO tester(@PathVariable(value = "name") String username){
+        return ResultVOUtil.success(username);
     }
 }
