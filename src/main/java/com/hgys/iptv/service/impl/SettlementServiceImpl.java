@@ -7,6 +7,7 @@ import com.hgys.iptv.model.QCpOrderBusinessComparison;
 import com.hgys.iptv.model.QOrderBusinessCp;
 import com.hgys.iptv.model.QOrderBusinessWithCp;
 import com.hgys.iptv.model.QOrderProduct;
+import com.hgys.iptv.model.QProduct;
 import com.hgys.iptv.model.QSettlementBusiness;
 import com.hgys.iptv.model.QSettlementMoney;
 import com.hgys.iptv.model.QSettlementOrder;
@@ -161,7 +162,7 @@ public class SettlementServiceImpl implements SettlementService {
                 Cp cp1 = jpaQueryFactory.selectFrom(qCp).where(qCp.code.eq(query.getCpCode())).fetchOne();
                 money.setCpname(StringUtils.trimToEmpty(cp1.getName()));
                 money.setSettlementMoney(query.getMoney());
-                money.setBusinessCode(StringUtils.trimToEmpty(query.getBusinessCode()));
+                money.setBusinessCode(query.getBusinessCode());
                 money.setBusinessName(query.getBusinessName());
                 cpSettlementMoneyRepository.save(money);
             }
@@ -418,7 +419,11 @@ public class SettlementServiceImpl implements SettlementService {
                     money.setCpname(StringUtils.trimToEmpty(cp.getName()));
                     money.setCpcode(StringUtils.trimToEmpty(single.getCpcode()));
                     money.setProductCode(StringUtils.trimToEmpty(single.getProductCode()));
-                    money.setProductName(StringUtils.trimToEmpty(single.getProductName()));
+                    //查询产品名称
+                    QProduct qProduct = QProduct.product;
+                    Product product = jpaQueryFactory.selectFrom(qProduct)
+                            .where(qProduct.code.eq(single.getProductCode())).fetchOne();
+                    money.setProductName(product.getName());
                     money.setCreateTime(new Timestamp(System.currentTimeMillis()));
                     //cp在该产品所占结算金额
                     BigDecimal cpmoney = single.getNumber().divide(collect.get(single.getProductCode()),2, BigDecimal.ROUND_HALF_UP).multiply(single.getSetMoney()).setScale(2);
@@ -462,7 +467,11 @@ public class SettlementServiceImpl implements SettlementService {
                     money.setCpname(StringUtils.trimToEmpty(cp.getName()));
                     money.setCpcode(StringUtils.trimToEmpty(many.getCpcode()));
                     money.setProductCode(StringUtils.trimToEmpty(many.getProductCode()));
-                    money.setProductName(StringUtils.trimToEmpty(many.getProductName()));
+                    //查询产品名称
+                    QProduct qProduct = QProduct.product;
+                    Product product = jpaQueryFactory.selectFrom(qProduct)
+                            .where(qProduct.code.eq(many.getProductCode())).fetchOne();
+                    money.setProductName(product.getName());
                     money.setCreateTime(new Timestamp(System.currentTimeMillis()));
                     //cp在该产品下结算金额
                     System.out.println(wights.get(many.getDimACode()));

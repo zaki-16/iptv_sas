@@ -147,4 +147,10 @@ public class SettlementDocumentController {
     public void excelSettlementInfo(HttpServletResponse response,@ApiParam(value = "结算账单ID",required = true) @RequestParam(value = "masterId")Integer masterId) {
         settlementDocumentService.excelSettlementInfo(masterId,response);
     }
+
+    @GetMapping("/excelSettlementInfo1")
+    @ApiOperation(value = "导出账期期间的结算信息,定制导出模板",notes = "返回Excel文件")
+    public void excelSettlementInfo1(HttpServletResponse response,@ApiParam(value = "结算账单ID",required = true) @RequestParam(value = "masterId")Integer masterId) {
+        settlementDocumentService.excelSettlementInfo1(masterId,response);
+    }
 }

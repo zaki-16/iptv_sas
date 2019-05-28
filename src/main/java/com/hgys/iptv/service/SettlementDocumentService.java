@@ -24,4 +24,6 @@ public interface SettlementDocumentService {
     SettlementDocumentCPListExcelVM settlementCpExcel(Integer id);
 
     void excelSettlementInfo(Integer masterId, HttpServletResponse response);
+
+    void excelSettlementInfo1(Integer masterId, HttpServletResponse response);
 }

@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -408,4 +409,243 @@ public class SettlementDocumentServiceImpl implements SettlementDocumentService 
         }
 
     }
+
+    @Override
+    public void excelSettlementInfo1(Integer masterId, HttpServletResponse response) {
+        //查询分账结算信息
+        Optional<AccountSettlement> byId = accountSettlementRepository.findById(masterId);
+        if (!byId.isPresent()){
+            throw new IllegalArgumentException("未查询到该结算账单信息");
+        }
+        AccountSettlement accountSettlement = byId.get();
+        /** 1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定 */
+        if (3 == accountSettlement.getSet_type()){
+            try{
+                //查询该结算账单详细信息
+                List<CpSettlementMoney> list = cpSettlementMoneyRepository.findByMasterCode(accountSettlement.getCode());
+
+                String startTime = new SimpleDateFormat("yyyy-MM-dd").format(accountSettlement.getSetStartTime());
+                String endTime = new SimpleDateFormat("yyyy-MM-dd").format(accountSettlement.getSetEndTime());
+                String timeHead = startTime + "至" + endTime;
+                QCpSettlementMoney qCpSettlementMoney = QCpSettlementMoney.cpSettlementMoney;
+                //查询该结算订单所有的cp信息
+                List<CpSettlementMoney> moneyList =  jpaQueryFactory.selectFrom(qCpSettlementMoney)
+                        .where(qCpSettlementMoney.masterCode.eq(accountSettlement.getCode()))
+                        .groupBy(qCpSettlementMoney.cpcode).fetch();
+
+                Map<String, Object> beanParams = new HashMap<>();
+                List<Map> l = new ArrayList<>();
+                for (CpSettlementMoney c : moneyList){
+                    //查询该结算订单Cp结算的所有产品
+                    List<CpSettlementMoney> fetch = jpaQueryFactory.selectFrom(qCpSettlementMoney)
+                            .where(qCpSettlementMoney.masterCode.eq(accountSettlement.getCode()))
+                            .where(qCpSettlementMoney.cpcode.eq(c.getCpcode())).fetch();
+
+                    Map<String,Object> a = new HashMap<>();
+                    a.put("cpName",c.getCpname());
+                    for (CpSettlementMoney money : fetch){
+                        //设置各产品金额
+                        if ("4K花园".equals(money.getProductName().trim())){
+                            a.put("product1",money.getSettlementMoney());
+                        }else if ("电竞世界".equals(money.getProductName().trim())){
+                            a.put("product2",money.getSettlementMoney());
+                        }else if ("动漫星空".equals(money.getProductName().trim())){
+                            a.put("product3",money.getSettlementMoney());
+                        }else if ("欢乐歌房".equals(money.getProductName().trim())){
+                            a.put("product4",money.getSettlementMoney());
+                        }else if ("黄冈学霸".equals(money.getProductName().trim())){
+                            a.put("product5",money.getSettlementMoney());
+                        }else if ("健身达人".equals(money.getProductName().trim())){
+                            a.put("product6",money.getSettlementMoney());
+                        }else if ("亲子乐园".equals(money.getProductName().trim())){
+                            a.put("product7",money.getSettlementMoney());
+                        }else if ("游戏王国".equals(money.getProductName().trim())){
+                            a.put("product8",money.getSettlementMoney());
+                        }else if ("院线大片".equals(money.getProductName().trim())){
+                            a.put("product9",money.getSettlementMoney());
+                        }else if ("欢乐屋".equals(money.getProductName().trim())){
+                            a.put("product10",money.getSettlementMoney());
+                        }else if ("热播剧场".equals(money.getProductName().trim())){
+                            a.put("product11",money.getSettlementMoney());
+                        }else if ("综艺娱乐".equals(money.getProductName().trim())){
+                            a.put("product12",money.getSettlementMoney());
+                        }
+
+                    }
+                    BigDecimal decimal = cpSettlementMoneyRepository.jsAllmoneyByMasterCodeAndCpcode(accountSettlement.getCode(), c.getCpcode());
+                    a.put("productAllMoney",decimal);
+                    l.add(a);
+
+                }
+
+                beanParams.put("pList",l);
+                beanParams.put("timeHead",timeHead);
+                //计算合计金额
+                BigDecimal allMoney = new BigDecimal(0);
+
+                for (CpSettlementMoney money : list){
+                    allMoney = allMoney.add(money.getSettlementMoney());
+                }
+                beanParams.put("allMoney",allMoney);
+                //当前时间（制表时间）
+                String nowTime = new SimpleDateFormat("yyyy年MM月dd日").format(new Timestamp(System.currentTimeMillis()));
+                beanParams.put("nowTime",nowTime);
+                //计算产品结算总金额
+                List<CpSettlementMoney> fetch = jpaQueryFactory.selectFrom(qCpSettlementMoney)
+                        .where(qCpSettlementMoney.masterCode.eq(accountSettlement.getCode()))
+                        .groupBy(qCpSettlementMoney.productCode).fetch();
+                for (CpSettlementMoney money : fetch){
+                    BigDecimal decimal = cpSettlementMoneyRepository.jsAllmoneyByMasterCodeAndProductCode(accountSettlement.getCode(), money.getProductCode());
+                    //设置各产品金额
+                    if ("4K花园".equals(money.getProductName().trim())){
+                        beanParams.put("product1",decimal);
+                    }else if ("电竞世界".equals(money.getProductName().trim())){
+                        beanParams.put("product2",decimal);
+                    }else if ("动漫星空".equals(money.getProductName().trim())){
+                        beanParams.put("product3",decimal);
+                    }else if ("欢乐歌房".equals(money.getProductName().trim())){
+                        beanParams.put("product4",decimal);
+                    }else if ("黄冈学霸".equals(money.getProductName().trim())){
+                        beanParams.put("product5",decimal);
+                    }else if ("健身达人".equals(money.getProductName().trim())){
+                        beanParams.put("product6",decimal);
+                    }else if ("亲子乐园".equals(money.getProductName().trim())){
+                        beanParams.put("product7",decimal);
+                    }else if ("游戏王国".equals(money.getProductName().trim())){
+                        beanParams.put("product8",decimal);
+                    }else if ("院线大片".equals(money.getProductName().trim())){
+                        beanParams.put("product9",decimal);
+                    }else if ("欢乐屋".equals(money.getProductName().trim())){
+                        beanParams.put("product10",decimal);
+                    }else if ("热播剧场".equals(money.getProductName().trim())){
+                        beanParams.put("product11",decimal);
+                    }else if ("综艺娱乐".equals(money.getProductName().trim())){
+                        beanParams.put("product12",decimal);
+                    }
+                }
+
+                ExcelForWebUtil.exportExcelLiunx(response,beanParams,"ProductLevel.xlsx","产品级结算");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }else if (1 == accountSettlement.getSet_type() || 4 == accountSettlement.getSet_type()){
+            String startTime = new SimpleDateFormat("yyyy-MM-dd").format(accountSettlement.getSetStartTime());
+            String endTime = new SimpleDateFormat("yyyy-MM-dd").format(accountSettlement.getSetEndTime());
+            String timeHead = startTime + "至" + endTime;
+            //查询数据
+            List<CpSettlementMoney> monies = cpSettlementMoneyRepository.findByMasterCode(accountSettlement.getCode());
+
+            Map<String, Object> beanParams = new HashMap<>();
+            List<Map> l = new ArrayList<>();
+            for (CpSettlementMoney money : monies){
+                Map<String,String> a = new HashMap<>();
+                a.put("cpName",money.getCpname());
+                a.put("money",money.getSettlementMoney().toString());
+                l.add(a);
+            }
+            beanParams.put("pList",l);
+            beanParams.put("timeHead",timeHead);
+            //计算合计金额
+            BigDecimal allMoney = new BigDecimal(0);
+            for (CpSettlementMoney money : monies){
+                allMoney = allMoney.add(money.getSettlementMoney());
+            }
+            beanParams.put("allMoney",allMoney);
+            //当前时间（制表时间）
+            String nowTime = new SimpleDateFormat("yyyy年MM月dd日").format(new Timestamp(System.currentTimeMillis()));
+            beanParams.put("nowTime",nowTime);
+            ExcelForWebUtil.exportExcelLiunx(response,beanParams,"OrderAndProportion.xlsx","订购量结算&CP定比例结算");
+        }else if (2 == accountSettlement.getSet_type() || 5 == accountSettlement.getSet_type()){
+            try{
+                //查询该结算账单详细信息
+                List<CpSettlementMoney> list = cpSettlementMoneyRepository.findByMasterCode(accountSettlement.getCode());
+
+                String startTime = new SimpleDateFormat("yyyy-MM-dd").format(accountSettlement.getSetStartTime());
+                String endTime = new SimpleDateFormat("yyyy-MM-dd").format(accountSettlement.getSetEndTime());
+                String timeHead = startTime + "至" + endTime;
+                QCpSettlementMoney qCpSettlementMoney = QCpSettlementMoney.cpSettlementMoney;
+                //查询该结算订单所有的cp信息
+                List<CpSettlementMoney> moneyList =  jpaQueryFactory.selectFrom(qCpSettlementMoney)
+                        .where(qCpSettlementMoney.masterCode.eq(accountSettlement.getCode()))
+                        .groupBy(qCpSettlementMoney.cpcode).fetch();
+
+                Map<String, Object> beanParams = new HashMap<>();
+                List<Map> l = new ArrayList<>();
+                for (CpSettlementMoney c : moneyList){
+                    //查询该结算订单Cp结算的所有业务
+                    List<CpSettlementMoney> fetch = jpaQueryFactory.selectFrom(qCpSettlementMoney)
+                            .where(qCpSettlementMoney.masterCode.eq(accountSettlement.getCode()))
+                            .where(qCpSettlementMoney.cpcode.eq(c.getCpcode())).fetch();
+
+                    Map<String,Object> a = new HashMap<>();
+                    a.put("cpName",c.getCpname());
+                    for (CpSettlementMoney money : fetch){
+                        //设置各业务金额
+                        if ("教育".equals(money.getBusinessName().trim())){
+                            a.put("business1",money.getSettlementMoney());
+                        }else if ("少儿".equals(money.getBusinessName().trim())){
+                            a.put("business2",money.getSettlementMoney());
+                        }else if ("影视".equals(money.getBusinessName().trim())){
+                            a.put("business3",money.getSettlementMoney());
+                        }else if ("生活".equals(money.getBusinessName().trim())){
+                            a.put("business4",money.getSettlementMoney());
+                        }else if ("电竞".equals(money.getBusinessName().trim())){
+                            a.put("business5",money.getSettlementMoney());
+                        }else if ("娱乐".equals(money.getBusinessName().trim())){
+                            a.put("business6",money.getSettlementMoney());
+                        }else if ("体育".equals(money.getBusinessName().trim())){
+                            a.put("business7",money.getSettlementMoney());
+                        }
+
+                    }
+                    BigDecimal decimal = cpSettlementMoneyRepository.jsAllmoneyByMasterCodeAndCpcode(accountSettlement.getCode(), c.getCpcode());
+                    a.put("businessAllMoney",decimal);
+                    l.add(a);
+
+                }
+
+                beanParams.put("pList",l);
+                beanParams.put("timeHead",timeHead);
+                //计算合计金额
+                BigDecimal allMoney = new BigDecimal(0);
+
+                for (CpSettlementMoney money : list){
+                    allMoney = allMoney.add(money.getSettlementMoney());
+                }
+                beanParams.put("allMoney",allMoney);
+                //当前时间（制表时间）
+                String nowTime = new SimpleDateFormat("yyyy年MM月dd日").format(new Timestamp(System.currentTimeMillis()));
+                beanParams.put("nowTime",nowTime);
+                //计算业务结算总金额
+                List<CpSettlementMoney> fetch = jpaQueryFactory.selectFrom(qCpSettlementMoney)
+                        .where(qCpSettlementMoney.masterCode.eq(accountSettlement.getCode()))
+                        .groupBy(qCpSettlementMoney.businessCode).fetch();
+                for (CpSettlementMoney money : fetch){
+                    BigDecimal decimal = cpSettlementMoneyRepository.jsAllmoneyByMasterCodeAndBusinessCode(accountSettlement.getCode(), money.getBusinessCode());
+                    //设置各业务结算总金额
+                    if ("教育".equals(money.getBusinessName().trim())){
+                        beanParams.put("business1",decimal);
+                    }else if ("少儿".equals(money.getBusinessName().trim())){
+                        beanParams.put("business2",decimal);
+                    }else if ("影视".equals(money.getBusinessName().trim())){
+                        beanParams.put("business3",decimal);
+                    }else if ("生活".equals(money.getBusinessName().trim())){
+                        beanParams.put("business4",decimal);
+                    }else if ("电竞".equals(money.getBusinessName().trim())){
+                        beanParams.put("business5",decimal);
+                    }else if ("娱乐".equals(money.getBusinessName().trim())){
+                        beanParams.put("business6",decimal);
+                    }else if ("体育".equals(money.getBusinessName().trim())){
+                        beanParams.put("business7",decimal);
+                    }
+                }
+
+                ExcelForWebUtil.exportExcelLiunx(response,beanParams,"BusinessLevel.xlsx","业务级结算&业务定比列");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+    }
+
 }
