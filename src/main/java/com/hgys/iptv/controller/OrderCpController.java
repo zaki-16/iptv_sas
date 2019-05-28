@@ -119,13 +119,13 @@ public class OrderCpController {
     public Page<OrderCPWithCPListVM> findByConditions(@ApiParam(value = "结算单维度名称") @RequestParam(value = "name",required = false )String name,
                                                                                    @ApiParam(value = "编码") @RequestParam(value = "code",required = false)String code,
                                                                                    @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
-                                                                                   @ApiParam(value = "结算方式") @RequestParam(value = "mode",required = false)String mode,
+                                                                                   @ApiParam(value = "结算方式") @RequestParam(value = "settleaccounts",required = false)String settleaccounts,
                                                                                    @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
                                                                                    @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
 
         Sort sort = new Sort(Sort.Direction.DESC,"inputTime");
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
-        Page<OrderCPWithCPListVM> byConditions = ordercpService.findByConditions(name, code, status, mode,pageable);
+        Page<OrderCPWithCPListVM> byConditions = ordercpService.findByConditions(name, code, status, settleaccounts,pageable);
         return byConditions;
     }
 
