@@ -35,11 +35,11 @@ public class SettlementStatisticsController {
     @GetMapping("/findsettlement")
     @ApiOperation(value = "通过条件，查询",notes = "返回处理结果")
     @ResponseStatus(HttpStatus.OK)
-    public List<AccountSettlement> findsettlement(@ApiParam(value = "名称") @RequestParam(value = "name",required = false )String name,
+    public ResultVO findsettlement(@ApiParam(value = "名称") @RequestParam(value = "name",required = false )String name,
                                                   @ApiParam(value = "结算开始时间") @RequestParam(value = "startTime",required = false)String startTime,
                                                   @ApiParam(value = "结算结束时间") @RequestParam(value = "endTime",required = false)String endTime ){
-        List<AccountSettlement> findsettlement = settlementStatisticsService.findsettlement(name, startTime, endTime );
-        return findsettlement;
+        return settlementStatisticsService.findsettlement(name, startTime, endTime );
+
     }
 
 }
