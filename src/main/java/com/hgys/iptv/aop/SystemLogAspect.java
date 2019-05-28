@@ -53,7 +53,7 @@ public class SystemLogAspect {
             try {
                 logger.log(getAnnotationMethod(joinPoint).target(),
                         getAnnotationMethod(joinPoint).type(),
-                        getAnnotationMethod(joinPoint).methodName(),"失败");
+                        clazzAndMethodName,"失败");
             }catch (Exception e1){
                 e1.printStackTrace();
             }
