@@ -162,7 +162,7 @@ public class OrderCpServiceImpl implements OrderCpService {
 
 
     @Override
-    public Page<OrderCPWithCPListVM> findByConditions(String name, String code, String status, String mode,Pageable pageable) {
+    public Page<OrderCPWithCPListVM> findByConditions(String name, String code, String status, String settleaccounts,Pageable pageable) {
 
         Page<OrderCPWithCPListVM> map = ordercpRepository.findAll(((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -183,8 +183,8 @@ public class OrderCpServiceImpl implements OrderCpService {
                 Predicate condition = builder.equal(root.get("status"), status);
                 predicates.add(condition);
             }
-            if (StringUtils.isNotBlank(mode)) {
-                Predicate condition = builder.equal(root.get("mode"), Integer.parseInt(mode));
+            if (StringUtils.isNotBlank(settleaccounts)) {
+                Predicate condition = builder.equal(root.get("settleaccounts"), Integer.parseInt(settleaccounts));
                 predicates.add(condition);
             }
 

@@ -44,7 +44,7 @@ public interface OrderCpService {
      * 根据条件分页查询
      * @return
      */
-    Page<OrderCPWithCPListVM> findByConditions(String name, String code, String status, String mode,Pageable pageable);
+    Page<OrderCPWithCPListVM> findByConditions(String name, String code, String status, String settleaccounts,Pageable pageable);
 
     /**
      * 修改
