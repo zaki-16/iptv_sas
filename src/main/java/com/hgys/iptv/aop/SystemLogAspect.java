@@ -1,6 +1,7 @@
 package com.hgys.iptv.aop;
 
 import com.hgys.iptv.util.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * @ClassName SystemLogAspect
@@ -23,6 +25,7 @@ import java.lang.reflect.Method;
 @Component
 public class SystemLogAspect {
 
+    private static String clazzAndMethodName = "";
     @Resource
     private Logger logger;
 
@@ -44,7 +47,7 @@ public class SystemLogAspect {
             //*========记录操作日志日志=========*//
             logger.log(getAnnotationMethod(joinPoint).target(),
                     getAnnotationMethod(joinPoint).type(),
-                    getAnnotationMethod(joinPoint).methodName(),"成功");
+                    clazzAndMethodName,"成功");
             //System.out.println("=====前置通知结束=====");
         }  catch (Exception e) {
             try {
@@ -87,12 +90,20 @@ public class SystemLogAspect {
         return description;
     }
 
-    public static SystemControllerLog getAnnotationMethod(JoinPoint joinPoint)  throws Exception {
+
+
+    private static SystemControllerLog getAnnotationMethod(JoinPoint joinPoint)  throws Exception {
         //获取类的全限定名
         String targetName = joinPoint.getTarget().getClass().getName();
 
         String methodName = joinPoint.getSignature().getName();
 
+        if(targetName.contains(".")){
+            Arrays.asList(StringUtils.split(targetName,".")).forEach(m->{
+                clazzAndMethodName=m;
+            });
+        }
+        clazzAndMethodName += "."+methodName;
         Object[] arguments = joinPoint.getArgs();
         Class targetClass = Class.forName(targetName);
         Method[] methods = targetClass.getMethods();
