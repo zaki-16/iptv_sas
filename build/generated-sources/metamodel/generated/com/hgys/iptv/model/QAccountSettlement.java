@@ -51,6 +51,8 @@ public class QAccountSettlement extends EntityPathBase<AccountSettlement> {
 
     public final NumberPath<Integer> status = createNumber("status", Integer.class);
 
+    public final NumberPath<java.math.BigDecimal> total_sum = createNumber("total_sum", java.math.BigDecimal.class);
+
     public QAccountSettlement(String variable) {
         super(AccountSettlement.class, forVariable(variable));
     }
