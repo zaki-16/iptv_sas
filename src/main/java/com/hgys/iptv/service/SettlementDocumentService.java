@@ -25,5 +25,5 @@ public interface SettlementDocumentService {
 
     void excelSettlementInfo(Integer masterId, HttpServletResponse response);
 
-    void excelSettlementInfo1(Integer masterId, HttpServletResponse response);
+    void excelSettlementInfoMode(Integer masterId, HttpServletResponse response);
 }

@@ -142,15 +142,15 @@ public class SettlementDocumentController {
         }
     }
 
-    @GetMapping("/excelSettlementInfo")
-    @ApiOperation(value = "导出账期期间的结算信息",notes = "返回Excel文件")
-    public void excelSettlementInfo(HttpServletResponse response,@ApiParam(value = "结算账单ID",required = true) @RequestParam(value = "masterId")Integer masterId) {
+    @GetMapping("/excelSettlementInfoDynamic")
+    @ApiOperation(value = "导出账期期间的结算信息,暂时请勿使用此接口",notes = "返回Excel文件")
+    public void excelSettlementInfoDynamic(HttpServletResponse response,@ApiParam(value = "结算账单ID",required = true) @RequestParam(value = "masterId")Integer masterId) {
         settlementDocumentService.excelSettlementInfo(masterId,response);
     }
 
-    @GetMapping("/excelSettlementInfo1")
+    @GetMapping("/excelSettlementInfo")
     @ApiOperation(value = "导出账期期间的结算信息,定制导出模板",notes = "返回Excel文件")
-    public void excelSettlementInfo1(HttpServletResponse response,@ApiParam(value = "结算账单ID",required = true) @RequestParam(value = "masterId")Integer masterId) {
-        settlementDocumentService.excelSettlementInfo1(masterId,response);
+    public void excelSettlementInfo(HttpServletResponse response,@ApiParam(value = "结算账单ID",required = true) @RequestParam(value = "masterId")Integer masterId) {
+        settlementDocumentService.excelSettlementInfoMode(masterId,response);
     }
 }

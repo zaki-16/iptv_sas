@@ -411,7 +411,7 @@ public class SettlementDocumentServiceImpl implements SettlementDocumentService 
     }
 
     @Override
-    public void excelSettlementInfo1(Integer masterId, HttpServletResponse response) {
+    public void excelSettlementInfoMode(Integer masterId, HttpServletResponse response) {
         //查询分账结算信息
         Optional<AccountSettlement> byId = accountSettlementRepository.findById(masterId);
         if (!byId.isPresent()){
