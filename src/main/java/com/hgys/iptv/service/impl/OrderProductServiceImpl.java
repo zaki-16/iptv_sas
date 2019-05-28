@@ -187,7 +187,7 @@ public class OrderProductServiceImpl implements OrderProductService {
                 predicates.add(condition);
             }
 
-            if (StringUtils.isNotBlank(status)) {
+            if (StringUtils.isNotBlank(mode)) {
                 Predicate condition = builder.equal(root.get("mode"), Integer.parseInt(mode));
                 predicates.add(condition);
             }

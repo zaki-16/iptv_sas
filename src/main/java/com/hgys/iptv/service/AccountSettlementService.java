@@ -29,7 +29,7 @@ public interface AccountSettlementService {
      * 根据条件分页查询
      * @return
      */
-    Page<AccountSettlementAddVM> findByConditions(String name, String code, String status, Pageable pageable,String startTime,String endTime);
+    Page<AccountSettlementAddVM> findByConditions(String name, String code, String status, Pageable pageable,String startTime,String set_type,String endTime);
 
     ResultVO<?> updateAccountSet(AccountSettlementAddVM vm);
 

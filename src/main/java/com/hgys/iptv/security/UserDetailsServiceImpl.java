@@ -30,8 +30,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private SysRoleService sysRoleService;
 
-//    @Autowired
-//    private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
 //    @Autowired
@@ -49,10 +47,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         Set<GrantedAuthority> authorities = new HashSet<>();
         getAuthorities(user,authorities);
-        org.springframework.security.core.userdetails.User auth_user =
                 //返回包括权限角色的User给security
-                new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.isEnabled(), user.isAccountNonExpired(), user.isCredentialsNonExpired(), user.isAccountNonLocked(), authorities);
-        return auth_user;
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.isEnabled(), user.isAccountNonExpired(), user.isCredentialsNonExpired(), user.isAccountNonLocked(), authorities);
     }
 
     /**
@@ -64,13 +60,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         List<Role> roles = sysUserService.findAllRoleByUserId(user.getId());
         roles.forEach(role->{
             Role role_ = roleRepository.findById(role.getId()).orElse(null);
-            if(role_==null || role_.getStatus()==1)//角色不存在或该角色已停用
-                return;
-            List<Authority> auths = sysRoleService.findAllAuthorityByRoleId(role_.getId());
-            auths.forEach(auth->{
-                if(auth.getStatus()==0)//权限被启用的才被加入授权上下文
-                    authorities.add(new SimpleGrantedAuthority(auth.getName()));
-            });
+            //角色存在且该角色时启用状态
+            if(role_!=null && role_.getStatus()==0){
+                List<Authority> auths = sysRoleService.findAllAuthorityByRoleId(role_.getId());
+                auths.forEach(auth->{
+                    if(auth.getStatus()==0)//权限被启用的才被加入授权上下文
+                        authorities.add(new SimpleGrantedAuthority(auth.getName()));
+                });
+            }
         });
     }
 }
