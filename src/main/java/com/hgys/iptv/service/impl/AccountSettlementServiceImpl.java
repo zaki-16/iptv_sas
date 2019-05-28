@@ -606,7 +606,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
     }
 
     @Override
-    public Page<AccountSettlementAddVM> findByConditions(String name, String code, String status, Pageable pageable,String startTime,String endTime) {
+    public Page<AccountSettlementAddVM> findByConditions(String name, String code, String status, Pageable pageable,String startTime,String endTime,String set_type) {
         Page<AccountSettlementAddVM> map = accountSettlementRepository.findAll(((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -622,6 +622,10 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
 
             if (StringUtils.isNotBlank(status)) {
                 Predicate condition = builder.equal(root.get("status"), Integer.parseInt(status));
+                predicates.add(condition);
+            }
+            if (StringUtils.isNotBlank(set_type)) {
+                Predicate condition = builder.equal(root.get("set_type"), Integer.parseInt(set_type));
                 predicates.add(condition);
             }
 
