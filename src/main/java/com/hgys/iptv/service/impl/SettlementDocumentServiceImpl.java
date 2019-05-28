@@ -115,6 +115,7 @@ public class SettlementDocumentServiceImpl implements SettlementDocumentService 
                 .innerJoin(qAccountSettlement).on(qCpSettlementMoney.masterCode.eq(qAccountSettlement.code))
                 .where(qCpSettlementMoney.cpcode.eq(cpCode))
                 .where(qAccountSettlement.setStartTime.lt(accountSettlement.getSetStartTime()))
+                .groupBy(qCpSettlementMoney.cpcode)
                 .orderBy(qAccountSettlement.setStartTime.desc())
                 .offset(Integer.parseInt(pageNum) - 1).limit(Integer.parseInt(pageSize)).fetchResults();
 
