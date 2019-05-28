@@ -21,4 +21,17 @@ public interface CpSettlementMoneyRepository extends JpaRepository<CpSettlementM
 
     @Query(value = "select SUM(settlementMoney) from CpSettlementMoney where masterCode = ?1")
     BigDecimal jsAllmoney(String masterCdoe);
+
+    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE cpcode=?1")
+    BigDecimal sumSettlementMoney(String cpcode);
+
+    /**
+     * 获取最近12个月的金额
+     * @return
+     */
+//    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney")
+    @Query(value = "SELECT SUM(settlementMoney) FROM cp_settlement_money " +
+            "WHERE DATE_FORMAT(CONCAT(createTime),'%Y-%M')> " +
+            "DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 12 MONTH),'%Y-%M');",nativeQuery = true)
+    BigDecimal sumAllSettlementMoney();
 }
