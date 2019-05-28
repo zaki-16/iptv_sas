@@ -25,7 +25,7 @@ public interface SysUserService {
     ResultVO batchOnUser(String ids);
     ResultVO batchOffUser(String ids);
     //    ResultVO findAllUser();
-    Page<User> findAllUserOfPage(String username,String realName,String cpAbbr,Integer status,Integer pageNum, Integer pageSize);
+    Page<User> findAllUserOfPage(String username,String realName,String cpId,Integer status,Integer pageNum, Integer pageSize);
     ResultVO modifyPassword(String password_old,String password_new);
     ResultVO resetPassword(String username);
     List<Role> findAllRoleByUserId(Integer userId);

@@ -3,6 +3,7 @@ package com.hgys.iptv.controller.vm;
 import com.hgys.iptv.model.Business;
 import com.hgys.iptv.model.Cp;
 import com.hgys.iptv.model.Product;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -22,6 +23,7 @@ public class ProductVM {
     private String name;
     private String code;
     private String price;
+    private String prodNum;
     private Timestamp inputTime;
     private Timestamp modifyTime;
     private Integer status;//0.禁用 1.启用

@@ -244,7 +244,7 @@ public class SysRoleServiceImpl extends SysServiceImpl implements SysRoleService
         Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
         HashMap<String, Object> map = Maps.newHashMap();
         if(name!=null)
-            map.put("name",name);
+            map.put("name","%"+name+"%");
         if(status!=null&&status>0)
             map.put("status",status);
         map.put("isdelete",0);
