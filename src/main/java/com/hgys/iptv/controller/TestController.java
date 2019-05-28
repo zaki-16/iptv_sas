@@ -62,7 +62,7 @@ public class TestController   {
 
         Criteria<Authority> criteria = new Criteria<>();
 //        criteria.add(Restrictions.eq("id",1)).add(Restrictions.like("name","a"));
-        criteria.add(Restrictions.gt("id",1));
+        criteria.add(Restrictions.like("name","cpM"));
         List<Authority> all = authorityRepository.findAll(criteria);
         return ResultVOUtil.success(all);
     }

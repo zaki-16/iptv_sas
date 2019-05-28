@@ -33,6 +33,9 @@ public class ProductControllerListVM {
     @ApiModelProperty("价格")
     private String price;
 
+    @ApiModelProperty("产品编号")
+    private String prodNum;
+
     /** 状态 */
     @ApiModelProperty("状态")
     private Integer status;

@@ -459,15 +459,15 @@ public class SysUserServiceImpl extends SysServiceImpl implements SysUserService
      * @return
      */
     @Override
-    public Page<User> findAllUserOfPage(String username,String realName,String cpAbbr,Integer status,Integer pageNum, Integer pageSize) {
+    public Page<User> findAllUserOfPage(String username,String realName,String cpId,Integer status,Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum -1 ,pageSize);
         HashMap<String, Object> map = Maps.newHashMap();
         if(username!=null)
             map.put("username","%"+username+"%");
         if(realName!=null)
-            map.put("realName",realName);
-        if(cpAbbr!=null)
-            map.put("cpAbbr",cpAbbr);
+            map.put("realName","%"+realName+"%");
+        if(cpId!=null)
+            map.put("cpId",cpId);
         if(status!=null&&status>0)
             map.put("status",status);
         map.put("isdelete",0);
