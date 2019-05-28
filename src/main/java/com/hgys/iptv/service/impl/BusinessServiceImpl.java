@@ -1,5 +1,6 @@
 package com.hgys.iptv.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.hgys.iptv.controller.assemlber.BusinessControllerAssemlber;
 import com.hgys.iptv.controller.vm.BusinessAddVM;
 import com.hgys.iptv.controller.vm.BusinessVM;
@@ -287,6 +288,8 @@ public class BusinessServiceImpl extends AbstractBaseServiceImpl implements Busi
 
     @Override
     public Page<BusinessVM> findByConditions(String name, String code, Integer bizType, Integer settleType, Integer status, Pageable pageable) {
+
+
         return businessRepository.findAll(((root, query,builder) -> {
             List<Predicate> predicates = new ArrayList<>();
 

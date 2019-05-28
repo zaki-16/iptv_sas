@@ -52,12 +52,12 @@ public class SysController {
     @ApiOperation(value = "查询用户列表")
     @PreAuthorize(value = "hasPermission('userManager', 'view')")
     public Page<User> findAllUser(String username, String realName,
-                                  @ApiParam(value = "cp简称") String cpAbbr,
+                                  @ApiParam(value = "用户类型-传平台或cp的id") String cpId,
                                   Integer status,
                                   @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")Integer pageNum,
                                   @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")Integer pageSize
                                   ) {
-        return sysUserService.findAllUserOfPage(username,realName,cpAbbr,status,pageNum,pageSize);
+        return sysUserService.findAllUserOfPage(username,realName,cpId,status,pageNum,pageSize);
     }
 
     @GetMapping("/findByUserName")

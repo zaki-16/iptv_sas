@@ -99,14 +99,12 @@ public class CpController {
     @PreAuthorize(value = "hasPermission('cpManager', 'view')")
     public Page<CpControllerListVM>findByConditions(
             @ApiParam(value = "cp名称") @RequestParam(value = "name",required = false )String name,
-            @ApiParam(value = "cp编码") @RequestParam(value = "code",required = false)String code,
-            @ApiParam(value = "cp简称") @RequestParam(value = "cpAbbr",required = false)String cpAbbr,
             @ApiParam(value = "状态") @RequestParam(value = "status",required = false)Integer status,
             @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
             @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
 
         Sort sort = new Sort(Sort.Direction.DESC,"regisTime");
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
-        return cpService.findByConditions(name,code,cpAbbr, status, pageable);
+        return cpService.findByConditions(name, status, pageable);
     }
 }

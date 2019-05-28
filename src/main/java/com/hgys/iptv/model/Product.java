@@ -24,6 +24,7 @@ public class Product implements Serializable {
     private String name;
     private String code;
     private String price;
+    private String prodNum;//产品编号
     private Timestamp inputTime;
     private Timestamp modifyTime;
     @Column(name = "status", nullable = false, length = 2)

@@ -114,9 +114,20 @@ public class AuthorityServiceImpl extends SysServiceImpl implements AuthoritySer
             authority.setCreatedTime(new Timestamp(System.currentTimeMillis()));
             authority.setMenuId(menuId);
             SysMenu sysMenu = repositoryManager.findOneById(SysMenu.class, menuId);
-            //
+            /**perm==
+             * 6:批量上线
+             * 7:批量下线
+             * 8:批量下线
+             * 9:批量导出
+             * 10:初审
+             * 11:复审
+             * 12:终审
+             * menu==
+             * 15:审核
+             */
+
             Permission permission = repositoryManager.findOneById(Permission.class, permId);
-            if(permission.getId()<=4){
+            if(permission.getId()<=4){//CRUD
                 authority.setName(sysMenu.getName()+":"+permission.getName());
                 authority.setMenuId(sysMenu.getId());
                 authority.setMenuName(sysMenu.getName());// 如 cp管理

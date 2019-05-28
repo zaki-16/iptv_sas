@@ -1,10 +1,12 @@
 package com.hgys.iptv.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.hgys.iptv.common.Criteria;
 import com.hgys.iptv.common.Restrictions;
 import com.hgys.iptv.controller.assemlber.CpProductListAssemlber;
 import com.hgys.iptv.controller.vm.CpAddVM;
 import com.hgys.iptv.controller.vm.CpControllerListVM;
+import com.hgys.iptv.controller.vm.CpListVm;
 import com.hgys.iptv.controller.vm.CpVM;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.enums.ResultEnum;
@@ -16,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -282,45 +285,14 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
 
     /**
      * 查询所有未删除的cp--包括status=1,2,3,4(已注销的)
-     *
-     * @param name
-     * @param code
-     * @param cpAbbr
-     * @param status
-     * @param pageable
-     * @return
+
      */
     @Override
-    public Page<CpControllerListVM> findByConditions(String name, String code, String cpAbbr, Integer status, Pageable pageable) {
-        return cpRepository.findAll(((root, query, builder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (StringUtils.isNotBlank(name)){
-                Predicate condition = builder.like(root.get("name"), "%"+name+"%");
-                predicates.add(condition);
-            }
-
-            if (StringUtils.isNotBlank(code)){
-                Predicate condition = builder.like(root.get("code"), "%"+code+"%");
-                predicates.add(condition);
-            }
-
-            if (StringUtils.isNotBlank(cpAbbr)){
-                Predicate condition = builder.like(root.get("cpAbbr"), "%"+cpAbbr+"%");
-                predicates.add(condition);
-            }
-
-            if (status!=null && status>0){
-                Predicate condition = builder.equal(root.get("status"), status);
-                predicates.add(condition);
-            }
-            Predicate condition = builder.equal(root.get("isdelete"), 0);
-            predicates.add(condition);
-            if (!predicates.isEmpty()){
-                return builder.and(predicates.toArray(new Predicate[0]));
-            }
-            return builder.conjunction();
-        }),pageable).map(assemlber::getListVM);
+    public Page<CpControllerListVM> findByConditions(String name, Integer status, Pageable pageable) {
+        Criteria<Cp> criteria = new Criteria<>();
+        criteria.add(Restrictions.like("name",name))
+                .add(Restrictions.eq("status",status));
+        return cpRepository.findAll(criteria,pageable).map(assemlber::getListVM);
     }
 
 
