@@ -627,7 +627,7 @@ public class AccountSettlementServiceImpl implements AccountSettlementService {
 
 
             if (StringUtils.isNotBlank(set_ruleName)) {
-                Predicate condition = builder.equal(root.get("set_ruleName"), Integer.parseInt(set_ruleName));
+                Predicate condition = builder.equal(root.get("set_ruleName"), set_ruleName);
                 predicates.add(condition);
             }
             if (StringUtils.isNotBlank(set_type)) {
