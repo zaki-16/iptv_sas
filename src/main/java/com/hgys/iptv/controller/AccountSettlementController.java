@@ -226,14 +226,16 @@ public class AccountSettlementController {
     @ApiOperation(value = "通过条件，分页查询",notes = "JSON类型格式数据")
     @ResponseStatus(HttpStatus.OK)
     public Page<AccountSettlementAddVM> findByConditions(@ApiParam(value = "名称") @RequestParam(value = "name",required = false )String name,
-                                                                 @ApiParam(value = "编码") @RequestParam(value = "code",required = false)String code,
-                                                                 @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
-                                                                 @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
-                                                                 @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
+                                                         @ApiParam(value = "编码") @RequestParam(value = "code",required = false)String code,
+                                                         @ApiParam(value = "状态") @RequestParam(value = "status",required = false)String status,
+                                                         @ApiParam(value = "结算开始时间(2019-01-01 12:12:12)") @RequestParam(value = "startTime",required = false)String startTime,
+                                                         @ApiParam(value = "结算结束时间(2019-01-01 12:12:12)") @RequestParam(value = "endTime",required = false)String endTime,
+                                                         @ApiParam(value = "当前页",required = true,example = "1") @RequestParam(value = "pageNum")String pageNum,
+                                                         @ApiParam(value = "当前页数量",required = true,example = "10") @RequestParam(value = "pageSize")String pageSize){
 
         Sort sort = new Sort(Sort.Direction.DESC,"inputTime");
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNum) -1 ,Integer.parseInt(pageSize),sort);
-        Page<AccountSettlementAddVM> byConditions = accountSettlementService.findByConditions(name, code,status,pageable);
+        Page<AccountSettlementAddVM> byConditions = accountSettlementService.findByConditions(name, code,status,pageable,startTime,endTime);
         return byConditions;
     }
 

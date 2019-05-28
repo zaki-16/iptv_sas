@@ -69,7 +69,7 @@ public class DemoContronller {
     }
 
     @GetMapping("/excel")
-    @ApiOperation(value = "excel导出模板方法一",notes = "返回Excel文件")
+    @ApiOperation(value = "excel导出模板(定制模板)",notes = "返回Excel文件")
     public void excel(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Map<String, Object> beanParams = new HashMap<>();
         List<Map> l = new ArrayList<>();
@@ -80,8 +80,7 @@ public class DemoContronller {
             l.add(a);
         }
         beanParams.put("pList",l);
-        ExcelForWebUtil.exportExcel(response,beanParams,"test.xlsx", PathConstant.getExcelExportResource(),"导出测试文件.xlsx");
-
+        ExcelForWebUtil.exportExcelLiunx(response,beanParams,"test.xlsx","test");
     }
 
     @GetMapping("/test")
@@ -105,21 +104,22 @@ public class DemoContronller {
         /**
          * Excel导出：Object 转换为 Excel
          */
-        //自己硬盘的地址
-        String filePath = "/Users/yance/Downloads/demo-sheet.xls";
+//        //自己硬盘的地址
+//        String filePath = "/Users/yance/Downloads/demo-sheet.xls";
+//        PathConstant.getExcelExportResource();
 
-        ExcelExportUtil.exportToFile(filePath, shopDTOList);
+//        ExcelExportUtil.exportToFile(filePath, shopDTOList);
 
         //浏览器返回Excel
         Workbook sheets = ExcelExportUtil.exportWorkbook(shopDTOList);
         ExcelForWebUtil.workBookExportExcel(response,sheets,"Excel导出测试文件");
 
-        /**
-         * Excel导入：Excel 转换为 Object
-         */
-        List<Object> list = ExcelImportUtil.importExcel(filePath, ShopDTO.class);
+//        /**
+//         * Excel导入：Excel 转换为 Object
+//         */
+//        List<Object> list = ExcelImportUtil.importExcel(filePath, ShopDTO.class);
 
-        System.out.println(list);
+//        System.out.println(list);
         return shopDTOList;
     }
 
