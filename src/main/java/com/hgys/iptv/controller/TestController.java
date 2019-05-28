@@ -52,7 +52,7 @@ public class TestController   {
     }
 
     @GetMapping("/tester")
-    @SystemControllerLog(target = "测试",methodName = "TestController.tester",type = "test")
+    @SystemControllerLog(target = "测试target",type = "测试type")
     public ResultVO tester(HttpServletRequest request){
 //        Page<Authority> pageByHql = repositoryManager.findPageByHql(Authority.class, null, null, 0, 10, null);
 ////        List<Map<String, Object>> pageBySql = repositoryManager.findPageBySql("SELECT * FROM authority", 1, 10, null);

@@ -31,10 +31,6 @@ import java.sql.Timestamp;
  */
 @Component
 public class Logger {
-    /**
-      @Autowired
-      private Logger logger;
-     */
 
     @Autowired
     private OperationLogRepository operationLogRepository;
@@ -42,21 +38,7 @@ public class Logger {
     @Autowired
     private SysLogRepository sysLogRepository;
 
-//    @Autowired
-//    private JPAQueryFactory queryFactory;
-//
-//    @Autowired
-//    private RepositoryManager repositoryManager;
-
     private Logger(){}
-//
-//    private static class LoggerHolder{
-//        private final static Logger INSTANCE= new Logger();
-//    }
-//    public static Logger getLogger(){
-//        return LoggerHolder.INSTANCE;
-//    }
-
 
 
     //----==============--=======------记录日志==============-==========--===-=============
@@ -135,20 +117,9 @@ public class Logger {
                 .add(Restrictions.gte("time",sysLogVM.getStartTime()))
                 .add(Restrictions.lte("time",sysLogVM.getEndTime()));
 
-
-//        HashMap<String, Object> map = Maps.newHashMap();
-//        if(sysLogVM.getLoginName()!=null)
-//            map.put("loginName","%"+sysLogVM.getLoginName()+"%");
-//        if(sysLogVM.getRealName()!=null)
-//            map.put("realName","%"+sysLogVM.getRealName()+"%");
-//        if(sysLogVM.getType()!=null)
-//            map.put("type","%"+sysLogVM.getType()+"%");
-//        map.put("result",sysLogVM.getResult());
-//        map.put("ip",sysLogVM.getIp());
         //排序
         Pageable pageable = PageRequest.of(pageNum-1, pageSize, Sort.Direction.DESC,"time");
         return sysLogRepository.findAll(criteria,pageable);
-//        return repositoryManager.findByCriteriaPage(sysLogRepository,map,pageable);
     }
     /**
      * 分页加载操作日志
@@ -167,51 +138,8 @@ public class Logger {
             .add(Restrictions.gte("operTime",operLogVM.getStartTime()))
             .add(Restrictions.lte("operTime",operLogVM.getEndTime()))
         ;
-//        HashMap<String, Object> map = Maps.newHashMap();
-//        if(operLogVM.getLoginName()!=null)
-//            map.put("loginName","%"+operLogVM.getLoginName()+"%");
-//        if(operLogVM.getRealName()!=null)
-//            map.put("realName","%"+operLogVM.getRealName()+"%");
-//        if(operLogVM.getOperObj()!=null)
-//            map.put("operObj","%"+operLogVM.getOperObj()+"%");
-//        map.put("result",operLogVM.getResult());
-//        map.put("ip",operLogVM.getIp());
         Pageable pageable = PageRequest.of(pageNum-1, pageSize, Sort.Direction.DESC,"operTime");
         return operationLogRepository.findAll(criteria,pageable);
-//        return repositoryManager.findByCriteriaPage(operationLogRepository,map,pageable);
     }
-
-//    protected Page<OperationLog> loadOperationLog(Pageable pageable){
-//        QOperationLog operationLog = QOperationLog.operationLog;
-//        JPAQuery<OperationLog> jpaQuery = queryFactory.selectFrom(operationLog)
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize());
-//        return new PageImpl<>(jpaQuery.fetch(),pageable,jpaQuery.fetchResults().getTotal());
-//    }
-
-
-
-    //=======================-=--------针对 增删改查的便捷日志调用-=-=-=----------========
-    public void log_add_success(String menuName,String methodName){
-        log(menuName, LogTypeEnum.ADD.getType(),methodName, LogResultEnum.SUCCESS.getResult());
-    }
-    public void log_add_fail(String menuName,String methodName){
-        log(menuName, LogTypeEnum.ADD.getType(),methodName, LogResultEnum.FAILURE.getResult());
-    }
-
-    public void log_up_success(String menuName,String methodName){
-        log(menuName, LogTypeEnum.MODIFY.getType(),methodName, LogResultEnum.SUCCESS.getResult());
-    }
-    public void log_up_fail(String menuName,String methodName){
-        log(menuName, LogTypeEnum.MODIFY.getType(),methodName, LogResultEnum.FAILURE.getResult());
-    }
-
-    public void log_rm_success(String menuName,String methodName){
-        log(menuName, LogTypeEnum.REMOVE.getType(),methodName, LogResultEnum.SUCCESS.getResult());
-    }
-    public void log_rm_fail(String menuName,String methodName){
-        log(menuName, LogTypeEnum.REMOVE.getType(),methodName, LogResultEnum.FAILURE.getResult());
-    }
-
 
 }
