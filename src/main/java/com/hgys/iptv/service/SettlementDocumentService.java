@@ -21,9 +21,9 @@ public interface SettlementDocumentService {
 
     ResultVO<?> settlementDocumentQueryCpMySelfList(Integer id);
 
-    SettlementDocumentCPListExcelVM settlementCpExcel(Integer id);
-
     void excelSettlementInfo(Integer masterId, HttpServletResponse response);
 
     void excelSettlementInfoMode(Integer masterId, HttpServletResponse response);
+
+    void excelCpSettlementInfo(Integer id,HttpServletResponse response);
 }
