@@ -51,7 +51,7 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
      * @return
      */
     public ResultVO getCpSettleDataForPie(CpSettlementMoneyDTO cpSettlementMoneyDTO) {
-        ResultVO cpSettleData = getCpSettleData(cpSettlementMoneyDTO);
+        ResultVO cpSettleData = getCpSettleData_(cpSettlementMoneyDTO);
         List<SingleCpSettleMoneyVM> singleCpSettleMoneyVMS = (List<SingleCpSettleMoneyVM>)cpSettleData.getData();
         List<CpSettleStatisticsVM> cpSettleStatisticsVMS = new ArrayList<>();
         //
@@ -130,84 +130,150 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
 //        });
 //    }
 
-        @Override
-    public ResultVO getCpSettleData(CpSettlementMoneyDTO cpSettlementMoneyDTO) {
+    public ResultVO getCpSettleData_(CpSettlementMoneyDTO cpSettlementMoneyDTO) {
 
-            /**1.所有账期对象的列表--默认取12个*/
+        /**1.所有账期对象的列表--默认取12个*/
         List<SingleCpSettleMoneyVM> singleCpSettleMoneyVMS = new LinkedList<>();
-            // 计算每个账期的所有cp的结算总金额
-            // 取最近的12个账期
-            BigDecimal b = BigDecimal.ZERO;
-            List<AccountSettlement> settlementList = settlementStatisticsRepository.findsettlement();
-            for(AccountSettlement accountSettlement:settlementList) {
-                //2.SingleCpSettleMoneyVM
-                SingleCpSettleMoneyVM singleCpSettleMoneyVM = new SingleCpSettleMoneyVM();
-                BeanUtils.copyProperties(accountSettlement, singleCpSettleMoneyVM);
-                /** 单个账期内所有cp的总金额之和*/
-                singleCpSettleMoneyVM.setGrossIncome(cpSettlementMoneyRepository.sumByMasterCode(accountSettlement.getCode()));
+        // 计算每个账期的所有cp的结算总金额
+        // 取最近的12个账期
+        BigDecimal b = BigDecimal.ZERO;
+        List<AccountSettlement> settlementList = settlementStatisticsRepository.findsettlement();
+        for(AccountSettlement accountSettlement:settlementList) {
+            //2.SingleCpSettleMoneyVM
+            SingleCpSettleMoneyVM singleCpSettleMoneyVM = new SingleCpSettleMoneyVM();
+            BeanUtils.copyProperties(accountSettlement, singleCpSettleMoneyVM);
+            /** 单个账期内所有cp的总金额之和*/
+            BigDecimal singleAccount = cpSettlementMoneyRepository.sumByMasterCode(accountSettlement.getCode());
+            singleCpSettleMoneyVM.setGrossIncome(singleAccount==null?BigDecimal.valueOf(0):singleAccount);
 
-                //3.List<CpSettlementMoneyVM> list
-                Map<String, CpSettlementMoneyVM> cpMap = new HashMap<>();// 记录该账期下cp的总金额
-                // 根据 masterCode 查询该账期内的所有cp数据(cp可能会重复，因为产品和业务不同)
-                // 按条件查询
-                Criteria<CpSettlementMoney> criteria = new Criteria<>();
-                criteria.add(Restrictions.like("cpname",cpSettlementMoneyDTO.getCpname()))
-                        .add(Restrictions.eq("masterCode",accountSettlement.getCode()))
-                        .add(Restrictions.lte("createTime",cpSettlementMoneyDTO.getSetEndTime()))
-                        .add(Restrictions.gte("createTime",cpSettlementMoneyDTO.getSetStartTime()));
-                List<CpSettlementMoney> cps = cpSettlementMoneyRepository.findAll(criteria);
+            //3.List<CpSettlementMoneyVM> list
+            Map<String, CpSettlementMoneyVM> cpMap = new HashMap<>();// 记录该账期下cp的总金额
+            // 根据 masterCode 查询该账期内的所有cp数据(cp可能会重复，因为产品和业务不同)
+            // 按条件查询
+            Criteria<CpSettlementMoney> criteria = new Criteria<>();
+            criteria.add(Restrictions.like("cpname",cpSettlementMoneyDTO.getCpname()))
+                    .add(Restrictions.eq("masterCode",accountSettlement.getCode()))
+                    .add(Restrictions.lte("createTime",cpSettlementMoneyDTO.getSetEndTime()))
+                    .add(Restrictions.gte("createTime",cpSettlementMoneyDTO.getSetStartTime()));
+            List<CpSettlementMoney> cps = cpSettlementMoneyRepository.findAll(criteria);
 //                List<CpSettlementMoney> byMasterCode = cpSettlementMoneyRepository.findByMasterCode(accountSettlement.getCode());
-                // 根据cpcode+masterCode 查询该账期下该cp的结算总额
-                //
-                for (CpSettlementMoney cpSettlementMoney : cps) {
-                    CpSettlementMoneyVM cpSettlementMoneyVM = new CpSettlementMoneyVM();
-                    BeanUtils.copyProperties(cpSettlementMoney,cpSettlementMoneyVM);
-                    b = b.add(cpSettlementMoney.getSettlementMoney());
-                    cpSettlementMoneyVM.setGrossIncome(b);
-                    cpMap.put(cpSettlementMoney.getCpcode(), cpSettlementMoneyVM);
-                }
-                // List<CpSettlementMoneyVM>// 一个账期下的cp汇总
-                List<CpSettlementMoneyVM> cpSettlementMoneyVMS = new ArrayList<>();
-                // 将cpMap的value
-                for(Map.Entry<String,CpSettlementMoneyVM> entry:cpMap.entrySet()){
-                    cpSettlementMoneyVMS.add(entry.getValue());
-                }
-                cpSettlementMoneyVMS.forEach(cp->{
-                    BigDecimal cpMoney = cp.getGrossIncome();
-                    BigDecimal divide = cpMoney.divide(singleCpSettleMoneyVM.getGrossIncome(), 2, RoundingMode.HALF_UP);
-                    cp.setRatio(divide.toString());
-                });
-                singleCpSettleMoneyVM.setCpList(cpSettlementMoneyVMS);
-                singleCpSettleMoneyVMS.add(singleCpSettleMoneyVM);
+            // 根据cpcode+masterCode 查询该账期下该cp的结算总额
+            //
+            for (CpSettlementMoney cpSettlementMoney : cps) {
+                CpSettlementMoneyVM cpSettlementMoneyVM = new CpSettlementMoneyVM();
+                BeanUtils.copyProperties(cpSettlementMoney,cpSettlementMoneyVM);
+
+//                    cpMap.put(cpSettlementMoney.getCpcode(), cpSettlementMoneyVM);//需要放2次，否则初始化没有数据
+//                    // 在map中按cpcode索引到同一个c进行 settlementMoney累加
+//                    if(cpMap.get(cpSettlementMoney.getCpcode()).getGrossIncome()!=null)
+//                        b = b.add(cpMap.get(cpSettlementMoney.getCpcode()).getGrossIncome());
+                cpSettlementMoneyVM.setGrossIncome(b);
+//                    cpMap.put(cpSettlementMoney.getCpcode(), cpSettlementMoneyVM);
             }
+            // List<CpSettlementMoneyVM>// 一个账期下的cp汇总
+            List<CpSettlementMoneyVM> cpSettlementMoneyVMS = new ArrayList<>();
+            // 将cpMap的value
+//                for(Map.Entry<String,CpSettlementMoneyVM> entry:cpMap.entrySet()){
+//                    cpSettlementMoneyVMS.add(entry.getValue());
+//                }
+            cpSettlementMoneyVMS.forEach(cp->{
+                BigDecimal cpMoney = cp.getGrossIncome();
+                BigDecimal divide = cpMoney.divide(singleCpSettleMoneyVM.getGrossIncome(), 2, RoundingMode.HALF_UP);
+                cp.setRatio(divide.toString());
+            });
+            singleCpSettleMoneyVM.setCpList(cpSettlementMoneyVMS);
+            singleCpSettleMoneyVMS.add(singleCpSettleMoneyVM);
+        }
 
         return ResultVOUtil.success(singleCpSettleMoneyVMS);
     }
 
+    /**
+     * CP名称、关联产品、关联业务、结算金额（各账期结算金额之和）、占比。默认取最近12个账期数据
+     * @param cpSettlementMoneyDTO
+     * @return
+     */
+    @Override
+    public ResultVO getCpSettleData(CpSettlementMoneyDTO cpSettlementMoneyDTO) {
+        List<CpSettlementMoneyVM> cpSettlementMoneyVMS = new ArrayList<>();
+        BigDecimal b = BigDecimal.ZERO;
+        /**1.所有账期对象的列表--默认取12个*/
+        List<AccountSettlement> settlementList = settlementStatisticsRepository.findsettlement();
+        for(AccountSettlement accountSettlement:settlementList) {
+            //某账期下的所有cp
+            List<CpSettlementMoney> byMasterCode = cpSettlementMoneyRepository.findByMasterCode(accountSettlement.getCode());
+            byMasterCode.forEach(cp -> {
+                // 单账期粒度下的cp所有结算总额
+                BigDecimal singleAcc = cpSettlementMoneyRepository.sumByMasterCode(accountSettlement.getCode());
+                CpSettlementMoneyVM cpSettlementMoneyVM = new CpSettlementMoneyVM();
+                BeanUtils.copyProperties(cp, cpSettlementMoneyVM);
+                // 处理grossIncome,ratio
+                BigDecimal grossIncome = cp.getSettlementMoney();
+                cpSettlementMoneyVM.setGrossIncome(grossIncome==null?BigDecimal.valueOf(0):grossIncome);
+                BigDecimal cpMoney = cp.getSettlementMoney();
+                if(cpMoney!=null){
+                    BigDecimal ratio = cpMoney.divide(singleAcc, 2, RoundingMode.HALF_UP);
+                    cpSettlementMoneyVM.setRatio(Double.toString(ratio.doubleValue()));
+                }else{
+                    cpSettlementMoneyVM.setRatio("0.00");
+                }
+                cpSettlementMoneyVMS.add(cpSettlementMoneyVM);
+            });
+        }
+        return ResultVOUtil.success(cpSettlementMoneyVMS);
+    }
+
     @Override
     public ResultVO getBizSettleData(CpSettlementMoneyDTO cpSettlementMoneyDTO) {
-        List<CpSettlementMoneyVM> cpSettlementMoneyVMS = new ArrayList<>();
-        Criteria<CpSettlementMoney> criteria = new Criteria<>();
-        criteria.add(Restrictions.like("businessName",cpSettlementMoneyDTO.getBusinessName()))
-                .add(Restrictions.lte("createTime",cpSettlementMoneyDTO.getSetEndTime()))
-                .add(Restrictions.gte("createTime",cpSettlementMoneyDTO.getSetStartTime()));
-        List<CpSettlementMoney> cps = cpSettlementMoneyRepository.findAll(criteria);
 
-        //1.获取每个账期(月)的总金额
-        BigDecimal allSettlementMoney = cpSettlementMoneyRepository.sumAllSettlementMoney(12);
-        //2.获取每个账期(月)的cp总金额
-        cps.forEach(cp->{
-            if(cp.getBusinessCode()!=null){
-                BigDecimal cpMoney = cpSettlementMoneyRepository.sumSettleMoneyByBizCode(cp.getBusinessCode());
-                BigDecimal divide = cpMoney.divide(allSettlementMoney, 2, RoundingMode.HALF_UP);
+        /**1.所有账期对象的列表--默认取12个*/
+        List<SingleCpSettleMoneyVM> singleCpSettleMoneyVMS = new LinkedList<>();
+        // 计算每个账期的所有cp的结算总金额
+        // 取最近的12个账期
+        BigDecimal b = BigDecimal.ZERO;
+        List<AccountSettlement> settlementList = settlementStatisticsRepository.findsettlement();
+        for(AccountSettlement accountSettlement:settlementList) {
+            //2.SingleCpSettleMoneyVM
+            SingleCpSettleMoneyVM singleCpSettleMoneyVM = new SingleCpSettleMoneyVM();
+            BeanUtils.copyProperties(accountSettlement, singleCpSettleMoneyVM);
+            /** 单个账期内所有cp的总金额之和*/
+            singleCpSettleMoneyVM.setGrossIncome(cpSettlementMoneyRepository.sumByMasterCode(accountSettlement.getCode()));
+
+            //3.List<CpSettlementMoneyVM> list
+            Map<String, CpSettlementMoneyVM> bizMap = new HashMap<>();// 统计该账期下的业务总金额
+            // 根据 masterCode 查询该账期内的所有cp数据(cp可能会重复，因为产品和业务不同)
+            // 按条件查询
+            Criteria<CpSettlementMoney> criteria = new Criteria<>();
+            criteria.add(Restrictions.like("businessName",cpSettlementMoneyDTO.getBusinessName()))
+                    .add(Restrictions.eq("masterCode",accountSettlement.getCode()))
+                    .add(Restrictions.lte("createTime",cpSettlementMoneyDTO.getSetEndTime()))
+                    .add(Restrictions.gte("createTime",cpSettlementMoneyDTO.getSetStartTime()));
+            List<CpSettlementMoney> cps = cpSettlementMoneyRepository.findAll(criteria);
+//                List<CpSettlementMoney> byMasterCode = cpSettlementMoneyRepository.findByMasterCode(accountSettlement.getCode());
+            // 根据cpcode+masterCode 查询该账期下该cp的结算总额
+            //
+            for (CpSettlementMoney cpSettlementMoney : cps) {
                 CpSettlementMoneyVM cpSettlementMoneyVM = new CpSettlementMoneyVM();
-                BeanUtils.copyProperties(cp,cpSettlementMoneyVM);
-                cpSettlementMoneyVM.setGrossIncome(cpMoney);
-                cpSettlementMoneyVM.setRatio(divide.toString());
-                cpSettlementMoneyVMS.add(cpSettlementMoneyVM);
+                BeanUtils.copyProperties(cpSettlementMoney,cpSettlementMoneyVM);
+                b = b.add(cpSettlementMoney.getSettlementMoney());
+                cpSettlementMoneyVM.setGrossIncome(b);
+                bizMap.put(cpSettlementMoney.getBusinessCode(), cpSettlementMoneyVM);
             }
-        });
-        return ResultVOUtil.success(cpSettlementMoneyVMS);
+            // List<CpSettlementMoneyVM>// 一个账期下的cp汇总
+            List<CpSettlementMoneyVM> cpSettlementMoneyVMS = new ArrayList<>();
+            for(Map.Entry<String,CpSettlementMoneyVM> entry:bizMap.entrySet()){
+                cpSettlementMoneyVMS.add(entry.getValue());
+            }
+            cpSettlementMoneyVMS.forEach(cp->{
+                BigDecimal cpMoney = cp.getGrossIncome();
+                BigDecimal divide = cpMoney.divide(singleCpSettleMoneyVM.getGrossIncome(), 2, RoundingMode.HALF_UP);
+                cp.setRatio(divide.toString());
+            });
+            singleCpSettleMoneyVM.setCpList(cpSettlementMoneyVMS);
+            singleCpSettleMoneyVMS.add(singleCpSettleMoneyVM);
+        }
+
+        return ResultVOUtil.success(singleCpSettleMoneyVMS);
     }
 
     @Override
