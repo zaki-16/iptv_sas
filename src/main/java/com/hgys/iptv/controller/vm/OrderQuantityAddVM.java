@@ -23,8 +23,8 @@ public class OrderQuantityAddVM {
     }
 
 
-    /** 维度编码 */
-    @ApiModelProperty("维度编码")
+    /** code */
+    @ApiModelProperty("code")
     private String code;
 
 
