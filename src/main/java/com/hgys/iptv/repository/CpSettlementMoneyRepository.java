@@ -55,4 +55,17 @@ public interface CpSettlementMoneyRepository extends JpaRepository<CpSettlementM
             "WHERE DATE_FORMAT(CONCAT(createTime),'%Y-%M')> " +
             "DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 12 MONTH),'%Y-%M');",nativeQuery = true)
     BigDecimal sumAllSettlementMoney();
+
+
+
+
+    /**
+     * 通过结算组合维度编码查询
+     * @param Code
+     * @return
+     */
+    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE masterCode=?1")
+    BigDecimal findByMastermoney(String Code);
+
+
 }
