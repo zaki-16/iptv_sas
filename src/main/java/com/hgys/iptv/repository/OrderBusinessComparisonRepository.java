@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -31,7 +32,11 @@ public interface OrderBusinessComparisonRepository extends JpaRepository<OrderBu
      * @param Code
      * @return
      */
-    @Query(value = "select o.id from OrderQuantity o where o.code = ?1")
+    @Query(value = "select o.id from OrderBusinessComparison o where o.code = ?1")
     Integer findByMastid(String Code);
+
+
+    @Query(value = "select o from OrderBusinessComparison o where o.code = ?1")
+    List<OrderBusinessComparison> finddetail(String code);
 
 }

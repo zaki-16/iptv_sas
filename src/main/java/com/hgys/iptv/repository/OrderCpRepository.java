@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -40,4 +41,6 @@ public interface OrderCpRepository extends JpaRepository<OrderCp,Object>, JpaSpe
     String findByMasterCodes(String Code);
 
 
+    @Query(value = "select o from OrderCp o where o.code = ?1")
+    List<OrderCp> finddetail(String code);
 }

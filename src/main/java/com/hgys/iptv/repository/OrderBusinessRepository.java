@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -46,4 +47,8 @@ public interface OrderBusinessRepository extends JpaRepository<OrderBusiness,Obj
     Optional<OrderBusiness> findByName(String name);
 
     Optional<OrderBusiness> findByCode(String code);
+
+    @Query(value = "select o from OrderBusiness o where o.code = ?1")
+    List<OrderBusiness> finddetail(String code);
+
 }
