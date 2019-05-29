@@ -84,8 +84,7 @@ public interface CpSettlementMoneyRepository extends JpaRepository<CpSettlementM
             @Param("recent") int recent,
             @Param("productCode") String productCode
     );
-            "DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 12 MONTH),'%Y-%M');",nativeQuery = true)
-    BigDecimal sumAllSettlementMoney();
+
 
 
 
@@ -99,4 +98,27 @@ public interface CpSettlementMoneyRepository extends JpaRepository<CpSettlementM
     BigDecimal findByMastermoney(String Code);
 
 
+    /**
+     * 按 cpcode、masterCode
+     * 查询 某个账期内的某个cp的结算总额
+     * SELECT SUM(settlementMoney)  FROM cp_settlement_money WHERE cpcode='CP2019052311193203512' AND masterCode='FZ2019052712112319925'
+     */
+
+    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE cpcode=?1 and masterCode=?1")
+    BigDecimal sumByCpCode(String cpcode,String masterCode);
+
+    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE businessCode=?1 and masterCode=?1")
+    BigDecimal sumByBizCode(String businessCode,String masterCode);
+
+    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE productCode=?1 and masterCode=?1")
+    BigDecimal sumByProdCode(String productCode,String masterCode);
+
+    /**
+     * 获取一个账期的总金额
+     *
+     * @param masterCode
+     * @return
+     */
+    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE masterCode=?1")
+    BigDecimal sumByMasterCode(String masterCode);
 }

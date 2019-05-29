@@ -27,5 +27,5 @@ public class SingleCpSettleMoneyVM {
     /** 单个账期内所有cp的总金额之和*/
     private BigDecimal grossIncome;
     /** 单个账期内所有cp的结算详情*/
-    List<CpSettlementMoneyVM> list;
+    List<CpSettlementMoneyVM> cpList;
 }

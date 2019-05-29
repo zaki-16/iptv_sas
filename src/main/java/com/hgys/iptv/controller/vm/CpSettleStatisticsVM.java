@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,14 +22,21 @@ public class CpSettleStatisticsVM {
      *      *      child1：cpList：包含金额+占比
      *      *      child2：汇总：取占比前5cp+剩余其他
      */
-        /** 结算总账编码 */
-        private String code;
-        /** 结算总账名称 */
-        private String name;
+    /** 账期名称 */
+    private String name;
+    /** 账期编码 */
+    private String code;
 
-        private List<CpSettlementMoneyVM> cpList;
+    /** 账期开始时间 */
+    private Timestamp setStartTime;
+    /** 结算结束时间 */
+    private Timestamp setEndTime;
+    /** 单个账期内所有cp的总金额之和*/
+    private BigDecimal grossIncome;
+    /** 单个账期内所有cp的结算详情*/
+    List<CpSettlementMoneyVM> cpList;
 
-        private LinkedList<TopSixListVM> topSixList;//按rank排序
+    private LinkedList<TopSixListVM> topSixList;//按rank排序
 
         @Getter @Setter
         public static class TopSixListVM{
