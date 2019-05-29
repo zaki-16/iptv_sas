@@ -1,6 +1,7 @@
 package com.hgys.iptv.service.impl;
 
 
+import cn.hutool.core.collection.CollUtil;
 import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.*;
 import com.hgys.iptv.model.vo.ResultVO;
@@ -13,8 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class RuleStatisticsServiceImpl implements RuleStatisticsService {
@@ -141,37 +141,86 @@ public class RuleStatisticsServiceImpl implements RuleStatisticsService {
                 List<AccountSettlement> settlementList = settlementStatisticsRepository.findsettlement();
                 for (AccountSettlement vm : settlementList) {
                     if (vm.getSet_type() == 1) {          //订购量结算
-                        BigDecimal money = settlementOrderRepository.findByMastermoney(vm.getCode());
-                        vm.setTotal_sum(money);
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
+                        if(money==null){
+                            vm.setTotal_sum(BigDecimal.ZERO);
+                        }else {
+                            vm.setTotal_sum(money);
+                        }
                     } else if (vm.getSet_type() == 2) {   //2:业务级结算;
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode());
-                        vm.setTotal_sum(money);
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
+                        if(money==null){
+                            vm.setTotal_sum(BigDecimal.ZERO);
+                        }else {
+                            vm.setTotal_sum(money);
+                        }
                     } else if (vm.getSet_type() == 3) {   //3:产品级结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
-                        vm.setTotal_sum(money);
+                        if(money==null){
+                            vm.setTotal_sum(BigDecimal.ZERO);
+                        }else {
+                            vm.setTotal_sum(money);
+                        }
                     } else if (vm.getSet_type() == 4) {   //4:CP定比例结算
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
-                        vm.setTotal_sum(money);
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
+                        if(money==null){
+                            vm.setTotal_sum(BigDecimal.ZERO);
+                        }else {
+                            vm.setTotal_sum(money);
+                        }
                     } else if (vm.getSet_type() == 5) {   // 5:业务定比例结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
-                        vm.setTotal_sum(money);
+                        if(money==null){
+                            vm.setTotal_sum(BigDecimal.ZERO);
+                        }else {
+                            vm.setTotal_sum(money);
+                        }
                     }
                 }
+                Collections.sort(settlementList, new Comparator<AccountSettlement>() {
+                    public int compare(AccountSettlement o1, AccountSettlement o2) {
+                        int flag = o1.getTotal_sum().compareTo(o2.getTotal_sum());
+                        if (flag==1) {
+                            return -1;
+                        }
+                        if (flag == 0) {
+                            return 0;
+                        }
+                        return 1;
+                    }
+                });
+                List<AccountSettlement> settlementLists =new ArrayList<>();
+                for (int i=0;i<settlementList.size();i++){
+                    BigDecimal money = null;
+                    if(i<6){
+                    settlementLists.add(settlementList.get(i));
+                }else{
+                        settlementLists.add(settlementList.get(i));
+                        settlementLists.get(i).setName("其他");
+                        money=settlementLists.get(i).getTotal_sum();
+                        BigDecimal  money1=settlementList.get(i-1).getTotal_sum();
+                        settlementLists.get(i).setTotal_sum(money.add(money1));
+
+
+                    }
+
+                }
+                settlementList.addAll(settlementLists);
                 return ResultVOUtil.success(settlementList);
             } else if (name != null && set_type == null && set_ruleName == null) {
                 List<AccountSettlement> settlementList = settlementStatisticsRepository.findsettlementnames(name);
                 for (AccountSettlement vm : settlementList) {
                     if (vm.getSet_type() == 1) {          //订购量结算
-                        BigDecimal money = settlementOrderRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 2) {   //2:业务级结算;
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 3) {   //3:产品级结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 4) {   //4:CP定比例结算
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 5) {   // 5:业务定比例结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
@@ -183,16 +232,16 @@ public class RuleStatisticsServiceImpl implements RuleStatisticsService {
                 List<AccountSettlement> settlementList = settlementStatisticsRepository.findsettlementnamess(name, set_type);
                 for (AccountSettlement vm : settlementList) {
                     if (vm.getSet_type() == 1) {          //订购量结算
-                        BigDecimal money = settlementOrderRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 2) {   //2:业务级结算;
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 3) {   //3:产品级结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 4) {   //4:CP定比例结算
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 5) {   // 5:业务定比例结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
@@ -204,16 +253,16 @@ public class RuleStatisticsServiceImpl implements RuleStatisticsService {
                 List<AccountSettlement> settlementList = settlementStatisticsRepository.findsettlementnamesss(name, set_type, set_ruleName);
                 for (AccountSettlement vm : settlementList) {
                     if (vm.getSet_type() == 1) {          //订购量结算
-                        BigDecimal money = settlementOrderRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 2) {   //2:业务级结算;
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 3) {   //3:产品级结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 4) {   //4:CP定比例结算
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 5) {   // 5:业务定比例结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
@@ -225,16 +274,16 @@ public class RuleStatisticsServiceImpl implements RuleStatisticsService {
                 List<AccountSettlement> settlementList = settlementStatisticsRepository.findsettlementnamessss(name, set_ruleName);
                 for (AccountSettlement vm : settlementList) {
                     if (vm.getSet_type() == 1) {          //订购量结算
-                        BigDecimal money = settlementOrderRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 2) {   //2:业务级结算;
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 3) {   //3:产品级结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 4) {   //4:CP定比例结算
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 5) {   // 5:业务定比例结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
@@ -248,16 +297,16 @@ public class RuleStatisticsServiceImpl implements RuleStatisticsService {
                 List<AccountSettlement> settlementList = settlementStatisticsRepository.finddatesettlement(startTime, endTime);
                 for (AccountSettlement vm : settlementList) {
                     if (vm.getSet_type() == 1) {          //订购量结算
-                        BigDecimal money = settlementOrderRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 2) {   //2:业务级结算;
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 3) {   //3:产品级结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 4) {   //4:CP定比例结算
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 5) {   // 5:业务定比例结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
@@ -269,16 +318,16 @@ public class RuleStatisticsServiceImpl implements RuleStatisticsService {
                 List<AccountSettlement> settlementList = settlementStatisticsRepository.finddatesettlementname(startTime, endTime, name);
                 for (AccountSettlement vm : settlementList) {
                     if (vm.getSet_type() == 1) {          //订购量结算
-                        BigDecimal money = settlementOrderRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 2) {   //2:业务级结算;
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 3) {   //3:产品级结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 4) {   //4:CP定比例结算
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 5) {   // 5:业务定比例结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
@@ -290,16 +339,16 @@ public class RuleStatisticsServiceImpl implements RuleStatisticsService {
                 List<AccountSettlement> settlementList = settlementStatisticsRepository.finddatesettlementnames(startTime, endTime, name, set_type);
                 for (AccountSettlement vm : settlementList) {
                     if (vm.getSet_type() == 1) {          //订购量结算
-                        BigDecimal money = settlementOrderRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 2) {   //2:业务级结算;
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 3) {   //3:产品级结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 4) {   //4:CP定比例结算
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 5) {   // 5:业务定比例结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
@@ -311,16 +360,16 @@ public class RuleStatisticsServiceImpl implements RuleStatisticsService {
                 List<AccountSettlement> settlementList = settlementStatisticsRepository.finddatesettlementnames(startTime, endTime, name, set_type);
                 for (AccountSettlement vm : settlementList) {
                     if (vm.getSet_type() == 1) {          //订购量结算
-                        BigDecimal money = settlementOrderRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 2) {   //2:业务级结算;
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 3) {   //3:产品级结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 4) {   //4:CP定比例结算
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 5) {   // 5:业务定比例结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
@@ -332,16 +381,16 @@ public class RuleStatisticsServiceImpl implements RuleStatisticsService {
                 List<AccountSettlement> settlementList = settlementStatisticsRepository.finddatesettlementnamess(startTime, endTime, name, set_type, set_ruleName);
                 for (AccountSettlement vm : settlementList) {
                     if (vm.getSet_type() == 1) {          //订购量结算
-                        BigDecimal money = settlementOrderRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 2) {   //2:业务级结算;
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 3) {   //3:产品级结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 4) {   //4:CP定比例结算
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 5) {   // 5:业务定比例结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
@@ -353,24 +402,26 @@ public class RuleStatisticsServiceImpl implements RuleStatisticsService {
                 List<AccountSettlement> settlementList = settlementStatisticsRepository.finddatesettlementnamesss(startTime, endTime, name, set_ruleName);
                 for (AccountSettlement vm : settlementList) {
                     if (vm.getSet_type() == 1) {          //订购量结算
-                        BigDecimal money = settlementOrderRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 2) {   //2:业务级结算;
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode());
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 3) {   //3:产品级结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 4) {   //4:CP定比例结算
-                        BigDecimal money = settlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
+                        BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode()); //通过code查询
                         vm.setTotal_sum(money);
                     } else if (vm.getSet_type() == 5) {   // 5:业务定比例结算
                         BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(vm.getCode());
                         vm.setTotal_sum(money);
                     }
                 }
+
                 return ResultVOUtil.success(settlementList);
             }
+
         }
         return ResultVOUtil.success();
     }
