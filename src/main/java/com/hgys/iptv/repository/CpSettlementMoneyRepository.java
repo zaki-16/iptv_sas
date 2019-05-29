@@ -19,6 +19,8 @@ public interface CpSettlementMoneyRepository extends JpaRepository<CpSettlementM
 
     List<CpSettlementMoney> findByMasterCode(String masterCode);
 
+    List<CpSettlementMoney> findByMasterCodeAndProductCode(String masterCode,String productCode);
+
     @Query(value = "select SUM(settlementMoney) from CpSettlementMoney where masterCode = ?1")
     BigDecimal jsAllmoney(String masterCode);
 
