@@ -97,6 +97,18 @@ public class AccountSettlement implements java.io.Serializable {
     @Column(name = "set_endTime", nullable = true, length = 10)
     private Timestamp setEndTime;
 
+    /** 总金额 */
+    @Column(name = "total_sum", nullable = true, length = 11)
+    private BigDecimal total_sum;
+
+    public BigDecimal getTotal_sum() {
+        return total_sum;
+    }
+
+    public void setTotal_sum(BigDecimal total_sum) {
+        this.total_sum = total_sum;
+    }
+
     /**
      * 获取主键
      *

@@ -18,7 +18,7 @@ public interface CpSettlementMoneyRepository extends JpaRepository<CpSettlementM
     @Query(value = "delete from CpSettlementMoney  where masterCode = ?1")
     void deleteByMasterCode(String masterCode);
 
-    List<CpSettlementMoney> findByMasterCode(String masterCdoe);
+    List<CpSettlementMoney> findByMasterCode(String masterCode);
 
     @Query(value = "select SUM(settlementMoney) from CpSettlementMoney where masterCode = ?1")
     BigDecimal jsAllmoney(String masterCode);
@@ -84,4 +84,19 @@ public interface CpSettlementMoneyRepository extends JpaRepository<CpSettlementM
             @Param("recent") int recent,
             @Param("productCode") String productCode
     );
+            "DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 12 MONTH),'%Y-%M');",nativeQuery = true)
+    BigDecimal sumAllSettlementMoney();
+
+
+
+
+    /**
+     * 通过结算组合维度编码查询
+     * @param Code
+     * @return
+     */
+    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE masterCode=?1")
+    BigDecimal findByMastermoney(String Code);
+
+
 }
