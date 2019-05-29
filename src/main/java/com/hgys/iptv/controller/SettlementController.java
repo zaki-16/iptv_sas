@@ -1,6 +1,7 @@
 package com.hgys.iptv.controller;
 
 import com.hgys.iptv.aop.SystemControllerLog;
+import com.hgys.iptv.controller.vm.ProductLevelStatisticsVM;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.SettlementService;
 import com.hgys.iptv.util.ResultVOUtil;
@@ -11,6 +12,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * @author yangpeng
@@ -43,5 +47,14 @@ public class SettlementController {
             return ResultVOUtil.error("1","分账结算ID不能为空!");
         }
         return settlementService.cancel(id);
+    }
+
+    @GetMapping("/productLevelStatistics")
+    @ApiOperation(value = "统计产品级数据",notes = "Json数据")
+    public List<ProductLevelStatisticsVM> productLevelStatistics(@ApiParam(value = "结算开始时间(2019-01-01 12:12:12)") @RequestParam(value = "startTime",required = false)String startTime,
+                                                                 @ApiParam(value = "结算结束时间(2019-01-01 12:12:12)") @RequestParam(value = "endTime",required = false)String endTime,
+                                                                 @ApiParam(value = "产品编码") @RequestParam(value = "productCodeList",required = false)String productCodeList){
+
+        return settlementService.productLevelStatistics(startTime,endTime,productCodeList);
     }
 }

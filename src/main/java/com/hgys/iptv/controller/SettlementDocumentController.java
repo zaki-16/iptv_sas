@@ -2,8 +2,6 @@ package com.hgys.iptv.controller;
 
 import com.hgys.iptv.controller.vm.SettlementDocumentCPListExcelVM;
 import com.hgys.iptv.controller.vm.SettlementDocumentQueryListVM;
-import com.hgys.iptv.model.QAccountSettlement;
-import com.hgys.iptv.model.QCpSettlementMoney;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.SettlementDocumentService;
 import io.swagger.annotations.Api;

@@ -1,9 +1,14 @@
 package com.hgys.iptv.service.impl;
 
+import com.hgys.iptv.controller.vm.ProductLevelStatisticsCPVM;
+import com.hgys.iptv.controller.vm.ProductLevelStatisticsVM;
+import com.hgys.iptv.controller.vm.SettlementDocumentCPListExcelVM;
 import com.hgys.iptv.model.*;
+import com.hgys.iptv.model.QAccountSettlement;
 import com.hgys.iptv.model.QBusinessComparisonRelation;
 import com.hgys.iptv.model.QCp;
 import com.hgys.iptv.model.QCpOrderBusinessComparison;
+import com.hgys.iptv.model.QCpSettlementMoney;
 import com.hgys.iptv.model.QOrderBusinessCp;
 import com.hgys.iptv.model.QOrderBusinessWithCp;
 import com.hgys.iptv.model.QOrderProduct;
@@ -24,17 +29,17 @@ import com.hgys.iptv.service.SettlementService;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.SettleUtil;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -113,6 +118,107 @@ public class SettlementServiceImpl implements SettlementService {
             return ResultVOUtil.error("1","系统内部异常!");
         }
         return ResultVOUtil.success();
+    }
+
+    @Override
+    public List<ProductLevelStatisticsVM> productLevelStatistics(String startTime, String endTime, String productCodeList) {
+        QAccountSettlement accountSettlement = QAccountSettlement.accountSettlement;
+        QCpSettlementMoney qCpSettlementMoney = QCpSettlementMoney.cpSettlementMoney;
+        //拆分产品编码
+        List<String>  codes = new ArrayList<>();
+        if (StringUtils.isNotBlank(productCodeList)){
+            codes = Arrays.asList(StringUtils.split(productCodeList.trim(), ","));
+        }
+
+        //查询12个账期
+        JPAQuery<AccountSettlement> acc = jpaQueryFactory.selectFrom(accountSettlement);
+        if (StringUtils.isNotBlank(startTime)){
+            acc.where(accountSettlement.setStartTime.goe(Timestamp.valueOf(startTime)));
+        }
+
+        if (StringUtils.isNotBlank(endTime)){
+            acc.where(accountSettlement.setEndTime.loe(Timestamp.valueOf(endTime)));
+        }
+
+        List<AccountSettlement> fetch = acc.where(accountSettlement.status.ne(1))
+                .where(accountSettlement.set_type.eq(3)).orderBy(accountSettlement.setStartTime.desc())
+                .offset(0).limit(12).fetch();
+
+        List<ProductLevelStatisticsVM> list = new ArrayList<>();
+        for (AccountSettlement as : fetch){
+            BigDecimal decimal1 = cpSettlementMoneyRepository.jsAllmoney(as.getCode());
+            ProductLevelStatisticsVM vm = new ProductLevelStatisticsVM();
+            vm.setSetStartTime(as.getSetStartTime());
+            vm.setSetEndTime(as.getSetEndTime());
+            vm.setName(as.getName());
+            vm.setCode(as.getCode());
+            //查询当前账期下的产品结算信息
+            JPAQuery<CpSettlementMoney> where = jpaQueryFactory.selectFrom(qCpSettlementMoney)
+                    .where(qCpSettlementMoney.masterCode.eq(as.getCode()));
+
+            if (StringUtils.isNotBlank(productCodeList)){
+                where.where(qCpSettlementMoney.productCode.in(codes));
+            }
+            List<CpSettlementMoney> cpSettlementMoneyList = where.groupBy(qCpSettlementMoney.productCode).fetch();
+            //根据结算编码和产品编码查询结算信息，因为存在一个产品关联多个cp的情况
+            List<ProductLevelStatisticsCPVM> cpvmList = new ArrayList<>();
+            for (CpSettlementMoney c : cpSettlementMoneyList){
+                ProductLevelStatisticsCPVM cpvm = new ProductLevelStatisticsCPVM();
+                String cpCode = "";
+                String cpName = "";
+                List<CpSettlementMoney> byMasterCodeAndProductCode = cpSettlementMoneyRepository.findByMasterCodeAndProductCode(c.getMasterCode(), c.getProductCode());
+                for (CpSettlementMoney cp : byMasterCodeAndProductCode){
+                    cpCode += "," + cp.getCpcode();
+                    cpName += "," + cp.getCpname();
+                }
+                cpCode = cpCode.replaceFirst(",", "");
+                cpName = cpName.replaceFirst(",", "");
+                cpvm.setCpCode(cpCode);
+                cpvm.setCpName(cpName);
+                //计算产品金额
+                BigDecimal decimal = cpSettlementMoneyRepository.jsAllmoneyByMasterCodeAndProductCode(as.getCode(), c.getProductCode());
+                cpvm.setMoney(decimal);
+                cpvm.setProductCode(c.getProductCode());
+                cpvm.setProductName(c.getProductName());
+                //计算占比
+                BigDecimal multiply = decimal.divide(decimal1,2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100));
+                cpvm.setProportion(multiply.toString());
+
+                cpvmList.add(cpvm);
+            }
+            vm.setVmList(cpvmList);
+
+            List<ProductLevelStatisticsCPVM> vmList = new ArrayList<>();
+            //处理账单产品前五的数据
+            if (cpvmList != null && cpvmList.size() > 5){
+                Collections.sort(cpvmList, (o1, o2) -> (o2.getMoney().compareTo(o1.getMoney())));
+                for (int i = 0;i < 5;i++){
+                    ProductLevelStatisticsCPVM pa = new ProductLevelStatisticsCPVM();
+                    BeanUtils.copyProperties(cpvmList.get(i),pa);
+                    vmList.add(pa);
+                }
+                ProductLevelStatisticsCPVM pa = new ProductLevelStatisticsCPVM();
+                pa.setProductName("其他");
+                pa.setProductCode("qita");
+                BigDecimal m = BigDecimal.ZERO;
+                for (int i = 5;i < cpvmList.size();i++){
+                    m = m.add(cpvmList.get(i).getMoney());
+                }
+                pa.setMoney(m);
+                pa.setProportion(m.divide(decimal1,2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)).toString());
+                vmList.add(pa);
+            }else {
+                for(ProductLevelStatisticsCPVM p : cpvmList){
+                    ProductLevelStatisticsCPVM pa = new ProductLevelStatisticsCPVM();
+                    BeanUtils.copyProperties(p,pa);
+                    vmList.add(pa);
+                }
+            }
+            vm.setAllMongey(decimal1);
+            vm.setVmCPList(vmList);
+            list.add(vm);
+        }
+        return list;
     }
 
     /**
