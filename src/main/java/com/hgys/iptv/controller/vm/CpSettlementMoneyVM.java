@@ -3,7 +3,6 @@ package com.hgys.iptv.controller.vm;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 
 /**
  * @ClassName CpSettlementMoneyVM
@@ -16,6 +15,19 @@ public class CpSettlementMoneyVM {
     /**
      * CP名称、关联产品、关联业务、结算金额（各账期结算金额之和）、占比
      * 账期（日期区间）、CP名称（文本输入）。
+     *
+     *              *     SingleCpSettleMoneyVM==1月：{
+     *              *         总金额
+     *                          List<CpSettlementMoneyVM>
+     *              *         cp1：{
+     *              *             总金额：
+     *              *             占比：
+     *              *         },
+     *              *         cp2{
+     *              *         ...
+     *              *         }
+     *              *     },
+     *              2 月：{}
      */
 //    private Integer id;
 
