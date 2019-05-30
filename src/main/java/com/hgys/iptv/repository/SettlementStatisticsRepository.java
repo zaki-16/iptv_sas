@@ -22,25 +22,25 @@ import java.util.Optional;
     @Query(value = "SELECT o.setStartTime, o.name, o.set_ruleName, o.setEndTime, o.set_type, o.inputTime, o.total_sum FROM AccountSettlement o GROUP BY o.setStartTime ORDER BY o.setStartTime DESC, o.setEndTime DESC")
     List<AccountSettlement> findsettlement();*/
     @Modifying
-    @Query(value = "SELECT * FROM account_settlement  GROUP BY DATE_FORMAT(set_startTime, '%Y-%M') ORDER BY set_startTime DESC, set_endTime DESC LIMIT 12", nativeQuery = true)
+    @Query(value = "SELECT * FROM account_settlement where status!=1 GROUP BY DATE_FORMAT(set_startTime, '%Y-%M') ORDER BY set_startTime DESC, set_endTime DESC LIMIT 12", nativeQuery = true)
     List<AccountSettlement> findsettlement();
 
   @Modifying
-  @Query(value = "SELECT * FROM account_settlement where name like  %?%  GROUP BY DATE_FORMAT(set_startTime, '%Y-%M') ORDER BY set_startTime DESC, set_endTime DESC LIMIT 12", nativeQuery = true)
+  @Query(value = "SELECT * FROM account_settlement where name like  %?% and status!=1 GROUP BY DATE_FORMAT(set_startTime, '%Y-%M') ORDER BY set_startTime DESC, set_endTime DESC LIMIT 12", nativeQuery = true)
   List<AccountSettlement> findsettlementname( String name);
 
   @Modifying
-  @Query(value = "SELECT * FROM account_settlement where name like  %?% GROUP BY DATE_FORMAT(set_startTime, '%Y-%M') ORDER BY set_startTime DESC, set_endTime DESC LIMIT 12", nativeQuery = true)
+  @Query(value = "SELECT * FROM account_settlement where name like  %?% and status!=1 GROUP BY DATE_FORMAT(set_startTime, '%Y-%M') ORDER BY set_startTime DESC, set_endTime DESC LIMIT 12", nativeQuery = true)
   List<AccountSettlement> findsettlementnames( String name);
 
 
   @Modifying
-  @Query(value = "SELECT * FROM account_settlement where name like  %?% and set_type=? GROUP BY DATE_FORMAT(set_startTime, '%Y-%M') ORDER BY set_startTime DESC, set_endTime DESC LIMIT 12", nativeQuery = true)
+  @Query(value = "SELECT * FROM account_settlement where name like  %?% and set_type=?  and status!=1 GROUP BY DATE_FORMAT(set_startTime, '%Y-%M') ORDER BY set_startTime DESC, set_endTime DESC LIMIT 12", nativeQuery = true)
   List<AccountSettlement> findsettlementnamess( String name,String set_type);
 
 
   @Modifying
-  @Query(value = "SELECT * FROM account_settlement where name like  %?% and set_type=? and set_ruleName=? GROUP BY DATE_FORMAT(set_startTime, '%Y-%M') ORDER BY set_startTime DESC, set_endTime DESC LIMIT 12", nativeQuery = true)
+  @Query(value = "SELECT * FROM account_settlement where name like  %?% and set_type=? and set_ruleName=? and status!=1  GROUP BY DATE_FORMAT(set_startTime, '%Y-%M') ORDER BY set_startTime DESC, set_endTime DESC LIMIT 12", nativeQuery = true)
   List<AccountSettlement> findsettlementnamesss( String name,String set_type,String set_ruleName);
 
   @Modifying

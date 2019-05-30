@@ -4,16 +4,20 @@ package com.hgys.iptv.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import com.hgys.iptv.controller.vm.*;
 import com.hgys.iptv.model.*;
+import com.hgys.iptv.model.QAccountSettlement;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.*;
 import com.hgys.iptv.service.RuleStatisticsService;
-import com.hgys.iptv.service.SettlementStatisticsService;
-import com.hgys.iptv.util.ResultVOUtil;
+ import com.hgys.iptv.util.ResultVOUtil;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.querydsl.jpa.impl.JPAQuery;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -37,7 +41,8 @@ public class RuleStatisticsServiceImpl implements RuleStatisticsService {
 
     @Autowired
     private OrderBusinessComparisonRepository orderBusinessComparisonRepository;
-
+    @Autowired
+    private JPAQueryFactory jpaQueryFactory;
 
     @Autowired
     private AccountSettlementRepository accountSettlementRepository;
@@ -54,7 +59,7 @@ public class RuleStatisticsServiceImpl implements RuleStatisticsService {
 
     @Override
     public SettlementStatisticsListVM findsettlement(AccountSettlement a) {
-        List<AccountSettlement> settlementList = settlementStatisticsRepository.findsettlement();
+     /*   List<AccountSettlement> settlementList = settlementStatisticsRepository.findsettlement();
         SettlementStatisticsListVM vms = new SettlementStatisticsListVM();
         BeanUtils.copyProperties( a,vms);
         for (AccountSettlement vm : settlementList) {
@@ -129,8 +134,8 @@ public class RuleStatisticsServiceImpl implements RuleStatisticsService {
                     vms.setOrderBusinessComparisonQueryVM(list);
                 }
             }
-        }
-            return vms;
+        }*/
+            return null;
     }
 
 
@@ -425,6 +430,102 @@ public class RuleStatisticsServiceImpl implements RuleStatisticsService {
         }
         return ResultVOUtil.success();
     }
+
+
+
+
+
+    @Override
+    public List<SettlementStatisticsListVMS> LevelStatistics(String name, String startTime, String endTime,String set_type,String set_ruleName) {
+        QAccountSettlement accountSettlement = QAccountSettlement.accountSettlement;
+        //查询12个账期
+        JPAQuery<AccountSettlement> acc = jpaQueryFactory.selectFrom(accountSettlement);
+        if (StringUtils.isNotBlank(startTime)){
+            acc.where(accountSettlement.setStartTime.goe(Timestamp.valueOf(startTime)));
+        }
+        if (StringUtils.isNotBlank(endTime)){
+            acc.where(accountSettlement.setEndTime.loe(Timestamp.valueOf(endTime)));
+        }
+        if (StringUtils.isNotBlank(name)){
+            acc.where(accountSettlement.name.like(String.valueOf(name)));
+        }
+        if (StringUtils.isNotBlank(set_type)){
+            acc.where(accountSettlement.set_type.eq(Integer.valueOf(set_type)));
+        }
+        if (StringUtils.isNotBlank(set_ruleName)){
+            acc.where(accountSettlement.set_ruleName.eq(String.valueOf(set_ruleName)));
+        }
+        List<AccountSettlement> fetch = acc.where(accountSettlement.status.ne(1)).groupBy(accountSettlement.setStartTime.yearMonth())
+                .orderBy(accountSettlement.setStartTime.desc())
+                .offset(0).limit(12).fetch();
+
+        List<SettlementStatisticsListVM> list = new ArrayList<>();
+        List<SettlementStatisticsListVM> lists = new ArrayList<>();
+        List<SettlementStatisticsListVMS> lista = new ArrayList<>();
+
+        SettlementStatisticsListVMS s = new SettlementStatisticsListVMS();
+        for (AccountSettlement as : fetch) {
+            SettlementStatisticsListVM vm = new SettlementStatisticsListVM();
+            BigDecimal money = cpSettlementMoneyRepository.findByMastermoney(as.getCode());
+            vm.setName(as.getName());
+            vm.setTotal_sum(money);
+            vm.setSet_ruleName(as.getSet_ruleName());
+            vm.setSet_ruleCode(as.getSet_ruleCode());
+            vm.setSet_type(as.getSet_type());
+            vm.setStartTime(as.getSetStartTime());
+            vm.setEndTime(as.getSetEndTime());
+            vm.setCode(as.getCode());
+            vm.setId(as.getId());
+            vm.setStatus(as.getStatus());
+            vm.setRemakes(as.getRemakes());
+            list.add(vm);
+        }
+
+        s.setLists(list);
+
+        if(fetch.size()!=0&&fetch.size()>5){
+            Collections.sort(list, (o1, o2) -> (o2.getTotal_sum().compareTo(o1.getTotal_sum())));
+
+            for (int i = 0;i < 5;i++){
+                SettlementStatisticsListVM pa = new SettlementStatisticsListVM();
+                BeanUtils.copyProperties(list.get(i),pa);
+                lists.add(pa);
+            }
+            SettlementStatisticsListVM pa = new SettlementStatisticsListVM();
+            pa.setName("其他");
+            pa.setCode("qita");
+            BigDecimal m = BigDecimal.ZERO;
+            for (int i = 5;i < list.size();i++){
+                m = m.add(list.get(i).getTotal_sum());
+            }
+            pa.setTotal_sum(m);
+
+            lists.add(pa);
+        }else {
+            for(SettlementStatisticsListVM p : list){
+                SettlementStatisticsListVM pa = new SettlementStatisticsListVM();
+                BeanUtils.copyProperties(p,pa);
+                lists.add(pa);
+            }
+        }
+        s.setListss(lists);
+        lista.add(s);
+
+          return lista ;
+
+   }
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 

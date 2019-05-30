@@ -50,7 +50,7 @@ public class SettlementStatisticsListVM {
 
     /** 结算开始时间 */
     @ApiModelProperty("结算开始时间(2019-01-01 12:12:12)")
-    private String startTime;
+    private Timestamp startTime;
 
     /** 录入时间 */
     @ApiModelProperty("录入时间")
@@ -62,59 +62,22 @@ public class SettlementStatisticsListVM {
 
     /** 结算结束时间 */
     @ApiModelProperty("结算结束时间(2019-01-01 12:12:12)")
-    private String endTime;
+    private Timestamp endTime;
 
-    /**分配结算业务级结算总收入*/
-    @ApiModelProperty("分配结算业务级结算总收入")
-    private BigDecimal businessMoney;
 
     /**分配结算订购量结算总收入*/
     @ApiModelProperty("分配结算订购量结算总收入")
-    private BigDecimal orderMoney;
+    private BigDecimal Total_sum;
 
-    /**分配结算CP定比例结算总收入*/
-    @ApiModelProperty("分配结算CP定比例结算总收入")
-    private BigDecimal cpAllMoney;
-    /**分配结算订购量信息集合*/
-    @ApiModelProperty("分配结算订购量信息集合")
-    private List<CpOrderCpAddVM> cpAddVMS;
+    public void setStartTime(Timestamp startTime) {
+        this.startTime = startTime;
+    }
 
-    /**分配结算产品级单维度结算信息集合*/
-    @ApiModelProperty("分配结算产品级单维度信息集合")
-    private List<OrderProductDimensionAddVM> dimensionAddVM;
-
-    /**分配结算产品级多维度信息集合*/
-    @ApiModelProperty("分配结算产品级多维度信息集合")
-    private List<OrderProductDimensionListAddVM> dimensionListAddVMS;
-
-    /**分配结算业务定比例结算信息集合*/
-    @ApiModelProperty("分配结算业务定比例结算信息集合")
-    private List<BusinessBelielAddVM> belielAddVMS;
-
-    /**订购量*/
-    @ApiModelProperty("订购量集合")
-    private List<OrderQuantityAddVM> OrderQuantityAddVM;
+    public void setEndTime(Timestamp endTime) {
+        this.endTime = endTime;
+    }
 
 
-    /**产品级*/
-    @ApiModelProperty("产品级集合")
-    private List<OrderProductWithSettlementfindVM> OrderProductWithSettlementfindVM;
-
-
-    /**CP定比例*/
-    @ApiModelProperty("CP定比例集合")
-    private List<OrderCPWithCPListVM> OrderCPWithCPListVM;
-
-
-    /**业务级*/
-    @ApiModelProperty("业务级集合")
-    private List<OrderBusinessWithCPAddVM> OrderBusinessWithCPAddVM;
-
-
-
-    /**业务定比例*/
-    @ApiModelProperty("业务定比例集合")
-    private List<OrderBusinessComparisonQueryVM> OrderBusinessComparisonQueryVM;
 
     public String getName() {
         return name;
@@ -188,12 +151,12 @@ public class SettlementStatisticsListVM {
         this.remakes = remakes;
     }
 
-    public String getStartTime() {
+    public Timestamp getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
+    public Timestamp getEndTime() {
+        return endTime;
     }
 
     public Timestamp getInputTime() {
@@ -212,107 +175,17 @@ public class SettlementStatisticsListVM {
         this.modifyTime = modifyTime;
     }
 
-    public String getEndTime() {
-        return endTime;
+
+
+
+
+    public BigDecimal getTotal_sum() {
+        return Total_sum;
     }
 
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
+    public void setTotal_sum(BigDecimal total_sum) {
+        Total_sum = total_sum;
     }
 
-    public BigDecimal getBusinessMoney() {
-        return businessMoney;
-    }
 
-    public void setBusinessMoney(BigDecimal businessMoney) {
-        this.businessMoney = businessMoney;
-    }
-
-    public BigDecimal getOrderMoney() {
-        return orderMoney;
-    }
-
-    public void setOrderMoney(BigDecimal orderMoney) {
-        this.orderMoney = orderMoney;
-    }
-
-    public BigDecimal getCpAllMoney() {
-        return cpAllMoney;
-    }
-
-    public void setCpAllMoney(BigDecimal cpAllMoney) {
-        this.cpAllMoney = cpAllMoney;
-    }
-
-    public List<CpOrderCpAddVM> getCpAddVMS() {
-        return cpAddVMS;
-    }
-
-    public void setCpAddVMS(List<CpOrderCpAddVM> cpAddVMS) {
-        this.cpAddVMS = cpAddVMS;
-    }
-
-    public List<OrderProductDimensionAddVM> getDimensionAddVM() {
-        return dimensionAddVM;
-    }
-
-    public void setDimensionAddVM(List<OrderProductDimensionAddVM> dimensionAddVM) {
-        this.dimensionAddVM = dimensionAddVM;
-    }
-
-    public List<OrderProductDimensionListAddVM> getDimensionListAddVMS() {
-        return dimensionListAddVMS;
-    }
-
-    public void setDimensionListAddVMS(List<OrderProductDimensionListAddVM> dimensionListAddVMS) {
-        this.dimensionListAddVMS = dimensionListAddVMS;
-    }
-
-    public List<BusinessBelielAddVM> getBelielAddVMS() {
-        return belielAddVMS;
-    }
-
-    public void setBelielAddVMS(List<BusinessBelielAddVM> belielAddVMS) {
-        this.belielAddVMS = belielAddVMS;
-    }
-
-    public List<com.hgys.iptv.controller.vm.OrderQuantityAddVM> getOrderQuantityAddVM() {
-        return OrderQuantityAddVM;
-    }
-
-    public void setOrderQuantityAddVM(List<com.hgys.iptv.controller.vm.OrderQuantityAddVM> orderQuantityAddVM) {
-        OrderQuantityAddVM = orderQuantityAddVM;
-    }
-
-    public List<com.hgys.iptv.controller.vm.OrderProductWithSettlementfindVM> getOrderProductWithSettlementfindVM() {
-        return OrderProductWithSettlementfindVM;
-    }
-
-    public void setOrderProductWithSettlementfindVM(List<com.hgys.iptv.controller.vm.OrderProductWithSettlementfindVM> orderProductWithSettlementfindVM) {
-        OrderProductWithSettlementfindVM = orderProductWithSettlementfindVM;
-    }
-
-    public List<com.hgys.iptv.controller.vm.OrderCPWithCPListVM> getOrderCPWithCPListVM() {
-        return OrderCPWithCPListVM;
-    }
-
-    public void setOrderCPWithCPListVM(List<com.hgys.iptv.controller.vm.OrderCPWithCPListVM> orderCPWithCPListVM) {
-        OrderCPWithCPListVM = orderCPWithCPListVM;
-    }
-
-    public List<com.hgys.iptv.controller.vm.OrderBusinessWithCPAddVM> getOrderBusinessWithCPAddVM() {
-        return OrderBusinessWithCPAddVM;
-    }
-
-    public void setOrderBusinessWithCPAddVM(List<com.hgys.iptv.controller.vm.OrderBusinessWithCPAddVM> orderBusinessWithCPAddVM) {
-        OrderBusinessWithCPAddVM = orderBusinessWithCPAddVM;
-    }
-
-    public List<com.hgys.iptv.controller.vm.OrderBusinessComparisonQueryVM> getOrderBusinessComparisonQueryVM() {
-        return OrderBusinessComparisonQueryVM;
-    }
-
-    public void setOrderBusinessComparisonQueryVM(List<com.hgys.iptv.controller.vm.OrderBusinessComparisonQueryVM> orderBusinessComparisonQueryVM) {
-        OrderBusinessComparisonQueryVM = orderBusinessComparisonQueryVM;
-    }
 }
