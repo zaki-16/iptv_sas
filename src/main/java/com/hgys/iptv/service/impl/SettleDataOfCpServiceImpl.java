@@ -102,6 +102,14 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
             ArrayList<CpSettlementMoneyVM> cpList = new ArrayList<>();
             for(Map.Entry<String,CpSettlementMoneyVM> entry: oneMap.entrySet()){
                 CpSettlementMoneyVM vm = entry.getValue();
+//                // 在这里要重新计算每个cp的 占比和 总金额
+//                BigDecimal singleCpMoeny = cpSettlementMoneyRepository.sumByCpCode(vm.getCpcode(), as.getCode());
+//                singleCpMoeny=singleCpMoeny==null?BigDecimal.ZERO:singleCpMoeny;
+//                vm.setSettlementMoney(singleCpMoeny==null?BigDecimal.ZERO:singleCpMoeny);
+//                BigDecimal ratio = BigDecimal.ZERO;
+//                if(allIncome!=null && allIncome != BigDecimal.ZERO)
+//                    ratio = singleCpMoeny.divide(allIncome, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+//                vm.setRatio(Double.toString(ratio.doubleValue()));
                 cpList.add(vm);
             }
             singleDataVM.setList(cpList);
@@ -198,7 +206,7 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
                     .add(Restrictions.in("productCode",pCodeList,true))
                     .add(Restrictions.eq("masterCode",accountSettlement.getCode()))
             ;
-            List<CpSettlementMoney> cpSettlementMoneyList = cpSettlementMoneyRepository.findAll();
+            List<CpSettlementMoney> cpSettlementMoneyList = cpSettlementMoneyRepository.findAll(criteria);
             cpSettlementMoneyList.forEach(cp->{
                 Collections.addAll(cpSettlementMonies,cp);
             });
