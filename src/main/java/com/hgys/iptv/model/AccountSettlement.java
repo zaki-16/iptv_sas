@@ -101,7 +101,7 @@ public class AccountSettlement implements java.io.Serializable {
     @Column(name = "total_sum", nullable = true, length = 11)
     private BigDecimal total_sum;
 
-    public BigDecimal getTotal_sum() {
+        public BigDecimal getTotal_sum() {
         return total_sum;
     }
 

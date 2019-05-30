@@ -1,8 +1,11 @@
 package com.hgys.iptv.controller.vm;
 
+import com.hgys.iptv.model.Business;
+import com.hgys.iptv.model.Product;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @ClassName CpSettlementMoneyVM
@@ -44,20 +47,23 @@ public class CpSettlementMoneyVM {
     private String cpname;
 
     /** 产品编码 */
-//    private String productCode;
+    private String productCode;
 
     /** 产品名称 */
-    private String productName;
+//    private String productName;
 
     /** 业务编码 */
-//    private String businessCode;
+    private String businessCode;
 
     /** 业务名称 */
-    private String businessName;
+//    private String businessName;
 
     /** 结算金额（各账期结算金额之和）*/
-//    private BigDecimal settlementMoney;
+    private BigDecimal settlementMoney;
 
+    private List<String> bList;
+    private List<String> pList;
+    private List<String> cpList;
     /**
      * （各账期结算金额之和）
      */
