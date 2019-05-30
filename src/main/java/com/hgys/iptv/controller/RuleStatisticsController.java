@@ -45,7 +45,7 @@ public class RuleStatisticsController {
 
 
     @GetMapping("/LevelStatistics")
-    @ApiOperation(value = "统计产品级数据",notes = "Json数据")
+    @ApiOperation(value = "统计规则数据",notes = "Json数据")
     public List<SettlementStatisticsListVMS> LevelStatistics(@ApiParam(value = "名称") @RequestParam(value = "name",required = false )String name,
                                                              @ApiParam(value = "结算开始时间") @RequestParam(value = "startTime",required = false)String startTime,
                                                              @ApiParam(value = "结算结束时间") @RequestParam(value = "endTime",required = false)String endTime,
