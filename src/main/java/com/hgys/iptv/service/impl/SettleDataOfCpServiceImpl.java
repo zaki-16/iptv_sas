@@ -44,6 +44,7 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
      * 获取最近12个账期数据
      *
      * @param cpSettlementMoneyDTO
+     * 1:订购量结算;2:业务级结算;3:产品级结算;4:CP定比例结算;5:业务定
      * @return
      */
     private List<AccountSettlement> getAccountSettlementList(CpSettlementMoneyDTO cpSettlementMoneyDTO){
@@ -61,6 +62,27 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
         }
 
         List<AccountSettlement> fetch = acc.where(accountSettlement.status.ne(1))
+                .where(accountSettlement.isdelete.eq(0)).orderBy(accountSettlement.setStartTime.desc())
+                .offset(0).limit(12).fetch();
+
+        return fetch;
+    }
+
+    private List<AccountSettlement> getAccountSettlementList4Biz(CpSettlementMoneyDTO cpSettlementMoneyDTO){
+        QAccountSettlement accountSettlement = QAccountSettlement.accountSettlement;
+
+        //查询12个账期
+        JPAQuery<AccountSettlement> acc = jpaQueryFactory.selectFrom(accountSettlement);
+        String startTime = cpSettlementMoneyDTO.getSetStartTime();
+        if (StringUtils.isNotBlank(startTime)){
+            acc.where(accountSettlement.setStartTime.goe(Timestamp.valueOf(startTime)));
+        }
+        String endTime = cpSettlementMoneyDTO.getSetEndTime();
+        if (StringUtils.isNotBlank(endTime)){
+            acc.where(accountSettlement.setEndTime.loe(Timestamp.valueOf(endTime)));
+        }
+
+        List<AccountSettlement> fetch = acc.where(accountSettlement.status.ne(1)).where(accountSettlement.set_type.in(2,5))
                 .where(accountSettlement.isdelete.eq(0)).orderBy(accountSettlement.setStartTime.desc())
                 .offset(0).limit(12).fetch();
 
@@ -102,6 +124,14 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
             ArrayList<CpSettlementMoneyVM> cpList = new ArrayList<>();
             for(Map.Entry<String,CpSettlementMoneyVM> entry: oneMap.entrySet()){
                 CpSettlementMoneyVM vm = entry.getValue();
+//                // 在这里要重新计算每个cp的 占比和 总金额
+//                BigDecimal singleCpMoeny = cpSettlementMoneyRepository.sumByCpCode(vm.getCpcode(), as.getCode());
+//                singleCpMoeny=singleCpMoeny==null?BigDecimal.ZERO:singleCpMoeny;
+//                vm.setSettlementMoney(singleCpMoeny==null?BigDecimal.ZERO:singleCpMoeny);
+//                BigDecimal ratio = BigDecimal.ZERO;
+//                if(allIncome!=null && allIncome != BigDecimal.ZERO)
+//                    ratio = singleCpMoeny.divide(allIncome, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+//                vm.setRatio(Double.toString(ratio.doubleValue()));
                 cpList.add(vm);
             }
             singleDataVM.setList(cpList);
@@ -198,7 +228,7 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
                     .add(Restrictions.in("productCode",pCodeList,true))
                     .add(Restrictions.eq("masterCode",accountSettlement.getCode()))
             ;
-            List<CpSettlementMoney> cpSettlementMoneyList = cpSettlementMoneyRepository.findAll();
+            List<CpSettlementMoney> cpSettlementMoneyList = cpSettlementMoneyRepository.findAll(criteria);
             cpSettlementMoneyList.forEach(cp->{
                 Collections.addAll(cpSettlementMonies,cp);
             });
@@ -310,6 +340,54 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
         }
         return map;
     }
+
+
+    public ResultVO getBizSettleDataForPie(CpSettlementMoneyDTO cpSettlementMoneyDTO){
+        // 12个账期分别 作为list 计算得到一个账期内所有cp详情的 map-->CpSettleStatisticsVM
+        /**
+         * 1.获取给定账期(e.g 单账期)内的待结算的所有cp数据（cp可以被条件查询）集合 getRawList();
+         * 2.对该票数据进行计算 每个cp在当前账期内的占比和总额详情
+         */
+        List<AccountSettlement> accountSettlementList = getAccountSettlementList4Biz(cpSettlementMoneyDTO);
+        ArrayList<CpSettleStatisticsVM> singleDataVMList = new ArrayList<>();
+        for(AccountSettlement as:accountSettlementList){
+            ArrayList<AccountSettlement> singleAcs = new ArrayList<>();// 单账期数据
+            singleAcs.add(as);
+            // 1.
+            List<CpSettlementMoney> rawList = getRawList(singleAcs, cpSettlementMoneyDTO);
+            // 2. 单账期内的所有cp结算详情
+            Map<String, CpSettlementMoneyVM> oneMap = countOneByBizCode(rawList);
+            //3. oneMap.getValue() == CpSettlementMoneyVM
+            // -----------------------------------------------开始装配单账期内的详情-----------------------------------------------------------
+            // ---------------------------需要：账期名，该账期内的总收入，该账期内的所有cp结算详情列表，top 6-----------------------------------------
+            CpSettleStatisticsVM singleDataVM = new CpSettleStatisticsVM();
+            // 账期名
+            singleDataVM.setName(as.getName());
+            // 该账期内的所有cp的总收入（根据masterCode）
+            BigDecimal allIncome = cpSettlementMoneyRepository.sumByMasterCode(as.getCode());
+            singleDataVM.setGrossIncome(allIncome);
+
+            // 该账期内的所有cp结算详情列表
+            ArrayList<CpSettlementMoneyVM> cpList = new ArrayList<>();
+            for(Map.Entry<String,CpSettlementMoneyVM> entry: oneMap.entrySet()){
+                CpSettlementMoneyVM vm = entry.getValue();
+                cpList.add(vm);
+            }
+            singleDataVM.setList(cpList);
+        }
+        return ResultVOUtil.success(singleDataVMList);
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public ResultVO getProdSettleData(CpSettlementMoneyDTO cpSettlementMoneyDTO) {
