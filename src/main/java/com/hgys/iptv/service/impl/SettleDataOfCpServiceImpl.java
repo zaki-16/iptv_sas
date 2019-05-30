@@ -61,7 +61,7 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
         }
 
         List<AccountSettlement> fetch = acc.where(accountSettlement.status.ne(1))
-                .where(accountSettlement.set_type.eq(3)).orderBy(accountSettlement.setStartTime.desc())
+                .where(accountSettlement.isdelete.eq(0)).orderBy(accountSettlement.setStartTime.desc())
                 .offset(0).limit(12).fetch();
 
         return fetch;
