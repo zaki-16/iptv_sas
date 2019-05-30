@@ -50,24 +50,24 @@ public class CpSettlementMoneyVM {
     private String productCode;
 
     /** 产品名称 */
-//    private String productName;
+    private String productName;
 
     /** 业务编码 */
     private String businessCode;
 
     /** 业务名称 */
-//    private String businessName;
+    private String businessName;
 
     /** 结算金额（各账期结算金额之和）*/
     private BigDecimal settlementMoney;
 
-    private List<String> bList;
-    private List<String> pList;
-    private List<String> cpList;
+    private List<String> bNameList;
+    private List<String> pNmaeList;
+    private List<String> cpNameList;
     /**
      * （各账期结算金额之和）
      */
-    private BigDecimal grossIncome;
+//    private BigDecimal grossIncome;
 
     /**
      * 占比
