@@ -64,8 +64,10 @@ public class OrderCpServiceImpl implements OrderCpService {
 
         List<OrderCPWithCPListVM.OrderCpWithCp> list = new ArrayList<>();
         for (OrderCpWithCp f : byMaster_code){
+            String cpname =cpRepository.findByMasterCodes(f.getCpcode());
             OrderCPWithCPListVM.OrderCpWithCp s = new OrderCPWithCPListVM.OrderCpWithCp();
             BeanUtils.copyProperties(f,s);
+            s.setCpname(cpname);
             list.add(s);
             vm.setList(list);
         }
