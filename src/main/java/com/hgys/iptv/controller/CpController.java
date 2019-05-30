@@ -59,7 +59,7 @@ public class CpController {
     @ApiOperation(value = "批量逻辑删除cp",notes = "@return：true/false")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(value = "hasPermission('cpManager', 'remove')")
-    @SystemControllerLog(target = target,methodName = "CpController.batchLogicDelete",type = "修改")
+    @SystemControllerLog(target = target,methodName = "CpController.batchLogicDelete",type = "删除")
     public ResultVO<?> batchLogicDelete(String ids){
         return cpService.batchLogicDelete(ids);
     }

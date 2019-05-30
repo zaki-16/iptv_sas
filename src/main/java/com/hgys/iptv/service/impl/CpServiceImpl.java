@@ -291,7 +291,8 @@ public class CpServiceImpl extends AbstractBaseServiceImpl implements CpService 
     public Page<CpControllerListVM> findByConditions(String name, Integer status, Pageable pageable) {
         Criteria<Cp> criteria = new Criteria<>();
         criteria.add(Restrictions.like("name",name))
-                .add(Restrictions.eq("status",status));
+                .add(Restrictions.eq("status",status))
+                .add(Restrictions.eq("isdelete",0));
         return cpRepository.findAll(criteria,pageable).map(assemlber::getListVM);
     }
 
