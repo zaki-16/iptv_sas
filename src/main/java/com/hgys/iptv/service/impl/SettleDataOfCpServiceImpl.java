@@ -12,7 +12,6 @@ import com.hgys.iptv.model.QAccountSettlement;
 import com.hgys.iptv.model.dto.CpSettlementMoneyDTO;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.CpSettlementMoneyRepository;
-import com.hgys.iptv.repository.SettlementStatisticsRepository;
 import com.hgys.iptv.service.SettleDataOfCpService;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -182,14 +181,21 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
 
         settlementList.forEach(accountSettlement -> {
             Criteria<CpSettlementMoney> criteria = new Criteria<>();
-            String ids = cpSettlementMoneyDTO.getIds();
-            List<String> idList=null;
-            if(StringUtils.isNotBlank(ids)){
-                idList= Arrays.asList(StringUtils.split(ids, ","));
+            String bCodes = cpSettlementMoneyDTO.getBCodes();
+            String pCodes = cpSettlementMoneyDTO.getPCodes();
+            List<String> bCodeList=null;
+            List<String> pCodeList=null;
+            if(StringUtils.isNotBlank(bCodes)){
+                bCodeList= Arrays.asList(StringUtils.split(bCodes, ","));
+            }
+
+            if(StringUtils.isNotBlank(pCodes)){
+                pCodeList= Arrays.asList(StringUtils.split(pCodes, ","));
             }
             criteria
                     .add(Restrictions.like("cpname",cpSettlementMoneyDTO.getCpname()))
-                    .add(Restrictions.in("businessCode",idList,true))
+                    .add(Restrictions.in("businessCode",bCodeList,true))
+                    .add(Restrictions.in("productCode",pCodeList,true))
                     .add(Restrictions.eq("masterCode",accountSettlement.getCode()))
             ;
             List<CpSettlementMoney> cpSettlementMoneyList = cpSettlementMoneyRepository.findAll();
@@ -247,26 +253,35 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
      */
     @Override
     public ResultVO getCpSettleData(CpSettlementMoneyDTO cpSettlementMoneyDTO) {
+        /**获取账期数据*/
         List<AccountSettlement> settlementList = getAccountSettlementList(cpSettlementMoneyDTO);
-
+        /**获取所有账期的所有待处理的数据*/
         List<CpSettlementMoney> rawList = getRawList(settlementList,cpSettlementMoneyDTO);
+        // 按cpCode处理
         Map<String, CpSettlementMoneyVM> moneyVMMap = countOne(rawList);
         return ResultVOUtil.success(moneyVMMap);
     }
 
     @Override
     public ResultVO getBizSettleData(CpSettlementMoneyDTO cpSettlementMoneyDTO) {
-
-
-
+        /**获取账期数据*/
         List<AccountSettlement> settlementList = getAccountSettlementList(cpSettlementMoneyDTO);
-
+        /**获取所有账期的所有待处理的数据*/
         List<CpSettlementMoney> rawList = getRawList(settlementList,cpSettlementMoneyDTO);
+        // 按bizCode处理
+        Map<String, CpSettlementMoneyVM> map = countOneByBizCode(rawList);
+        return ResultVOUtil.success(map);
+    }
+
+
+    private Map<String, CpSettlementMoneyVM> countOneByBizCode(List<CpSettlementMoney> rawList){
         Map<String, CpSettlementMoneyVM> map = Maps.newHashMap();
         BigDecimal sumAll = BigDecimal.ZERO;
 
         for(CpSettlementMoney cp:rawList) {
             CpSettlementMoneyVM cpSettlementMoneyVM = new CpSettlementMoneyVM();
+            if(cp.getBusinessCode()==null)
+                continue;
             if (cp.getSettlementMoney() == null)
                 cp.setSettlementMoney(BigDecimal.ZERO);
             // 统计总金额
@@ -293,19 +308,23 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
             BigDecimal ratio = one.divide(sumAll, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
             vm.setRatio(Double.toString(ratio.doubleValue()));
         }
-        return ResultVOUtil.success(map);
+        return map;
     }
 
     @Override
     public ResultVO getProdSettleData(CpSettlementMoneyDTO cpSettlementMoneyDTO) {
+        /**获取账期数据*/
         List<AccountSettlement> settlementList = getAccountSettlementList(cpSettlementMoneyDTO);
+        /**获取所有账期的所有待处理的数据*/
         List<CpSettlementMoney> rawList = getRawList(settlementList,cpSettlementMoneyDTO);
-
+        // 按prodCode处理
         Map<String, CpSettlementMoneyVM> map = Maps.newHashMap();
         BigDecimal sumAll = BigDecimal.ZERO;
 
         for(CpSettlementMoney cp:rawList) {
             CpSettlementMoneyVM cpSettlementMoneyVM = new CpSettlementMoneyVM();
+            if(cp.getProductCode()==null)
+                continue;
             if (cp.getSettlementMoney() == null)
                 cp.setSettlementMoney(BigDecimal.ZERO);
             // 统计总金额
