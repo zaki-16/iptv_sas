@@ -36,12 +36,10 @@ public class CpSettlementMoneyDTO {
 //    /** 业务编码 */
 //    private String businessCode;
 //
-
-//
 //    /** 结算金额 */
 //    private BigDecimal settlementMoney;
 
-    /** 创建时间 */
+    /** 账期 */
 //    private Timestamp createTime;
     private Timestamp setStartTime;
     private Timestamp setEndTime;
@@ -51,9 +49,7 @@ public class CpSettlementMoneyDTO {
      * 账期（日期区间）、业务名称（下拉选择，多选）
      */
 
-    private String bids;
     //    /** 业务名称 */
     private String businessName;
     private String productName;
-    private String pids;
 }

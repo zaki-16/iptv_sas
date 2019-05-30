@@ -22,7 +22,7 @@ import java.util.Optional;
     @Query(value = "SELECT o.setStartTime, o.name, o.set_ruleName, o.setEndTime, o.set_type, o.inputTime, o.total_sum FROM AccountSettlement o GROUP BY o.setStartTime ORDER BY o.setStartTime DESC, o.setEndTime DESC")
     List<AccountSettlement> findsettlement();*/
     @Modifying
-    @Query(value = "SELECT * FROM account_settlement  GROUP BY DATE_FORMAT(set_startTime, '%Y-%M') ORDER BY set_startTime DESC, set_endTime DESC LIMIT 12", nativeQuery = true)
+    @Query(value = "SELECT * FROM account_settlement WHERE isdelete=0 GROUP BY DATE_FORMAT(set_startTime, '%Y-%M') ORDER BY set_startTime DESC, set_endTime DESC LIMIT 12", nativeQuery = true)
     List<AccountSettlement> findsettlement();
 
   @Modifying

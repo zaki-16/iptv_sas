@@ -123,4 +123,23 @@ public interface CpSettlementMoneyRepository extends JpaRepository<CpSettlementM
      */
     @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE masterCode=?1")
     BigDecimal sumByMasterCode(String masterCode);
+
+
+    @Query(value = "SELECT DISTINCT businessName FROM CpSettlementMoney WHERE masterCode=?1 AND cpcode=?2")
+    List<String> findBizNameListByCpCode (String masterCode,String cpcode);
+
+    @Query(value = "SELECT DISTINCT productName FROM CpSettlementMoney WHERE masterCode=?1 AND cpcode=?2")
+    List<String> findProdNameListByCpCode (String masterCode,String cpcode);
+
+    @Query(value = "SELECT DISTINCT cpname FROM CpSettlementMoney WHERE masterCode=?1 AND businessCode=?2")
+    List<String> findCpNameListByBizCode (String masterCode,String cpcode);
+
+    @Query(value = "SELECT DISTINCT productName FROM CpSettlementMoney WHERE masterCode=?1 AND businessCode=?2")
+    List<String> findProdNameListByBizCode (String masterCode,String cpcode);
+
+    @Query(value = "SELECT DISTINCT cpname FROM CpSettlementMoney WHERE masterCode=?1 AND productCode=?2")
+    List<String> findCpNameListByProdCode (String masterCode,String cpcode);
+
+    @Query(value = "SELECT DISTINCT businessName FROM CpSettlementMoney WHERE masterCode=?1 AND productCode=?2")
+    List<String> findBizNameListByProdCode (String masterCode,String cpcode);
 }
