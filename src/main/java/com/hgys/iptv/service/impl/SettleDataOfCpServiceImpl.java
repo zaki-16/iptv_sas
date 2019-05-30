@@ -224,7 +224,7 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
                 BeanUtils.copyProperties(cp, cpSettlementMoneyVM);
                 List<String> productNameList = cpSettlementMoneyRepository.findProdNameListByCpCode(cp.getMasterCode(), cp.getCpcode());
                 if (productNameList.size() > 0)
-                    cpSettlementMoneyVM.setPNmaeList(productNameList);
+                    cpSettlementMoneyVM.setPNameList(productNameList);
                 List<String> businessNameList = cpSettlementMoneyRepository.findBizNameListByCpCode(cp.getMasterCode(), cp.getCpcode());
                 if (businessNameList.size() > 0)
                     cpSettlementMoneyVM.setBNameList(businessNameList);
@@ -289,7 +289,7 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
             BeanUtils.copyProperties(cp, cpSettlementMoneyVM);
             List<String> productNameList = cpSettlementMoneyRepository.findProdNameListByBizCode(cp.getMasterCode(), cp.getBusinessCode());
             if (productNameList.size() > 0)
-                cpSettlementMoneyVM.setPNmaeList(productNameList);
+                cpSettlementMoneyVM.setPNameList(productNameList);
             List<String> cpNameList =  cpSettlementMoneyRepository.findCpNameListByBizCode(cp.getMasterCode(), cp.getBusinessCode());
             if (cpNameList.size() > 0)
                 cpSettlementMoneyVM.setCpNameList(cpNameList);

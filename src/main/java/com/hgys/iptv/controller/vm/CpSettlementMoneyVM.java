@@ -62,7 +62,7 @@ public class CpSettlementMoneyVM {
     private BigDecimal settlementMoney;
 
     private List<String> bNameList;
-    private List<String> pNmaeList;
+    private List<String> pNameList;
     private List<String> cpNameList;
     /**
      * （各账期结算金额之和）
