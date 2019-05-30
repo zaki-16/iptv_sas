@@ -9,6 +9,7 @@ import com.hgys.iptv.model.CpSettlementMoney;
 import com.hgys.iptv.model.QAccountSettlement;
 import com.hgys.iptv.model.dto.CpSettlementMoneyDTO;
 import com.hgys.iptv.model.dto.PieVMForBiz;
+import com.hgys.iptv.model.dto.PieVMForCp;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.AccountSettlementRepository;
 import com.hgys.iptv.repository.CpSettlementMoneyRepository;
@@ -56,10 +57,10 @@ public class SettleDataOfCpServiceImpl_ {
         return accountSettlementRepository.findAll(criteria,pageable).getContent();
     }
 
-    // 图表
+
 
     /**
-     * CpSettlementMoney: 每个账单的
+     * CpSettlementMoney:
      * @param startTime
      * @param endTime
      */
@@ -114,4 +115,49 @@ public class SettleDataOfCpServiceImpl_ {
     }
 
 
+
+    public ResultVO getCpSettleDataOfPie(String startTime, String endTime, String cpName){
+        List<PieVMForCp> pieVMForBizs = new ArrayList<>();
+        // 账期数据 -- 每个账单下有不同业务code 计算每个code的总金额
+        List<AccountSettlement> settlementList = getAccountSettlementList(startTime, endTime);
+        // 根据
+        for(AccountSettlement as : settlementList){
+            String masterCode = as.getCode();
+            BigDecimal all = cpSettlementMoneyRepository.sumByMasterCode(masterCode);
+            all=all==null?BigDecimal.ZERO:all;
+
+            PieVMForCp pieVMForBiz = new PieVMForCp();
+            pieVMForBiz.setName(as.getName());//账单名
+            pieVMForBiz.setSettlementMoney(all);//账单总金额
+
+            // 查询
+            Criteria<CpSettlementMoney> criteria = new Criteria<>();
+            criteria.add(Restrictions.like("cpname",cpName));
+            criteria.add(Restrictions.eq("masterCode",masterCode));
+            List<CpSettlementMoney> byMasterCode = cpSettlementMoneyRepository.findAll(criteria);
+
+            Set<PieVMForCp.Details> detailsList = new HashSet<>();
+            for(CpSettlementMoney biz : byMasterCode){
+                PieVMForCp.Details details = new PieVMForCp.Details();
+                BigDecimal one = cpSettlementMoneyRepository.sumByCpCode(biz.getCpcode(), masterCode);
+                one=one==null?BigDecimal.ZERO:one;
+                details.setName(biz.getCpname());// cp名称
+                details.setSettlementMoney(one);
+                BigDecimal ratio = one.divide(all, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+                details.setRatio(Double.toString(ratio.doubleValue()));
+
+                // 关联的业务
+                List<String> bizNames = cpSettlementMoneyRepository.findBizNameListByCpCode(masterCode, biz.getCpcode());
+                details.setBizNames(bizNames);
+                // 关联的产品
+                List<String> prodNames = cpSettlementMoneyRepository.findProdNameListByCpCode(masterCode, biz.getCpcode());
+                details.setProdNames(prodNames);
+                detailsList.add(details);
+            }
+            pieVMForBiz.setList(detailsList);
+            pieVMForBizs.add(pieVMForBiz);
+        }
+
+        return ResultVOUtil.success(pieVMForBizs);
+    }
 }

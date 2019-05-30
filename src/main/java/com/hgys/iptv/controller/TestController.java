@@ -44,8 +44,8 @@ public class TestController   {
 
     @GetMapping("/tester")
 //    @SystemControllerLog(target = "测试target",type = "测试type")
-    public ResultVO tester(String username){
-        return ResultVOUtil.success(service.getBizSettleDataOfPie(null,null,null));
+    public ResultVO tester(String cpName){
+        return ResultVOUtil.success(service.getCpSettleDataOfPie(null,null,cpName));
     }
 
 

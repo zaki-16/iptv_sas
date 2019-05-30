@@ -36,10 +36,17 @@ public class SettleDataOfCpController {
         return settleDataOfCpService.getCpSettleDataForPie(cpSettlementMoneyDTO);
     }
 
+    @GetMapping("/getCpSettleDataOfPie")
+    public ResultVO getCpSettleDataOfPie(String startTime,String endTime,String codes){
+        return settleDataOfCpServiceImpl_.getCpSettleDataOfPie(startTime,endTime,codes);
+    }
+
     @GetMapping("/getBizSettleDataForPie")
     public ResultVO getBizSettleDataForPie(String startTime,String endTime,String codes){
         return settleDataOfCpServiceImpl_.getBizSettleDataOfPie(startTime,endTime,codes);
     }
+
+
 
     @GetMapping("/getBizSettleData")
     public ResultVO getBizSettleData(CpSettlementMoneyDTO cpSettlementMoneyDTO){
