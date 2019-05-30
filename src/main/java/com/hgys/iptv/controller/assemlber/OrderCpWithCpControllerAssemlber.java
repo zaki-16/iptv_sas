@@ -6,6 +6,7 @@ import com.hgys.iptv.model.OrderCp;
 import com.hgys.iptv.model.OrderCpWithCp;
 import com.hgys.iptv.model.SettlementCombinatorialDimensionFrom;
 import com.hgys.iptv.model.SettlementCombinatorialDimensionMaster;
+import com.hgys.iptv.repository.CpRepository;
 import com.hgys.iptv.repository.OrderCpWithCpRepository;
 import com.hgys.iptv.repository.SettlementCombinatorialDimensionFromRepository;
 import org.springframework.beans.BeanUtils;
@@ -20,6 +21,8 @@ public class OrderCpWithCpControllerAssemlber {
 
     @Autowired
     private OrderCpWithCpRepository orderCpWithCpRepository;
+    @Autowired
+    private CpRepository cpRepository;
 
     public OrderCPWithCPListVM getListVM(OrderCp od){
         OrderCPWithCPListVM vm = new OrderCPWithCPListVM();
@@ -28,8 +31,10 @@ public class OrderCpWithCpControllerAssemlber {
 
         List<OrderCPWithCPListVM.OrderCpWithCp> list = new ArrayList<>();
         for (OrderCpWithCp f : byMasterCode){
+            String cpname =cpRepository.findByMasterCodes(f.getCpcode());
             OrderCPWithCPListVM.OrderCpWithCp s = new OrderCPWithCPListVM.OrderCpWithCp();
             BeanUtils.copyProperties(f,s);
+            s.setCpname(cpname);
             list.add(s);
         }
         vm.setList(list);
