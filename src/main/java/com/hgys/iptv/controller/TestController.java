@@ -7,6 +7,7 @@ import com.hgys.iptv.model.Authority;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.AuthorityRepository;
 import com.hgys.iptv.repository.RoleRepository;
+import com.hgys.iptv.service.impl.SettleDataOfCpServiceImpl_;
 import com.hgys.iptv.util.RepositoryManager;
 import com.hgys.iptv.util.ResultVOUtil;
 import com.hgys.iptv.util.UserSessionInfoHolder;
@@ -37,14 +38,14 @@ public class TestController   {
     @Autowired
     private RepositoryManager repositoryManager;
     @Autowired
-    private RoleRepository roleRepository;
+    private SettleDataOfCpServiceImpl_ service;
 
 
 
-    @GetMapping("/tester/{name}")
+    @GetMapping("/tester")
 //    @SystemControllerLog(target = "测试target",type = "测试type")
-    public ResultVO tester(@PathVariable(value = "name") String username){
-        return ResultVOUtil.success(username);
+    public ResultVO tester(String username){
+        return ResultVOUtil.success(service.getBizSettleDataOfPie(null,null,null));
     }
 
 

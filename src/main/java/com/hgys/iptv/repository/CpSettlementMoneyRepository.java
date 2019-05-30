@@ -107,13 +107,13 @@ public interface CpSettlementMoneyRepository extends JpaRepository<CpSettlementM
      * SELECT SUM(settlementMoney)  FROM cp_settlement_money WHERE cpcode='CP2019052311193203512' AND masterCode='FZ2019052712112319925'
      */
 
-    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE cpcode=?1 and masterCode=?1")
+    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE cpcode=?1 and masterCode=?2")
     BigDecimal sumByCpCode(String cpcode,String masterCode);
 
-    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE businessCode=?1 and masterCode=?1")
+    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE businessCode=?1 and masterCode=?2")
     BigDecimal sumByBizCode(String businessCode,String masterCode);
 
-    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE productCode=?1 and masterCode=?1")
+    @Query(value = "SELECT SUM(settlementMoney) FROM CpSettlementMoney WHERE productCode=?1 and masterCode=?2")
     BigDecimal sumByProdCode(String productCode,String masterCode);
 
     /**
@@ -133,14 +133,14 @@ public interface CpSettlementMoneyRepository extends JpaRepository<CpSettlementM
     List<String> findProdNameListByCpCode (String masterCode,String cpcode);
 
     @Query(value = "SELECT DISTINCT cpname FROM CpSettlementMoney WHERE masterCode=?1 AND businessCode=?2")
-    List<String> findCpNameListByBizCode (String masterCode,String cpcode);
+    List<String> findCpNameListByBizCode (String masterCode,String businessCode);
 
     @Query(value = "SELECT DISTINCT productName FROM CpSettlementMoney WHERE masterCode=?1 AND businessCode=?2")
-    List<String> findProdNameListByBizCode (String masterCode,String cpcode);
+    List<String> findProdNameListByBizCode (String masterCode,String businessCode);
 
     @Query(value = "SELECT DISTINCT cpname FROM CpSettlementMoney WHERE masterCode=?1 AND productCode=?2")
-    List<String> findCpNameListByProdCode (String masterCode,String cpcode);
+    List<String> findCpNameListByProdCode (String masterCode,String productCode);
 
     @Query(value = "SELECT DISTINCT businessName FROM CpSettlementMoney WHERE masterCode=?1 AND productCode=?2")
-    List<String> findBizNameListByProdCode (String masterCode,String cpcode);
+    List<String> findBizNameListByProdCode (String masterCode,String productCode);
 }

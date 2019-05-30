@@ -40,6 +40,9 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
     @Autowired
     private CpSettlementMoneyRepository cpSettlementMoneyRepository;
 
+
+
+
     /**
      * 获取最近12个账期数据
      *
@@ -229,9 +232,10 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
                     .add(Restrictions.eq("masterCode",accountSettlement.getCode()))
             ;
             List<CpSettlementMoney> cpSettlementMoneyList = cpSettlementMoneyRepository.findAll(criteria);
-            cpSettlementMoneyList.forEach(cp->{
-                Collections.addAll(cpSettlementMonies,cp);
-            });
+            cpSettlementMonies.addAll(cpSettlementMoneyList);
+//            cpSettlementMoneyList.forEach(cp->{
+//                Collections.addAll(cpSettlementMonies,cp);
+//            });
         });
         return cpSettlementMonies;
     }
@@ -295,7 +299,7 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
     @Override
     public ResultVO getBizSettleData(CpSettlementMoneyDTO cpSettlementMoneyDTO) {
         /**获取账期数据*/
-        List<AccountSettlement> settlementList = getAccountSettlementList(cpSettlementMoneyDTO);
+        List<AccountSettlement> settlementList = getAccountSettlementList4Biz(cpSettlementMoneyDTO);
         /**获取所有账期的所有待处理的数据*/
         List<CpSettlementMoney> rawList = getRawList(settlementList,cpSettlementMoneyDTO);
         // 按bizCode处理
@@ -342,6 +346,45 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
     }
 
 
+    private Map<String, CpSettlementMoneyVM> countOneByBizCodeForPie(List<CpSettlementMoney> rawList){
+        Map<String, CpSettlementMoneyVM> map = Maps.newHashMap();
+        BigDecimal sumAll = BigDecimal.ZERO;
+
+        for(CpSettlementMoney cp:rawList) {
+            CpSettlementMoneyVM cpSettlementMoneyVM = new CpSettlementMoneyVM();
+            if(cp.getBusinessCode()==null)
+                continue;
+            if (cp.getSettlementMoney() == null)
+                cp.setSettlementMoney(BigDecimal.ZERO);
+            // 统计总金额
+            sumAll = sumAll.add(cp.getSettlementMoney());
+            BeanUtils.copyProperties(cp, cpSettlementMoneyVM);
+            List<String> productNameList = cpSettlementMoneyRepository.findProdNameListByBizCode(cp.getMasterCode(), cp.getBusinessCode());
+            if (productNameList.size() > 0)
+                cpSettlementMoneyVM.setPNameList(productNameList);
+            List<String> cpNameList =  cpSettlementMoneyRepository.findCpNameListByBizCode(cp.getMasterCode(), cp.getBusinessCode());
+            if (cpNameList.size() > 0)
+                cpSettlementMoneyVM.setCpNameList(cpNameList);
+
+            String key_code = cpSettlementMoneyVM.getBusinessCode() + ":" + cp.getMasterCode();
+            if (map.get(key_code) != null) {
+                // 同名cp金额汇总
+                BigDecimal sumMoney = map.get(key_code).getSettlementMoney();
+                sumMoney = sumMoney.add(cpSettlementMoneyVM.getSettlementMoney());
+                cpSettlementMoneyVM.setSettlementMoney(sumMoney);
+            }
+            map.put(key_code, cpSettlementMoneyVM);
+        }
+
+        for(Map.Entry<String,CpSettlementMoneyVM> entry:map.entrySet()){
+            CpSettlementMoneyVM vm = entry.getValue();
+            BigDecimal one = vm.getSettlementMoney();
+            BigDecimal ratio = one.divide(sumAll, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+            vm.setRatio(Double.toString(ratio.doubleValue()));
+        }
+        return map;
+    }
+
     public ResultVO getBizSettleDataForPie(CpSettlementMoneyDTO cpSettlementMoneyDTO){
         // 12个账期分别 作为list 计算得到一个账期内所有cp详情的 map-->CpSettleStatisticsVM
         /**
@@ -356,7 +399,7 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
             // 1.
             List<CpSettlementMoney> rawList = getRawList(singleAcs, cpSettlementMoneyDTO);
             // 2. 单账期内的所有cp结算详情
-            Map<String, CpSettlementMoneyVM> oneMap = countOneByBizCode(rawList);
+            Map<String, CpSettlementMoneyVM> oneMap = countOneByBizCodeForPie(rawList);
             //3. oneMap.getValue() == CpSettlementMoneyVM
             // -----------------------------------------------开始装配单账期内的详情-----------------------------------------------------------
             // ---------------------------需要：账期名，该账期内的总收入，该账期内的所有cp结算详情列表，top 6-----------------------------------------
@@ -377,15 +420,6 @@ public class SettleDataOfCpServiceImpl implements SettleDataOfCpService {
         }
         return ResultVOUtil.success(singleDataVMList);
     }
-
-
-
-
-
-
-
-
-
 
 
 

@@ -3,6 +3,7 @@ package com.hgys.iptv.controller;
 import com.hgys.iptv.model.dto.CpSettlementMoneyDTO;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.service.SettleDataOfCpService;
+import com.hgys.iptv.service.impl.SettleDataOfCpServiceImpl_;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class SettleDataOfCpController {
 
     @Autowired
-
     private SettleDataOfCpService settleDataOfCpService;
+    @Autowired
+    private SettleDataOfCpServiceImpl_ settleDataOfCpServiceImpl_;
 
     @GetMapping("/getCpSettleData")
     public ResultVO getCpSettleData(CpSettlementMoneyDTO cpSettlementMoneyDTO){
@@ -35,8 +37,8 @@ public class SettleDataOfCpController {
     }
 
     @GetMapping("/getBizSettleDataForPie")
-    public ResultVO getBizSettleDataForPie(CpSettlementMoneyDTO cpSettlementMoneyDTO){
-        return settleDataOfCpService.getBizSettleDataForPie(cpSettlementMoneyDTO);
+    public ResultVO getBizSettleDataForPie(String startTime,String endTime,String codes){
+        return settleDataOfCpServiceImpl_.getBizSettleDataOfPie(startTime,endTime,codes);
     }
 
     @GetMapping("/getBizSettleData")
@@ -48,4 +50,7 @@ public class SettleDataOfCpController {
     public ResultVO getProdSettleData(CpSettlementMoneyDTO cpSettlementMoneyDTO){
         return settleDataOfCpService.getProdSettleData(cpSettlementMoneyDTO);
     }
+
+
+
 }
