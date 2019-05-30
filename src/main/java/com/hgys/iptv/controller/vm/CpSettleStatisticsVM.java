@@ -25,16 +25,16 @@ public class CpSettleStatisticsVM {
     /** 账期名称 */
     private String name;
     /** 账期编码 */
-    private String code;
+//    private String code;
 
-    /** 账期开始时间 */
-    private Timestamp setStartTime;
-    /** 结算结束时间 */
-    private Timestamp setEndTime;
+//    /** 账期开始时间 */
+//    private Timestamp setStartTime;
+//    /** 结算结束时间 */
+//    private Timestamp setEndTime;
     /** 单个账期内所有cp的总金额之和*/
     private BigDecimal grossIncome;
     /** 单个账期内所有cp的结算详情*/
-    List<CpSettlementMoneyVM> cpList;
+    List<CpSettlementMoneyVM> List;
 
     private LinkedList<TopSixListVM> topSixList;//按rank排序
 
@@ -43,7 +43,7 @@ public class CpSettleStatisticsVM {
             /** cp名称 */
             private String cpname;
             private Integer rank;//cp-排名
-            private BigDecimal grossIncome;
+            private BigDecimal settlementMoney;
             private String ratio;//占比
         }
 
