@@ -39,8 +39,8 @@ public class SettleDataOfCpController {
     @ApiOperation(value = "cp结算统计饼状图")
     @GetMapping("/getCpSettleDataOfPie")
     public ResultVO getCpSettleDataOfPie(String startTime,String endTime,
-                                         @ApiParam("cp名称")String cpname){
-        return settleDataOfCpServiceImpl_.getCpSettleDataOfPie(startTime,endTime,cpname);
+                                         @ApiParam("cp名称")String cpName){
+        return settleDataOfCpServiceImpl_.getCpSettleDataOfPie(startTime,endTime,cpName);
     }
 
 //    @GetMapping("/getCpSettleDataForPie")
