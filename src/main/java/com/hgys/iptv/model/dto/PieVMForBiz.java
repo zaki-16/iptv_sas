@@ -23,14 +23,14 @@ public class PieVMForBiz {
     @Data
     public static class Details {
 
-        private String name;// 业务名称
+        private String bizName;// 业务名称
 
         private String ratio;
 
         private BigDecimal settlementMoney;
 
-        private List<String> cpNames;//关联的cp
+        private Set<String> cpNames;//关联的cp
 
-        private List<String> prodNames;//关联的产品
+        private Set<String> prodNames;//关联的产品
     }
 }

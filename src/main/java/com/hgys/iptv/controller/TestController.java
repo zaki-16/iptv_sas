@@ -18,7 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,8 +46,8 @@ public class TestController   {
 
     @GetMapping("/tester")
 //    @SystemControllerLog(target = "测试target",type = "测试type")
-    public ResultVO tester(String cpName){
-        return ResultVOUtil.success(service.getCpSettleDataOfPie(null,null,cpName));
+    public ResultVO tester(String codes){
+        return ResultVOUtil.success(service.getCpSettleDataOfChart(null,null,codes));
     }
 
 
