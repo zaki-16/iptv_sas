@@ -4,7 +4,6 @@ import com.hgys.iptv.model.dto.ChartVMForBiz;
 import com.hgys.iptv.model.dto.ChartVMForCp;
 import com.hgys.iptv.model.dto.ChartVMForProd;
 import com.hgys.iptv.model.vo.ResultVO;
-import com.hgys.iptv.service.SettleDataOfCpService;
 import com.hgys.iptv.service.impl.SettleDataOfCpServiceImpl_;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,19 +27,19 @@ import java.util.Set;
 public class SettleDataOfCpController {
 
     @Autowired
-    private SettleDataOfCpService settleDataOfCpService;
-    @Autowired
     private SettleDataOfCpServiceImpl_ settleDataOfCpServiceImpl_;
 
     @GetMapping("/getCpSettleDataOfChart")
     @ApiOperation(value = "cp结算统计表")
-    public Set<ChartVMForCp> getCpSettleDataOfChart(String startTime, String endTime, String cpName){
+    public Set<ChartVMForCp> getCpSettleDataOfChart(String startTime, String endTime,
+                                                    @ApiParam("cp名称")String cpName){
         return settleDataOfCpServiceImpl_.getCpSettleDataOfChart(startTime,endTime,cpName);
     }
 
     @ApiOperation(value = "cp结算统计饼状图")
     @GetMapping("/getCpSettleDataOfPie")
-    public ResultVO getCpSettleDataOfPie(String startTime,String endTime,String cpname){
+    public ResultVO getCpSettleDataOfPie(String startTime,String endTime,
+                                         @ApiParam("cp名称")String cpname){
         return settleDataOfCpServiceImpl_.getCpSettleDataOfPie(startTime,endTime,cpname);
     }
 
@@ -61,7 +60,10 @@ public class SettleDataOfCpController {
 
     @ApiOperation(value = "业务结算统计饼状图")
     @GetMapping("/getBizSettleDataForPie")
-    public ResultVO getBizSettleDataForPie(String startTime,String endTime,String codes){
+    public ResultVO getBizSettleDataForPie(
+            @ApiParam("业务结算起始时间")String startTime,
+            @ApiParam("业务结算结束时间")String endTime,
+            @ApiParam("业务编码集合字符串")String codes){
         return settleDataOfCpServiceImpl_.getBizSettleDataOfPie(startTime,endTime,codes);
     }
 
@@ -69,7 +71,9 @@ public class SettleDataOfCpController {
 
     @ApiOperation(value = "产品结算统计表")
     @GetMapping("/getProdSettleDataOfChart")
-    public Set<ChartVMForProd> getProdSettleDataOfChart(String startTime, String endTime, String codes){
+    public Set<ChartVMForProd> getProdSettleDataOfChart(String startTime,
+                                                        String endTime,
+                                                        @ApiParam("产品编码集合字符串") String codes){
         return settleDataOfCpServiceImpl_.getProdSettleDataOfChart(startTime,endTime,codes);
     }
 
