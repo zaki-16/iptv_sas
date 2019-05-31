@@ -37,8 +37,8 @@ public class SettleDataOfCpController {
     }
 
     @GetMapping("/getCpSettleDataOfPie")
-    public ResultVO getCpSettleDataOfPie(String startTime,String endTime,String codes){
-        return settleDataOfCpServiceImpl_.getCpSettleDataOfPie(startTime,endTime,codes);
+    public ResultVO getCpSettleDataOfPie(String startTime,String endTime,String cpname){
+        return settleDataOfCpServiceImpl_.getCpSettleDataOfPie(startTime,endTime,cpname);
     }
 
     @GetMapping("/getBizSettleDataForPie")

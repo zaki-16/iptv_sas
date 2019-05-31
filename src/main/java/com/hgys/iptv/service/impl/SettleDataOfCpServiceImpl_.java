@@ -1,21 +1,15 @@
 package com.hgys.iptv.service.impl;
 
-import com.google.common.collect.Maps;
 import com.hgys.iptv.common.Criteria;
 import com.hgys.iptv.common.Restrictions;
-import com.hgys.iptv.controller.vm.CpSettlementMoneyVM;
 import com.hgys.iptv.model.AccountSettlement;
 import com.hgys.iptv.model.CpSettlementMoney;
-import com.hgys.iptv.model.QAccountSettlement;
-import com.hgys.iptv.model.dto.CpSettlementMoneyDTO;
 import com.hgys.iptv.model.dto.PieVMForBiz;
 import com.hgys.iptv.model.dto.PieVMForCp;
 import com.hgys.iptv.model.vo.ResultVO;
 import com.hgys.iptv.repository.AccountSettlementRepository;
 import com.hgys.iptv.repository.CpSettlementMoneyRepository;
 import com.hgys.iptv.util.ResultVOUtil;
-import com.querydsl.jpa.impl.JPAQuery;
-import io.lettuce.core.GeoArgs;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -45,21 +39,27 @@ public class SettleDataOfCpServiceImpl_ {
     @Autowired
     private AccountSettlementRepository accountSettlementRepository;
 
-    private List<AccountSettlement> getAccountSettlementList(String startTime,String endTime){
+
+
+    /**-======================================业务 图表 =====================================================*/
+
+    private List<AccountSettlement> getBizAccountSettlementList(String startTime,String endTime){
         Criteria<AccountSettlement> criteria = new Criteria<>();
         if(StringUtils.isNotBlank(endTime))
             criteria.add(Restrictions.lte("setEndTime",Timestamp.valueOf(endTime)));
         if(StringUtils.isNotBlank(startTime))
             criteria.add(Restrictions.gte("setStartTime",Timestamp.valueOf(startTime)));
 
-        criteria.add(Restrictions.eq("isdelete",0));
+        criteria.add(Restrictions.eq("isdelete",0))
+            .add(Restrictions.in("set_type",Arrays.asList(2,5),true));
         Pageable pageable = PageRequest.of(0, 12, Sort.Direction.DESC, "setStartTime");
         return accountSettlementRepository.findAll(criteria,pageable).getContent();
     }
 
 
-
     /**
+     * 业务饼状图
+     *
      * CpSettlementMoney:
      * @param startTime
      * @param endTime
@@ -69,10 +69,9 @@ public class SettleDataOfCpServiceImpl_ {
         if(StringUtils.isNotBlank(codes)) {
             codeList = Arrays.asList(StringUtils.split(codes, ","));
         }
-        Map<String, PieVMForBiz.Details> map = Maps.newHashMap();
         List<PieVMForBiz> pieVMForBizs = new ArrayList<>();
         // 账期数据 -- 每个账单下有不同业务code 计算每个code的总金额
-        List<AccountSettlement> settlementList = getAccountSettlementList(startTime, endTime);
+        List<AccountSettlement> settlementList = getBizAccountSettlementList(startTime, endTime);
         // 根据
         for(AccountSettlement as : settlementList){
             String masterCode = as.getCode();
@@ -115,11 +114,32 @@ public class SettleDataOfCpServiceImpl_ {
     }
 
 
+    /**-======================================cp 图表 =====================================================*/
 
+    private List<AccountSettlement> getCpAccountSettlementList(String startTime,String endTime){
+        Criteria<AccountSettlement> criteria = new Criteria<>();
+        if(StringUtils.isNotBlank(endTime))
+            criteria.add(Restrictions.lte("setEndTime",Timestamp.valueOf(endTime)));
+        if(StringUtils.isNotBlank(startTime))
+            criteria.add(Restrictions.gte("setStartTime",Timestamp.valueOf(startTime)));
+
+        criteria.add(Restrictions.eq("isdelete",0));
+        Pageable pageable = PageRequest.of(0, 12, Sort.Direction.DESC, "setStartTime");
+        return accountSettlementRepository.findAll(criteria,pageable).getContent();
+    }
+
+    /**
+     * 饼状图
+     *
+     * @param startTime
+     * @param endTime
+     * @param cpName
+     * @return
+     */
     public ResultVO getCpSettleDataOfPie(String startTime, String endTime, String cpName){
         List<PieVMForCp> pieVMForBizs = new ArrayList<>();
         // 账期数据 -- 每个账单下有不同业务code 计算每个code的总金额
-        List<AccountSettlement> settlementList = getAccountSettlementList(startTime, endTime);
+        List<AccountSettlement> settlementList = getCpAccountSettlementList(startTime, endTime);
         // 根据
         for(AccountSettlement as : settlementList){
             String masterCode = as.getCode();
