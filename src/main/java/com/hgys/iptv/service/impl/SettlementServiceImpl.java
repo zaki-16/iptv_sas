@@ -439,7 +439,7 @@ public class SettlementServiceImpl implements SettlementService {
                         money.setBusinessCode(StringUtils.trimToEmpty(bi.getBusinessCode()));
                         money.setBusinessName(StringUtils.trimToEmpty(bi.getBusinessName()));
                         money.setCreateTime(new Timestamp(System.currentTimeMillis()));
-                        //计算cp计算金额，业务收入*cp在该业务下的比例
+                        //计算cp结算金额，业务收入*cp在该业务下的比例
                         BigDecimal decimal =  (new BigDecimal(bi.getProportion()).divide(new BigDecimal(100)).setScale(2)).multiply(collect.get(bi.getBusinessCode()).getBusinessMoney()).setScale(2);
                         money.setSettlementMoney(decimal);
                         cpSettlementMoneyRepository.save(money);

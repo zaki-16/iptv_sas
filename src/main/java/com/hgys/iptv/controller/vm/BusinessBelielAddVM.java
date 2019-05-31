@@ -7,7 +7,6 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @ApiModel("分配结算业务定比例结算新增VM")
-@Data
 public class BusinessBelielAddVM {
     /**
      * 业务名称
@@ -30,6 +29,12 @@ public class BusinessBelielAddVM {
      */
     @ApiModelProperty("业务收入")
     private BigDecimal money;
+
+    /**
+     * 业务收入
+     */
+    @ApiModelProperty("业务收入")
+    private BigDecimal businessMoney;
 
     public String getBusinessName() {
         return businessName;
@@ -61,5 +66,13 @@ public class BusinessBelielAddVM {
 
     public BigDecimal getMoney() {
         return money;
+    }
+
+    public BigDecimal getBusinessMoney() {
+        return businessMoney;
+    }
+
+    public void setBusinessMoney(BigDecimal businessMoney) {
+        this.businessMoney = businessMoney;
     }
 }
