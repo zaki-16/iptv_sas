@@ -16,6 +16,7 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.criteria.Predicate;
@@ -42,13 +43,15 @@ public class TestController   {
     @Autowired
     private SettleDataOfCpServiceImpl_ service;
 
-
+    @Autowired
+    protected BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping("/tester")
 //    @SystemControllerLog(target = "测试target",type = "测试type")
-    public ResultVO tester(String codes){
-        return ResultVOUtil.success(service.getCpSettleDataOfChart(null,null,codes));
+    public ResultVO tester(){
+        String wangz = passwordEncoder.encode("123456");
+        System.out.println(wangz);
+        return ResultVOUtil.success(wangz);
     }
-
 
 }

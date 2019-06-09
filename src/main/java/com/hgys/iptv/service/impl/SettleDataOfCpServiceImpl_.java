@@ -103,7 +103,6 @@ public class SettleDataOfCpServiceImpl_ {
             BigDecimal oneIncome = chartVM.getSettlementMoney();
             BigDecimal ratio = oneIncome.divide(allIncome_12, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
             chartVM.setRatio(Double.toString(ratio.doubleValue()));
-
             chartVMForBizs.add(chartVM);
         }
 
@@ -197,9 +196,8 @@ public class SettleDataOfCpServiceImpl_ {
             ChartVMForBiz chartVM = new ChartVMForBiz();
             if (cp.getSettlementMoney() == null)
                 cp.setSettlementMoney(BigDecimal.ZERO);
-
             BeanUtils.copyProperties(cp, chartVM);
-            chartVM.setName(cp.getProductName());
+            chartVM.setName(cp.getBusinessName());
 
             List<String> cpNameList = cpSettlementMoneyRepository.findCpNameListByBizCode(cp.getMasterCode(), cp.getBusinessCode());
             List<String> prodNameList = cpSettlementMoneyRepository.findProdNameListByBizCode(cp.getMasterCode(), cp.getBusinessCode());

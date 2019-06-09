@@ -35,5 +35,4 @@ public abstract class SysServiceImpl extends AbstractBaseServiceImpl implements 
 //    @Autowired
 //    protected Logger logger;
 
-
 }
